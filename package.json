@@ -6,7 +6,8 @@
     "clean": "rm -rf public/build",
     "build": "rollup -c",
     "start": "rollup -c -w",
-    "test": "eslint 'src/*' && svelte-check --tsconfig ./tsconfig.json"
+    "test": "eslint 'src/*' && svelte-check --tsconfig ./tsconfig.json",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -31,9 +32,11 @@
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "eslint-plugin-unicorn": "^33.0.1",
+    "husky": "^6.0.0",
     "prettier": "^2.3.1",
     "prettier-plugin-svelte": "^2.3.0",
     "svelte-check": "^2.0.0"

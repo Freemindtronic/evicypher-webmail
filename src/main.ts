@@ -1,8 +1,6 @@
-import App from './App.svelte'
+import Popup from './Popup.svelte'
 import './i18n'
 
-const app = new App({
+export default new Popup({
   target: document.body,
 })
-
-export default app

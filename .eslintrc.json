@@ -17,7 +17,8 @@
   },
   "plugins": [
     "svelte3",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "html"
   ],
   "rules": {
     "unicorn/prevent-abbreviations": 0
