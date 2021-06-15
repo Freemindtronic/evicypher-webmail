@@ -1,5 +1,6 @@
 <script>
   import { browser } from 'webextension-polyfill-ts'
+  import { _, locale, locales } from 'svelte-i18n'
 
   let color = '#fcdcb4'
 
@@ -9,7 +10,12 @@
 </script>
 
 <main>
-  <h1>Title</h1>
-  <p>Background color: <input type="text" bind:value={color} /></p>
-  <p><button on:click={change}>Change</button></p>
+  <h1>{$_('title')}</h1>
+  <p>{$_('background-color')} <input type="text" bind:value={color} /></p>
+  <p><button on:click={change}>{$_('change')}</button></p>
+  <select bind:value={$locale}>
+    {#each $locales as locale}
+      <option value={locale}>{locale}</option>
+    {/each}
+  </select>
 </main>
