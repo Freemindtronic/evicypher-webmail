@@ -8,12 +8,25 @@
     "start": "rollup -c -w",
     "test": "eslint 'src/*' && svelte-check --tsconfig ./tsconfig.json"
   },
-  "devDependencies": {
+  "dependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
+    "svelte-i18n": "^3.3.9",
+    "svelte-preprocess": "^4.0.0",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.0",
+    "webextension-polyfill-ts": "^0.25.0"
+  },
+  "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.28.0",
@@ -23,18 +36,7 @@
     "eslint-plugin-unicorn": "^33.0.1",
     "prettier": "^2.3.1",
     "prettier-plugin-svelte": "^2.3.0",
-    "rollup": "^2.3.4",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0",
-    "svelte-check": "^2.0.0",
-    "svelte-i18n": "^3.3.9",
-    "svelte-preprocess": "^4.0.0",
-    "tslib": "^2.0.0",
-    "typescript": "^4.0.0",
-    "webextension-polyfill-ts": "^0.25.0"
+    "svelte-check": "^2.0.0"
   },
   "volta": {
     "node": "16.3.0",
