@@ -7,7 +7,7 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "test": "eslint 'src/*' && svelte-check --tsconfig ./tsconfig.json",
-    "prepare": "husky install"
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
