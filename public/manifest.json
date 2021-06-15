@@ -23,6 +23,14 @@
       "js": [
         "build/content-script.js"
       ]
+    },
+    {
+      "matches": [
+        "https://mail.google.com/mail/*"
+      ],
+      "css": [
+        "injected.css"
+      ]
     }
   ]
 }
