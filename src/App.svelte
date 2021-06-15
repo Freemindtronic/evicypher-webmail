@@ -1,15 +1,15 @@
 <script>
-	import browser from "webextension-polyfill";
+  import { browser } from 'webextension-polyfill-ts'
 
-	let image =
-		"https://images.unsplash.com/photo-1586074299757-dc655f18518c?fit=crop&w=1268&q=80";
+  let color = '#fcdcb4'
 
-	function change() {
-		browser.storage.local.set({ background: image });
-	}
+  function change() {
+    browser.storage.local.set({ color })
+  }
 </script>
 
 <main>
-	Image URL: <input type="text" bind:value={image} />
-	<button on:click={change}>Change</button>
+  <h1>Title</h1>
+  <p>Background color: <input type="text" bind:value={color} /></p>
+  <p><button on:click={change}>Change</button></p>
 </main>
