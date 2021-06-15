@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { browser } from 'webextension-polyfill-ts'
   import { _, locale, locales } from 'svelte-i18n'
 
