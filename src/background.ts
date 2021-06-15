@@ -1,7 +1,7 @@
-import browser from "webextension-polyfill";
+import { browser } from "webextension-polyfill-ts";
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === "install") {
-    alert("Hello");
+    console.log("Hello");
   }
 });

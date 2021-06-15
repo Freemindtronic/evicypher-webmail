@@ -87,25 +87,39 @@ export default [
     },
   },
   {
-    input: "src/background.js",
+    input: "src/background.ts",
     output: {
       sourcemap: true,
       format: "iife",
       file: "public/build/background.js",
     },
-    plugins: [resolve(), commonjs()],
+    plugins: [
+      resolve(),
+      typescript({
+        sourceMap: !production,
+        inlineSources: !production,
+      }),
+      commonjs(),
+    ],
     watch: {
       clearScreen: false,
     },
   },
   {
-    input: "src/injection.js",
+    input: "src/injected.ts",
     output: {
       sourcemap: true,
       format: "iife",
       file: "public/build/injection.js",
     },
-    plugins: [resolve(), commonjs()],
+    plugins: [
+      resolve(),
+      typescript({
+        sourceMap: !production,
+        inlineSources: !production,
+      }),
+      commonjs(),
+    ],
     watch: {
       clearScreen: false,
     },
