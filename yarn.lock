@@ -2793,6 +2793,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"regexparam@npm:1.3.0":
+  version: 1.3.0
+  resolution: "regexparam@npm:1.3.0"
+  checksum: 3be8055bc697d720647e2b2a781e8a784013e80d51724dce833524c8f1a9fbfa7efd3dac90572ce64191b82e908c8e70c6ff40b8da3ff0b3fb4199af73d4a8b5
+  languageName: node
+  linkType: hard
+
 "regexpp@npm:^3.1.0":
   version: 3.2.0
   resolution: "regexpp@npm:3.2.0"
@@ -3324,6 +3331,7 @@ fsevents@~2.3.1:
     svelte-check: ^2.0.0
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.0.0
+    svelte-spa-router: ^3.1.0
     tslib: ^2.0.0
     typescript: ^4.0.0
     webextension-polyfill-ts: ^0.25.0
@@ -3412,6 +3420,15 @@ fsevents@~2.3.1:
     typescript:
       optional: true
   checksum: 8862ba953f521df5cf31ac711e8971555adcd1a52b9d577bb157107da144d83cbccfa07f0d8c8d017837c7bf2f602fbbb39ee61932099ee467a48997399a3c10
+  languageName: node
+  linkType: hard
+
+"svelte-spa-router@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "svelte-spa-router@npm:3.1.0"
+  dependencies:
+    regexparam: 1.3.0
+  checksum: 6951d3871b35022c87a32c7c750724d9840bd42f2180088a09b7077c23fe6751cd2f44b8761178cf96aadda89c13160ef0e152bf2d29a85b4da4f0aa110f347a
   languageName: node
   linkType: hard
 
