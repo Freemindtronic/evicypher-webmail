@@ -3290,6 +3290,7 @@ __metadata:
     rollup-plugin-svelte: ^7.1.0
     rollup-plugin-terser: ^7.0.2
     svelte: ^3.38.2
+    svelte-burger-menu: ^1.0.5
     svelte-check: ^2.1.0
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.7.3
@@ -3299,6 +3300,13 @@ __metadata:
     webextension-polyfill-ts: ^0.25.0
   languageName: unknown
   linkType: soft
+
+"svelte-burger-menu@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "svelte-burger-menu@npm:1.0.5"
+  checksum: 6ca1b4e7fa0c12a9551e3121206003d10446586f235606cfbaae78c426c7328ed5dd9e09221d2e62fb8ea7e903f5b1467cfac6a33055cb87b1cca014a9d836b5
+  languageName: node
+  linkType: hard
 
 "svelte-check@npm:^2.1.0":
   version: 2.1.0

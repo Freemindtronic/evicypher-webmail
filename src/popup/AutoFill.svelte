@@ -1,3 +1,5 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { _ } from 'svelte-i18n'
+</script>
 
-<h1>AutoFill</h1>
+<h1>{$_('auto-fill')}</h1>

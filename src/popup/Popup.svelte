@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { locale, locales } from 'svelte-i18n'
-  import Router from 'svelte-spa-router'
+  import { _, locale, locales } from 'svelte-i18n'
+  import BurgerMenu from 'svelte-burger-menu'
+  import Router, { link } from 'svelte-spa-router'
   import About from './About.svelte'
   import AutoFill from './AutoFill.svelte'
   import Home from './Home.svelte'
@@ -15,10 +16,32 @@
 </script>
 
 <main>
+  <BurgerMenu>
+    <ul>
+      <li>
+        <a href="/" use:link>{$_('home')}</a>
+      </li>
+      <li>
+        <a href="/phones" use:link>{$_('phones')}</a>
+      </li>
+      <li>
+        <a href="/autofill" use:link>{$_('auto-fill')}</a>
+      </li>
+      <li>
+        <a href="/about" use:link>{$_('about')}</a>
+      </li>
+    </ul>
+    <select bind:value={$locale}>
+      {#each $locales as locale}
+        <option value={locale}>{locale}</option>
+      {/each}
+    </select>
+  </BurgerMenu>
   <Router {routes} />
-  <select bind:value={$locale}>
-    {#each $locales as locale}
-      <option value={locale}>{locale}</option>
-    {/each}
-  </select>
 </main>
+
+<style>
+  main {
+    padding-top: 2em;
+  }
+</style>
