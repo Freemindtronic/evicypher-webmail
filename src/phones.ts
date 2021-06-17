@@ -1,4 +1,5 @@
-import { Writable, writable } from 'svelte/store'
+import BrowserStore from 'browser-store'
+import type { Writable } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 
 /**
@@ -28,7 +29,9 @@ export class Phone {
 }
 
 /** Phone list. */
-export const phones: Writable<Phone[]> = writable([])
+export const phones: Writable<Phone[]> = new BrowserStore('phones', [], (x) =>
+  (x as Array<{ id: number; name: string }>).map((obj) => Phone.fromObject(obj))
+)
 export default phones
 
 /** Produce an auto-incremented integer. */
@@ -38,22 +41,3 @@ export const nextPhoneId = async (): Promise<number> => {
   await browser.storage.local.set({ nextPhoneId: currentValue + 1 })
   return currentValue
 }
-
-// Asynchronously load registered phones from local storage
-let loaded = false
-
-phones.subscribe((phones) => {
-  // Update the list of stored phones
-  if (loaded) browser.storage.local.set({ phones })
-})
-
-browser.storage.local
-  .get({ phones: [] })
-  .then(
-    ({ phones: storedPhones }) =>
-      storedPhones as Array<{ id: number; name: string }>
-  )
-  .then((storedPhones) => {
-    phones.set(storedPhones.map((obj) => Phone.fromObject(obj)))
-    loaded = true
-  })
