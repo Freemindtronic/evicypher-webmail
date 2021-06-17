@@ -7,5 +7,9 @@
   "back": "Back",
   "phones": "Phones",
   "auto-fill": "Auto-Fill",
-  "home": "Home"
+  "home": "Home",
+  "register-a-new-phone": "Register a new phone",
+  "name": "Name:",
+  "add": "Add",
+  "delete": "Delete"
 }
