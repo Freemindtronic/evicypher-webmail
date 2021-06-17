@@ -1,4 +1,4 @@
-public/build/
+extension/build/
 .yarn/*
 !.yarn/patches
 !.yarn/releases

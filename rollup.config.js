@@ -1,7 +1,6 @@
 import svelte from 'rollup-plugin-svelte'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
-import livereload from 'rollup-plugin-livereload'
 import { terser } from 'rollup-plugin-terser'
 import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
@@ -27,10 +26,6 @@ const build = [
     inlineSources: !production,
   }),
 
-  // Watch the `public` directory and refresh the
-  // browser on changes when not in production
-  !production && livereload('public'),
-
   // If we're building for production (npm run build
   // instead of npm run dev), minify
   production && terser(),
@@ -38,12 +33,12 @@ const build = [
 
 export default [
   {
-    input: 'src/main.ts',
+    input: 'src/popup/main.ts',
     output: {
       sourcemap: true,
       format: 'iife',
       name: 'app',
-      file: 'public/build/bundle.js',
+      file: 'extension/build/popup.js',
     },
     plugins: [
       svelte({
@@ -55,7 +50,7 @@ export default [
       }),
       // we'll extract any component CSS out into
       // a separate file - better for performance
-      css({ output: 'bundle.css' }),
+      css({ output: 'popup.css' }),
 
       ...build,
     ],
@@ -64,11 +59,11 @@ export default [
     },
   },
   {
-    input: 'src/background.ts',
+    input: 'src/background/main.ts',
     output: {
       sourcemap: true,
       format: 'iife',
-      file: 'public/build/background.js',
+      file: 'extension/build/background.js',
     },
     plugins: build,
     watch: {
@@ -76,11 +71,11 @@ export default [
     },
   },
   {
-    input: 'src/content-script.ts',
+    input: 'src/content-scripts/main.ts',
     output: {
       sourcemap: true,
       format: 'iife',
-      file: 'public/build/content-script.js',
+      file: 'extension/build/content-script.js',
     },
     plugins: build,
     watch: {

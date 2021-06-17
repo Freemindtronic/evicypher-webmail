@@ -922,7 +922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.4.1, chokidar@npm:^3.5.0":
+"chokidar@npm:^3.4.1":
   version: 3.5.1
   resolution: "chokidar@npm:3.5.1"
   dependencies:
@@ -2171,27 +2171,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"livereload-js@npm:^3.3.1":
-  version: 3.3.2
-  resolution: "livereload-js@npm:3.3.2"
-  checksum: 1615183f01af010e1bd161e7782563b984c27ba89efaf773d16c921c8b6c8e67f9a715cfd9bacc457b20c11353614431250f501aba9d37ed4a2d2608502354c6
-  languageName: node
-  linkType: hard
-
-"livereload@npm:^0.9.1":
-  version: 0.9.3
-  resolution: "livereload@npm:0.9.3"
-  dependencies:
-    chokidar: ^3.5.0
-    livereload-js: ^3.3.1
-    opts: ">= 1.2.0"
-    ws: ^7.4.3
-  bin:
-    livereload: bin/livereload.js
-  checksum: dd0fba2fd07ee81bedfc8d7993e2ab190d391dfd323b8d699246d20af8d20e0d1c5e8d0eff7a1d42b8c3c1a7954c5b057b0337ccfdfc6070b9bfe7ef567a270b
-  languageName: node
-  linkType: hard
-
 "locate-path@npm:^5.0.0":
   version: 5.0.0
   resolution: "locate-path@npm:5.0.0"
@@ -2534,13 +2513,6 @@ __metadata:
     type-check: ^0.4.0
     word-wrap: ^1.2.3
   checksum: bdf5683f986d00e173e6034837b7b6a9e68c7e1a37d7684b240adf1758db9076cfb04c9f64be29327881bb06c5017afb8b65012c5f02d07b180e9f6f42595ffd
-  languageName: node
-  linkType: hard
-
-"opts@npm:>= 1.2.0":
-  version: 2.0.2
-  resolution: "opts@npm:2.0.2"
-  checksum: 9f06c54f4dfa7ddccbf7c42b2e170076c5eabfacafe4249f643bda50462dabf0543405557eb619d2f09c886075c2bcaba2c2e8b5e23fcf4f899fc259e3e4397d
   languageName: node
   linkType: hard
 
@@ -2888,15 +2860,6 @@ __metadata:
   peerDependencies:
     rollup: 1 || 2
   checksum: 8a7d81d583bb3d2e0ccc29ddec4af94328e72f79421474613aafdf1363de7bb8ea0d5498b21f01b8db69c881db903310142397e60dd919e57a7bd6f2a889e20d
-  languageName: node
-  linkType: hard
-
-"rollup-plugin-livereload@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "rollup-plugin-livereload@npm:2.0.0"
-  dependencies:
-    livereload: ^0.9.1
-  checksum: e32fc0e3dc090128af39f5ce3d7d442fc27f9059e596a2a81541553b3f600dab708c3a507ffcc0eb6b36e40726f67be1b4a77ecbf15ffcc66b7724acd3c6d52b
   languageName: node
   linkType: hard
 
@@ -3324,7 +3287,6 @@ __metadata:
     prettier-plugin-svelte: ^2.3.0
     rollup: ^2.52.1
     rollup-plugin-css-only: ^3.1.0
-    rollup-plugin-livereload: ^2.0.0
     rollup-plugin-svelte: ^7.1.0
     rollup-plugin-terser: ^7.0.2
     svelte: ^3.38.2
@@ -3706,21 +3668,6 @@ typescript@^4.3.3:
   version: 1.0.2
   resolution: "wrappy@npm:1.0.2"
   checksum: 519fcda0fcdf0c16327be2de9d98646742307bc830277e8868529fcf7566f2b330a6453c233e0cdcb767d5838dd61a90984a02ecc983bcddebea5ad0833bbf98
-  languageName: node
-  linkType: hard
-
-"ws@npm:^7.4.3":
-  version: 7.4.6
-  resolution: "ws@npm:7.4.6"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: ffeb626d92f14aa3a67aa3784824c1d290131e25d225f4ca6b1b6b6d7ea754fca67694d89a5b99b144382365e1bccf1f7ec2f92df56f0d25f44939b070452f06
   languageName: node
   linkType: hard
 
