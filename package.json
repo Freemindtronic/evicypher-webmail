@@ -20,6 +20,7 @@
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.2",
+    "sass": "^1.35.1",
     "svelte": "^3.38.2",
     "svelte-burger-menu": "^1.0.5",
     "svelte-i18n": "^3.3.9",

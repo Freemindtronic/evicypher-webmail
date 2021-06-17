@@ -40,8 +40,9 @@
   <Router {routes} />
 </main>
 
-<style>
+<style lang="scss">
+  $gap-large: 2em;
   main {
-    padding-top: 2em;
+    padding-top: $gap-large;
   }
 </style>
