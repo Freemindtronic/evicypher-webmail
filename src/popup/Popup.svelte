@@ -42,6 +42,7 @@
 
 <style lang="scss">
   $gap-large: 2em;
+
   main {
     padding-top: $gap-large;
   }

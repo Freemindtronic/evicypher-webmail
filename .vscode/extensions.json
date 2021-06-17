@@ -4,6 +4,7 @@
     "esbenp.prettier-vscode",
     "lokalise.i18n-ally",
     "dbaeumer.vscode-eslint",
-    "arcanis.vscode-zipfs"
+    "arcanis.vscode-zipfs",
+    "stylelint.vscode-stylelint"
   ]
 }
