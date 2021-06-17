@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "@wemake-services/stylelint-config-scss",
+    "stylelint-config-rational-order"
+  ]
+}
