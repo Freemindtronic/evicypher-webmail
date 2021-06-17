@@ -1,11 +1,15 @@
 {
-  "title": "Titre",
-  "background-color": "Couleur de fond :",
-  "change": "Changer",
-  "about": "À propos",
-  "this-extension-is-developed-by-freemindtronic": "Cette extension est développée par Freemindtronic",
-  "back": "Retour",
-  "phones": "Téléphones",
-  "home": "Accueil",
-  "auto-fill": "Auto-remplissage"
+    "title": "Titre",
+    "background-color": "Couleur de fond :",
+    "change": "Changer",
+    "about": "À propos",
+    "this-extension-is-developed-by-freemindtronic": "Cette extension est développée par Freemindtronic",
+    "back": "Retour",
+    "phones": "Téléphones",
+    "auto-fill": "Auto-remplissage",
+    "home": "Accueil",
+    "register-a-new-phone": "Enregistrer un nouveau téléphone",
+    "name": "Nom :",
+    "add": "Ajouter",
+    "delete": "Supprimer"
 }
