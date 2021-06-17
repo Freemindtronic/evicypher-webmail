@@ -368,9 +368,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^17.0.0":
-  version: 17.1.0
-  resolution: "@rollup/plugin-commonjs@npm:17.1.0"
+"@rollup/plugin-commonjs@npm:^19.0.0":
+  version: 19.0.0
+  resolution: "@rollup/plugin-commonjs@npm:19.0.0"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     commondir: ^1.0.1
@@ -380,8 +380,8 @@ __metadata:
     magic-string: ^0.25.7
     resolve: ^1.17.0
   peerDependencies:
-    rollup: ^2.30.0
-  checksum: 9b162f93090e5bf544c85bb835a29f65371726d2e6161aa1a048bbb708b77433184e5836e7118e2c6277f9a9a7b5835f56e420d2040b1b623b03ca76db4b5d10
+    rollup: ^2.38.3
+  checksum: e6dd7c68f5256482f97e2aeef4fc7621c990d18c8ddf7f6d1a3de052f88f837507886d345a6d12c35290ed8dd3ce5cb9bf31ac1c5ea74d4a10bada297d53a251
   languageName: node
   linkType: hard
 
@@ -396,9 +396,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^11.0.0":
-  version: 11.2.1
-  resolution: "@rollup/plugin-node-resolve@npm:11.2.1"
+"@rollup/plugin-node-resolve@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "@rollup/plugin-node-resolve@npm:13.0.0"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     "@types/resolve": 1.17.1
@@ -407,12 +407,12 @@ __metadata:
     is-module: ^1.0.0
     resolve: ^1.19.0
   peerDependencies:
-    rollup: ^1.20.0||^2.0.0
-  checksum: ae1bed46a949a1d8c077e021751c0140a523f731bea464ed0bfc3d335096493d1638be2a756f72d96f1f3a00fbdad8ba8fad8e86381d3eafce5ea2dffd62f175
+    rollup: ^2.42.0
+  checksum: 4b323e8ad5f1245449cd44b4857ed94a8dd3b998178ce139e74542c216a5abeb5a9e44885f3809ac747296a108f0562f986f9561055e76d1b0b268cf788a5c83
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^8.0.0":
+"@rollup/plugin-typescript@npm:^8.2.1":
   version: 8.2.1
   resolution: "@rollup/plugin-typescript@npm:8.2.1"
   dependencies:
@@ -458,7 +458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^2.0.0":
+"@tsconfig/svelte@npm:^2.0.1":
   version: 2.0.1
   resolution: "@tsconfig/svelte@npm:2.0.1"
   checksum: de3191db005bf053172f1cf69f8fa0317781b3df4f86edb96cdae6f3333738b703fc7c03c2228e705e4190a5663e1202e35a0a546ac385dfe9900d6e50d3c97e
@@ -1639,7 +1639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@~2.3.1#builtin<compat/fsevents>":
+"fsevents@patch:fsevents@~2.3.1#builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#builtin<compat/fsevents>":
   version: 2.3.2
   resolution: "fsevents@patch:fsevents@npm%3A2.3.2#builtin<compat/fsevents>::version=2.3.2&hash=11e9ea"
   dependencies:
@@ -1648,7 +1648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-fsevents@~2.3.1:
+"fsevents@~2.3.1, fsevents@~2.3.2":
   version: 2.3.2
   resolution: "fsevents@npm:2.3.2"
   dependencies:
@@ -2793,10 +2793,10 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"regexparam@npm:1.3.0":
-  version: 1.3.0
-  resolution: "regexparam@npm:1.3.0"
-  checksum: 3be8055bc697d720647e2b2a781e8a784013e80d51724dce833524c8f1a9fbfa7efd3dac90572ce64191b82e908c8e70c6ff40b8da3ff0b3fb4199af73d4a8b5
+"regexparam@npm:2.0.0":
+  version: 2.0.0
+  resolution: "regexparam@npm:2.0.0"
+  checksum: 1607aeed3b6ce33fb89803b1728442abf38014d6b4c7ad37657e458ce99424c924ccf09c3455b3c0aa5fb9202138273f05056587b7ca794c13fb13eccd3a8e50
   languageName: node
   linkType: hard
 
@@ -2900,7 +2900,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"rollup-plugin-svelte@npm:^7.0.0":
+"rollup-plugin-svelte@npm:^7.1.0":
   version: 7.1.0
   resolution: "rollup-plugin-svelte@npm:7.1.0"
   dependencies:
@@ -2913,7 +2913,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"rollup-plugin-terser@npm:^7.0.0":
+"rollup-plugin-terser@npm:^7.0.2":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
   dependencies:
@@ -2936,17 +2936,17 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.3.4":
-  version: 2.51.2
-  resolution: "rollup@npm:2.51.2"
+"rollup@npm:^2.52.1":
+  version: 2.52.1
+  resolution: "rollup@npm:2.52.1"
   dependencies:
-    fsevents: ~2.3.1
+    fsevents: ~2.3.2
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: adad3fa3993c5843cdfdd9d6e370a5780182816175c154a3bfb437f01ca7838b2725c2b3030eb3ba3b1002f0ce77f091be78bbfc4aef4b75ddd83302138a19c6
+  checksum: 27591773875ad7c4c1b1095c099fbf852c41cee0ae009ecd24c42d56b0ce70e90179802b9385fb6b466c30ed6407014ababc8043eb666d491c54688c91c8d4e9
   languageName: node
   linkType: hard
 
@@ -3306,11 +3306,11 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "svelte-app@workspace:."
   dependencies:
-    "@rollup/plugin-commonjs": ^17.0.0
+    "@rollup/plugin-commonjs": ^19.0.0
     "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^11.0.0
-    "@rollup/plugin-typescript": ^8.0.0
-    "@tsconfig/svelte": ^2.0.0
+    "@rollup/plugin-node-resolve": ^13.0.0
+    "@rollup/plugin-typescript": ^8.2.1
+    "@tsconfig/svelte": ^2.0.1
     "@typescript-eslint/eslint-plugin": ^4.27.0
     "@typescript-eslint/parser": ^4.27.0
     eslint: ^7.28.0
@@ -3322,23 +3322,23 @@ fsevents@~2.3.1:
     husky: ^6.0.0
     prettier: ^2.3.1
     prettier-plugin-svelte: ^2.3.0
-    rollup: ^2.3.4
+    rollup: ^2.52.1
     rollup-plugin-css-only: ^3.1.0
     rollup-plugin-livereload: ^2.0.0
-    rollup-plugin-svelte: ^7.0.0
-    rollup-plugin-terser: ^7.0.0
-    svelte: ^3.0.0
-    svelte-check: ^2.0.0
+    rollup-plugin-svelte: ^7.1.0
+    rollup-plugin-terser: ^7.0.2
+    svelte: ^3.38.2
+    svelte-check: ^2.1.0
     svelte-i18n: ^3.3.9
-    svelte-preprocess: ^4.0.0
-    svelte-spa-router: ^3.1.0
-    tslib: ^2.0.0
-    typescript: ^4.0.0
+    svelte-preprocess: ^4.7.3
+    svelte-spa-router: ^3.2.0
+    tslib: ^2.3.0
+    typescript: ^4.3.3
     webextension-polyfill-ts: ^0.25.0
   languageName: unknown
   linkType: soft
 
-"svelte-check@npm:^2.0.0":
+"svelte-check@npm:^2.1.0":
   version: 2.1.0
   resolution: "svelte-check@npm:2.1.0"
   dependencies:
@@ -3376,7 +3376,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"svelte-preprocess@npm:^4.0.0":
+"svelte-preprocess@npm:^4.0.0, svelte-preprocess@npm:^4.7.3":
   version: 4.7.3
   resolution: "svelte-preprocess@npm:4.7.3"
   dependencies:
@@ -3423,16 +3423,16 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"svelte-spa-router@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "svelte-spa-router@npm:3.1.0"
+"svelte-spa-router@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "svelte-spa-router@npm:3.2.0"
   dependencies:
-    regexparam: 1.3.0
-  checksum: 6951d3871b35022c87a32c7c750724d9840bd42f2180088a09b7077c23fe6751cd2f44b8761178cf96aadda89c13160ef0e152bf2d29a85b4da4f0aa110f347a
+    regexparam: 2.0.0
+  checksum: 2afbcd404e6a09dec0ef7fbc04f70d0f29c10a94a7cbe29256125b35a4ee8e42330be99c5e075750af96f7517e9551ad7fcdac278bc473e840929826af915ffa
   languageName: node
   linkType: hard
 
-"svelte@npm:^3.0.0":
+"svelte@npm:^3.38.2":
   version: 3.38.2
   resolution: "svelte@npm:3.38.2"
   checksum: e415be40336418f331e3531dfb842ac8298e4fb698702d60e4b7cad3975720e6965c281e435fcc4b94e2abca12121dd71274b23406bfe2aa203beeb8b533e5aa
@@ -3520,7 +3520,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0":
+"tslib@npm:^2.1.0, tslib@npm:^2.3.0":
   version: 2.3.0
   resolution: "tslib@npm:2.3.0"
   checksum: 7b4fc9feff0f704743c3760f5d8d708f6417fac6458159e63df3a6b1100f0736e3b99edb9fe370f274ad15160a1f49ff05cb49402534c818ff552c48e38c3e6e
@@ -3568,7 +3568,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"typescript@*, typescript@^4.0.0":
+typescript@*:
   version: 4.3.2
   resolution: "typescript@npm:4.3.2"
   bin:
@@ -3578,13 +3578,33 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@*#builtin<compat/typescript>, typescript@patch:typescript@^4.0.0#builtin<compat/typescript>":
+typescript@^4.3.3:
+  version: 4.3.3
+  resolution: "typescript@npm:4.3.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: a5cd61a84cbf6311840f97584dd098fa5743a23a541dbd41d99e8e95e8589aef62b41effdb7e0a67cc9023aa380468c320526352e3fbb43539e7ba9e2483d026
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@*#builtin<compat/typescript>":
   version: 4.3.2
   resolution: "typescript@patch:typescript@npm%3A4.3.2#builtin<compat/typescript>::version=4.3.2&hash=ddfc1b"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 68d48dc86dacfeab59a22414ff061c976c46b679a9717a3a710051ea7bab779fd23f4edb856434da8155e8e8646c90b3912e342cc0010dfd15ed321a42cb0578
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.3.3#builtin<compat/typescript>":
+  version: 4.3.3
+  resolution: "typescript@patch:typescript@npm%3A4.3.3#builtin<compat/typescript>::version=4.3.3&hash=ddfc1b"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 9fff16e8bd0648af1744cbc722eddef94b9d7e746f257e9b3ceeb5e93d301c1824cf4d851aef80c08f920e2506380808aaed500480d0d39e9a38aad00f8bab68
   languageName: node
   linkType: hard
 
