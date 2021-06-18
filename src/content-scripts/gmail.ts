@@ -74,16 +74,27 @@ const createDecryptButton = () => {
 new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     if (
-      mutation.type !== 'childList' ||
-      !(mutation.target as HTMLElement)?.classList.contains('aiL')
-    )
-      continue
-    const mailElement = mutation.target as HTMLElement
-    const mailString = mailElement.textContent
-    // If it's not an encrypted mail, ignore it
-    if (mailString === null || !containsEncryptedText(mailString)) continue
-    // `mailElement` contains an encrypted mail, let's add a button to decrypt it
-    handleEncryptedMailElement(mailElement, mailString)
+      mutation.type === 'childList' &&
+      (mutation.target as HTMLElement)?.classList.contains('aiL')
+    ) {
+      const mailElement = mutation.target as HTMLElement
+      const mailString = mailElement.textContent
+      // If it's not an encrypted mail, ignore it
+      if (mailString === null || !containsEncryptedText(mailString)) continue
+      // `mailElement` contains an encrypted mail, let's add a button to decrypt it
+      handleEncryptedMailElement(mailElement, mailString)
+    } else if (
+      mutation.type === 'childList' &&
+      (mutation.target as HTMLElement)?.classList.contains('bAK')
+    ) {
+      const toolbar = mutation.target as HTMLElement
+      if ('freemindtronicButtonAdded' in toolbar.dataset) return
+      toolbar.dataset.freemindtronicButtonAdded = '1'
+      const button: HTMLButtonElement = document.createElement('button')
+      button.style.all = 'revert'
+      button.innerHTML = '🔐'
+      toolbar.append(button)
+    }
   }
 }).observe(document.body, {
   attributeFilter: ['class'],
