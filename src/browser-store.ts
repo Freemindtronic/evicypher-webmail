@@ -17,14 +17,17 @@ export default class<T> implements Writable<T> {
    *
    * @param name name of the store, must be unique
    * @param initialValue initial value
-   * @param transformer used to produce an object of type `T` with the output of JSON.parse (default is `x => x`)
-   * @param storage where to physically store data (default is `browser.storage.local`)
+   * @param options optionnal settings, see bellow
+   * @param options.transformer used to produce an object of type `T` with the output of JSON.parse (default is `x => x`)
+   * @param options.storage where to physically store data (default is `browser.storage.local`)
    */
   constructor(
     name: string,
     initialValue: T,
-    transformer: (parsed: unknown) => T = (x) => x as T,
-    storage: Storage.StorageArea = browser.storage.local
+    {
+      transformer = (x) => x as T,
+      storage = browser.storage.local,
+    }: { transformer?: (parsed: unknown) => T; storage?: Storage.StorageArea }
   ) {
     this.name = name
     this.writable = writable(initialValue)

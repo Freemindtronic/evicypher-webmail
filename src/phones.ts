@@ -29,9 +29,12 @@ export class Phone {
 }
 
 /** Phone list. */
-export const phones: Writable<Phone[]> = new BrowserStore('phones', [], (x) =>
-  (x as Array<{ id: number; name: string }>).map((obj) => Phone.fromObject(obj))
-)
+export const phones: Writable<Phone[]> = new BrowserStore('phones', [], {
+  transformer: (x) =>
+    (x as Array<{ id: number; name: string }>).map((obj) =>
+      Phone.fromObject(obj)
+    ),
+})
 export default phones
 
 /** Produce an auto-incremented integer. */
