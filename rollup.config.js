@@ -63,6 +63,7 @@ export default [
     output: {
       sourcemap: true,
       format: 'iife',
+      name: 'app',
       file: 'extension/build/background.js',
     },
     plugins: build,
@@ -75,6 +76,7 @@ export default [
     output: {
       sourcemap: true,
       format: 'iife',
+      name: 'app',
       file: 'extension/build/content-script.js',
     },
     plugins: build,
