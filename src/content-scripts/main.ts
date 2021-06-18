@@ -37,19 +37,25 @@ const handleEncryptedMailElement = (
   mailElement.style.outline = '3px solid orange'
   const button = createDecryptButton()
   mailElement.append(button)
-  button.addEventListener(
-    'click',
-    () => {
-      for (const string of extractEncryptedStrings(mailString)) {
-        decryptString(string).then((decryptedString) => {
-          const p: HTMLElement = document.createElement('p')
-          p.textContent = decryptedString
-          mailElement.append(p)
-        })
-      }
-    },
-    { once: true }
-  )
+
+  let paragraphs: HTMLElement[] = []
+  let toggle = true
+  button.addEventListener('click', () => {
+    toggle = !toggle
+    if (toggle) {
+      for (const p of paragraphs) p.parentNode?.removeChild(p)
+      paragraphs = []
+      return
+    }
+    for (const string of extractEncryptedStrings(mailString)) {
+      decryptString(string).then((decryptedString) => {
+        const p: HTMLElement = document.createElement('p')
+        p.textContent = decryptedString
+        mailElement.append(p)
+        paragraphs.push(p)
+      })
+    }
+  })
 }
 
 /** Create an HTML button */
