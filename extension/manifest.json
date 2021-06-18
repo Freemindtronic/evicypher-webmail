@@ -17,19 +17,10 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
-      "js": [
-        "build/content-script.js"
-      ]
-    },
-    {
-      "matches": [
         "https://mail.google.com/mail/*"
       ],
-      "css": [
-        "injected.css"
+      "js": [
+        "build/content-script-gmail.js"
       ]
     }
   ]

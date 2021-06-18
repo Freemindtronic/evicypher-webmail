@@ -72,12 +72,12 @@ export default [
     },
   },
   {
-    input: 'src/content-scripts/main.ts',
+    input: 'src/content-scripts/gmail.ts',
     output: {
       sourcemap: true,
       format: 'iife',
       name: 'app',
-      file: 'extension/build/content-script.js',
+      file: 'extension/build/content-script-gmail.js',
     },
     plugins: build,
     watch: {
