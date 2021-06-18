@@ -5,6 +5,7 @@
     "lokalise.i18n-ally",
     "dbaeumer.vscode-eslint",
     "arcanis.vscode-zipfs",
-    "stylelint.vscode-stylelint"
+    "stylelint.vscode-stylelint",
+    "editorconfig.editorconfig"
   ]
 }
