@@ -42,7 +42,7 @@ export const phones: Writable<Phone[]> = new BrowserStore(
 
 /** Produce an auto-incremented integer. */
 export const nextPhoneId = async (): Promise<number> => {
-  const currentValue = (await browser.storage.local.get({ nextPhoneId: 0 }))
+  const currentValue = (await browser.storage.local.get({ nextPhoneId: 1 }))
     .nextPhoneId as number
   await browser.storage.local.set({ nextPhoneId: currentValue + 1 })
   return currentValue
