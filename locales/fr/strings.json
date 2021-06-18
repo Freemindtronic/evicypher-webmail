@@ -14,5 +14,7 @@
     "delete": "Supprimer",
     "get-connected-phone": "Dernier téléphone connecté",
     "show-most-recent-post-it": "Afficher le dernier post-it",
-    "create-a-key-segment": "Créer un segment de clé"
+    "create-a-key-segment": "Créer un segment de clé",
+    "favorite-phone": "Téléphone favori :",
+    "none-define-one-here": "aucun, définissez-en un ici"
 }
