@@ -6290,7 +6290,7 @@ __metadata:
     stylelint: ^13.13.1
     stylelint-config-rational-order: ^0.1.2
     svelte: ^3.38.2
-    svelte-burger-menu: ^1.0.5
+    svelte-burger-menu: jorisBarkema/svelte-burger-menu
     svelte-check: ^2.1.0
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.7.3
@@ -6301,10 +6301,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"svelte-burger-menu@npm:^1.0.5":
+svelte-burger-menu@jorisBarkema/svelte-burger-menu:
   version: 1.0.5
-  resolution: "svelte-burger-menu@npm:1.0.5"
-  checksum: 6ca1b4e7fa0c12a9551e3121206003d10446586f235606cfbaae78c426c7328ed5dd9e09221d2e62fb8ea7e903f5b1467cfac6a33055cb87b1cca014a9d836b5
+  resolution: "svelte-burger-menu@https://github.com/jorisBarkema/svelte-burger-menu.git#commit=df037f7d802bdc1b4f529da4a45a1c54a9d5409e"
+  checksum: 616366f3f59fda9b747f054e9b3f69bee680bc6c6af82b0289d352d2f261a90bdeeb7e015a709043c2bcb7b84dfb94e7fb707f9c64cee31a7c5708b1ccbb1323
   languageName: node
   linkType: hard
 

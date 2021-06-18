@@ -22,7 +22,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.35.1",
     "svelte": "^3.38.2",
-    "svelte-burger-menu": "^1.0.5",
+    "svelte-burger-menu": "jorisBarkema/svelte-burger-menu",
     "svelte-i18n": "^3.3.9",
     "svelte-preprocess": "^4.7.3",
     "svelte-spa-router": "^3.2.0",

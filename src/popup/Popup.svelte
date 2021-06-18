@@ -8,6 +8,8 @@
   import Home from './Home.svelte'
   import Phones from './Phones.svelte'
 
+  let open = false
+
   const routes = {
     '/': Home,
     '/about': About,
@@ -17,19 +19,25 @@
 </script>
 
 <main>
-  <BurgerMenu>
+  <BurgerMenu bind:open>
     <ul>
       <li>
-        <a href="/" use:link>{$_('home')}</a>
+        <a href="/" use:link on:click={() => (open = false)}>{$_('home')}</a>
       </li>
       <li>
-        <a href="/phones" use:link>{$_('phones')}</a>
+        <a href="/phones" use:link on:click={() => (open = false)}
+          >{$_('phones')}</a
+        >
       </li>
       <li>
-        <a href="/autofill" use:link>{$_('auto-fill')}</a>
+        <a href="/autofill" use:link on:click={() => (open = false)}
+          >{$_('auto-fill')}</a
+        >
       </li>
       <li>
-        <a href="/about" use:link>{$_('about')}</a>
+        <a href="/about" use:link on:click={() => (open = false)}
+          >{$_('about')}</a
+        >
       </li>
     </ul>
     <select bind:value={$locale}>
