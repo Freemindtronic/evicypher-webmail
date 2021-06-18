@@ -47,3 +47,8 @@ export const nextPhoneId = async (): Promise<number> => {
   await browser.storage.local.set({ nextPhoneId: currentValue + 1 })
   return currentValue
 }
+
+export const favoritePhoneId: Writable<number> = new BrowserStore(
+  'favoritePhoneId',
+  writable(-1)
+)

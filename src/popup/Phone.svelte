@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Phone } from 'phones'
+  import { favoritePhoneId, Phone } from 'phones'
   import { createEventDispatcher } from 'svelte'
   import { _ } from 'svelte-i18n'
 
@@ -8,6 +8,12 @@
 </script>
 
 <p>
+  {#if $favoritePhoneId == phone.id}
+    <button on:click={() => ($favoritePhoneId = -1)}>★</button>
+  {:else}
+    <button on:click={() => ($favoritePhoneId = phone.id)}>☆</button>
+  {/if}
   {phone}
+  <button on:click={() => dispatch('delete', phone)}>{$_('delete')}</button>
   <button on:click={() => dispatch('delete', phone)}>{$_('delete')}</button>
 </p>
