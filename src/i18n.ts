@@ -6,7 +6,6 @@ import fr from '/locales/fr/strings.json'
 
 addMessages('en', en)
 addMessages('fr', fr)
-console.log('messages loaded')
 
 init({
   fallbackLocale: 'en',
