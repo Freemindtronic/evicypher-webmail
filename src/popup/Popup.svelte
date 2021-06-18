@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { _, locale, locales } from 'svelte-i18n'
+  import { locale } from 'i18n'
   import BurgerMenu from 'svelte-burger-menu'
+  import { locales, _ } from 'svelte-i18n'
   import Router, { link } from 'svelte-spa-router'
   import About from './About.svelte'
   import AutoFill from './AutoFill.svelte'

@@ -1,5 +1,5 @@
-import BrowserStore from 'browser-store'
-import type { Writable } from 'svelte/store'
+import { BrowserStore } from 'browser-store'
+import { writable, Writable } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 
 /**
@@ -29,13 +29,16 @@ export class Phone {
 }
 
 /** Phone list. */
-export const phones: Writable<Phone[]> = new BrowserStore('phones', [], {
-  transformer: (x) =>
-    (x as Array<{ id: number; name: string }>).map((obj) =>
-      Phone.fromObject(obj)
-    ),
-})
-export default phones
+export const phones: Writable<Phone[]> = new BrowserStore(
+  'phones',
+  writable([]),
+  {
+    transformer: (x) =>
+      (x as Array<{ id: number; name: string }>).map((obj) =>
+        Phone.fromObject(obj)
+      ),
+  }
+)
 
 /** Produce an auto-incremented integer. */
 export const nextPhoneId = async (): Promise<number> => {

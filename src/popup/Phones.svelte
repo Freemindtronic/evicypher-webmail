@@ -1,5 +1,5 @@
 <script lang="ts">
-  import phones, { nextPhoneId, Phone } from 'phones'
+  import { nextPhoneId, Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
   import PhoneItem from './Phone.svelte'
