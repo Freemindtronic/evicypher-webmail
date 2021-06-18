@@ -4,8 +4,7 @@
 
 <h1>{$_('home')}</h1>
 <ul>
-  <li>Get connected phone</li>
-  <li>Show most recent postit</li>
-  <li>Générer un segment de clé</li>
-  <li>Mini-boite de chiffrement ?</li>
+  <li>{$_('get-connected-phone')}</li>
+  <li>{$_('show-most-recent-post-it')}</li>
+  <li>{$_('create-a-key-segment')}</li>
 </ul>
