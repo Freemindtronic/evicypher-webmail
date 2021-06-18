@@ -4,6 +4,8 @@
   import { link } from 'svelte-spa-router'
   import { derived } from 'svelte/store'
 
+  // The favorite phone is a read-only store derived from two writable stores,
+  // it updates whenever one of the two updates
   let favoritePhone = derived(
     [phones, favoritePhoneId],
     ([$phones, $favoritePhoneId]) =>
