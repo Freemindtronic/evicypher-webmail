@@ -15,5 +15,4 @@
   {/if}
   {phone}
   <button on:click={() => dispatch('delete', phone)}>{$_('delete')}</button>
-  <button on:click={() => dispatch('delete', phone)}>{$_('delete')}</button>
 </p>
