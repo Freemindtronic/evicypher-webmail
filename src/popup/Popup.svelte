@@ -19,7 +19,7 @@
 </script>
 
 <main>
-  <BurgerMenu bind:open>
+  <BurgerMenu bind:open backgroundColor="#ccc" menuColor="#000">
     <ul>
       <li>
         <a href="/" use:link on:click={() => (open = false)}>{$_('home')}</a>
