@@ -12,7 +12,7 @@
   }
 
   const removePhone = ({ detail: phone }: CustomEvent<Phone>) => {
-    $phones = $phones.filter((p) => p.id != phone.id)
+    $phones = $phones.filter((p) => p.id !== phone.id)
   }
 </script>
 

@@ -7,7 +7,7 @@
     "clean": "rm -rf extension/build",
     "build": "rollup -c",
     "start": "rollup -c -w",
-    "test": "eslint 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
+    "test": "eslint 'src/**/*' --fix && svelte-check --tsconfig ./tsconfig.json",
     "postinstall": "husky install"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "@wemake-services/stylelint-config-scss": "^0.5.0",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-config-xo": "^0.37.0",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-svelte3": "^3.2.0",

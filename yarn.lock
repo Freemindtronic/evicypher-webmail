@@ -1584,6 +1584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"confusing-browser-globals@npm:1.0.10":
+  version: 1.0.10
+  resolution: "confusing-browser-globals@npm:1.0.10"
+  checksum: 47e9365de6afe12e11b8dfbd12ce38d20bf8f4fd4614c838f88be5deb7c84dd20a5f00e432a6dd7e85d9e2be4601553cc6f28cc54d4cb07a3b04508aae0b4bd0
+  languageName: node
+  linkType: hard
+
 "console-control-strings@npm:^1.0.0, console-control-strings@npm:~1.1.0":
   version: 1.1.0
   resolution: "console-control-strings@npm:1.1.0"
@@ -2052,6 +2059,17 @@ __metadata:
   bin:
     eslint-config-prettier: bin/cli.js
   checksum: 94ccbb50fb67e5e47e8ba6cfa257b5cbf53619990ab13f46b99518cfe9b900394b93bdf6ffedbde1a8e2997d301b0fbd73a6b4202146bc53475dfb30a8c812f2
+  languageName: node
+  linkType: hard
+
+"eslint-config-xo@npm:^0.37.0":
+  version: 0.37.0
+  resolution: "eslint-config-xo@npm:0.37.0"
+  dependencies:
+    confusing-browser-globals: 1.0.10
+  peerDependencies:
+    eslint: ">=7.20.0"
+  checksum: 31dcfd1d64702bb7e293ecb85d54b23197759e73c5e2812cce539898e5ddf8322d6b322e4b458099cbaa6995dd22232d25981d529959c2a13c394cdf29d2952d
   languageName: node
   linkType: hard
 
@@ -6275,6 +6293,7 @@ __metadata:
     "@wemake-services/stylelint-config-scss": ^0.5.0
     eslint: ^7.28.0
     eslint-config-prettier: ^8.3.0
+    eslint-config-xo: ^0.37.0
     eslint-plugin-html: ^6.1.2
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-svelte3: ^3.2.0

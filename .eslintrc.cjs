@@ -8,6 +8,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:unicorn/recommended',
+    'xo',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -17,7 +18,9 @@ module.exports = {
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
-    'unicorn/prevent-abbreviations': 0,
+    'unicorn/prevent-abbreviations': 'off',
+    'no-return-assign': ['error', 'except-parens'],
+    'no-unused-vars': ['error', { args: 'none' }],
   },
   overrides: [
     {

@@ -6,10 +6,10 @@
 
   // The favorite phone is a read-only store derived from two writable stores,
   // it updates whenever one of the two updates
-  let favoritePhone = derived(
+  const favoritePhone = derived(
     [phones, favoritePhoneId],
     ([$phones, $favoritePhoneId]) =>
-      $phones.find((phone) => phone.id == $favoritePhoneId)
+      $phones.find((phone) => phone.id === $favoritePhoneId)
   )
 </script>
 

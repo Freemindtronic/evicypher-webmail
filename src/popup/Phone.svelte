@@ -8,7 +8,7 @@
 </script>
 
 <p>
-  {#if $favoritePhoneId == phone.id}
+  {#if $favoritePhoneId === phone.id}
     <button on:click={() => ($favoritePhoneId = -1)}>★</button>
   {:else}
     <button on:click={() => ($favoritePhoneId = phone.id)}>☆</button>

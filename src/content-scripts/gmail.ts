@@ -1,20 +1,16 @@
 import { browser } from 'webextension-polyfill-ts'
 
 /** Send a request to the background script to encrypt the given string. */
-export const encryptString = async (string: string): Promise<string> => {
-  return await browser.runtime.sendMessage({
+export const encryptString = async (string: string): Promise<string> =>  browser.runtime.sendMessage({
     type: 'encrypt-request',
     string,
   })
-}
 
 /** Send a request to the background script to decrypt the given string. */
-const decryptString = async (string: string): Promise<string> => {
-  return await browser.runtime.sendMessage({
+const decryptString = async (string: string): Promise<string> =>  browser.runtime.sendMessage({
     type: 'decrypt-request',
     string,
   })
-}
 
 /** Return whether the given string contains a known encryption header and footer. */
 const containsEncryptedText = (string: string) =>
@@ -47,6 +43,7 @@ const handleEncryptedMailElement = (
       paragraphs = []
       return
     }
+
     for (const string of extractEncryptedStrings(mailString)) {
       decryptString(string).then((decryptedString) => {
         const p: HTMLElement = document.createElement('p')
