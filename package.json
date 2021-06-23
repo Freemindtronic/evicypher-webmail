@@ -7,7 +7,7 @@
     "clean": "rm -rf extension/build",
     "build": "yarn rollup -c",
     "start": "yarn rollup -c -w",
-    "test": "yarn eslint 'src/**/*' --fix && yarn svelte-check --tsconfig ./tsconfig.json",
+    "test": "yarn eslint 'src/**/*.{ts,js,svelte}' --fix && yarn svelte-check --tsconfig ./tsconfig.json",
     "postinstall": "husky install"
   },
   "dependencies": {
