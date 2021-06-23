@@ -130,7 +130,7 @@ export function uint8ToHex(uint8: Uint8Array): string {
 }
 
 export function utf8ToUint8Array(str: string): Uint8Array {
-  return new Uint8Array(Buffer.from(str, 'utf8'))
+  return new TextEncoder().encode(str)
 }
 
 export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
@@ -141,10 +141,6 @@ export const delay = (millis: number): Promise<void> =>
   new Promise<void>((resolve) => {
     setTimeout(() => resolve(), millis)
   })
-
-export function arrayEqual(a: Uint8Array, b: Uint8Array): boolean {
-  return Buffer.from(a).equals(Buffer.from(b))
-}
 
 export function webSafe64(base64: string): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')

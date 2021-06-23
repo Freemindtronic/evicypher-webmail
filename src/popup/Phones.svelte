@@ -13,6 +13,8 @@
   /** Wether to show the pairing screen. */
   let pairingInProgress = false
 
+  let uid: string | undefined
+
   /** A canvas to draw the QR code. */
   let qr: HTMLCanvasElement
 
@@ -33,7 +35,14 @@
     await device.clientHello()
     const key = await device.clientKeyExchange()
 
-    console.log(key)
+    // Show the UID
+    uid = key.UUID
+
+    // Send the confirmation request
+    await device.sendNameInfo(phoneName, key.ECC)
+
+    // Show a success message
+    console.log('Pairing successful')
   }
 
   /** Remove a phone. */
@@ -56,6 +65,13 @@
     </p>
     <p>
       <canvas bind:this={qr} />
+    </p>
+    <p>
+      {#if uid !== undefined}
+        Paring with phone {uid} in progress...
+      {:else}
+        Please can this QR Code with the application Freemindtronic.
+      {/if}
     </p>
   {:else}
     {#each $phones as phone (phone.id)}
