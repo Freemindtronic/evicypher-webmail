@@ -7,7 +7,7 @@
     "paths": {
       "/*": ["../*"]
     },
-    "lib": ["ES2021"]
+    "lib": ["ESNext", "DOM"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "extension/*"]
