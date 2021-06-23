@@ -19,6 +19,7 @@ module.exports = {
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
     'unicorn/prevent-abbreviations': 'off',
+    'unicorn/prefer-node-protocol': 'off',
     'no-return-assign': ['error', 'except-parens'],
     'no-unused-vars': ['error', { args: 'none' }],
   },
