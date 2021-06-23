@@ -28,7 +28,7 @@
     const device = new Device()
     const pairingKey = await device.generatePairingKey()
 
-    // Display the pairing QR Code
+    // Display the pairing QR code
     toCanvas(qr, pairingKey)
 
     // Wait for the user to scan the code
@@ -70,7 +70,7 @@
       {#if uid !== undefined}
         Paring with phone {uid} in progress...
       {:else}
-        Please can this QR Code with the application Freemindtronic.
+        Please scan this QR code with the application Freemindtronic.
       {/if}
     </p>
   {:else}
