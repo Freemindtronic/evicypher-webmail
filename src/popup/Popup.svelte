@@ -4,7 +4,6 @@
   import { locales, _ } from 'svelte-i18n'
   import Router, { link } from 'svelte-spa-router'
   import About from './About.svelte'
-  import AutoFill from './AutoFill.svelte'
   import Home from './Home.svelte'
   import Phones from './Phones.svelte'
 
@@ -14,7 +13,6 @@
     '/': Home,
     '/about': About,
     '/phones': Phones,
-    '/autofill': AutoFill,
   }
 </script>
 
@@ -27,11 +25,6 @@
       <li>
         <a href="/phones" use:link on:click={() => (open = false)}
           >{$_('phones')}</a
-        >
-      </li>
-      <li>
-        <a href="/autofill" use:link on:click={() => (open = false)}
-          >{$_('auto-fill')}</a
         >
       </li>
       <li>
