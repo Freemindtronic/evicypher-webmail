@@ -6,7 +6,8 @@
     "baseUrl": "./src",
     "paths": {
       "/*": ["../*"]
-    }
+    },
+    "lib": ["ES2019"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "extension/*"]

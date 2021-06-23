@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf extension/build",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
-    "test": "eslint 'src/**/*' --fix && svelte-check --tsconfig ./tsconfig.json",
+    "build": "yarn rollup -c",
+    "start": "yarn rollup -c -w",
+    "test": "yarn eslint 'src/**/*' --fix && yarn svelte-check --tsconfig ./tsconfig.json",
     "postinstall": "husky install"
   },
   "dependencies": {
@@ -16,6 +16,10 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@tsconfig/svelte": "^2.0.1",
+    "axlsign": "Freemindtronic/lib_axlsign",
+    "base64-arraybuffer": "^0.2.0",
+    "crypto-js": "^4.0.0",
+    "jquery": "^3.6.0",
     "qrcode": "^1.4.4",
     "rollup": "^2.52.1",
     "rollup-plugin-css-only": "^3.1.0",
@@ -32,6 +36,8 @@
     "webextension-polyfill-ts": "^0.25.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.0.1",
+    "@types/jquery": "^3.5.5",
     "@types/qrcode": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",

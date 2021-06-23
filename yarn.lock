@@ -507,6 +507,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/crypto-js@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@types/crypto-js@npm:4.0.1"
+  checksum: 6b81c4d064931ef697a8896f09e1290cfb2e59420522f7f6ce443646f768d25a767e15763853007eae8abfb298c6853bdb17fb2c894ed7ddf651337912526d7a
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*":
   version: 0.0.48
   resolution: "@types/estree@npm:0.0.48"
@@ -528,6 +535,15 @@ __metadata:
     "@types/minimatch": "*"
     "@types/node": "*"
   checksum: 633bf1dda9a30899b233ed6b97c75cdd59f2ee856a12240c85474ce6889e26b3b3520b62de56f6bb61824af0ef51b311a0cae305f27ba0de8ddc4898a3673d42
+  languageName: node
+  linkType: hard
+
+"@types/jquery@npm:^3.5.5":
+  version: 3.5.5
+  resolution: "@types/jquery@npm:3.5.5"
+  dependencies:
+    "@types/sizzle": "*"
+  checksum: 9e3c34451577c6916ac9de8a26fd8bce2831cb5861116514cba4a984189067635a3e084039308324d8e20bfa5f2e1ce7725a509110e5e05487b91f9369b1ae43
   languageName: node
   linkType: hard
 
@@ -613,6 +629,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: e95d14da2d05dea49e913db55922857234b01f2b1b513dd8cc556b64ffa6d89fb81ce4c1f21a6b4cd20f39d61455975e623ed681502b3d06b2d24a2ddd03a21e
+  languageName: node
+  linkType: hard
+
+"@types/sizzle@npm:*":
+  version: 2.3.3
+  resolution: "@types/sizzle@npm:2.3.3"
+  checksum: 8f019f9e1b110b4fdfc08f8a3a8b8b87118a11f3ba11e159541b17f17498c0ef95e8efa0b818c9fed6911041f6b71ef8d44cf8c1c83b4cbb7bd14e4248892f4c
   languageName: node
   linkType: hard
 
@@ -1054,6 +1077,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+axlsign@Freemindtronic/lib_axlsign:
+  version: 1.0.0
+  resolution: "axlsign@https://github.com/Freemindtronic/lib_axlsign.git#commit=d497fabfb6d86654518393b10d75cf1fa99ac9c9"
+  checksum: cc4ebd4605ad230b1895bb6f8e0d4c2521974c33d8b197f2cb9ec2dfc9c8d55e9f0d87e98ab8ecaeff01100018040156492f6e09cbd9261ee0527bd1ff909aad
+  languageName: node
+  linkType: hard
+
 "bail@npm:^1.0.0":
   version: 1.0.5
   resolution: "bail@npm:1.0.5"
@@ -1072,6 +1102,13 @@ __metadata:
   version: 2.0.0
   resolution: "balanced-match@npm:2.0.0"
   checksum: 4effbe02ad270b88a5852bb07c1db45598da13c0f9b2697c0485eb4524a24efd2321d5e9db5a6669dfae7f520886b6d4ba956b830eb2d4e461a809197f05bfeb
+  languageName: node
+  linkType: hard
+
+"base64-arraybuffer@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "base64-arraybuffer@npm:0.2.0"
+  checksum: 097fafec2f8ac4b9de62426cf7132123b82f6f5a941dc45301a532ae54d64b75af45ab92dc041dc6d77a3fcdc1032143b39450bb8eeefe7a3d22ac69c7e3df8a
   languageName: node
   linkType: hard
 
@@ -1715,6 +1752,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 51f10036f5f1de781be98f4738d58b50c6d44f4f471069b8ab075b21605893ba1548654880f7310a29a732d6fc7cd481da6026169b9f0831cab0148a62fb397a
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "crypto-js@npm:4.0.0"
+  checksum: fdd1415b9e4b317f6ac7f055a00495dabea6aa93ab82ccd63866b0a76d2da9587942764816a8a7976cb23b8bbfd7eea23ccb852b3fef218d166cc5db8c008ab3
   languageName: node
   linkType: hard
 
@@ -3637,6 +3681,13 @@ __metadata:
     merge-stream: ^2.0.0
     supports-color: ^7.0.0
   checksum: 5eb349833b5e9750ce8700388961dfd5d5e207c913122221e418e48b9cda3c17b0fb418f6a90f1614cfdc3ca836158b720c5dc1de82cb1e708266b4d76e31a38
+  languageName: node
+  linkType: hard
+
+"jquery@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "jquery@npm:3.6.0"
+  checksum: a0a819022a1bdff5efa79bbd9d4d7352de5bd32dabe42108e6ec0797238dba36c09c108e0eea2724f5d03acc1b30ee87d76bec80e15b9510106532292ebe6ba4
   languageName: node
   linkType: hard
 
@@ -6443,10 +6494,15 @@ __metadata:
     "@rollup/plugin-node-resolve": ^13.0.0
     "@rollup/plugin-typescript": ^8.2.1
     "@tsconfig/svelte": ^2.0.1
+    "@types/crypto-js": ^4.0.1
+    "@types/jquery": ^3.5.5
     "@types/qrcode": ^1.4.0
     "@typescript-eslint/eslint-plugin": ^4.27.0
     "@typescript-eslint/parser": ^4.27.0
     "@wemake-services/stylelint-config-scss": ^0.5.0
+    axlsign: Freemindtronic/lib_axlsign
+    base64-arraybuffer: ^0.2.0
+    crypto-js: ^4.0.0
     eslint: ^7.28.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
@@ -6455,6 +6511,7 @@ __metadata:
     eslint-plugin-svelte3: ^3.2.0
     eslint-plugin-unicorn: ^33.0.1
     husky: ^6.0.0
+    jquery: ^3.6.0
     prettier: ^2.3.1
     prettier-plugin-svelte: ^2.3.0
     qrcode: ^1.4.4
