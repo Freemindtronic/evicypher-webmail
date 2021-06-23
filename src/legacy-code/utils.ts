@@ -1,6 +1,5 @@
 import Base64 from 'base64-arraybuffer'
 import CryptoJS from 'crypto-js'
-import { randomFillSync } from 'crypto'
 
 type WordArray = CryptoJS.lib.WordArray
 
@@ -10,7 +9,7 @@ export function b64ToUint8Array(data: string): Uint8Array {
 
 export function random(size: number): Uint8Array {
   const array = new Uint8Array(size)
-  return randomFillSync(array)
+  return window.crypto.getRandomValues(array)
 }
 
 export function numberToArray(word: number, length: number): number[] {

@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/filename-case */
 import { Certificate } from './Certificate'
 import * as utils from './utils'
 import { AesUtil } from './AesUtil'

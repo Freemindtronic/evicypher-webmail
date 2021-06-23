@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { nextPhoneId, Phone, phones } from 'phones'
+  import { Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
   import PhoneItem from './Phone.svelte'
   import { toCanvas } from 'qrcode'
   import { tick } from 'svelte'
+  import { Device } from 'legacy-code/device'
 
   /** Name of the phone to be added. */
   let phoneName = ''
@@ -21,8 +22,12 @@
     pairingInProgress = true
     await tick()
 
+    // Create a new pairing key
+    const device = new Device()
+    const pairingKey = await device.generatePairingKey()
+
     // Display the pairing QR Code
-    toCanvas(qr, `${phoneName} ${await nextPhoneId()}`)
+    toCanvas(qr, pairingKey)
   }
 
   /** Remove a phone. */

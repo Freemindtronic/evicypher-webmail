@@ -40,6 +40,7 @@ export default [
       format: 'iife',
       name: 'app',
       file: 'extension/build/popup.js',
+      globals: { crypto: 'crypto' },
     },
     plugins: [
       svelte({
