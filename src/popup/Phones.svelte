@@ -28,6 +28,12 @@
 
     // Display the pairing QR Code
     toCanvas(qr, pairingKey)
+
+    // Wait for the user to scan the code
+    await device.clientHello()
+    const key = await device.clientKeyExchange()
+
+    console.log(key)
   }
 
   /** Remove a phone. */

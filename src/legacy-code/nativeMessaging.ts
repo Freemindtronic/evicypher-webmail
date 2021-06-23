@@ -23,7 +23,7 @@ export function isNativeSupported(): Promise<boolean> {
   return new Promise((resolve) => {
     browser.runtime
       .sendNativeMessage(nativeMessagingApp, { cmd: 'Version' })
-      .then(() => resolve(browser.runtime.lastError === undefined))
+      .then(() => resolve(browser.runtime.lastError === null))
       .catch(() => resolve(false))
   })
 }

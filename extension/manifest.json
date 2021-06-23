@@ -2,13 +2,9 @@
   "manifest_version": 2,
   "name": "My Extension",
   "version": "1.0.0",
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage", "nativeMessaging"],
   "background": {
-    "scripts": [
-      "build/background.js"
-    ],
+    "scripts": ["build/background.js"],
     "persistent": true
   },
   "browser_action": {
@@ -16,12 +12,13 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://mail.google.com/mail/*"
-      ],
-      "js": [
-        "build/content-script-gmail.js"
-      ]
+      "matches": ["https://mail.google.com/mail/*"],
+      "js": ["build/content-script-gmail.js"]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "evitoken@freemindtronic.com"
+    }
+  }
 }

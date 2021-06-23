@@ -118,16 +118,15 @@ export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
 }
 
 export function uint8ArrayToUTF8(data: Uint8Array): string {
-  return (
-    Buffer.from(data)
-      .toString('utf8')
-      // eslint-disable-next-line no-control-regex
-      .replace(/\u0000/gi, '')
-  )
+  return new TextDecoder('utf-8').decode(data)
 }
 
 export function uint8ToHex(uint8: Uint8Array): string {
-  return Buffer.from(uint8).toString('hex').toUpperCase()
+  // eslint-disable-next-line unicorn/no-array-reduce
+  return uint8.reduce(
+    (str, byte) => str + byte.toString(16).padStart(2, '0'),
+    ''
+  )
 }
 
 export function utf8ToUint8Array(str: string): Uint8Array {
