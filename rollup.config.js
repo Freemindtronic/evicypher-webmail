@@ -17,6 +17,7 @@ const build = [
   // https://github.com/rollup/plugins/tree/master/packages/commonjs
   resolve({
     browser: true,
+    preferBuiltins: false,
     dedupe: ['svelte'],
   }),
   json(),

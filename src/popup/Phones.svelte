@@ -3,31 +3,61 @@
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
   import PhoneItem from './Phone.svelte'
+  import { toCanvas } from 'qrcode'
+  import { tick } from 'svelte'
 
-  let value = ''
+  /** Name of the phone to be added. */
+  let phoneName = ''
 
+  /** Wether to show the pairing screen. */
+  let pairingInProgress = false
+
+  /** A canvas to draw the QR code. */
+  let qr: HTMLCanvasElement
+
+  /** Start the interactive process to register a new phone. */
   const addPhone = async () => {
-    $phones.push(new Phone(await nextPhoneId(), value))
-    $phones = $phones
+    // Show the pairing screen and wait for it to load
+    pairingInProgress = true
+    await tick()
+
+    // Display the pairing QR Code
+    toCanvas(qr, `${phoneName} ${await nextPhoneId()}`)
   }
 
+  /** Remove a phone. */
   const removePhone = ({ detail: phone }: CustomEvent<Phone>) => {
     $phones = $phones.filter((p) => p.id !== phone.id)
+  }
+
+  /** Cancel the pairing process. */
+  const cancelPairing = () => {
+    phoneName = ''
+    pairingInProgress = false
   }
 </script>
 
 <main>
   <h1>{$_('phones')}</h1>
-  {#each $phones as phone (phone.id)}
-    <PhoneItem {phone} on:delete={removePhone} />
-  {/each}
-  <form on:submit|preventDefault={addPhone}>
-    <h2>{$_('register-a-new-phone')}</h2>
+  {#if pairingInProgress}
     <p>
-      {$_('name')}
-      <input type="text" bind:value />
-      <button type="submit">{$_('add')}</button>
+      <button on:click={() => cancelPairing()}>X</button>
     </p>
-  </form>
-  <a href="/about/" use:link>{$_('about')}</a>
+    <p>
+      <canvas bind:this={qr} />
+    </p>
+  {:else}
+    {#each $phones as phone (phone.id)}
+      <PhoneItem {phone} on:delete={removePhone} />
+    {/each}
+    <form on:submit|preventDefault={addPhone}>
+      <h2>{$_('register-a-new-phone')}</h2>
+      <p>
+        {$_('name')}
+        <input type="text" bind:value={phoneName} required />
+        <button type="submit">{$_('add')}</button>
+      </p>
+    </form>
+    <a href="/about/" use:link>{$_('about')}</a>
+  {/if}
 </main>
