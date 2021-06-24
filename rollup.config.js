@@ -35,6 +35,7 @@ const build = [
 export default [
   {
     input: 'src/popup/main.ts',
+    external: ['crypto'],
     output: {
       sourcemap: true,
       format: 'iife',
@@ -53,7 +54,6 @@ export default [
       // We'll extract any component CSS out into
       // a separate file - better for performance
       css({ output: 'popup.css' }),
-
       ...build,
     ],
     watch: {
@@ -62,11 +62,13 @@ export default [
   },
   {
     input: 'src/background/main.ts',
+    external: ['crypto'],
     output: {
       sourcemap: true,
       format: 'iife',
       name: 'app',
       file: 'extension/build/background.js',
+      globals: { crypto: 'crypto' },
     },
     plugins: build,
     watch: {
