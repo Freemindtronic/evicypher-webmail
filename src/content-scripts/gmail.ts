@@ -53,10 +53,11 @@ const handleEncryptedMailElement = (
 
     for (const string of encryptedStrings) {
       decryptString(string).then((decryptedString) => {
-        const p: HTMLElement = document.createElement('p')
-        p.textContent = decryptedString
-        mailElement.append(p)
-        paragraphs.push(p)
+        const frame: HTMLIFrameElement = document.createElement('iframe')
+        frame.srcdoc = decryptedString
+        frame.sandbox.value = ''
+        mailElement.append(frame)
+        paragraphs.push(frame)
       })
     }
   })
