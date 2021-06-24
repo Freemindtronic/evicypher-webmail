@@ -9,7 +9,7 @@ export function b64ToUint8Array(data: string): Uint8Array {
 
 export function random(size: number): Uint8Array {
   const array = new Uint8Array(size)
-  return window.crypto.getRandomValues(array)
+  return crypto.getRandomValues(array)
 }
 
 export function numberToArray(word: number, length: number): number[] {
@@ -167,9 +167,9 @@ export function objectToB64(
 
 export function b64ToObject(
   b64: Record<string, string>
-): Record<string, ArrayBuffer> {
+): Record<string, Uint8Array> {
   const keys = Object.keys(b64)
-  const obj: Record<string, ArrayBuffer> = {}
+  const obj: Record<string, Uint8Array> = {}
   for (const key of keys) {
     obj[key] = b64ToUint8Array(b64[key])
   }

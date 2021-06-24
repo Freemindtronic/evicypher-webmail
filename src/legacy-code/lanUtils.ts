@@ -289,7 +289,7 @@ function sendPostRequest(
   url: string,
   data: unknown,
   timeout: number
-): Promise<[unknown, string, number]> {
+): Promise<[Record<string, string>, string, number]> {
   return new Promise((resolve, reject) => {
     $.ajax({
       dataType: json,
@@ -310,7 +310,7 @@ function sendPostRequest(
 
 async function sendPostRequestData(
   url: string,
-  payload: unknown,
+  payload: Record<string, string>,
   timeout: number
 ) {
   return sendPostRequest(url, payload, timeout).then(([data, , xhr]) => {
@@ -334,16 +334,22 @@ export function extractURL(url: string): string {
 export async function sendCipher(
   type: string,
   url: string,
-  payload: unknown
-): Promise<unknown> {
+  payload: Record<string, string>
+): Promise<Record<string, string>> {
   return sendPostRequestData(url + type, payload, 180_000)
 }
 
-export function sendEnd(url: string, payload: unknown): Promise<unknown> {
+export function sendEnd(
+  url: string,
+  payload: Record<string, string>
+): Promise<Record<string, string>> {
   return sendPostRequestData(url + '/f2', payload, 5000)
 }
 
-export function sendOk(url: string, data: string): Promise<unknown> {
+export function sendOk(
+  url: string,
+  data: string
+): Promise<Record<string, string>> {
   const payload = { d: data }
   return sendPostRequestData(url + '/o', payload, 5000)
 }

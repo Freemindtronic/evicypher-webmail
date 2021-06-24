@@ -1,22 +1,44 @@
+import { Client } from 'legacy-code/Client'
+import { EviCrypt } from 'legacy-code/EviCrypt'
+import { Settings } from 'legacy-code/Settings'
 import type { Message } from 'messages'
 import { browser } from 'webextension-polyfill-ts'
 
-/** Basic ROT13 encryption. */
-const encrypt = (str: string) => str
-    .split('')
-    .map((x) => {
-      const i = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.indexOf(
-        x
-      )
-      return i > -1
-        ? 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'[i]
-        : x
-    })
-    .join('')
+/** Send an encryption request to the phone, return the encrypted text. */
+const encrypt = async (str: string) => {
+  // Fetch the cerificate of the favorite phone in browser storage
+  const device = await Settings.getFavorite()
 
-/** Basic ROT13 decryption. */
-const decrypt = encrypt
+  // Send a request to the FMT app
+  const client = new Client()
+  const keys = await client.requestKey(device)
 
+  // Encrypt the text
+  const evi = new EviCrypt(keys)
+  const encrypted = evi.encryptText(str)
+
+  console.log(encrypted)
+  return encrypted
+}
+
+/** Send an decryption request to the phone, return the decrypted text. */
+const decrypt = async (str: string) => {
+  // Fetch the cerificate of the favorite phone in browser storage
+  const device = await Settings.getFavorite()
+
+  // Send a request to the FMT app
+  const client = new Client()
+  const keys = await client.requestKey(device)
+
+  // Decrypt the text
+  const evi = new EviCrypt(keys)
+  const decrypted = evi.decryptText(str)
+
+  console.log(decrypted)
+  return decrypted
+}
+
+// Handle messages sent by content scripts
 browser.runtime.onMessage.addListener(async (message: Message) => {
   if (
     message === null ||
@@ -24,6 +46,7 @@ browser.runtime.onMessage.addListener(async (message: Message) => {
     typeof message?.type !== 'string'
   )
     throw new Error(`Unexpected message ${message}`)
+
   switch (message.type) {
     case 'encrypt-request':
       return encrypt(message.string)
