@@ -4,9 +4,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,12 +30,14 @@ jobs:
         id: cache
         uses: actions/cache@v2
         with:
-          path: .yarn
+          path: |
+            .yarn
+            node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
 
       - name: Install
         if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        run: yarn install --immutable --immutable-cache
 
       - name: Build
         run: yarn build
