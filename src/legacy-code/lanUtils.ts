@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/filename-case */
-import $ from 'jquery'
+import { ajax } from 'jquery'
 
 import { PromiseManager } from './PromiseManager'
 import {
@@ -213,7 +213,7 @@ export async function searchLoop(
       if (awaitingResponce.includes(url)) continue
       awaitingResponce.push(url)
 
-      $.ajax({
+      ajax({
         dataType: json,
         type: POST,
         url,
@@ -291,7 +291,7 @@ function sendPostRequest(
   timeout: number
 ): Promise<[Record<string, string>, string, number]> {
   return new Promise((resolve, reject) => {
-    $.ajax({
+    ajax({
       dataType: json,
       type: POST,
       url,
