@@ -37,7 +37,7 @@ export default [
     input: 'src/popup/main.ts',
     external: ['crypto'],
     output: {
-      sourcemap: true,
+      sourcemap: !production,
       format: 'iife',
       name: 'app',
       file: 'extension/build/popup.js',
@@ -64,7 +64,7 @@ export default [
     input: 'src/background/main.ts',
     external: ['crypto'],
     output: {
-      sourcemap: true,
+      sourcemap: !production,
       format: 'iife',
       name: 'app',
       file: 'extension/build/background.js',
@@ -78,7 +78,7 @@ export default [
   {
     input: 'src/content-scripts/gmail.ts',
     output: {
-      sourcemap: true,
+      sourcemap: !production,
       format: 'iife',
       name: 'app',
       file: 'extension/build/content-script-gmail.js',
