@@ -1,5 +1,6 @@
 import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
+import EncryptButton from './EncryptButton.svelte'
 
 /** Send a request to the background script to encrypt the given string. */
 export const encryptString = async (string: string): Promise<string> =>
@@ -30,6 +31,7 @@ const handleEncryptedMailElement = (
 ) => {
   if ('freemindtronicButtonAdded' in mailElement.dataset) return
   mailElement.dataset.freemindtronicButtonAdded = '1'
+
   mailElement.style.position = 'relative'
   mailElement.style.outline = '3px solid orange'
 
@@ -58,8 +60,22 @@ const handleEncryptedMailElement = (
   })
 }
 
+const handleToolbar = (toolbar: HTMLElement) => {
+  if ('freemindtronicButtonAdded' in toolbar.dataset) return
+  toolbar.dataset.freemindtronicButtonAdded = '1'
+
+  const button = new EncryptButton({
+    target: toolbar,
+  })
+
+  button.$on('click', () => {
+    console.log('Youpi')
+  })
+}
+
 new MutationObserver((mutations) => {
   for (const mutation of mutations) {
+    // The user opens a mail
     if ((mutation.target as HTMLElement)?.classList.contains('aiL')) {
       const mailElement = mutation.target as HTMLElement
       const mailString = mailElement.textContent
@@ -67,17 +83,12 @@ new MutationObserver((mutations) => {
       if (mailString === null || !containsEncryptedText(mailString)) continue
       // `mailElement` contains an encrypted mail, let's add a button to decrypt it
       handleEncryptedMailElement(mailElement, mailString)
-    } else if (
-      mutation.type === 'childList' &&
-      (mutation.target as HTMLElement)?.classList.contains('bAK')
-    ) {
+    }
+
+    // The user starts writing a mail
+    else if ((mutation.target as HTMLElement)?.classList.contains('bAK')) {
       const toolbar = mutation.target as HTMLElement
-      if ('freemindtronicButtonAdded' in toolbar.dataset) return
-      toolbar.dataset.freemindtronicButtonAdded = '1'
-      const button: HTMLButtonElement = document.createElement('button')
-      button.style.all = 'revert'
-      button.innerHTML = '🔐'
-      toolbar.append(button)
+      handleToolbar(toolbar)
     }
   }
 }).observe(document.body, {
