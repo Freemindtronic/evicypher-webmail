@@ -7,8 +7,9 @@
     "clean": "rm -rf extension/build",
     "build": "yarn rollup -c",
     "start": "yarn rollup -c -w",
-    "lint": "yarn eslint --fix 'src/**/*.{ts,js,svelte}' && yarn stylelint --fix 'src/**/*' && yarn svelte-check --tsconfig ./tsconfig.json",
-    "postinstall": "husky install"
+    "check": "yarn eslint --fix 'src/**/*.{ts,js,svelte}' && yarn stylelint --fix 'src/**/*' && yarn svelte-check --tsconfig ./tsconfig.json",
+    "postinstall": "husky install",
+    "test": "echo 'No tests defined' && exit 1"
   },
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint --fix",
