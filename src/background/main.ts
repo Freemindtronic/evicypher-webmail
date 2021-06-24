@@ -17,7 +17,6 @@ const encrypt = async (str: string) => {
   const evi = new EviCrypt(keys)
   const encrypted = evi.encryptText(str)
 
-  console.log(encrypted)
   return encrypted
 }
 
@@ -34,7 +33,6 @@ const decrypt = async (str: string) => {
   const evi = new EviCrypt(keys)
   const decrypted = evi.decryptText(str)
 
-  console.log(decrypted)
   return decrypted
 }
 

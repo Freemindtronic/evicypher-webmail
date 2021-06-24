@@ -39,6 +39,8 @@ const handleEncryptedMailElement = (
     target: mailElement,
   })
 
+  const encryptedStrings = [extractEncryptedStrings(mailString)[0]]
+
   let paragraphs: HTMLElement[] = []
   let toggle = true
   button.$on('click', () => {
@@ -49,7 +51,7 @@ const handleEncryptedMailElement = (
       return
     }
 
-    for (const string of extractEncryptedStrings(mailString)) {
+    for (const string of encryptedStrings) {
       decryptString(string).then((decryptedString) => {
         const p: HTMLElement = document.createElement('p')
         p.textContent = decryptedString
@@ -68,8 +70,12 @@ const handleToolbar = (toolbar: HTMLElement) => {
     target: toolbar,
   })
 
-  button.$on('click', () => {
-    console.log('Youpi')
+  button.$on('click', async () => {
+    const mail = toolbar
+      .closest('.iN')
+      ?.querySelector('[contenteditable] > :first-child')
+    if (!mail || !mail.textContent) return
+    mail.textContent = await encryptString(mail.textContent)
   })
 }
 
