@@ -83,7 +83,17 @@ export default [
       name: 'app',
       file: 'extension/build/content-script-gmail.js',
     },
-    plugins: build,
+    plugins: [
+      svelte({
+        preprocess: sveltePreprocess({ sourceMap: !production }),
+        compilerOptions: {
+          // Enable run-time checks when not in production
+          dev: !production,
+        },
+        emitCss: false,
+      }),
+      ...build,
+    ],
     watch: {
       clearScreen: false,
     },

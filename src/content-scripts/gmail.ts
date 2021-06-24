@@ -1,4 +1,5 @@
 import { browser } from 'webextension-polyfill-ts'
+import DecryptButton from './DecryptButton.svelte'
 
 /** Send a request to the background script to encrypt the given string. */
 export const encryptString = async (string: string): Promise<string> =>
@@ -31,12 +32,14 @@ const handleEncryptedMailElement = (
   mailElement.dataset.freemindtronicButtonAdded = '1'
   mailElement.style.position = 'relative'
   mailElement.style.outline = '3px solid orange'
-  const button = createDecryptButton()
-  mailElement.append(button)
+
+  const button = new DecryptButton({
+    target: mailElement,
+  })
 
   let paragraphs: HTMLElement[] = []
   let toggle = true
-  button.addEventListener('click', () => {
+  button.$on('click', () => {
     toggle = !toggle
     if (toggle) {
       for (const p of paragraphs) p.parentNode?.removeChild(p)
@@ -53,19 +56,6 @@ const handleEncryptedMailElement = (
       })
     }
   })
-}
-
-/** Create an HTML button */
-const createDecryptButton = () => {
-  const button: HTMLButtonElement = document.createElement('button')
-  button.type = 'button'
-  button.style.all = 'revert'
-  button.style.position = 'absolute'
-  button.style.top = '0'
-  button.style.right = '0'
-  button.style.padding = '1em 2em'
-  button.innerHTML = '🔓 Decrypt'
-  return button
 }
 
 new MutationObserver((mutations) => {
