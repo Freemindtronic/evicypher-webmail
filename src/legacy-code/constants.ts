@@ -1,2 +1,1 @@
-export const nativeMessagingApp = 'com.freemindtronic.evidns';
-
+export const nativeMessagingApp = 'com.freemindtronic.evidns'
