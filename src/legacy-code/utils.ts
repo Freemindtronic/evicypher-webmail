@@ -1,8 +1,6 @@
 import Base64 from 'base64-arraybuffer'
 import CryptoJS from 'crypto-js'
 
-type WordArray = CryptoJS.lib.WordArray
-
 export function b64ToUint8Array(data: string): Uint8Array {
   return new Uint8Array(Base64.decode(data))
 }
@@ -53,7 +51,9 @@ export function uint8ArrayToString(ta: Uint8Array): string {
   return String.fromCharCode(...ta)
 }
 
-export function wordArrayToUint8Array(word: WordArray): Uint8Array {
+export function wordArrayToUint8Array(
+  word: CryptoJS.lib.WordArray
+): Uint8Array {
   let length = word.sigBytes
   const wordArray = word.words
 
