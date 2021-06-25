@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/filename-case */
-import { PromiseManager } from './PromiseManager'
 import * as utils from './utils'
 import {
   getZeroconfService,
@@ -102,60 +101,6 @@ export async function searchByIP(
   })
 }
 
-export async function searchByIPv2(
-  IPs: string[],
-  PORT: number,
-  hash: string,
-  type: string
-): Promise<undefined | WebAnswer> {
-  let flagLoop = true
-  let result
-  const refreshPeriod = 500
-  const timeOut = 2500
-  const awaitingResponce: string[] = []
-  const promiseMng = new PromiseManager()
-
-  const startTime = Date.now()
-
-  await promiseMng.getPromiseWithTimeout(timeOut)
-
-  // Loop addresses with a cooldown of refreshPeriod (ms)
-  while (flagLoop) {
-    console.log('inLoop', IPs, awaitingResponce)
-
-    for (const IP of IPs) {
-      const url = formatURL(IP, PORT) + type
-
-      // Do not send new request to the one that did not responded yet
-      if (awaitingResponce.includes(url)) continue
-      awaitingResponce.push(url)
-
-      sendPostRequest(url, { t: hash }, 2500)
-        .then(([data, textStatus, xhr]) => {
-          if (xhr === 202) {
-            flagLoop = false
-            result = { url, data }
-          } else {
-            throw new Error(textStatus)
-          }
-        })
-        .catch(() => {
-          utils.removeValueFromArray(awaitingResponce, url)
-        })
-    }
-
-    const deltaT = refreshPeriod - ((Date.now() - startTime) % refreshPeriod)
-    // eslint-disable-next-line no-await-in-loop
-    await promiseMng.getPromiseWithTimeout(deltaT)
-    // Run for 5s then exit
-    if (Date.now() - startTime > timeOut) {
-      flagLoop = false
-    }
-  }
-
-  return result
-}
-
 export async function searchLoop(
   hash: string,
   type: string,
@@ -171,30 +116,34 @@ export async function searchLoop(
   const refreshPeriod = 500
   const timeOut = 2500
   const awaitingResponce: string[] = []
-  const promiseMng = new PromiseManager()
 
   if (!(await isZeroconfServiceInstalled())) {
     throw new Error('eviDNS not installed')
   }
 
   const nativePort = getZeroconfService()
-  nativePort.onMessage.addListener((response: ZeroconfResponse) => {
-    const tempAddr: string[] = []
-    const tempPort: number[] = []
-    for (let i = 0; i < response.result.length; i++) {
-      tempAddr.push(response.result[i].a)
-      tempPort.push(response.result[i].port)
-    }
 
-    asyncAddrs = [...tempAddr]
-    asyncPort = [...tempPort]
-    promiseMng.resolve()
+  // A promise to a response of the Zeroconf Service
+  const responded = new Promise<void>((resolve) => {
+    nativePort.onMessage.addListener((response: ZeroconfResponse) => {
+      const tempAddr: string[] = []
+      const tempPort: number[] = []
+      for (let i = 0; i < response.result.length; i++) {
+        tempAddr.push(response.result[i].a)
+        tempPort.push(response.result[i].port)
+      }
+
+      asyncAddrs = [...tempAddr]
+      asyncPort = [...tempPort]
+      resolve()
+    })
   })
   nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
 
-  const startTime = Date.now()
+  // Wait for either a response from EviDNS or a timeout
+  await Promise.race([responded, utils.delay(timeOut)])
 
-  await promiseMng.getPromiseWithTimeout(timeOut)
+  const startTime = Date.now()
 
   // Loop addresses with a cooldown of refreshPeriod (ms)
   while (flagLoop) {
@@ -241,9 +190,10 @@ export async function searchLoop(
         })
     }
 
-    const deltaT = refreshPeriod - ((Date.now() - startTime) % refreshPeriod)
+    // Wait a few milliseconds before retrying
     // eslint-disable-next-line no-await-in-loop
-    await promiseMng.getPromiseWithTimeout(deltaT)
+    await utils.delay(refreshPeriod)
+
     // Run for 5s then exit
     if (Date.now() - startTime > timeOut) {
       flagLoop = false
