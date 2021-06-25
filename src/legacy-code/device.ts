@@ -10,6 +10,7 @@ import {
   extractIP,
   WebAnswer,
 } from './lanUtils'
+import { browser } from 'webextension-polyfill-ts'
 
 export class Device {
   certificate: Certificate | undefined
@@ -32,7 +33,7 @@ export class Device {
     const portA = utils.longToByteArray(myPORT)
     this.port = myPORT
     this.AES = new AesUtil(256, 1000)
-    this.certificate = Certificate.generate()
+    this.certificate = Certificate.generate(browser.storage.local)
     this.k1 = axlsign.generateKeyPair(utils.random(32))
     this.key = utils.random(16)
     this.iv = utils.random(16)
@@ -173,7 +174,7 @@ export class Device {
       jamming: utils.sha256(utils.concatUint8Array(this.iv, saltb)),
       id: utils.sha256(utils.concatUint8Array(this.Tkey, this.certificate.id)),
     }
-    const certificate = new Certificate(certData)
+    const certificate = new Certificate(certData, browser.storage.local)
     return certificate.saveNew()
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import Base64 from 'base64-arraybuffer'
+import type { Storage } from 'webextension-polyfill-ts'
 
-import { storage } from './storage'
 import { Settings } from './Settings'
 import * as utils from './utils'
 
@@ -33,19 +33,23 @@ export class Certificate {
   sKey: Uint8Array
   tKey: Uint8Array
 
-  constructor(data: CertData) {
+  /** Where to store certificates. */
+  storage: Storage.StorageArea
+
+  constructor(data: CertData, storage: Storage.StorageArea) {
     this.name = data.name
     this.id = data.id
     this.jamming = data.jamming
     this.fKey = data.fKey
     this.sKey = data.sKey
     this.tKey = data.tKey
+    this.storage = storage
   }
 
   async saveNew(): Promise<unknown> {
     const promiseDevice = this.update()
 
-    const promiseList = Certificate.listAll().then(async (list) => {
+    const promiseList = Certificate.listAll(this.storage).then(async (list) => {
       let pFav
       if (list.length === 0) {
         pFav = Settings.setFavorite(this.name)
@@ -53,48 +57,57 @@ export class Certificate {
 
       list.push(this.name)
       list.sort()
-      return Promise.all([pFav, storage().set({ devices: list })])
+      return Promise.all([pFav, this.storage.set({ devices: list })])
     })
 
     return Promise.all([promiseDevice, promiseList])
   }
 
   async update(): Promise<void> {
-    return storage().set({ [CERT_PREFIX + this.name]: certToB64(this) })
+    return this.storage.set({ [CERT_PREFIX + this.name]: certToB64(this) })
   }
 
-  static async load(name: string): Promise<Certificate> {
+  static async load(
+    name: string,
+    storage: Storage.StorageArea
+  ): Promise<Certificate> {
     const key = CERT_PREFIX + name
-    return storage()
+    return storage
       .get(key)
-      .then((result) => new Certificate(b64ToCert(result[key])))
+      .then((result) => new Certificate(b64ToCert(result[key]), storage))
   }
 
-  static async listAll(): Promise<string[]> {
-    return storage()
+  static async listAll(storage: Storage.StorageArea): Promise<string[]> {
+    return storage
       .get('devices')
       .then((val) => (val.devices === undefined ? [] : val.devices))
   }
 
-  static async remove(device: string): Promise<unknown> {
-    const pDevice = storage().remove(CERT_PREFIX + device)
-    const pList = Certificate.listAll().then((list) => {
+  static async remove(
+    device: string,
+    storage: Storage.StorageArea
+  ): Promise<unknown> {
+    const pDevice = storage.remove(CERT_PREFIX + device)
+    const pList = Certificate.listAll(storage).then((list) => {
       const index = list.indexOf(device)
       if (index > -1) {
         list.splice(index, 1)
-        return storage().set({ devices: list })
+        return storage.set({ devices: list })
       }
     })
     return Promise.all([pDevice, pList])
   }
 
-  static async removeMultiple(devices: string[]): Promise<unknown> {
+  static async removeMultiple(
+    devices: string[],
+    storage: Storage.StorageArea
+  ): Promise<unknown> {
     const pDevices = []
     for (const device of devices) {
-      pDevices.push(storage().remove(CERT_PREFIX + device))
+      pDevices.push(storage.remove(CERT_PREFIX + device))
     }
 
-    const pList = Certificate.listAll().then((list) => {
+    const pList = Certificate.listAll(storage).then((list) => {
       for (const device of devices) {
         const index = list.indexOf(device)
         if (index > -1) {
@@ -102,12 +115,12 @@ export class Certificate {
         }
       }
 
-      return storage().set({ devices: list })
+      return storage.set({ devices: list })
     })
     return Promise.all([...pDevices, pList])
   }
 
-  static generate(): Certificate {
+  static generate(storage: Storage.StorageArea): Certificate {
     const data = {
       name: '',
       id: utils.random(16),
@@ -116,7 +129,7 @@ export class Certificate {
       sKey: utils.random(16),
       tKey: utils.random(16),
     }
-    return new Certificate(data)
+    return new Certificate(data, storage)
   }
 }
 

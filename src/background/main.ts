@@ -10,7 +10,7 @@ const encrypt = async (str: string) => {
   const device = await Settings.getFavorite()
 
   // Send a request to the FMT app
-  const client = new Client()
+  const client = new Client(browser.storage.local)
   const keys = await client.requestKey(device)
 
   // Encrypt the text
@@ -26,7 +26,7 @@ const decrypt = async (str: string) => {
   const device = await Settings.getFavorite()
 
   // Send a request to the FMT app
-  const client = new Client()
+  const client = new Client(browser.storage.local)
   const keys = await client.requestKey(device)
 
   // Decrypt the text

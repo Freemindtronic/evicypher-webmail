@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable camelcase */
-import { storage } from './storage'
+
+import { browser } from 'webextension-polyfill-ts'
 
 const SETTINGS_PREFIX = 'settings-'
 const KEY_VERSION = SETTINGS_PREFIX + 'version'
@@ -69,19 +70,17 @@ export class Settings {
 }
 
 async function get(key: string) {
-  return storage()
-    .get(key)
-    .then((value) => {
-      if (value[key] === undefined) {
-        return defaultOptions[
-          key.replace(SETTINGS_PREFIX, '') as keyof typeof defaultOptions
-        ]
-      }
+  return browser.storage.local.get(key).then((value) => {
+    if (value[key] === undefined) {
+      return defaultOptions[
+        key.replace(SETTINGS_PREFIX, '') as keyof typeof defaultOptions
+      ]
+    }
 
-      return value[key]
-    })
+    return value[key]
+  })
 }
 
 async function set(key: string, value: unknown) {
-  return storage().set({ [key]: value })
+  return browser.storage.local.set({ [key]: value })
 }
