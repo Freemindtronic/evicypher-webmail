@@ -1,6 +1,7 @@
 extension/build/
 node_modules/
 .DS_Store
+docs/
 
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*

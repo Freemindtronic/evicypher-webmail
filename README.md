@@ -13,6 +13,7 @@
 
 - Run in watch mode `yarn start`
 - Run tests `yarn test`
+- Read the API documentation `yarn doc && cat docs/index.html`
 
 ## Details
 

@@ -9,7 +9,8 @@
     "start": "yarn rollup -c -w",
     "check": "yarn tsc --noEmit && yarn eslint --fix 'src/**/*.{ts,js,svelte}' && yarn stylelint --fix 'src/**/*' && yarn svelte-check --tsconfig ./tsconfig.json",
     "postinstall": "husky install",
-    "test": "echo 'No tests defined' && exit 1"
+    "test": "echo 'No tests defined' && exit 1",
+    "doc": "typedoc src/*.ts"
   },
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint --fix",
@@ -60,7 +61,8 @@
     "prettier-plugin-svelte": "^2.3.1",
     "stylelint": "^13.13.1",
     "stylelint-config-rational-order": "^0.1.2",
-    "svelte-check": "^2.2.0"
+    "svelte-check": "^2.2.0",
+    "typedoc": "^0.21.1"
   },
   "volta": {
     "node": "16.4.0",
