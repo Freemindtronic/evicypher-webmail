@@ -18,10 +18,13 @@
   /** A canvas to draw the QR code. */
   let qr: HTMLCanvasElement
 
+  let pairingController: AbortController | undefined
+
   /** Start the interactive process to register a new phone. */
   const addPhone = async () => {
     // Show the pairing screen and wait for it to load
     pairingInProgress = true
+    pairingController = new AbortController()
     await tick()
 
     // Create a new pairing key
@@ -31,7 +34,7 @@
     toCanvas(qr, pairingKey.toString())
 
     // Wait for the user to scan the code
-    const device = await clientHello(pairingKey)
+    const device = await clientHello(pairingKey, pairingController.signal)
     const key = await device.clientKeyExchange()
 
     // Show the UID
@@ -53,6 +56,7 @@
   const cancelPairing = () => {
     phoneName = ''
     pairingInProgress = false
+    pairingController?.abort()
   }
 </script>
 
