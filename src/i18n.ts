@@ -1,8 +1,8 @@
 import { BrowserStore } from 'browser-store'
 import { addMessages, getLocaleFromNavigator, init, locale } from 'svelte-i18n'
 import { browser } from 'webextension-polyfill-ts'
-import en from '/locales/en/strings.json'
-import fr from '/locales/fr/strings.json'
+import en from '~/locales/en/strings.json'
+import fr from '~/locales/fr/strings.json'
 
 // Register languages
 addMessages('en', en)
