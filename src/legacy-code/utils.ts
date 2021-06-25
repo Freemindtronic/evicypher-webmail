@@ -79,22 +79,15 @@ function wordToByteArray(word: number, length: number): number[] {
   return ba
 }
 
-/**
- * Convert a number to a an array in little endian fashion
- *
- * @param l - Input number
- * @returns Converted array
- */
-export function longToByteArray(l: number): number[] {
-  const a = [0, 0, 0, 0]
-  for (let index = 0; index < a.length; index++) {
-    const b = l & 0xff
-    a[index] = b
-    l = (l - b) / 256
-  }
-
-  return a
-}
+/** Convert a number to a little-endian quadruple. */
+export const longToByteArray = (
+  long: number
+): [number, number, number, number] => [
+  long & 0xff,
+  (long & 0xff_00) >> 8,
+  (long & 0xff_00_00) >> 16,
+  (long & 0xff_00_00_00) >> 24,
+]
 
 /**
  * Convert an array to a number in little endian fashion
