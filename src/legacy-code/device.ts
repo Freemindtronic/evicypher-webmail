@@ -13,25 +13,21 @@ import {
 import { browser } from 'webextension-polyfill-ts'
 
 export class Device {
-  certificate: Certificate | undefined
-  port: number | undefined
-  key: Uint8Array | undefined
-  salt: Uint8Array | undefined
-  AES: AesUtil | undefined
+  readonly certificate: Certificate
+  readonly port: number
+  readonly key: Uint8Array
+  readonly salt: Uint8Array
+  readonly AES: AesUtil
   IP: string | undefined
-  Tkey: Uint8Array | undefined
-  iv: Uint8Array | undefined
-  k1: KeyPair | undefined
-  stopPairing: boolean
+  readonly Tkey: Uint8Array
+  readonly iv: Uint8Array
+  readonly k1: KeyPair
+  readonly stopPairing: boolean
+  readonly pairingKey: string
 
   constructor() {
     this.stopPairing = false
-  }
-
-  async generatePairingKey(): Promise<string> {
-    const myPORT = Math.floor(Math.random() * 61_000) + 1025
-    const portA = utils.longToByteArray(myPORT)
-    this.port = myPORT
+    this.port = Math.floor(Math.random() * 61_000) + 1025
     this.AES = new AesUtil(256, 1000)
     this.certificate = Certificate.generate(browser.storage.local)
     this.k1 = axlsign.generateKeyPair(utils.random(32))
@@ -49,14 +45,14 @@ export class Device {
 
     const cA = new Uint8Array([
       ...this.certificate.id,
-      ...portA,
+      ...utils.longToByteArray(this.port),
       ...this.iv,
       ...this.certificate.sKey,
       ...this.key,
       ...enc,
     ])
 
-    return Base64.encode(cA)
+    this.pairingKey = Base64.encode(cA)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

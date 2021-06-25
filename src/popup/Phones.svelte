@@ -26,10 +26,9 @@
 
     // Create a new pairing key
     const device = new Device()
-    const pairingKey = await device.generatePairingKey()
 
     // Display the pairing QR code
-    toCanvas(qr, pairingKey)
+    toCanvas(qr, device.pairingKey)
 
     // Wait for the user to scan the code
     await device.clientHello()
