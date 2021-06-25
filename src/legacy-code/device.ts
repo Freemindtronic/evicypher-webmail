@@ -22,11 +22,9 @@ export class Device {
   readonly Tkey: Uint8Array
   readonly iv: Uint8Array
   readonly k1: KeyPair
-  readonly stopPairing: boolean
   readonly pairingKey: string
 
   constructor() {
-    this.stopPairing = false
     this.port = Math.floor(Math.random() * 61_000) + 1025
     this.AES = new AesUtil(256, 1000)
     this.certificate = Certificate.generate(browser.storage.local)
@@ -69,17 +67,7 @@ export class Device {
     UUID: string
     ECC: Uint8Array
   }> {
-    if (
-      this.AES === undefined ||
-      this.certificate === undefined ||
-      this.key === undefined ||
-      this.salt === undefined ||
-      this.IP === undefined ||
-      this.port === undefined ||
-      this.k1 === undefined ||
-      this.Tkey === undefined
-    )
-      throw new Error('Certificate undefined')
+    if (this.IP === undefined) throw new Error('IP undefined')
 
     const ivS = utils.random(16)
     const enc = this.AES.encryptCTR(
@@ -127,16 +115,7 @@ export class Device {
   }
 
   async sendNameInfo(name: string, sharedKey: Uint8Array): Promise<unknown> {
-    if (
-      this.AES === undefined ||
-      this.certificate === undefined ||
-      this.key === undefined ||
-      this.iv === undefined ||
-      this.IP === undefined ||
-      this.port === undefined ||
-      this.Tkey === undefined
-    )
-      throw new Error('Certificate undefined')
+    if (this.IP === undefined) throw new Error('Certificate undefined')
 
     const ivS = utils.random(16)
     const saltb = utils.random(16)
