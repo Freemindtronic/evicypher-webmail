@@ -1,18 +1,24 @@
 # A new browser extension
 
+## Try it!
+
+1. Download the file `extension.zip` from the [latest successful build](https://github.com/Freemindtronic/browser-extension/actions?query=is%3Asuccess).
+2. Load the extension using your browser developer tools.
+
 ## Requirements
 
-- Install [Volta](https://volta.sh/): `curl https://get.volta.sh | bash`
-- Install dependencies: `yarn install`
+1. Install [Volta](https://volta.sh/): `curl https://get.volta.sh | bash`
+2. Install dependencies: `yarn install`
 
 ## How to build
 
-- Run `yarn build`
+Run `yarn build`
 
 ## How to contribute
 
 - Run in watch mode `yarn start`
-- Run tests `yarn test`
+- Run checks `yarn check`
+- Run tests `yarn test` (not implemented yet)
 - Read the API documentation `yarn doc && cat docs/index.html`
 
 ## Details
