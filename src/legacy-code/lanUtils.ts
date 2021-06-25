@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/filename-case */
-import { ajax } from 'jquery'
 import { PromiseManager } from './PromiseManager'
 import * as utils from './utils'
 import {
@@ -212,28 +211,34 @@ export async function searchLoop(
       if (awaitingResponce.includes(url)) continue
       awaitingResponce.push(url)
 
-      ajax({
-        dataType: json,
-        type: POST,
-        url,
-        data: { t: hash },
-        timeout: 2500,
-        success: (data, _textStatus, xhr) => {
-          if (xhr.status === 202) {
-            nativePort.disconnect()
-            flagLoop = false
-            result = { url, data }
-          } else {
-            throw new Error(`Device return wrong status number: ${xhr.status}`)
-          }
-        },
-        error: (XMLHttpRequest) => {
-          utils.removeValueFromArray(awaitingResponce, url)
-          if (XMLHttpRequest.status !== 409) {
-            // Console.log(`Wrong status number: ${XMLHttpRequest.status}`);
-          }
-        },
+      // Create an AbortController to trigger a timeout
+      const controller = new AbortController()
+      setTimeout(() => {
+        controller.abort()
+      }, timeOut)
+
+      // Try to reach the phone
+      fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams({ t: hash }),
+        signal: controller.signal,
       })
+        .then((response) => {
+          if (response.status === 202) return response.json()
+          if (response.status >= 400) throw new Error('Server error')
+          throw new Error(
+            `Device return wrong status number: ${response.status}`
+          )
+        })
+        .then((data) => {
+          nativePort.disconnect()
+          flagLoop = false
+          result = { url, data }
+        })
+        .catch(() => {
+          utils.removeValueFromArray(awaitingResponce, url)
+          console.warn('Connection failed, retrying in a few seconds.')
+        })
     }
 
     const deltaT = refreshPeriod - ((Date.now() - startTime) % refreshPeriod)
@@ -284,26 +289,26 @@ export function sendName(
   return sendPostRequest(url, data, 5000)
 }
 
-function sendPostRequest(
+async function sendPostRequest(
   url: string,
-  data: unknown,
+  data: Record<string, string>,
   timeout: number
 ): Promise<[Record<string, string>, string, number]> {
-  return new Promise((resolve, reject) => {
-    ajax({
-      dataType: json,
-      type: POST,
-      url,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: data as any,
-      timeout,
-      success: (data, _textStatus, xhr) => {
-        resolve([data, xhr.statusText, xhr.status])
-      },
-      error: (_xhr, _textStatus, error) => {
-        reject(error)
-      },
-    })
+  // Create an AbortController to trigger a timeout
+  const controller = new AbortController()
+  setTimeout(() => {
+    controller.abort()
+  }, timeout)
+
+  // Send a POST request
+  return fetch(url, {
+    method: 'POST',
+    body: new URLSearchParams(data),
+    signal: controller.signal,
+  }).then(async (response) => {
+    if (response.status >= 400) throw new Error(response.statusText)
+    const data: Record<string, string> = await response.json()
+    return [data, response.statusText, response.status]
   })
 }
 
