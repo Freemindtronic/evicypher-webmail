@@ -1,13 +1,12 @@
 /* eslint-disable unicorn/filename-case */
 import { ajax } from 'jquery'
-
 import { PromiseManager } from './PromiseManager'
-import {
-  getNativePort,
-  isNativeSupported,
-  NativeAnswer,
-} from './nativeMessaging'
 import * as utils from './utils'
+import {
+  getZeroconfService,
+  isZeroconfServiceInstalled,
+  ZeroconfResponse,
+} from './zeroconf-service'
 
 export const apiProtocol = 'http://'
 export const json = 'json'
@@ -175,12 +174,12 @@ export async function searchLoop(
   const awaitingResponce: string[] = []
   const promiseMng = new PromiseManager()
 
-  if (!(await isNativeSupported())) {
+  if (!(await isZeroconfServiceInstalled())) {
     throw new Error('eviDNS not installed')
   }
 
-  const nativePort = getNativePort()
-  nativePort.onMessage.addListener((response: NativeAnswer) => {
+  const nativePort = getZeroconfService()
+  nativePort.onMessage.addListener((response: ZeroconfResponse) => {
     const tempAddr: string[] = []
     const tempPort: number[] = []
     for (let i = 0; i < response.result.length; i++) {
