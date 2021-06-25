@@ -5,7 +5,7 @@
   import PhoneItem from './Phone.svelte'
   import { toCanvas } from 'qrcode'
   import { tick } from 'svelte'
-  import { Device } from 'legacy-code/device'
+  import { clientHello, PairingKey } from 'legacy-code/device'
 
   /** Name of the phone to be added. */
   let phoneName = ''
@@ -25,13 +25,13 @@
     await tick()
 
     // Create a new pairing key
-    const device = new Device()
+    const pairingKey = new PairingKey()
 
     // Display the pairing QR code
-    toCanvas(qr, device.pairingKey)
+    toCanvas(qr, pairingKey.toString())
 
     // Wait for the user to scan the code
-    await device.clientHello()
+    const device = await clientHello(pairingKey)
     const key = await device.clientKeyExchange()
 
     // Show the UID

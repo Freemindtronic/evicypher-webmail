@@ -12,13 +12,12 @@ import {
 } from './lanUtils'
 import { browser } from 'webextension-polyfill-ts'
 
-export class Device {
+export class PairingKey {
   readonly certificate: Certificate
   readonly port: number
   readonly key: Uint8Array
   readonly salt: Uint8Array
   readonly AES: AesUtil
-  IP: string | undefined
   readonly Tkey: Uint8Array
   readonly iv: Uint8Array
   readonly k1: KeyPair
@@ -53,13 +52,36 @@ export class Device {
     this.pairingKey = Base64.encode(cA)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async clientHello(_ipRange?: string[]): Promise<void> {
-    if (this.certificate === undefined) throw new Error('Certificate undefined')
+  toString(): string {
+    return this.pairingKey
+  }
+}
 
-    const hash = Base64.encode(utils.sha256(this.certificate.id))
-    const answer = await search(hash, '/t', undefined, this.port, 0)
-    this.IP = extractIP((answer as WebAnswer).url)
+export async function clientHello(
+  pairingKey: PairingKey,
+  signal?: AbortSignal
+): Promise<Device> {
+  if (pairingKey.certificate === undefined)
+    throw new Error('Certificate undefined')
+
+  const hash = Base64.encode(utils.sha256(pairingKey.certificate.id))
+  const answer = await search(hash, '/t', signal, pairingKey.port, 0)
+  const ip = extractIP((answer as WebAnswer).url)
+
+  return new Device(ip, pairingKey)
+}
+
+export class Device {
+  readonly IP: string
+  readonly pairingKey: PairingKey
+  readonly certificate: Certificate
+  readonly port: number
+
+  constructor(ip: string, pairingKey: PairingKey) {
+    this.IP = ip
+    this.port = pairingKey.port
+    this.pairingKey = pairingKey
+    this.certificate = pairingKey.certificate
   }
 
   async clientKeyExchange(): Promise<{
@@ -70,37 +92,53 @@ export class Device {
     if (this.IP === undefined) throw new Error('IP undefined')
 
     const ivS = utils.random(16)
-    const enc = this.AES.encryptCTR(
+    const enc = this.pairingKey.AES.encryptCTR(
       ivS,
       this.certificate.id,
-      this.key,
-      this.salt
+      this.pairingKey.key,
+      this.pairingKey.salt
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = await sendCipherADD(
+    const data = await sendCipherADD(
       this.IP,
       this.port,
       Base64.encode(ivS),
       Base64.encode(enc),
-      Base64.encode(utils.sha256(utils.xor(this.certificate.id, this.salt)))
+      Base64.encode(
+        utils.sha256(utils.xor(this.certificate.id, this.pairingKey.salt))
+      )
     )
 
     let iv = utils.b64ToUint8Array(data.ik)
-    let salt = utils.xor(this.salt, utils.b64ToUint8Array(data.sk))
+    let salt = utils.xor(this.pairingKey.salt, utils.b64ToUint8Array(data.sk))
     let cipherText = utils.b64ToUint8Array(data.ek)
-    const ECC = this.AES.decryptCTR(iv, salt, this.key, cipherText)
-    const sharedKey = axlsign.sharedKey(this.k1.private, ECC)
+    const ECC = this.pairingKey.AES.decryptCTR(
+      iv,
+      salt,
+      this.pairingKey.key,
+      cipherText
+    )
+    const sharedKey = axlsign.sharedKey(this.pairingKey.k1.private, ECC)
 
     iv = utils.b64ToUint8Array(data.in)
     salt = utils.b64ToUint8Array(data.sn)
     cipherText = utils.b64ToUint8Array(data.n)
-    const name = this.AES.decryptCTR(iv, salt, this.Tkey, cipherText)
+    const name = this.pairingKey.AES.decryptCTR(
+      iv,
+      salt,
+      this.pairingKey.Tkey,
+      cipherText
+    )
 
     iv = utils.b64ToUint8Array(data.iu)
     salt = utils.b64ToUint8Array(data.su)
     cipherText = utils.b64ToUint8Array(data.u)
-    const UUID_U8 = this.AES.decryptCTR(iv, salt, this.Tkey, cipherText)
+    const UUID_U8 = this.pairingKey.AES.decryptCTR(
+      iv,
+      salt,
+      this.pairingKey.Tkey,
+      cipherText
+    )
     const UUID = utils.uint8ToHex(UUID_U8)
 
     return { name: utils.uint8ArrayToUTF8(name), UUID, ECC: sharedKey }
@@ -119,10 +157,10 @@ export class Device {
 
     const ivS = utils.random(16)
     const saltb = utils.random(16)
-    const enc = this.AES.encryptCTR(
+    const enc = this.pairingKey.AES.encryptCTR(
       ivS,
       saltb,
-      this.Tkey,
+      this.pairingKey.Tkey,
       utils.utf8ToUint8Array(name)
     )
     await sendName(
@@ -137,9 +175,11 @@ export class Device {
       name,
       fKey: sharedKey,
       sKey: utils.sha256(this.certificate.sKey),
-      tKey: utils.sha256(this.key),
-      jamming: utils.sha256(utils.concatUint8Array(this.iv, saltb)),
-      id: utils.sha256(utils.concatUint8Array(this.Tkey, this.certificate.id)),
+      tKey: utils.sha256(this.pairingKey.key),
+      jamming: utils.sha256(utils.concatUint8Array(this.pairingKey.iv, saltb)),
+      id: utils.sha256(
+        utils.concatUint8Array(this.pairingKey.Tkey, this.certificate.id)
+      ),
     }
     const certificate = new Certificate(certData, browser.storage.local)
     return certificate.saveNew()

@@ -218,7 +218,7 @@ export function sendCipherADD(
   iv: string,
   salt: string,
   hash: string
-): Promise<unknown> {
+): Promise<Record<string, string>> {
   const url = formatURL(IP, PORT) + '/c'
   const data = { t: hash, s: salt, i: iv }
   return sendPostRequestData(url, data, 60_000)
