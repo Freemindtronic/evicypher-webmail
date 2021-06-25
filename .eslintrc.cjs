@@ -16,12 +16,13 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['svelte3', '@typescript-eslint', 'html'],
+  plugins: ['svelte3', '@typescript-eslint', 'eslint-plugin-tsdoc', 'html'],
   rules: {
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
     'no-return-assign': ['error', 'except-parens'],
     'no-unused-vars': ['error', { args: 'none' }],
+    'tsdoc/syntax': 'warn',
   },
   overrides: [
     {
