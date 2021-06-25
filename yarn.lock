@@ -331,25 +331,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/tsdoc-config@npm:0.15.2":
-  version: 0.15.2
-  resolution: "@microsoft/tsdoc-config@npm:0.15.2"
-  dependencies:
-    "@microsoft/tsdoc": 0.13.2
-    ajv: ~6.12.6
-    jju: ~1.4.0
-    resolve: ~1.19.0
-  checksum: 85eb7808d4e4541199437f39e6aed235aaece0a6d0fd05c0b923067d494d20baca483fc6871880d09630f6d4e62b8bb99af0fde503eb2b2ded1b7ae5f74dfaf3
-  languageName: node
-  linkType: hard
-
-"@microsoft/tsdoc@npm:0.13.2":
-  version: 0.13.2
-  resolution: "@microsoft/tsdoc@npm:0.13.2"
-  checksum: 70948c5647495ef99752ff500e0f612c1fcf3476ea663ace19937e4d2f86fd78f0ad92ea5876d67e06b421f347d571b3d9e49c444935dc267768d5afd15581f8
-  languageName: node
-  linkType: hard
-
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
@@ -847,7 +828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.4, ajv@npm:~6.12.6":
+"ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.4":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -1149,6 +1130,13 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: ccd267956c58d2315f5d3ea6757cf09863c5fc703e50fbeb13a7dc849b812ef76e3cf9ca8f35a0c48498776a7478d7b4a0418e1e2b8cb9cb9731f2922aaad7f8
+  languageName: node
+  linkType: hard
+
+"binary-search-bounds@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "binary-search-bounds@npm:2.0.5"
+  checksum: e073e265570ad09fe7520835c620f1e95036c7e9696c4f2135c9b20f4b4a44e0306b38977e057b049dab60fea4ab53ed4ad2ee19d9bf44cb6b652aa081788b89
   languageName: node
   linkType: hard
 
@@ -1695,6 +1683,13 @@ __metadata:
   version: 7.2.0
   resolution: "commander@npm:7.2.0"
   checksum: 53501cbeee61d5157546c0bef0fedb6cdfc763a882136284bed9a07225f09a14b82d2a84e7637edfd1a679fb35ed9502fd58ef1d091e6287f60d790147f68ddc
+  languageName: node
+  linkType: hard
+
+"comment-parser@npm:^1.1.4":
+  version: 1.1.5
+  resolution: "comment-parser@npm:1.1.5"
+  checksum: e669d6328a1244a2d7db5ae077dcdd4ef6ddfda752aed9c29d6b4690672d80c0002a7e3ce4fadbb5008c27704adb3153169533312262592834f37ccb5e8eed7c
   languageName: node
   linkType: hard
 
@@ -2260,16 +2255,6 @@ __metadata:
     eslint: ">=6.0.0"
     svelte: ^3.2.0
   checksum: 8d29f1fed24ffab4d75a01ff7c8c5e61415e0a5d89e705beefb2fb2961156aaf04473774d6cefe24be68156dcd93684819fbed49d9895fe0d19933def39e20ef
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-tsdoc@npm:^0.2.14":
-  version: 0.2.14
-  resolution: "eslint-plugin-tsdoc@npm:0.2.14"
-  dependencies:
-    "@microsoft/tsdoc": 0.13.2
-    "@microsoft/tsdoc-config": 0.15.2
-  checksum: cb00835ac74de031a01415b2595dd055808de65fcfbd2582ab52cba191e63d41f0d19f83f767b842e437c54204e063f9d9044409bd66a2c58a333873352a0d14
   languageName: node
   linkType: hard
 
@@ -3487,7 +3472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.1.0, is-core-module@npm:^2.2.0":
+"is-core-module@npm:^2.2.0":
   version: 2.4.0
   resolution: "is-core-module@npm:2.4.0"
   dependencies:
@@ -3808,13 +3793,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jju@npm:~1.4.0":
-  version: 1.4.0
-  resolution: "jju@npm:1.4.0"
-  checksum: 3790481bd2b7827dd6336e6e3dc2dcc6d425679ba7ebde7b679f61dceb4457ea0cda330972494de608571f4973c6dfb5f70fab6f3c5037dbab19ac449a60424f
-  languageName: node
-  linkType: hard
-
 "js-base64@npm:^2.1.9":
   version: 2.6.4
   resolution: "js-base64@npm:2.6.4"
@@ -3963,6 +3941,13 @@ __metadata:
   version: 1.1.6
   resolution: "lines-and-columns@npm:1.1.6"
   checksum: 198a5436b1fa5cf703bae719c01c686b076f0ad7e1aafd95a58d626cabff302dc0414822126f2f80b58a8c3d66cda8a7b6da064f27130f87e1d3506d6dfd0d68
+  languageName: node
+  linkType: hard
+
+"linguist-languages@npm:^7.13.0":
+  version: 7.15.0
+  resolution: "linguist-languages@npm:7.15.0"
+  checksum: 2f930295a291997ecf30219246f1bdb915ea53820f37410aacd0effb5a94ab6b1076ab35fa792899ac86b196ab0a9b2c40f2cc021817ccbecd4bd2efc45a1df1
   languageName: node
   linkType: hard
 
@@ -4267,7 +4252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-from-markdown@npm:^0.8.0":
+"mdast-util-from-markdown@npm:^0.8.0, mdast-util-from-markdown@npm:^0.8.5":
   version: 0.8.5
   resolution: "mdast-util-from-markdown@npm:0.8.5"
   dependencies:
@@ -5308,6 +5293,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-jsdoc@npm:^0.3.23":
+  version: 0.3.23
+  resolution: "prettier-plugin-jsdoc@npm:0.3.23"
+  dependencies:
+    binary-search-bounds: ^2.0.5
+    comment-parser: ^1.1.4
+    linguist-languages: ^7.13.0
+    mdast-util-from-markdown: ^0.8.5
+  peerDependencies:
+    prettier: ">=2.1.2"
+  checksum: 167463d840d57e624c496ec5667217b95f3d9437a1e3c016cefb4316f1ae10ea01489c2301a81dee5eb94d7c1b66cc3020ed62f020c3d7180a8f583c0fb74c1b
+  languageName: node
+  linkType: hard
+
 "prettier-plugin-svelte@npm:^2.3.1":
   version: 2.3.1
   resolution: "prettier-plugin-svelte@npm:2.3.1"
@@ -5739,26 +5738,6 @@ __metadata:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
   checksum: bed00be983cd20a8af0e7840664f655c4b269786dbd9595c5f156cd9d8a0050e65cdbbbdafc30ee9b6245b230c78a2c8ab6447a52545b582f476c29adb188cc5
-  languageName: node
-  linkType: hard
-
-"resolve@patch:resolve@~1.19.0#~builtin<compat/resolve>":
-  version: 1.19.0
-  resolution: "resolve@patch:resolve@npm%3A1.19.0#~builtin<compat/resolve>::version=1.19.0&hash=00b1ff"
-  dependencies:
-    is-core-module: ^2.1.0
-    path-parse: ^1.0.6
-  checksum: 4714fbea90c3a4b9c14af343f255193ab16bce50782309318e01c3e4113e89df69a2a9fb1f1d9f7791c9c5a52a56f10568ce82df92dbbe184557d309a96808e5
-  languageName: node
-  linkType: hard
-
-resolve@~1.19.0:
-  version: 1.19.0
-  resolution: "resolve@npm:1.19.0"
-  dependencies:
-    is-core-module: ^2.1.0
-    path-parse: ^1.0.6
-  checksum: a05b356e47b85ad3613d9e2a39a824f3c27f4fcad9c9ff6c7cc71a2e314c5904a90ab37481ad0069d03cab9eaaac6eb68aca1bc3355fdb05f1045cd50e2aacea
   languageName: node
   linkType: hard
 
@@ -6854,11 +6833,11 @@ resolve@~1.19.0:
     eslint-plugin-html: ^6.1.2
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-svelte3: ^3.2.0
-    eslint-plugin-tsdoc: ^0.2.14
     eslint-plugin-unicorn: ^33.0.1
     husky: ^6.0.0
     lint-staged: ^11.0.0
     prettier: ^2.3.1
+    prettier-plugin-jsdoc: ^0.3.23
     prettier-plugin-svelte: ^2.3.1
     qrcode: ^1.4.4
     rollup: ^2.52.2
