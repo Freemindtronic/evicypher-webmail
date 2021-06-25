@@ -3,6 +3,7 @@ import { browser, Storage } from 'webextension-polyfill-ts'
 
 /**
  * A {@link https://svelte.dev/docs#writable | writable store} backed by local storage.
+ *
  * @typeParam T - Type of the wrapped variable
  */
 export class BrowserStore<T> implements Writable<T> {
@@ -11,6 +12,7 @@ export class BrowserStore<T> implements Writable<T> {
 
   /**
    * Instanciate a writable store backed by a local storage.
+   *
    * @param name - Name of the store, must be unique
    * @param writable - A writable object to wrap
    */
@@ -23,16 +25,18 @@ export class BrowserStore<T> implements Writable<T> {
     }: {
       /**
        * Used to produce an object of type `T` with the output of `JSON.parse`.
-       * @remarks The default transformer is `x => x`: it returns its first argument directly.
+       *
+       * @remarks
+       *   The default transformer is `x => x`: it returns its first argument directly.
        * @param parsed - The output of `JSON.parse`
-       * @returns a value to {@link set | `set`} the store to
-       * @defaultValue `x => x`
+       * @returns A value to {@link set | `set`} the store to
        */
       transformer?: (parsed: unknown) => T
 
       /**
        * Where to physically store data.
-       * @defaultValue `browser.storage.local`
+       *
+       * @default `browser.storage.local`
        */
       storage?: Storage.StorageArea
     } = {}

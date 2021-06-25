@@ -2,9 +2,7 @@ import { BrowserStore } from 'browser-store'
 import { writable, Writable } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 
-/**
- * Represent a phone, with a unique identifier and a name.
- */
+/** Represent a phone, with a unique identifier and a name. */
 export class Phone {
   /** Unique identifier. */
   id: number
