@@ -17,30 +17,27 @@ export interface WebAnswer {
   data: unknown
 }
 
-interface lanCallback {
-  hasStop: () => boolean
-}
-
 // eslint-disable-next-line max-params
 export async function search(
   hash: string,
   type: string,
-  callback: lanCallback,
+  // eslint-disable-next-line default-param-last
+  signal: AbortSignal = new AbortController().signal,
   PORT?: number,
   n?: number
 ): Promise<undefined | WebAnswer> {
   n = n === undefined ? 0 : n + 1
-  if (callback.hasStop()) {
+  if (signal.aborted) {
     throwCancelError('Canceled by user')
   }
 
-  return searchLoop(hash, type, callback, PORT).then((res) => {
+  return searchLoop(hash, type, signal, PORT).then((res) => {
     if (res !== undefined) {
       return res
     }
 
     if ((n as number) < 100) {
-      return search(hash, type, callback, PORT, n)
+      return search(hash, type, signal, PORT, n)
     }
 
     throw new ErrorTimeOut('TimeOut')
@@ -104,7 +101,8 @@ export async function searchByIP(
 export async function searchLoop(
   hash: string,
   type: string,
-  callback: lanCallback,
+  // eslint-disable-next-line default-param-last
+  signal: AbortSignal = new AbortController().signal,
   PORT?: number
 ): Promise<undefined | WebAnswer> {
   let addrs: string[]
@@ -199,7 +197,7 @@ export async function searchLoop(
       flagLoop = false
     }
 
-    if (callback.hasStop()) {
+    if (signal.aborted) {
       nativePort.disconnect()
       throwCancelError('Canceled by user')
     }

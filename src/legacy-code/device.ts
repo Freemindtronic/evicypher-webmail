@@ -64,15 +64,7 @@ export class Device {
     if (this.certificate === undefined) throw new Error('Certificate undefined')
 
     const hash = Base64.encode(utils.sha256(this.certificate.id))
-    const answer = await search(
-      hash,
-      '/t',
-      {
-        hasStop: () => this.stopPairing,
-      },
-      this.port,
-      0
-    )
+    const answer = await search(hash, '/t', undefined, this.port, 0)
     this.IP = extractIP((answer as WebAnswer).url)
   }
 

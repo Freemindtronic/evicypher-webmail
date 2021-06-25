@@ -78,9 +78,10 @@ export class Client {
     high: Uint8Array
     low: Uint8Array
   }> {
-    const answer = (await lanUtil.search(Base64.encode(crypt.KEY.id), '/P', {
-      hasStop: () => this.stopClient,
-    })) as lanUtil.WebAnswer
+    const answer = (await lanUtil.search(
+      Base64.encode(crypt.KEY.id),
+      '/P'
+    )) as lanUtil.WebAnswer
     const data = utils.b64ToObject(answer.data as Record<string, string>)
     crypt.ECC1 = AES.decryptCTR(data.iv1, data.sa1, crypt.KEY.tKey, data.k1)
     crypt.ECC2 = AES.decryptCTR(data.iv2, data.sa2, crypt.KEY.tKey, data.k2)
