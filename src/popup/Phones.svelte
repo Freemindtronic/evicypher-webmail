@@ -68,7 +68,7 @@
     </p>
     <p>
       {#if uid !== undefined}
-        Paring with phone {uid} in progress...
+        Pairing with phone {uid} in progress...
       {:else}
         Please scan this QR code with the application Freemindtronic.
       {/if}
