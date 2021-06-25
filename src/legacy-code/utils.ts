@@ -81,8 +81,8 @@ function wordToByteArray(word: number, length: number): number[] {
 
 /**
  * Convert a number to a an array in little endian fashion
- * @param {number} l input number
- * @return {number[]} converted array
+ * @param l - input number
+ * @returns converted array
  */
 export function longToByteArray(l: number): number[] {
   const a = [0, 0, 0, 0]
@@ -97,8 +97,8 @@ export function longToByteArray(l: number): number[] {
 
 /**
  * Convert an array to a number in little endian fashion
- * @param {Uint8Array} array input array
- * @return {number} converted number
+ * @param array - input array
+ * @returns converted number
  */
 export function byteArrayToLong(array: Uint8Array): number {
   let l = 0
