@@ -61,9 +61,6 @@ export async function clientHello(
   pairingKey: PairingKey,
   signal?: AbortSignal
 ): Promise<Device> {
-  if (pairingKey.certificate === undefined)
-    throw new Error('Certificate undefined')
-
   const hash = Base64.encode(utils.sha256(pairingKey.certificate.id))
   const answer = await search(hash, '/t', signal, pairingKey.port, 0)
   const ip = extractIP((answer as WebAnswer).url)
