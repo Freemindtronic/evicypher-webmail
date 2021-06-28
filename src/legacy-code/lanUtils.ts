@@ -243,9 +243,3 @@ export function sendOk(
   const payload = { d: data }
   return sendPostRequestData(url + '/o', payload, 5000)
 }
-
-export function throwCancelError(s: string): never {
-  const err = new Error(s)
-  err.name = 'CancelError'
-  throw err
-}
