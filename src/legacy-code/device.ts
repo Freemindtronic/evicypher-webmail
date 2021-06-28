@@ -3,13 +3,7 @@ import * as utils from './utils'
 import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
-import {
-  search,
-  sendCipherADD,
-  sendName,
-  extractIP,
-  WebAnswer,
-} from './lanUtils'
+import { search, sendCipherADD, sendName, extractIP } from './lanUtils'
 import { browser } from 'webextension-polyfill-ts'
 
 export class PairingKey {
@@ -63,7 +57,7 @@ export async function clientHello(
 ): Promise<Device> {
   const hash = Base64.encode(utils.sha256(pairingKey.certificate.id))
   const answer = await search(hash, '/t', signal, pairingKey.port, 0)
-  const ip = extractIP((answer as WebAnswer).url)
+  const ip = extractIP(answer.url)
 
   return new Device(ip, pairingKey)
 }

@@ -25,7 +25,7 @@ export async function search(
   signal: AbortSignal = new AbortController().signal,
   PORT?: number,
   maxNumberOfSearches = 100
-): Promise<undefined | WebAnswer> {
+): Promise<WebAnswer> {
   if (signal.aborted) {
     throwCancelError('Canceled by user')
   }
