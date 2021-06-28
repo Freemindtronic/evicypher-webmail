@@ -15,15 +15,31 @@ export interface WebAnswer {
   data: unknown
 }
 
-// eslint-disable-next-line max-params
-export async function search(
+/**
+ * Find devices on the local network and send them a pairing request.
+ *
+ * @param hash - Pairing payload
+ * @param type - Type of pairing request
+ * @returns The URL and the pairing response of the device
+ * @throws {Error} If the maximum number of tries is reached, if the operation
+ *   is aborted or if the Zeroconf service is not properly installed
+ */
+export const search = async (
   hash: string,
   type: string,
-  signal: AbortSignal = new AbortController().signal,
-  // eslint-disable-next-line unicorn/no-useless-undefined
-  port: number | undefined = undefined,
-  maxNumberOfSearches = 100
-): Promise<WebAnswer> {
+  {
+    signal = new AbortController().signal,
+    portOverride,
+    maxNumberOfSearches = 100,
+  }: {
+    /** An AbortSignal to cancel any pending request. */
+    signal?: AbortSignal
+    /** If set, ignore the connection port advertised by the devices. */
+    portOverride?: number
+    /** Max number of tries before aborting. */
+    maxNumberOfSearches?: number
+  } = {}
+): Promise<WebAnswer> => {
   // Check that the Zeroconf service is reachable
   if (!(await isZeroconfServiceInstalled()))
     throw new Error('Zeroconf service not installed.')
@@ -35,7 +51,7 @@ export async function search(
 
     // Run the search loop
     // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(hash, type, { signal, portOverride: port })
+    const res = await searchLoop(hash, type, { signal, portOverride })
     if (res !== undefined) return res
 
     maxNumberOfSearches--

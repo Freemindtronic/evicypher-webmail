@@ -56,7 +56,10 @@ export async function clientHello(
   signal?: AbortSignal
 ): Promise<Device> {
   const hash = Base64.encode(utils.sha256(pairingKey.certificate.id))
-  const answer = await search(hash, '/t', signal, pairingKey.port)
+  const answer = await search(hash, '/t', {
+    signal,
+    portOverride: pairingKey.port,
+  })
   const ip = extractIP(answer.url)
 
   return new Device(ip, pairingKey)
