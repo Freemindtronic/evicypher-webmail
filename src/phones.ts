@@ -46,6 +46,7 @@ export const nextPhoneId = async (): Promise<number> => {
   return currentValue
 }
 
+/** Favorite phone id in the list {@link phones} */
 export const favoritePhoneId: Writable<number> = new BrowserStore(
   'favoritePhoneId',
   writable(-1)
