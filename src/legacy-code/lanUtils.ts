@@ -85,7 +85,7 @@ export async function searchLoop(
 
     // Create an AbortController to trigger a timeout
     const controller = new AbortController()
-    setTimeout(controller.abort, timeOut)
+    setTimeout(() => controller.abort(), timeOut)
     signal.addEventListener('abort', () => controller.abort())
 
     // Try to reach all the devices found
@@ -155,9 +155,7 @@ async function sendPostRequest(
 ): Promise<[Record<string, string>, string, number]> {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
-  setTimeout(() => {
-    controller.abort()
-  }, timeout)
+  setTimeout(() => controller.abort(), timeout)
 
   // Send a POST request
   return fetch(url, {
