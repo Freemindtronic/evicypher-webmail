@@ -18,7 +18,8 @@ export interface WebAnswer {
 }
 
 /**
- * Find devices on the local network and send them a pairing request.
+ * Find devices on the local network, send them a pairing request and return the
+ * device that accepted it.
  *
  * @param hash - Pairing payload
  * @param type - Type of pairing request
@@ -63,8 +64,11 @@ export const search = async (
 }
 
 /**
- * Find devices on the local network and send them a pairing request.
+ * Find devices on the local network, send them a pairing request and return the
+ * device that accepted it.
  *
+ * @remarks
+ *   The difference with the function above is that this one only tries once.
  * @param hash - Pairing payload
  * @param type - Type of pairing request
  * @returns A promise with the pairing response, if any, or undefined if all
