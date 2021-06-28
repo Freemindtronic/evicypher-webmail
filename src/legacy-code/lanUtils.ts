@@ -10,8 +10,6 @@ export const apiProtocol = 'http://'
 export const json = 'json'
 export const POST = 'POST'
 
-class ErrorTimeOut extends Error {}
-
 export interface WebAnswer {
   url: string
   data: unknown
@@ -23,24 +21,22 @@ export async function search(
   type: string,
   // eslint-disable-next-line default-param-last
   signal: AbortSignal = new AbortController().signal,
-  PORT?: number,
+  port?: number,
   maxNumberOfSearches = 100
 ): Promise<WebAnswer> {
   if (signal.aborted) {
     throwCancelError('Canceled by user')
   }
 
-  return searchLoop(hash, type, signal, PORT).then((res) => {
-    if (res !== undefined) {
-      return res
-    }
+  // Try `maxNumberOfSearches` times to reach a phone
+  while (maxNumberOfSearches > 0) {
+    // eslint-disable-next-line no-await-in-loop
+    const res = await searchLoop(hash, type, signal, port)
+    if (res !== undefined) return res
+    maxNumberOfSearches--
+  }
 
-    if (maxNumberOfSearches > 0) {
-      return search(hash, type, signal, PORT, maxNumberOfSearches - 1)
-    }
-
-    throw new ErrorTimeOut('TimeOut')
-  })
+  throw new Error('Too many tries.')
 }
 
 export async function searchByIP(
