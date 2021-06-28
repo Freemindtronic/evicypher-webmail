@@ -24,9 +24,8 @@ export async function search(
   // eslint-disable-next-line default-param-last
   signal: AbortSignal = new AbortController().signal,
   PORT?: number,
-  n?: number
+  maxNumberOfSearches = 100
 ): Promise<undefined | WebAnswer> {
-  n = n === undefined ? 0 : n + 1
   if (signal.aborted) {
     throwCancelError('Canceled by user')
   }
@@ -36,8 +35,8 @@ export async function search(
       return res
     }
 
-    if ((n as number) < 100) {
-      return search(hash, type, signal, PORT, n)
+    if (maxNumberOfSearches > 0) {
+      return search(hash, type, signal, PORT, maxNumberOfSearches - 1)
     }
 
     throw new ErrorTimeOut('TimeOut')
