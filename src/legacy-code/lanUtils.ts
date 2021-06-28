@@ -54,18 +54,16 @@ export async function searchLoop(
   const nativePort = getZeroconfService()
 
   try {
-    // A promise to a response of the Zeroconf Service
-    const zeroconfResponse = new Promise<Array<[string, number]>>((resolve) => {
-      // Get a list of connected devices
-      nativePort.onMessage.addListener((response: ZeroconfResponse) => {
-        const devicesFound: Array<[string, number]> = []
-
-        for (const { a: ip, port } of response.result)
-          devicesFound.push([ip, port])
-
-        resolve(devicesFound)
-      })
-    })
+    // A promise to a list of connected devices
+    const zeroconfResponse = new Promise<Array<{ ip: string; port: number }>>(
+      (resolve) => {
+        // Ask the service for a list of connected devices
+        nativePort.onMessage.addListener((response: ZeroconfResponse) => {
+          // Return an array of {ip, port}
+          resolve(response.result.map(({ a: ip, port }) => ({ ip, port })))
+        })
+      }
+    )
     nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
 
     // Wait for either a response or a timeout
@@ -90,7 +88,7 @@ export async function searchLoop(
 
     // Try to reach all the devices found
     const requestsSent = []
-    for (const [ip, port] of devicesFound) {
+    for (const { ip, port } of devicesFound) {
       // URL to send the request to
       // If `portOverride` is set, ignore, the port found by Zeroconf
       const url = formatURL(ip, portOverride ?? port, type)
@@ -108,7 +106,7 @@ export async function searchLoop(
             throw new Error('The device refused the connection.')
           })
           .then((data) => ({ url, data })) // Resolve with url and data
-          .catch() // Ignore errors
+          .catch() // Ignore connection errors
       )
     }
 
