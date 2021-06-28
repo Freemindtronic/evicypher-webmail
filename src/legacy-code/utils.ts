@@ -10,24 +10,6 @@ export function random(size: number): Uint8Array {
   return crypto.getRandomValues(array)
 }
 
-export function numberToArray(word: number, length: number): number[] {
-  const array = []
-  for (let i = 0; i < length; i++) {
-    array.push((word >>> (8 * (length - 1 - i))) & 0xff)
-  }
-
-  return array
-}
-
-export function removeValueFromArray<T>(arr: T[], value: T): void {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === value) {
-      arr.splice(i, 1)
-      break
-    }
-  }
-}
-
 export function sha256(data: Uint8Array): Uint8Array {
   // eslint-disable-next-line new-cap
   return wordArrayToUint8Array(CryptoJS.SHA256(uint8ArrayToString(data)))
@@ -88,21 +70,6 @@ export const longToByteArray = (
   (long & 0xff_00_00) >> 16,
   (long & 0xff_00_00_00) >> 24,
 ]
-
-/**
- * Convert an array to a number in little endian fashion
- *
- * @param array - Input array
- * @returns Converted number
- */
-export function byteArrayToLong(array: Uint8Array): number {
-  let l = 0
-  for (const [i, v] of array.entries()) {
-    l += v << (8 * i)
-  }
-
-  return l
-}
 
 export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
   if (a.length > b.length) {
