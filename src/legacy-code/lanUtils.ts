@@ -105,38 +105,37 @@ export async function searchLoop(
   signal: AbortSignal = new AbortController().signal,
   PORT?: number
 ): Promise<undefined | WebAnswer> {
-  let addrs: string[]
-  let ports: number[]
-  let asyncAddrs: string[] = []
-  let asyncPort: number[] = []
-  let flagLoop = true
-  let result
-  const refreshPeriod = 500
-  const timeOut = 2500
-  const awaitingResponce: string[] = []
-
   if (!(await isZeroconfServiceInstalled())) {
     throw new Error('eviDNS not installed')
   }
 
   const nativePort = getZeroconfService()
+  let asyncAddrs: string[] = []
+  let asyncPort: number[] = []
 
   // A promise to a response of the Zeroconf Service
   const responded = new Promise<void>((resolve) => {
     nativePort.onMessage.addListener((response: ZeroconfResponse) => {
-      const tempAddr: string[] = []
-      const tempPort: number[] = []
-      for (let i = 0; i < response.result.length; i++) {
-        tempAddr.push(response.result[i].a)
-        tempPort.push(response.result[i].port)
+      asyncAddrs = []
+      asyncPort = []
+
+      for (const { a: ip, port } of response.result) {
+        asyncAddrs.push(ip)
+        asyncPort.push(port)
       }
 
-      asyncAddrs = [...tempAddr]
-      asyncPort = [...tempPort]
       resolve()
     })
   })
   nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
+
+  let addrs: string[]
+  let ports: number[]
+  let flagLoop = true
+  let result
+  const refreshPeriod = 500
+  const timeOut = 2500
+  const awaitingResponce: string[] = []
 
   // Wait for either a response from EviDNS or a timeout
   await Promise.race([responded, utils.delay(timeOut)])
