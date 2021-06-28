@@ -6,9 +6,8 @@ import {
   ZeroconfResponse,
 } from './zeroconf-service'
 
-export const apiProtocol = 'http://'
-export const json = 'json'
-export const POST = 'POST'
+/** @returns An HTTP address created from `ip` and `port` */
+const formatURL = (ip: string, port: number): string => `http://${ip}:${port}`
 
 export interface WebAnswer {
   url: string
@@ -146,10 +145,6 @@ export async function searchLoop(
 
   nativePort.disconnect()
   return result
-}
-
-export function formatURL(ip: string, port: number): string {
-  return apiProtocol + ip + ':' + port
 }
 
 // eslint-disable-next-line max-params
