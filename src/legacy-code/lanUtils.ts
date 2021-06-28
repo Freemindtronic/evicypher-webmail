@@ -19,20 +19,21 @@ export interface WebAnswer {
 export async function search(
   hash: string,
   type: string,
-  // eslint-disable-next-line default-param-last
   signal: AbortSignal = new AbortController().signal,
-  port?: number,
+  // eslint-disable-next-line unicorn/no-useless-undefined
+  port: number | undefined = undefined,
   maxNumberOfSearches = 100
 ): Promise<WebAnswer> {
-  if (signal.aborted) {
-    throwCancelError('Canceled by user')
-  }
-
   // Try `maxNumberOfSearches` times to reach a phone
   while (maxNumberOfSearches > 0) {
+    // Shall we continue?
+    if (signal.aborted) throw new Error('Cancel by user.')
+
+    // Run the search loop
     // eslint-disable-next-line no-await-in-loop
     const res = await searchLoop(hash, type, signal, port)
     if (res !== undefined) return res
+
     maxNumberOfSearches--
   }
 
