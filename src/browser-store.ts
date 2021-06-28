@@ -9,6 +9,7 @@ import { browser, Storage } from 'webextension-polyfill-ts'
 export class BrowserStore<T> implements Writable<T> {
   name: string
   writable: Writable<T>
+  loadPromise: Promise<void>
 
   /**
    * Instanciate a writable store backed by a local storage.
@@ -51,15 +52,18 @@ export class BrowserStore<T> implements Writable<T> {
       if (loaded) storage.set({ [this.name]: value })
     })
 
-    this.writable.update((value) => {
-      storage
-        .get({ [this.name]: value })
-        .then(({ [this.name]: value }) => transformer(value))
-        .then((value) => {
-          this.writable.set(value)
-          loaded = true
-        })
-      return value
+    this.loadPromise = new Promise((resolve) => {
+      this.writable.update((value) => {
+        storage
+          .get({ [this.name]: value })
+          .then(({ [this.name]: value }) => transformer(value))
+          .then((value) => {
+            this.writable.set(value)
+            loaded = true
+            resolve()
+          })
+        return value
+      })
     })
   }
 
