@@ -39,60 +39,6 @@ export async function search(
   throw new Error('Too many tries.')
 }
 
-export async function searchByIP(
-  IPs: string[],
-  PORT: number,
-  hash: string,
-  type: string
-): Promise<undefined | WebAnswer> {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
-    let flagLoop = true
-    const refreshPeriod = 500
-    const timeOut = 60_000
-    const awaitingResponce: string[] = []
-
-    const startTime = Date.now()
-
-    // Loop addresses with a cooldown of refreshPeriod (ms)
-    while (flagLoop) {
-      console.log('inLoop', IPs, awaitingResponce, flagLoop)
-
-      for (const ip of IPs) {
-        const url = formatURL(ip, PORT) + type
-
-        // Do not send new request to the one that did not responded yet
-        if (awaitingResponce.includes(url)) continue
-        awaitingResponce.push(url)
-
-        sendPostRequest(url, { t: hash }, 2500)
-          .then(([data, textStatus, xhr]) => {
-            if (xhr === 202) {
-              flagLoop = false
-              resolve({ url, data })
-            } else {
-              reject(textStatus)
-            }
-          })
-          .catch(() => {
-            utils.removeValueFromArray(awaitingResponce, url)
-          })
-      }
-
-      const deltaT = refreshPeriod - ((Date.now() - startTime) % refreshPeriod)
-      if (deltaT > 0) {
-        // eslint-disable-next-line no-await-in-loop
-        await utils.delay(deltaT)
-      }
-
-      // Run for 5s then exit
-      if (Date.now() - startTime > timeOut) {
-        flagLoop = false
-      }
-    }
-  })
-}
-
 export async function searchLoop(
   hash: string,
   type: string,
