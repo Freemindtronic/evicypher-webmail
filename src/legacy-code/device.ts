@@ -4,7 +4,6 @@ import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
 import { search, sendCipherADD, sendName } from './lanUtils'
-import { browser } from 'webextension-polyfill-ts'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -20,7 +19,7 @@ export class PairingKey {
   constructor() {
     this.port = Math.floor(Math.random() * 61_000) + 1025
     this.AES = new AesUtil(256, 1000)
-    this.certificate = Certificate.generate(browser.storage.local)
+    this.certificate = Certificate.generate()
     this.k1 = axlsign.generateKeyPair(utils.random(32))
     this.key = utils.random(16)
     this.iv = utils.random(16)
@@ -136,15 +135,10 @@ export class Device {
     return { name: utils.uint8ArrayToUTF8(name), UUID, ECC: sharedKey }
   }
 
-  async initForm(
+  async sendNameInfo(
     name: string,
-    _UUID: never,
     sharedKey: Uint8Array
-  ): Promise<void> {
-    this.sendNameInfo(name, sharedKey)
-  }
-
-  async sendNameInfo(name: string, sharedKey: Uint8Array): Promise<unknown> {
+  ): Promise<Certificate> {
     if (this.IP === undefined) throw new Error('Certificate undefined')
 
     const ivS = utils.random(16)
@@ -173,7 +167,8 @@ export class Device {
         utils.concatUint8Array(this.pairingKey.Tkey, this.certificate.id)
       ),
     }
-    const certificate = new Certificate(certData, browser.storage.local)
-    return certificate.saveNew()
+
+    // Return the permanent certificate for this device
+    return new Certificate(certData)
   }
 }

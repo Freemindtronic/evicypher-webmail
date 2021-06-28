@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Phone, phones } from 'phones'
+  import { nextPhoneId, Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
   import PhoneItem from './Phone.svelte'
@@ -41,10 +41,16 @@
     uid = key.UUID
 
     // Send the confirmation request
-    await device.sendNameInfo(phoneName, key.ECC)
+    const certificate = await device.sendNameInfo(phoneName, key.ECC)
+
+    $phones = [
+      ...$phones,
+      new Phone(await nextPhoneId(), phoneName, certificate),
+    ]
 
     // Show a success message
     console.log('Pairing successful')
+    cancelPairing()
   }
 
   /** Remove a phone. */

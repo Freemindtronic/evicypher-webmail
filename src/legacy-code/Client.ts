@@ -7,7 +7,7 @@ import * as lanUtil from './lanUtils'
 import * as utils from './utils'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
-import { browser, Storage } from 'webextension-polyfill-ts'
+import type { Phone } from 'phones'
 
 const AES = new AesUtil(256, 1000)
 
@@ -34,22 +34,19 @@ interface Crypt {
 export class Client {
   keysExchange: KeysExchange | undefined
   stopClient: boolean
-  storage: Storage.StorageArea
+  phone: Phone
 
-  constructor(storage: Storage.StorageArea) {
+  constructor(phone: Phone) {
+    this.phone = phone
     this.stopClient = false
-    this.storage = storage
   }
 
-  requestKey(
-    name: string,
-    keyToGet?: Uint8Array
-  ): Promise<{
+  requestKey(keyToGet?: Uint8Array): Promise<{
     high: Uint8Array
     low: Uint8Array
   }> {
     const exchange = {
-      name,
+      name: this.phone.name,
       type: '/CK',
       link: keyToGet,
     }
@@ -62,7 +59,7 @@ export class Client {
     low: Uint8Array
   }> {
     const crypt = {
-      KEY: await Certificate.load(exchange.name, this.storage),
+      KEY: this.phone.certificate,
       ECC1: undefined,
       ECC2: undefined,
       ECC3: undefined,
@@ -274,7 +271,7 @@ export class Client {
               id: nId,
               jamming: nJam,
             }
-            new Certificate(data, browser.storage.local).update()
+            this.phone.certificate = new Certificate(data)
           })
       })
   }

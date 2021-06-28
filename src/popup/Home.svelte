@@ -1,16 +1,7 @@
 <script lang="ts">
-  import { favoritePhoneId, phones } from 'phones'
+  import { favoritePhone } from 'phones'
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
-  import { derived } from 'svelte/store'
-
-  // The favorite phone is a read-only store derived from two writable stores,
-  // it updates whenever one of the two updates
-  const favoritePhone = derived(
-    [phones, favoritePhoneId],
-    ([$phones, $favoritePhoneId]) =>
-      $phones.find((phone) => phone.id === $favoritePhoneId)
-  )
 </script>
 
 <h1>{$_('home')}</h1>

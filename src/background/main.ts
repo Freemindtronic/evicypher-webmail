@@ -1,37 +1,51 @@
+import { BrowserStore } from 'browser-store'
 import { Client } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import { Settings } from 'legacy-code/Settings'
 import type { Message } from 'messages'
+import { favoritePhone, phones } from 'phones'
+import { get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 
 /** Send an encryption request to the phone, return the encrypted text. */
 const encrypt = async (str: string) => {
+  await BrowserStore.allLoaded
   // Fetch the cerificate of the favorite phone in browser storage
-  const device = await Settings.getFavorite()
+  const phone = get(favoritePhone)
+
+  if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const client = new Client(browser.storage.local)
-  const keys = await client.requestKey(device)
+  const client = new Client(phone)
+  const keys = await client.requestKey()
 
   // Encrypt the text
   const evi = new EviCrypt(keys)
   const encrypted = evi.encryptText(str)
+
+  // A new certificate is created at the end of each exchange
+  phones.update((phones) => phones)
 
   return encrypted
 }
 
 /** Send an decryption request to the phone, return the decrypted text. */
 const decrypt = async (str: string) => {
+  await BrowserStore.allLoaded
   // Fetch the cerificate of the favorite phone in browser storage
-  const device = await Settings.getFavorite()
+  const phone = get(favoritePhone)
+
+  if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const client = new Client(browser.storage.local)
-  const keys = await client.requestKey(device)
+  const client = new Client(phone)
+  const keys = await client.requestKey()
 
   // Decrypt the text
   const evi = new EviCrypt(keys)
   const decrypted = evi.decryptText(str)
+
+  // A new certificate is created at the end of each exchange
+  phones.update((phones) => phones)
 
   return decrypted
 }

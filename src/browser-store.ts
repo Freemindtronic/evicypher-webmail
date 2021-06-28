@@ -11,6 +11,8 @@ export class BrowserStore<T> implements Writable<T> {
   writable: Writable<T>
   loadPromise: Promise<void>
 
+  static allLoaded: Promise<void> = Promise.resolve()
+
   /**
    * Instanciate a writable store backed by a local storage.
    *
@@ -49,14 +51,15 @@ export class BrowserStore<T> implements Writable<T> {
     let loaded = false
 
     this.writable.subscribe((value) => {
-      if (loaded) storage.set({ [this.name]: value })
+      console.log(value)
+      if (loaded) storage.set({ [this.name]: JSON.stringify(value) })
     })
 
     this.loadPromise = new Promise((resolve) => {
       this.writable.update((value) => {
         storage
-          .get({ [this.name]: value })
-          .then(({ [this.name]: value }) => transformer(value))
+          .get({ [this.name]: JSON.stringify(value) })
+          .then(({ [this.name]: value }) => transformer(JSON.parse(value)))
           .then((value) => {
             this.writable.set(value)
             loaded = true
@@ -64,6 +67,11 @@ export class BrowserStore<T> implements Writable<T> {
           })
         return value
       })
+    })
+
+    const previousPromise = BrowserStore.allLoaded
+    BrowserStore.allLoaded = new Promise((resolve) => {
+      this.loadPromise.then(() => previousPromise).then(resolve)
     })
   }
 
