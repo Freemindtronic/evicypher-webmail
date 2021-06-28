@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/filename-case */
-import * as utils from './utils'
 import {
   getZeroconfService,
   isZeroconfServiceInstalled,
@@ -107,7 +106,9 @@ const searchLoop = async (
     const timeOut = 2500
     const devicesFound = await Promise.race([
       zeroconfResponse,
-      utils.delay(timeOut),
+      new Promise<void>((resolve) => {
+        setTimeout(resolve, timeOut)
+      }),
     ])
 
     // Check it the request timed out

@@ -132,11 +132,6 @@ export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
   return new Uint8Array([...a, ...b])
 }
 
-export const delay = (millis: number): Promise<void> =>
-  new Promise<void>((resolve) => {
-    setTimeout(() => resolve(), millis)
-  })
-
 export function webSafe64(base64: string): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
