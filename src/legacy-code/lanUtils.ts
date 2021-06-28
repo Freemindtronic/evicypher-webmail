@@ -7,12 +7,14 @@ import {
 } from './zeroconf-service'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
-const formatURL = (ip: string, port: number, type: string): string =>
+const formatURL = (ip: string, port: number, type = ''): string =>
   `http://${ip}:${port}${type}`
 
 export interface WebAnswer {
   url: string
   data: unknown
+  ip: string
+  origin: string
 }
 
 /**
@@ -120,9 +122,11 @@ const searchLoop = async (
     // Try to reach all the devices found
     const requestsSent = []
     for (const { ip, port } of devicesFound) {
-      // URL to send the request to
       // If `portOverride` is set, ignore, the port found by Zeroconf
-      const url = formatURL(ip, portOverride ?? port, type)
+      const requestPort = portOverride ?? port
+
+      // URL to send the request to
+      const url = formatURL(ip, requestPort, type)
 
       // We send the request to the device
       requestsSent.push(
@@ -136,7 +140,12 @@ const searchLoop = async (
             if (response.status === 202) return response.json()
             throw new Error('The device refused the connection.')
           })
-          .then((data) => ({ url, data })) // Resolve with url and data
+          .then((data) => ({
+            url,
+            data,
+            ip,
+            origin: formatURL(ip, requestPort),
+          })) // Resolve with url and data
           .catch() // Ignore connection errors
       )
     }
@@ -210,15 +219,6 @@ async function sendPostRequestData(
 
     throw new Error('err')
   })
-}
-
-export function extractIP(url: string): string {
-  // eslint-disable-next-line unicorn/prefer-string-slice
-  return url.substring(7, url.lastIndexOf(':'))
-}
-
-export function extractURL(url: string): string {
-  return url.slice(0, Math.max(0, url.lastIndexOf('/')))
 }
 
 export async function sendCipher(

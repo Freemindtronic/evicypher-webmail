@@ -3,7 +3,7 @@ import * as utils from './utils'
 import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
-import { search, sendCipherADD, sendName, extractIP } from './lanUtils'
+import { search, sendCipherADD, sendName } from './lanUtils'
 import { browser } from 'webextension-polyfill-ts'
 
 export class PairingKey {
@@ -60,9 +60,7 @@ export async function clientHello(
     signal,
     portOverride: pairingKey.port,
   })
-  const ip = extractIP(answer.url)
-
-  return new Device(ip, pairingKey)
+  return new Device(answer.ip, pairingKey)
 }
 
 export class Device {
