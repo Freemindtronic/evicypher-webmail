@@ -6,8 +6,9 @@ import {
   ZeroconfResponse,
 } from './zeroconf-service'
 
-/** @returns An HTTP address created from `ip` and `port` */
-const formatURL = (ip: string, port: number): string => `http://${ip}:${port}`
+/** @returns An HTTP address created from `ip`, `port` and `type` */
+const formatURL = (ip: string, port: number, type: string): string =>
+  `http://${ip}:${port}${type}`
 
 export interface WebAnswer {
   url: string
@@ -23,6 +24,10 @@ export async function search(
   port: number | undefined = undefined,
   maxNumberOfSearches = 100
 ): Promise<WebAnswer> {
+  // Check that the Zeroconf service is reachable
+  if (!(await isZeroconfServiceInstalled()))
+    throw new Error('Zeroconf service not installed.')
+
   // Try `maxNumberOfSearches` times to reach a phone
   while (maxNumberOfSearches > 0) {
     // Shall we continue?
@@ -44,107 +49,77 @@ export async function searchLoop(
   type: string,
   // eslint-disable-next-line default-param-last
   signal: AbortSignal = new AbortController().signal,
-  PORT?: number
-): Promise<undefined | WebAnswer> {
-  if (!(await isZeroconfServiceInstalled())) {
-    throw new Error('eviDNS not installed')
-  }
-
+  portOverride?: number
+): Promise<WebAnswer | void> {
   const nativePort = getZeroconfService()
-  let asyncAddrs: string[] = []
-  let asyncPort: number[] = []
 
-  // A promise to a response of the Zeroconf Service
-  const responded = new Promise<void>((resolve) => {
-    nativePort.onMessage.addListener((response: ZeroconfResponse) => {
-      asyncAddrs = []
-      asyncPort = []
+  try {
+    // A promise to a response of the Zeroconf Service
+    const zeroconfResponse = new Promise<Array<[string, number]>>((resolve) => {
+      // Get a list of connected devices
+      nativePort.onMessage.addListener((response: ZeroconfResponse) => {
+        const devicesFound: Array<[string, number]> = []
 
-      for (const { a: ip, port } of response.result) {
-        asyncAddrs.push(ip)
-        asyncPort.push(port)
-      }
+        for (const { a: ip, port } of response.result)
+          devicesFound.push([ip, port])
 
-      resolve()
-    })
-  })
-  nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
-
-  let addrs: string[]
-  let ports: number[]
-  let flagLoop = true
-  let result
-  const refreshPeriod = 500
-  const timeOut = 2500
-  const awaitingResponce: string[] = []
-
-  // Wait for either a response from EviDNS or a timeout
-  await Promise.race([responded, utils.delay(timeOut)])
-
-  const startTime = Date.now()
-
-  // Loop addresses with a cooldown of refreshPeriod (ms)
-  while (flagLoop) {
-    addrs = [...asyncAddrs]
-    ports = [...asyncPort]
-
-    console.log('inLoop', addrs, awaitingResponce)
-
-    for (const [i, addr] of addrs.entries()) {
-      const port = PORT === undefined ? ports[i] : PORT
-      const url = formatURL(addr, port) + type
-
-      // Do not send new request to the one that did not responded yet
-      if (awaitingResponce.includes(url)) continue
-      awaitingResponce.push(url)
-
-      // Create an AbortController to trigger a timeout
-      const controller = new AbortController()
-      setTimeout(() => {
-        controller.abort()
-      }, timeOut)
-
-      // Try to reach the phone
-      fetch(url, {
-        method: 'POST',
-        body: new URLSearchParams({ t: hash }),
-        signal: controller.signal,
+        resolve(devicesFound)
       })
-        .then((response) => {
-          if (response.status === 202) return response.json()
-          if (response.status >= 400) throw new Error('Server error')
-          throw new Error(
-            `Device return wrong status number: ${response.status}`
-          )
+    })
+    nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
+
+    // Wait for either a response or a timeout
+    const timeOut = 2500
+    const devicesFound = await Promise.race([
+      zeroconfResponse,
+      utils.delay(timeOut),
+    ])
+
+    // Check it the request timed out
+    if (devicesFound === undefined) return
+
+    console.log(`${devicesFound.length} devices found.`)
+
+    // Abort the operation if no device is found
+    if (devicesFound.length === 0) return
+
+    // Create an AbortController to trigger a timeout
+    const controller = new AbortController()
+    setTimeout(controller.abort, timeOut)
+    signal.addEventListener('abort', () => controller.abort())
+
+    // Try to reach all the devices found
+    const requestsSent = []
+    for (const [ip, port] of devicesFound) {
+      // URL to send the request to
+      // If `portOverride` is set, ignore, the port found by Zeroconf
+      const url = formatURL(ip, portOverride ?? port, type)
+
+      // We send the request to the device
+      requestsSent.push(
+        fetch(url, {
+          method: 'POST',
+          body: new URLSearchParams({ t: hash }),
+          signal: controller.signal,
         })
-        .then((data) => {
-          nativePort.disconnect()
-          flagLoop = false
-          result = { url, data }
-        })
-        .catch(() => {
-          utils.removeValueFromArray(awaitingResponce, url)
-          console.warn('Connection failed, retrying in a few seconds.')
-        })
+          .then((response) => {
+            // Accept responses that match "202 Accepted"
+            if (response.status === 202) return response.json()
+            throw new Error('The device refused the connection.')
+          })
+          .then((data) => ({ url, data })) // Resolve with url and data
+          .catch() // Ignore errors
+      )
     }
 
-    // Wait a few milliseconds before retrying
-    // eslint-disable-next-line no-await-in-loop
-    await utils.delay(refreshPeriod)
-
-    // Run for 5s then exit
-    if (Date.now() - startTime > timeOut) {
-      flagLoop = false
-    }
-
-    if (signal.aborted) {
-      nativePort.disconnect()
-      throwCancelError('Canceled by user')
-    }
+    // Wait for either a device to pair, or an AggregateError
+    return await Promise.any(requestsSent)
+  } catch {
+    console.warn('No device accepted to pair.')
+  } finally {
+    // Properly disconnect
+    nativePort.disconnect()
   }
-
-  nativePort.disconnect()
-  return result
 }
 
 // eslint-disable-next-line max-params
@@ -155,7 +130,7 @@ export function sendCipherADD(
   salt: string,
   hash: string
 ): Promise<Record<string, string>> {
-  const url = formatURL(IP, PORT) + '/c'
+  const url = formatURL(IP, PORT, '/c')
   const data = { t: hash, s: salt, i: iv }
   return sendPostRequestData(url, data, 60_000)
 }
@@ -168,7 +143,7 @@ export function sendName(
   salt: string,
   name: string
 ): Promise<[unknown, string, number]> {
-  const url = formatURL(IP, PORT) + '/n'
+  const url = formatURL(IP, PORT, '/n')
   const data = { n: name, s: salt, i: iv }
   return sendPostRequest(url, data, 5000)
 }
