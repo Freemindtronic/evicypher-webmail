@@ -1,11 +1,17 @@
 <script lang="ts">
-  import { nextPhoneId, Phone, phones } from 'phones'
+  import { clientHello, PairingKey } from 'legacy-code/device'
+  import {
+    favoritePhone,
+    favoritePhoneId,
+    nextPhoneId,
+    Phone,
+    phones,
+  } from 'phones'
+  import { toCanvas } from 'qrcode'
+  import { tick } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { link } from 'svelte-spa-router'
   import PhoneItem from './Phone.svelte'
-  import { toCanvas } from 'qrcode'
-  import { tick } from 'svelte'
-  import { clientHello, PairingKey } from 'legacy-code/device'
 
   /** Name of the phone to be added. */
   let phoneName = ''
@@ -42,15 +48,19 @@
 
     // Send the confirmation request
     const certificate = await device.sendNameInfo(phoneName, key.ECC)
+    const phone = new Phone(await nextPhoneId(), phoneName, certificate)
 
-    $phones = [
-      ...$phones,
-      new Phone(await nextPhoneId(), phoneName, certificate),
-    ]
+    $phones = [...$phones, phone]
 
     // Show a success message
     console.log('Pairing successful')
-    cancelPairing()
+
+    if ($favoritePhone === undefined) {
+      $favoritePhoneId = phone.id
+    }
+
+    phoneName = ''
+    pairingInProgress = false
   }
 
   /** Remove a phone. */
