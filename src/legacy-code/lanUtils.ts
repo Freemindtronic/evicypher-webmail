@@ -35,7 +35,7 @@ export async function search(
 
     // Run the search loop
     // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(hash, type, signal, port)
+    const res = await searchLoop(hash, type, { signal, portOverride: port })
     if (res !== undefined) return res
 
     maxNumberOfSearches--
@@ -44,13 +44,28 @@ export async function search(
   throw new Error('Too many tries.')
 }
 
-export async function searchLoop(
+/**
+ * Find devices on the local network and send them a pairing request.
+ *
+ * @param hash - Pairing payload
+ * @param type - Type of pairing request
+ * @returns A promise with the pairing response, if any, or undefined if all
+ *   devices refused the connection
+ */
+const searchLoop = async (
   hash: string,
   type: string,
-  // eslint-disable-next-line default-param-last
-  signal: AbortSignal = new AbortController().signal,
-  portOverride?: number
-): Promise<WebAnswer | void> {
+  {
+    signal = new AbortController().signal,
+    portOverride,
+  }: {
+    /** An AbortSignal to cancel any pending request. */
+    signal?: AbortSignal
+    /** If set, ignore the connection port advertised by the devices. */
+    portOverride?: number
+  } = {}
+): Promise<WebAnswer | void> => {
+  // Connect to the Zeroconf/mDNS service locally installed
   const nativePort = getZeroconfService()
 
   try {
