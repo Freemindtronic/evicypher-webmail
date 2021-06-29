@@ -14,8 +14,8 @@ init({
   initialLocale: getLocaleFromNavigator(),
 })
 
-// Store the locale in browser storage
-const storedLocale = new BrowserStore('locale', locale, {
+/** Application locale. */
+const storedLocale = new BrowserStore<string>('locale', locale, {
   storage: browser.storage.sync,
 })
 

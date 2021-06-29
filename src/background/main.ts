@@ -9,6 +9,7 @@ import { browser } from 'webextension-polyfill-ts'
 /** Send an encryption request to the phone, return the encrypted text. */
 const encrypt = async (str: string) => {
   await BrowserStore.allLoaded
+
   // Fetch the cerificate of the favorite phone in browser storage
   const phone = get(favoritePhone)
 
@@ -31,6 +32,7 @@ const encrypt = async (str: string) => {
 /** Send an decryption request to the phone, return the decrypted text. */
 const decrypt = async (str: string) => {
   await BrowserStore.allLoaded
+
   // Fetch the cerificate of the favorite phone in browser storage
   const phone = get(favoritePhone)
 

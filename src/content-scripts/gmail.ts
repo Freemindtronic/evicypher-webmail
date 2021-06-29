@@ -3,7 +3,7 @@ import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
 /** Send a request to the background script to encrypt the given string. */
-export const encryptString = async (string: string): Promise<string> =>
+const encryptString = async (string: string): Promise<string> =>
   browser.runtime.sendMessage({
     type: 'encrypt-request',
     string,
