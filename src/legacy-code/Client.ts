@@ -25,10 +25,10 @@ interface KeysExchange {
 
 interface Crypt {
   KEY: Certificate
-  ECC1?: Uint8Array
-  ECC2?: Uint8Array
-  ECC3?: Uint8Array
-  URL?: string
+  ECC1: Uint8Array
+  ECC2: Uint8Array
+  ECC3: Uint8Array
+  URL: string
 }
 
 export class Client {
@@ -58,29 +58,26 @@ export class Client {
     high: Uint8Array
     low: Uint8Array
   }> {
-    const crypt = {
-      KEY: this.phone.certificate,
-      ECC1: undefined,
-      ECC2: undefined,
-      ECC3: undefined,
-      URL: undefined,
-    }
-    return this.sendRequest(exchange, crypt)
+    return this.sendRequest(exchange, this.phone.certificate)
   }
 
   async sendRequest(
     exchange: Exchange,
-    crypt: Crypt
+    certificate: Certificate
   ): Promise<{
     high: Uint8Array
     low: Uint8Array
   }> {
-    const answer = await lanUtil.search(Base64.encode(crypt.KEY.id), '/P')
+    const answer = await lanUtil.search(Base64.encode(certificate.id), '/P')
     const data = utils.b64ToObject(answer.data as Record<string, string>)
-    crypt.ECC1 = AES.decryptCTR(data.iv1, data.sa1, crypt.KEY.tKey, data.k1)
-    crypt.ECC2 = AES.decryptCTR(data.iv2, data.sa2, crypt.KEY.tKey, data.k2)
-    crypt.ECC3 = AES.decryptCTR(data.iv3, data.sa3, crypt.KEY.tKey, data.k3)
-    crypt.URL = answer.origin
+    const crypt: Crypt = {
+      KEY: certificate,
+      ECC1: AES.decryptCTR(data.iv1, data.sa1, certificate.tKey, data.k1),
+      ECC2: AES.decryptCTR(data.iv2, data.sa2, certificate.tKey, data.k2),
+      ECC3: AES.decryptCTR(data.iv3, data.sa3, certificate.tKey, data.k3),
+      URL: answer.origin,
+    }
+
     return this.sendKey(exchange, crypt)
   }
 
@@ -145,11 +142,7 @@ export class Client {
       data.dh = Base64.encode(encd)
     }
 
-    const answer = await lanUtil.sendCipher(
-      exchange.type,
-      crypt.URL as string,
-      data
-    )
+    const answer = await lanUtil.sendCipher(exchange.type, crypt.URL, data)
     const keys = this.getKey(crypt, answer)
     this.endAndUpdate(crypt)
     return keys
@@ -246,33 +239,31 @@ export class Client {
     }
 
     return lanUtil
-      .sendEnd(crypt.URL as string, utils.objectToB64(dataToSend))
+      .sendEnd(crypt.URL, utils.objectToB64(dataToSend))
       .then(async (data) => {
         const newKey = utils.b64ToObject(data)
         const newId = axlsign.sharedKey(newShare.k4.private, newKey.k4)
-        return lanUtil
-          .sendOk(crypt.URL as string, Base64.encode(newId))
-          .then(() => {
-            const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
-            const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
-            const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
-            const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
-            const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
-            const nFkey = utils.xor(SK1, crypt.KEY.fKey)
-            const nSkey = utils.xor(SK2, crypt.KEY.sKey)
-            const nTkey = utils.xor(SK3, crypt.KEY.tKey)
-            const nId = utils.xor(SKid, crypt.KEY.id)
-            const nJam = utils.xor(SK4, crypt.KEY.jamming)
-            const data = {
-              name: crypt.KEY.name,
-              fKey: nFkey,
-              sKey: nSkey,
-              tKey: nTkey,
-              id: nId,
-              jamming: nJam,
-            }
-            this.phone.certificate = new Certificate(data)
-          })
+        return lanUtil.sendOk(crypt.URL, Base64.encode(newId)).then(() => {
+          const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
+          const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
+          const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
+          const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
+          const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+          const nFkey = utils.xor(SK1, crypt.KEY.fKey)
+          const nSkey = utils.xor(SK2, crypt.KEY.sKey)
+          const nTkey = utils.xor(SK3, crypt.KEY.tKey)
+          const nId = utils.xor(SKid, crypt.KEY.id)
+          const nJam = utils.xor(SK4, crypt.KEY.jamming)
+          const data = {
+            name: crypt.KEY.name,
+            fKey: nFkey,
+            sKey: nSkey,
+            tKey: nTkey,
+            id: nId,
+            jamming: nJam,
+          }
+          this.phone.certificate = new Certificate(data)
+        })
       })
   }
 }
