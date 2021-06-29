@@ -68,10 +68,7 @@ export class BrowserStore<T> implements Writable<T> {
       })
     })
 
-    const previousPromise = BrowserStore.allLoaded
-    BrowserStore.allLoaded = new Promise((resolve) => {
-      this.loadPromise.then(() => previousPromise).then(resolve)
-    })
+    BrowserStore.allLoaded = BrowserStore.allLoaded.then(() => this.loadPromise)
   }
 
   set(value: T): void {
