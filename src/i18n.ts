@@ -16,7 +16,7 @@ init({
 
 // Store the locale in browser storage
 const storedLocale = new BrowserStore('locale', locale, {
-  storage: browser.storage.local, // TODO: move to storage.sync
+  storage: browser.storage.sync,
 })
 
 export { storedLocale as locale }
