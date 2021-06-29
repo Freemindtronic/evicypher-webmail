@@ -7,10 +7,16 @@ import { browser, Storage } from 'webextension-polyfill-ts'
  * @typeParam T - Type of the wrapped variable
  */
 export class BrowserStore<T> implements Writable<T> {
-  name: string
-  writable: Writable<T>
-  loadPromise: Promise<void>
+  /** Storage key. */
+  readonly name: string
 
+  /** Underlying store. */
+  readonly writable: Writable<T>
+
+  /** A promise resolved when the store is hydrated with the persisted data. */
+  readonly loadPromise: Promise<void>
+
+  /** A promise resolved when all known BrowserStores are hydrated. */
   static allLoaded: Promise<void> = Promise.resolve()
 
   /**
@@ -30,11 +36,12 @@ export class BrowserStore<T> implements Writable<T> {
        * Used to produce an object of type `T` with the output of `JSON.parse`.
        *
        * @remarks
-       *   The default transformer is `x => x`: it returns its first argument directly.
+       *   The default transformer is `x => x`: it returns its first argument
+       *   directly. Async functions are allowed.
        * @param parsed - The output of `JSON.parse`
        * @returns A value to {@link set | `set`} the store to
        */
-      transformer?: (parsed: unknown) => T
+      transformer?: (parsed: unknown) => T | Promise<T>
 
       /**
        * Where to physically store data.
@@ -47,13 +54,11 @@ export class BrowserStore<T> implements Writable<T> {
     this.name = name
     this.writable = writable
 
-    // Asynchronously load data from browser storage
+    // Set to true when `get(this.writable) === storage.get(this.name)`
     let loaded = false
+    let ignoreNextEvent = false
 
-    this.writable.subscribe((value) => {
-      if (loaded) storage.set({ [this.name]: JSON.stringify(value) })
-    })
-
+    // Asynchronously load data from browser storage
     this.loadPromise = new Promise((resolve) => {
       this.writable.update((value) => {
         storage
@@ -68,7 +73,45 @@ export class BrowserStore<T> implements Writable<T> {
       })
     })
 
+    // Make changes persistent
+    this.writable.subscribe((value) => {
+      if (!loaded) return
+      storage.set({ [this.name]: JSON.stringify(value) })
+      // Do not trigger the event listener below
+      ignoreNextEvent = true
+    })
+
+    // Make a nice promise chain
     BrowserStore.allLoaded = BrowserStore.allLoaded.then(() => this.loadPromise)
+
+    // Listen for changes in other tabs/processes
+    browser.storage.onChanged.addListener((changes, area) => {
+      // Ignore unrelated storages and keys
+      if (
+        (area === 'sync' && storage !== browser.storage.sync) ||
+        (area === 'local' && storage !== browser.storage.local) ||
+        (area === 'managed' && storage !== browser.storage.managed) ||
+        !(this.name in changes)
+      )
+        return
+
+      // If the change was local, ignore it
+      if (ignoreNextEvent) {
+        ignoreNextEvent = false
+        return
+      }
+
+      // Temporarily unload the value to prevent an infinite loop
+      loaded = false
+
+      // We need to wrap the output of `transformer` in case it is not asynchronous
+      Promise.resolve(
+        transformer(JSON.parse(changes[this.name].newValue))
+      ).then((value) => {
+        this.writable.set(value)
+        loaded = true
+      })
+    })
   }
 
   set(value: T): void {
