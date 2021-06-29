@@ -101,15 +101,14 @@ export class Client {
     const ivList = []
     const saltList = []
     const encList = []
-    const keysSK = ['SK1', 'SK2', 'SK3']
-    const keysECC = ['ECC1', 'ECC2', 'ECC3']
 
-    for (let i = 0; i < 3; i++) {
+    for (const [sk, ecc] of [
+      ['SK1', 'ECC1'],
+      ['SK2', 'ECC2'],
+      ['SK3', 'ECC3'],
+    ] as ['SK1' | 'SK2' | 'SK3', 'ECC1' | 'ECC2' | 'ECC3'][]) {
       const k = axlsign.generateKeyPair(utils.random(32))
-      keysExchange[keysSK[i] as keyof KeysExchange] = axlsign.sharedKey(
-        k.private,
-        crypt[keysECC[i] as 'ECC1' | 'ECC2' | 'ECC3'] as Uint8Array
-      )
+      keysExchange[sk] = axlsign.sharedKey(k.private, crypt[ecc] as Uint8Array)
       const iv = utils.random(16)
       const salt = utils.random(16)
       const enc = AES.encryptCTR(iv, salt, crypt.KEY.tKey, k.public)
