@@ -1,13 +1,12 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable camelcase */
-import * as Base64 from 'base64-arraybuffer'
 import axlsign from 'axlsign'
-
-import * as lanUtil from './lanUtils'
-import * as utils from './utils'
+import * as Base64 from 'base64-arraybuffer'
+import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
-import type { Phone } from 'phones'
+import * as lanUtil from './lanUtils'
+import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
 
@@ -31,6 +30,22 @@ interface Crypt {
   URL: string
 }
 
+/**
+ * A ping response, as sent by the application. It contains important
+ * information such as keys.
+ */
+export interface PingResponse {
+  iv1: Uint8Array
+  sa1: Uint8Array
+  k1: Uint8Array
+  iv2: Uint8Array
+  sa2: Uint8Array
+  k2: Uint8Array
+  iv3: Uint8Array
+  sa3: Uint8Array
+  k3: Uint8Array
+}
+
 export interface KeyPair {
   high: Uint8Array
   low: Uint8Array
@@ -46,13 +61,14 @@ export const fetchKeys = async (
   phone: Phone,
   keyToGet?: Uint8Array
 ): Promise<[KeyPair, Certificate]> => {
+  // For protocol "details", see https://github.com/Freemindtronic/Evitoken_Android/blob/master/app/src/main/java/com/fulltoken/NetworkManage/http/HttpServer.java
   const firstResponse = await lanUtil.search(
     Base64.encode(phone.certificate.id),
     '/P'
   )
   const firstData = utils.b64ToObject(
     firstResponse.data as Record<string, string>
-  )
+  ) as unknown as PingResponse
   const crypt: Crypt = {
     KEY: phone.certificate,
     ECC1: AES.decryptCTR(
