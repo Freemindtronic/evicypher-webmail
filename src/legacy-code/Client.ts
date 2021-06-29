@@ -221,6 +221,16 @@ export class Client {
     return { high, low }
   }
 
+  /**
+   * Conclude the key exchange process and ask the device for the certificate to
+   * use for the next exchange.
+   *
+   * @privateRemarks
+   *   There are many design flaws in the protocol, and here is one more: the
+   *   browser extension may never receive the new certificate if the connection
+   *   is broken before receiving the new key. This leads to this annoying "303
+   *   See Other" you will probably see more than once.
+   */
   async endAndUpdate(crypt: Crypt): Promise<void> {
     const newShare = {
       id: axlsign.generateKeyPair(utils.random(32)),
@@ -238,32 +248,30 @@ export class Client {
       k4: newShare.k4.public,
     }
 
-    return lanUtil
-      .sendEnd(crypt.URL, utils.objectToB64(dataToSend))
-      .then(async (data) => {
-        const newKey = utils.b64ToObject(data)
-        const newId = axlsign.sharedKey(newShare.k4.private, newKey.k4)
-        return lanUtil.sendOk(crypt.URL, Base64.encode(newId)).then(() => {
-          const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
-          const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
-          const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
-          const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
-          const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
-          const nFkey = utils.xor(SK1, crypt.KEY.fKey)
-          const nSkey = utils.xor(SK2, crypt.KEY.sKey)
-          const nTkey = utils.xor(SK3, crypt.KEY.tKey)
-          const nId = utils.xor(SKid, crypt.KEY.id)
-          const nJam = utils.xor(SK4, crypt.KEY.jamming)
-          const data = {
-            name: crypt.KEY.name,
-            fKey: nFkey,
-            sKey: nSkey,
-            tKey: nTkey,
-            id: nId,
-            jamming: nJam,
-          }
-          this.phone.certificate = new Certificate(data)
-        })
-      })
+    const data = await lanUtil.sendEnd(crypt.URL, utils.objectToB64(dataToSend))
+    const newKey = utils.b64ToObject(data)
+    const newId = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+
+    await lanUtil.sendOk(crypt.URL, Base64.encode(newId))
+
+    const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
+    const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
+    const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
+    const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
+    const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+    const nFkey = utils.xor(SK1, crypt.KEY.fKey)
+    const nSkey = utils.xor(SK2, crypt.KEY.sKey)
+    const nTkey = utils.xor(SK3, crypt.KEY.tKey)
+    const nId = utils.xor(SKid, crypt.KEY.id)
+    const nJam = utils.xor(SK4, crypt.KEY.jamming)
+    const newCertificate = {
+      name: crypt.KEY.name,
+      fKey: nFkey,
+      sKey: nSkey,
+      tKey: nTkey,
+      id: nId,
+      jamming: nJam,
+    }
+    this.phone.certificate = new Certificate(newCertificate)
   }
 }
