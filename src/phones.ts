@@ -34,7 +34,6 @@ export class Phone {
   }
 
   toJSON(): Record<string, unknown> {
-    console.log('toJSON called!')
     return {
       id: this.id,
       name: this.name,

@@ -51,7 +51,6 @@ export class BrowserStore<T> implements Writable<T> {
     let loaded = false
 
     this.writable.subscribe((value) => {
-      console.log(value)
       if (loaded) storage.set({ [this.name]: JSON.stringify(value) })
     })
 
