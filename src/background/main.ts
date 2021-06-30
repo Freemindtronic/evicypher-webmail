@@ -22,9 +22,7 @@ const encrypt = async (str: string) => {
 
   // Encrypt the text
   const evi = new EviCrypt(keys)
-  const encrypted = evi.encryptText(str)
-
-  return encrypted
+  return evi.encryptText(str)
 }
 
 /** Send an decryption request to the phone, return the decrypted text. */

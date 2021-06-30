@@ -128,7 +128,7 @@ export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
   return new Uint8Array([...a, ...b])
 }
 
-// eslint-disable-next-line complexity
+// eslint-disable-next-line complexity, sonarjs/cognitive-complexity
 export function shiftLeft(
   byteArray: Uint8Array,
   shiftBitCount: number
@@ -202,8 +202,7 @@ export function addJammingSimple(
   jam: Uint8Array
 ): Uint8Array {
   const jamSize = 24
-  const cA = addJammingHelper(data, jam, jamSize, true)
-  return cA
+  return addJammingHelper(data, jam, jamSize, true)
 }
 
 function addJammingHelper(

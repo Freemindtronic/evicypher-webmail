@@ -2248,6 +2248,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-sonarjs@npm:^0.8.0-125":
+  version: 0.8.0-125
+  resolution: "eslint-plugin-sonarjs@npm:0.8.0-125"
+  peerDependencies:
+    eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+  checksum: bc0d9d6218660cb3e9db1adfda55571d179f9914f882c611b1f51629acabecac4dbfd926f917d50129ac9203024d863ca29f75bb99803bbe232b00af5c59bb7a
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-svelte3@npm:^3.2.0":
   version: 3.2.0
   resolution: "eslint-plugin-svelte3@npm:3.2.0"
@@ -6832,6 +6841,7 @@ __metadata:
     eslint-config-xo: ^0.37.0
     eslint-plugin-html: ^6.1.2
     eslint-plugin-prettier: ^3.4.0
+    eslint-plugin-sonarjs: ^0.8.0-125
     eslint-plugin-svelte3: ^3.2.0
     eslint-plugin-unicorn: ^33.0.1
     husky: ^6.0.0

@@ -8,6 +8,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:unicorn/recommended',
+    'plugin:sonarjs/recommended',
     'xo',
     'prettier',
   ],
@@ -18,11 +19,12 @@ module.exports = {
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
-    'unicorn/prevent-abbreviations': 'off',
-    'unicorn/prefer-node-protocol': 'off',
     'no-return-assign': ['error', 'except-parens'],
     'no-unused-vars': ['error', { args: 'none' }],
-    complexity: ['error', { max: 6 }],
+    complexity: ['error', 6],
+    'unicorn/prevent-abbreviations': 'off',
+    'unicorn/prefer-node-protocol': 'off',
+    'sonarjs/cognitive-complexity': ['error', 8],
   },
   overrides: [
     {
