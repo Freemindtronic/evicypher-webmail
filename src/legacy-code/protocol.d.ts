@@ -8,6 +8,9 @@ export const Request = {
   CIPHER_KEY: '/CK',
   END: '/f2',
   END_OK: '/o',
+  PAIRING_START: '/t',
+  PAIRING_SALT: '/c',
+  PAIRING_NAME: '/n',
 } as const
 
 /** Maps Request constants to the correct request type. */
@@ -16,6 +19,9 @@ export interface RequestMap {
   [Request.CIPHER_KEY]: CipherKeyRequest
   [Request.END]: EndRequest
   [Request.END_OK]: EndOkRequest
+  [Request.PAIRING_START]: PairingStartRequest
+  [Request.PAIRING_SALT]: PairingSaltRequest
+  [Request.PAIRING_NAME]: PairingNameRequest
 }
 
 /** Maps Request constants to the correct response type. */
@@ -24,6 +30,9 @@ export interface ResponseMap {
   [Request.CIPHER_KEY]: CipherKeyResponse
   [Request.END]: EndResponse
   [Request.END_OK]: EndOkResponse
+  [Request.PAIRING_START]: PairingStartResponse
+  [Request.PAIRING_SALT]: PairingSaltResponse
+  [Request.PAIRING_NAME]: PairingNameResponse
 }
 
 /**
@@ -87,3 +96,53 @@ export interface EndOkRequest {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EndOkResponse {}
+
+export interface PairingStartRequest {
+  t: Uint8Array
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface PairingStartResponse {}
+
+export interface PairingSaltRequest {
+  /** Initialization vector. */
+  i: Uint8Array
+  /** Data. */
+  s: Uint8Array
+  /** UUID. */
+  t: Uint8Array
+}
+
+/** This is currently annotated with variable names found in the Android app code. */
+export interface PairingSaltResponse {
+  /** PublicECCCipher */
+  ek: Uint8Array
+  /** NameCipher */
+  n: Uint8Array
+  /** UUIDCipher */
+  u: Uint8Array
+  /** IvForEcc */
+  ik: Uint8Array
+  /** IvForName */
+  in: Uint8Array
+  /** IvForUUID */
+  iu: Uint8Array
+  /** SaltForEcc */
+  sk: Uint8Array
+  /** SaltForName */
+  sn: Uint8Array
+  /** SaltForUUID */
+  su: Uint8Array
+  /** SaltForName */
+  h: Uint8Array
+}
+
+export interface PairingNameRequest {
+  i: Uint8Array
+  s: Uint8Array
+  n: Uint8Array
+}
+
+export interface PairingNameResponse {
+  h: Uint8Array
+}
