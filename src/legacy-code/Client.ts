@@ -109,7 +109,7 @@ export const fetchKeys = async (
     ['SK1', 'ECC1'],
     ['SK2', 'ECC2'],
     ['SK3', 'ECC3'],
-  ] as ['SK1' | 'SK2' | 'SK3', 'ECC1' | 'ECC2' | 'ECC3'][]) {
+  ] as const) {
     const k = axlsign.generateKeyPair(utils.random(32))
     keysExchange[sk] = axlsign.sharedKey(k.private, crypt[ecc] as Uint8Array)
     const iv = utils.random(16)
@@ -325,7 +325,7 @@ export class Client {
       ['SK1', 'ECC1'],
       ['SK2', 'ECC2'],
       ['SK3', 'ECC3'],
-    ] as ['SK1' | 'SK2' | 'SK3', 'ECC1' | 'ECC2' | 'ECC3'][]) {
+    ] as const) {
       const k = axlsign.generateKeyPair(utils.random(32))
       keysExchange[sk] = axlsign.sharedKey(k.private, crypt[ecc] as Uint8Array)
       const iv = utils.random(16)
