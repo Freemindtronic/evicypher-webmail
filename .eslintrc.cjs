@@ -22,6 +22,7 @@ module.exports = {
     'unicorn/prefer-node-protocol': 'off',
     'no-return-assign': ['error', 'except-parens'],
     'no-unused-vars': ['error', { args: 'none' }],
+    complexity: ['error', { max: 6 }],
   },
   overrides: [
     {

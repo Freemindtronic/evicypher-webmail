@@ -128,6 +128,7 @@ export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
   return new Uint8Array([...a, ...b])
 }
 
+// eslint-disable-next-line complexity
 export function shiftLeft(
   byteArray: Uint8Array,
   shiftBitCount: number

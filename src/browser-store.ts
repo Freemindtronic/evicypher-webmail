@@ -85,6 +85,7 @@ export class BrowserStore<T> implements Writable<T> {
     BrowserStore.allLoaded = BrowserStore.allLoaded.then(() => this.loadPromise)
 
     // Listen for changes in other tabs/processes
+    // eslint-disable-next-line complexity
     browser.storage.onChanged.addListener((changes, area) => {
       // Ignore unrelated storages and keys
       if (
