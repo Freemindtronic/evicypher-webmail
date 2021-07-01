@@ -174,73 +174,12 @@ const searchLoop = async (
   }
 }
 
-// eslint-disable-next-line max-params
-export function sendCipherADD(
-  IP: string,
-  PORT: number,
-  iv: string,
-  salt: string,
-  hash: string
-): Promise<Record<string, string>> {
-  const url = formatURL(IP, PORT, '/c')
-  const data = { t: hash, s: salt, i: iv }
-  return sendPostRequestData(url, data, 60_000)
-}
-
-// eslint-disable-next-line max-params
-export function sendName(
-  IP: string,
-  PORT: number,
-  iv: string,
-  salt: string,
-  name: string
-): Promise<[unknown, string, number]> {
-  const url = formatURL(IP, PORT, '/n')
-  const data = { n: name, s: salt, i: iv }
-  return sendPostRequest(url, data, 5000)
-}
-
-async function sendPostRequest(
-  url: string,
-  data: Record<string, string>,
-  timeout: number
-): Promise<[Record<string, string>, string, number]> {
-  // Create an AbortController to trigger a timeout
-  const controller = new AbortController()
-  setTimeout(() => controller.abort(), timeout)
-
-  // Send a POST request
-  return fetch(url, {
-    method: 'POST',
-    body: new URLSearchParams(data),
-    signal: controller.signal,
-  }).then(async (response) => {
-    if (response.status >= 400) throw new Error(response.statusText)
-    const data: Record<string, string> = await response.json()
-    return [data, response.statusText, response.status]
-  })
-}
-
-async function sendPostRequestData(
-  url: string,
-  payload: Record<string, string>,
-  timeout: number
-) {
-  return sendPostRequest(url, payload, timeout).then(([data, , xhr]) => {
-    if (xhr === 202) {
-      return data
-    }
-
-    throw new Error('err')
-  })
-}
-
 export type Serialize<T> = {
   // eslint-disable-next-line no-unused-vars
   [K in keyof T]: string
 }
 
-export function objectToB64<T>(obj: T): Serialize<T> {
+export function serialize<T>(obj: T): Serialize<T> {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
@@ -254,7 +193,7 @@ export type Unserialize<T> = {
   [K in keyof T]: Uint8Array
 }
 
-export function b64ToObject<T>(obj: T): Unserialize<T> {
+export function unserialize<T>(obj: T): Unserialize<T> {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
@@ -274,7 +213,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   port: number
   type: T
   data: RequestMap[T]
-  timeout?: number
+  timeout?: number // TODO re-introduce a default timeout
 }): Promise<ResponseMap[T]> => {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
@@ -283,12 +222,12 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // Send a POST request
   const response = await fetch(formatURL(ip, port, type), {
     method: 'POST',
-    body: new URLSearchParams(objectToB64(data)),
+    body: new URLSearchParams(serialize(data)),
     signal: controller.signal,
   })
 
   if (response.status >= 400) throw new Error(response.statusText)
 
   const responseData: Serialize<ResponseMap[T]> = await response.json()
-  return b64ToObject(responseData) as unknown as ResponseMap[T]
+  return unserialize(responseData) as unknown as ResponseMap[T]
 }

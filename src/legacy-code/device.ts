@@ -3,7 +3,8 @@ import * as utils from './utils'
 import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
-import { search, sendCipherADD, sendName } from './lanUtils'
+import { search, sendRequest } from './lanUtils'
+import { Request } from './protocol'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -90,19 +91,20 @@ export class Device {
       this.pairingKey.salt
     )
 
-    const data = await sendCipherADD(
-      this.IP,
-      this.port,
-      Base64.encode(ivS),
-      Base64.encode(enc),
-      Base64.encode(
-        utils.sha256(utils.xor(this.certificate.id, this.pairingKey.salt))
-      )
-    )
+    const data = await sendRequest({
+      ip: this.IP,
+      port: this.port,
+      type: Request.PAIRING_SALT,
+      data: {
+        t: utils.sha256(utils.xor(this.certificate.id, this.pairingKey.salt)),
+        s: enc,
+        i: ivS,
+      },
+    })
 
-    let iv = utils.b64ToUint8Array(data.ik)
-    let salt = utils.xor(this.pairingKey.salt, utils.b64ToUint8Array(data.sk))
-    let cipherText = utils.b64ToUint8Array(data.ek)
+    let iv = data.ik
+    let salt = utils.xor(this.pairingKey.salt, data.sk)
+    let cipherText = data.ek
     const ECC = this.pairingKey.AES.decryptCTR(
       iv,
       salt,
@@ -111,9 +113,9 @@ export class Device {
     )
     const sharedKey = axlsign.sharedKey(this.pairingKey.k1.private, ECC)
 
-    iv = utils.b64ToUint8Array(data.in)
-    salt = utils.b64ToUint8Array(data.sn)
-    cipherText = utils.b64ToUint8Array(data.n)
+    iv = data.in
+    salt = data.sn
+    cipherText = data.n
     const name = this.pairingKey.AES.decryptCTR(
       iv,
       salt,
@@ -121,9 +123,9 @@ export class Device {
       cipherText
     )
 
-    iv = utils.b64ToUint8Array(data.iu)
-    salt = utils.b64ToUint8Array(data.su)
-    cipherText = utils.b64ToUint8Array(data.u)
+    iv = data.iu
+    salt = data.su
+    cipherText = data.u
     const UUID_U8 = this.pairingKey.AES.decryptCTR(
       iv,
       salt,
@@ -149,13 +151,12 @@ export class Device {
       this.pairingKey.Tkey,
       utils.utf8ToUint8Array(name)
     )
-    await sendName(
-      this.IP,
-      this.port,
-      Base64.encode(ivS),
-      Base64.encode(saltb),
-      Base64.encode(enc)
-    )
+    await sendRequest({
+      ip: this.IP,
+      port: this.port,
+      type: Request.PAIRING_NAME,
+      data: { i: ivS, n: enc, s: saltb },
+    })
 
     const certData = {
       name,
