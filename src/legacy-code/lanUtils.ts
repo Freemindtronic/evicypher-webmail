@@ -107,12 +107,15 @@ const searchLoop = async (
     const devicesFound = await Promise.race([
       zeroconfResponse,
       new Promise<void>((resolve) => {
-        setTimeout(resolve, timeOut)
+        setTimeout(() => resolve(), timeOut)
       }),
     ])
 
     // Check it the request timed out
-    if (devicesFound === undefined) return
+    if (devicesFound === undefined) {
+      console.warn('Zeroconf timed out.')
+      return
+    }
 
     console.log(`${devicesFound.length} devices found.`)
 
@@ -133,12 +136,13 @@ const searchLoop = async (
       // URL to send the request to
       const url = formatURL(ip, requestPort, type)
 
-      // We send the request to the device
+      // Send the request to the device
       requestsSent.push(
         fetch(url, {
           method: 'POST',
           body: new URLSearchParams({ t: hash }),
           signal: controller.signal,
+          mode: 'cors',
         })
           .then((response) => {
             // Accept responses that match "202 Accepted"
