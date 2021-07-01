@@ -60,9 +60,18 @@ export interface PingResponse {
 }
 
 export interface CipherKeyRequest {
-  sd: Uint8Array
-  id: Uint8Array
-  dh: Uint8Array
+  i1: Uint8Array
+  i2: Uint8Array
+  i3: Uint8Array
+  s1: Uint8Array
+  s2: Uint8Array
+  s3: Uint8Array
+  d1: Uint8Array
+  d2: Uint8Array
+  d3: Uint8Array
+  ih?: Uint8Array
+  sh?: Uint8Array
+  dh?: Uint8Array
 }
 
 export interface CipherKeyResponse {
