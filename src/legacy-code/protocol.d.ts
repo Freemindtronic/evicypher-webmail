@@ -4,7 +4,7 @@
  * https://github.com/Freemindtronic/Evitoken_Android/blob/828431a90fd6449a769849ad537d3d04d1fedca7/app/src/main/java/com/fulltoken/NetworkManage/http/HttpServer.java
  */
 export const Request = {
-  PONG: '/P',
+  PING: '/P',
   CIPHER_KEY: '/CK',
   END: '/f2',
   END_OK: '/o',
@@ -15,7 +15,7 @@ export const Request = {
 
 /** Maps Request constants to the correct request type. */
 export interface RequestMap {
-  [Request.PONG]: PingRequest
+  [Request.PING]: PingRequest
   [Request.CIPHER_KEY]: CipherKeyRequest
   [Request.END]: EndRequest
   [Request.END_OK]: EndOkRequest
@@ -26,7 +26,7 @@ export interface RequestMap {
 
 /** Maps Request constants to the correct response type. */
 export interface ResponseMap {
-  [Request.PONG]: PingResponse
+  [Request.PING]: PingResponse
   [Request.CIPHER_KEY]: CipherKeyResponse
   [Request.END]: EndResponse
   [Request.END_OK]: EndOkResponse
