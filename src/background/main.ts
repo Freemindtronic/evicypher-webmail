@@ -1,5 +1,5 @@
 import { BrowserStore } from 'browser-store'
-import { Client, fetchKeys } from 'legacy-code/Client'
+import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
 import type { Message } from 'messages'
 import { favoritePhone, phones } from 'phones'
@@ -35,8 +35,9 @@ const decrypt = async (str: string) => {
   if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const client = new Client(phone)
-  const keys = await client.requestKey()
+  const [keys, newCertificate] = await fetchKeys(phone)
+  phone.certificate = newCertificate
+  phones.update((phones) => phones)
 
   // Decrypt the text
   const evi = new EviCrypt(keys)
