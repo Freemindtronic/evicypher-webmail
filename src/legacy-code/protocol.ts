@@ -44,7 +44,7 @@ export interface ResponseMap {
  * - Else, the device responds "303 See Other".
  */
 export interface PingRequest {
-  t: string
+  t: Uint8Array
 }
 
 export interface PingResponse {

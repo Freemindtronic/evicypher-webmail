@@ -1,20 +1,20 @@
 /* eslint-disable unicorn/filename-case */
+import Base64 from 'base64-arraybuffer'
+import type { RequestMap, ResponseMap } from './protocol'
+import { b64ToUint8Array } from './utils'
 import {
   getZeroconfService,
   isZeroconfServiceInstalled,
   ZeroconfResponse,
 } from './zeroconf-service'
-import type { RequestMap, ResponseMap } from './protocol'
-import { b64ToUint8Array } from './utils'
-import Base64 from 'base64-arraybuffer'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
   `http://${ip}:${port}${type}`
 
-export interface WebAnswer {
+export interface WebAnswer<T> {
   url: string
-  data: unknown
+  data: T
   ip: string
   port: number
   origin: string
@@ -30,9 +30,9 @@ export interface WebAnswer {
  * @throws {Error} If the maximum number of tries is reached, if the operation
  *   is aborted or if the Zeroconf service is not properly installed
  */
-export const search = async (
-  hash: string,
-  type: string,
+export const search = async <T extends keyof RequestMap>(
+  type: T,
+  data: RequestMap[T],
   {
     signal = new AbortController().signal,
     portOverride,
@@ -45,7 +45,7 @@ export const search = async (
     /** Max number of tries before aborting. */
     maxNumberOfSearches?: number
   } = {}
-): Promise<WebAnswer> => {
+): Promise<WebAnswer<ResponseMap[T]>> => {
   // Check that the Zeroconf service is reachable
   if (!(await isZeroconfServiceInstalled()))
     throw new Error('Zeroconf service not installed.')
@@ -57,7 +57,7 @@ export const search = async (
 
     // Run the search loop
     // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(hash, type, { signal, portOverride })
+    const res = await searchLoop(type, data, { signal, portOverride })
     if (res !== undefined) return res
 
     maxNumberOfSearches--
@@ -77,9 +77,9 @@ export const search = async (
  * @returns A promise with the pairing response, if any, or undefined if all
  *   devices refused the connection
  */
-const searchLoop = async (
-  hash: string,
-  type: string,
+const searchLoop = async <T extends keyof RequestMap>(
+  type: T,
+  data: RequestMap[T],
   {
     signal = new AbortController().signal,
     portOverride,
@@ -89,7 +89,7 @@ const searchLoop = async (
     /** If set, ignore the connection port advertised by the devices. */
     portOverride?: number
   } = {}
-): Promise<WebAnswer | void> => {
+): Promise<WebAnswer<ResponseMap[T]> | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
   const nativePort = getZeroconfService()
 
@@ -132,7 +132,7 @@ const searchLoop = async (
     signal.addEventListener('abort', () => controller.abort())
 
     // Try to reach all the devices found
-    const requestsSent = []
+    const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
     for (const { ip, port } of devicesFound) {
       // If `portOverride` is set, ignore, the port found by Zeroconf
       const requestPort = portOverride ?? port
@@ -140,28 +140,24 @@ const searchLoop = async (
       // URL to send the request to
       const url = formatURL(ip, requestPort, type)
 
-      // Send the request to the device
-      requestsSent.push(
-        fetch(url, {
-          method: 'POST',
-          body: new URLSearchParams({ t: hash }),
-          signal: controller.signal,
-          mode: 'cors',
+      const send = async () => {
+        const responseData = await sendRequest({
+          ip,
+          port: requestPort,
+          type,
+          data,
         })
-          .then((response) => {
-            // Accept responses that match "202 Accepted"
-            if (response.status === 202) return response.json()
-            throw new Error('The device refused the connection.')
-          })
-          .then((data) => ({
-            url,
-            data,
-            ip,
-            port: requestPort,
-            origin: formatURL(ip, requestPort),
-          })) // Resolve with url and data
-          .catch() // Ignore connection errors
-      )
+        return {
+          url,
+          data: responseData,
+          ip,
+          port: requestPort,
+          origin: formatURL(ip, requestPort),
+        }
+      }
+
+      // Send the request to the device
+      requestsSent.push(send())
     }
 
     // Wait for either a device to pair, or an AggregateError
@@ -174,32 +170,24 @@ const searchLoop = async (
   }
 }
 
-export type Serialize<T> = {
+export type Serialize<T extends ResponseMap[keyof ResponseMap]> = {
   // eslint-disable-next-line no-unused-vars
   [K in keyof T]: string
 }
 
-export function serialize<T>(obj: T): Serialize<T> {
+function serialize<T>(obj: T): Serialize<T> {
   return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [
-      key,
-      value instanceof Uint8Array ? Base64.encode(value) : value.toString(),
-    ])
+    Object.entries(obj).map(([key, value]) => [key, Base64.encode(value)])
   ) as Serialize<T>
 }
 
-export type Unserialize<T> = {
-  // eslint-disable-next-line no-unused-vars
-  [K in keyof T]: Uint8Array
-}
-
-export function unserialize<T>(obj: T): Unserialize<T> {
+function unserialize<T>(obj: Serialize<T>): T {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
       typeof value === 'string' ? b64ToUint8Array(value) : value,
     ])
-  ) as Unserialize<T>
+  ) as unknown as T
 }
 
 export const sendRequest = async <T extends keyof RequestMap>({
@@ -224,10 +212,11 @@ export const sendRequest = async <T extends keyof RequestMap>({
     method: 'POST',
     body: new URLSearchParams(serialize(data)),
     signal: controller.signal,
+    mode: 'cors',
   })
 
-  if (response.status >= 400) throw new Error(response.statusText)
+  if (response.status >= 300) throw new Error(response.statusText)
 
   const responseData: Serialize<ResponseMap[T]> = await response.json()
-  return unserialize(responseData) as unknown as ResponseMap[T]
+  return unserialize(responseData)
 }

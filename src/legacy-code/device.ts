@@ -55,11 +55,14 @@ export async function clientHello(
   pairingKey: PairingKey,
   signal?: AbortSignal
 ): Promise<Device> {
-  const hash = Base64.encode(utils.sha256(pairingKey.certificate.id))
-  const answer = await search(hash, '/t', {
-    signal,
-    portOverride: pairingKey.port,
-  })
+  const answer = await search(
+    Request.PAIRING_START,
+    { t: utils.sha256(pairingKey.certificate.id) },
+    {
+      signal,
+      portOverride: pairingKey.port,
+    }
+  )
   return new Device(answer.ip, pairingKey)
 }
 

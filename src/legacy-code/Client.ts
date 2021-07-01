@@ -1,7 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable camelcase */
 import axlsign from 'axlsign'
-import * as Base64 from 'base64-arraybuffer'
 import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
@@ -51,13 +50,10 @@ export const fetchKeys = async (
   keyToGet?: Uint8Array
 ): Promise<[KeyPair, Certificate]> => {
   // For protocol "details", see https://github.com/Freemindtronic/Evitoken_Android/blob/master/app/src/main/java/com/fulltoken/NetworkManage/http/HttpServer.java
-  const firstResponse = await lanUtil.search(
-    Base64.encode(phone.certificate.id),
-    '/P'
-  )
-  const firstData = utils.b64ToObject(
-    firstResponse.data as Record<string, string>
-  ) as unknown as PingResponse
+  const firstResponse = await lanUtil.search(Request.PING, {
+    t: phone.certificate.id,
+  })
+  const firstData = firstResponse.data
   const crypt: Crypt = {
     KEY: phone.certificate,
     ECC1: AES.decryptCTR(
