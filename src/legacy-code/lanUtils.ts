@@ -235,29 +235,6 @@ async function sendPostRequestData(
   })
 }
 
-export async function sendCipher(
-  type: string,
-  url: string,
-  payload: Record<string, string>
-): Promise<Record<string, string>> {
-  return sendPostRequestData(url + type, payload, 180_000)
-}
-
-export function sendEnd(
-  url: string,
-  payload: Record<string, string>
-): Promise<Record<string, string>> {
-  return sendPostRequestData(url + '/f2', payload, 5000)
-}
-
-export function sendOk(
-  url: string,
-  data: string
-): Promise<Record<string, string>> {
-  const payload = { d: data }
-  return sendPostRequestData(url + '/o', payload, 5000)
-}
-
 export type Serialize<T> = {
   // eslint-disable-next-line no-unused-vars
   [K in keyof T]: string
