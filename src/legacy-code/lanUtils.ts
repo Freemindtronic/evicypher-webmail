@@ -4,6 +4,9 @@ import {
   isZeroconfServiceInstalled,
   ZeroconfResponse,
 } from './zeroconf-service'
+import type { RequestMap, ResponseMap } from './protocol'
+import { b64ToUint8Array } from './utils'
+import Base64 from 'base64-arraybuffer'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -13,6 +16,7 @@ export interface WebAnswer {
   url: string
   data: unknown
   ip: string
+  port: number
   origin: string
 }
 
@@ -153,6 +157,7 @@ const searchLoop = async (
             url,
             data,
             ip,
+            port: requestPort,
             origin: formatURL(ip, requestPort),
           })) // Resolve with url and data
           .catch() // Ignore connection errors
@@ -251,4 +256,62 @@ export function sendOk(
 ): Promise<Record<string, string>> {
   const payload = { d: data }
   return sendPostRequestData(url + '/o', payload, 5000)
+}
+
+export type Serialize<T> = {
+  // eslint-disable-next-line no-unused-vars
+  [K in keyof T]: string
+}
+
+export function objectToB64<T>(obj: T): Serialize<T> {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key,
+      value instanceof Uint8Array ? Base64.encode(value) : value.toString(),
+    ])
+  ) as Serialize<T>
+}
+
+export type Unserialize<T> = {
+  // eslint-disable-next-line no-unused-vars
+  [K in keyof T]: Uint8Array
+}
+
+export function b64ToObject<T>(obj: T): Unserialize<T> {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? b64ToUint8Array(value) : value,
+    ])
+  ) as Unserialize<T>
+}
+
+export const sendRequest = async <T extends keyof RequestMap>({
+  ip,
+  port,
+  type,
+  data,
+  timeout,
+}: {
+  ip: string
+  port: number
+  type: T
+  data: RequestMap[T]
+  timeout?: number
+}): Promise<ResponseMap[T]> => {
+  // Create an AbortController to trigger a timeout
+  const controller = new AbortController()
+  if (timeout) setTimeout(() => controller.abort(), timeout)
+
+  // Send a POST request
+  const response = await fetch(formatURL(ip, port, type), {
+    method: 'POST',
+    body: new URLSearchParams(objectToB64(data)),
+    signal: controller.signal,
+  })
+
+  if (response.status >= 400) throw new Error(response.statusText)
+
+  const responseData: Serialize<ResponseMap[T]> = await response.json()
+  return b64ToObject(responseData) as unknown as ResponseMap[T]
 }

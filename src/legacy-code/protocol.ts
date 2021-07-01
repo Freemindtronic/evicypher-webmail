@@ -59,7 +59,7 @@ export interface PingResponse {
   k3: Uint8Array
 }
 
-export interface CipherKeyRequest {
+export interface CipherKeyRequestWithoutKey {
   i1: Uint8Array
   i2: Uint8Array
   i3: Uint8Array
@@ -69,10 +69,15 @@ export interface CipherKeyRequest {
   d1: Uint8Array
   d2: Uint8Array
   d3: Uint8Array
-  ih?: Uint8Array
-  sh?: Uint8Array
-  dh?: Uint8Array
 }
+
+export type CipherKeyRequest =
+  | CipherKeyRequestWithoutKey
+  | (CipherKeyRequestWithoutKey & {
+      ih: Uint8Array
+      sh: Uint8Array
+      dh: Uint8Array
+    })
 
 export interface CipherKeyResponse {
   i: Uint8Array
