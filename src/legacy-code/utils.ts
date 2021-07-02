@@ -109,27 +109,3 @@ export function normal64(base64: string): string {
     '=='.slice(0, Math.max(0, (3 * base64.length) % 4))
   )
 }
-
-export function objectToB64(
-  obj: Record<string, ArrayBuffer>
-): Record<string, string> {
-  const keys = Object.keys(obj)
-  const b64: Record<string, string> = {}
-  for (const key of keys) {
-    b64[key] = Base64.encode(obj[key])
-  }
-
-  return b64
-}
-
-export function b64ToObject(
-  b64: Record<string, string>
-): Record<string, Uint8Array> {
-  const keys = Object.keys(b64)
-  const obj: Record<string, Uint8Array> = {}
-  for (const key of keys) {
-    obj[key] = b64ToUint8Array(b64[key])
-  }
-
-  return obj
-}
