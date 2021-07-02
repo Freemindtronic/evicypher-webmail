@@ -171,7 +171,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   }
 }
 
-export type Serialize<T extends ResponseMap[keyof ResponseMap]> = {
+export type Serialize<T> = {
   // eslint-disable-next-line no-unused-vars
   [K in keyof T]: string
 }
