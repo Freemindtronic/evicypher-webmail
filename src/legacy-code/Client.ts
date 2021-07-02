@@ -10,6 +10,27 @@ import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
 
+/** Does some encryption stuff, it's still unclear at this time of refactoring. */
+const encryptKey = (
+  iv: Uint8Array,
+  salt: Uint8Array,
+  passPhrase: Uint8Array,
+  cipherText: Uint8Array
+): {
+  sharedKey: Uint8Array
+  iv: Uint8Array
+  salt: Uint8Array
+  encryptedKey: Uint8Array
+} => {
+  const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
+  const k = axlsign.generateKeyPair(utils.random(32))
+  const sharedKey = axlsign.sharedKey(k.private, ecc)
+  const newIv = utils.random(16)
+  const newSalt = utils.random(16)
+  const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
+  return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
+}
+
 export interface KeyPair {
   high: Uint8Array
   low: Uint8Array
@@ -34,72 +55,31 @@ export const fetchKeys = async (
     t: certificate.id,
   })
 
-  const crypt = {
-    ECC1: AES.decryptCTR(
-      pingResponse.iv1,
-      pingResponse.sa1,
+  const keysExchange = ([1, 2, 3] as const).map((i) =>
+    encryptKey(
+      pingResponse[`iv${i}` as const],
+      pingResponse[`sa${i}` as const],
       certificate.tKey,
-      pingResponse.k1
-    ),
-    ECC2: AES.decryptCTR(
-      pingResponse.iv2,
-      pingResponse.sa2,
-      certificate.tKey,
-      pingResponse.k2
-    ),
-    ECC3: AES.decryptCTR(
-      pingResponse.iv3,
-      pingResponse.sa3,
-      certificate.tKey,
-      pingResponse.k3
-    ),
-  }
-
-  const keysExchange: {
-    SK1: Uint8Array | undefined
-    SK2: Uint8Array | undefined
-    SK3: Uint8Array | undefined
-  } = {
-    SK1: undefined,
-    SK2: undefined,
-    SK3: undefined,
-  }
-
-  const ivList = []
-  const saltList = []
-  const encList = []
-
-  for (const [sk, ecc] of [
-    ['SK1', 'ECC1'],
-    ['SK2', 'ECC2'],
-    ['SK3', 'ECC3'],
-  ] as const) {
-    const k = axlsign.generateKeyPair(utils.random(32))
-    keysExchange[sk] = axlsign.sharedKey(k.private, crypt[ecc] as Uint8Array)
-    const iv = utils.random(16)
-    const salt = utils.random(16)
-    const enc = AES.encryptCTR(iv, salt, certificate.tKey, k.public)
-    ivList.push(iv)
-    saltList.push(salt)
-    encList.push(enc)
-  }
+      pingResponse[`k${i}` as const]
+    )
+  )
 
   let secondData: CipherKeyRequest = {
-    i1: ivList[0],
-    i2: ivList[1],
-    i3: ivList[2],
-    s1: saltList[0],
-    s2: saltList[1],
-    s3: saltList[2],
-    d1: encList[0],
-    d2: encList[1],
-    d3: encList[2],
+    i1: keysExchange[0].iv,
+    i2: keysExchange[1].iv,
+    i3: keysExchange[2].iv,
+    s1: keysExchange[0].salt,
+    s2: keysExchange[1].salt,
+    s3: keysExchange[2].salt,
+    d1: keysExchange[0].encryptedKey,
+    d2: keysExchange[1].encryptedKey,
+    d3: keysExchange[2].encryptedKey,
   }
 
   if (keyToGet !== undefined) {
     const ivd = utils.random(16)
     const saltd = utils.random(16)
-    const keyd = utils.xor(keysExchange.SK2 as Uint8Array, certificate.sKey)
+    const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
     const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
     secondData = {
       ...secondData,
@@ -124,33 +104,27 @@ export const fetchKeys = async (
   const salt_high = answer.s
   const data_high_jam = answer.d
 
-  const key_high = utils.xor(keysExchange.SK3 as Uint8Array, certificate.fKey)
-  const key_low = utils.xor(keysExchange.SK2 as Uint8Array, certificate.fKey)
+  const key_high = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
+  const key_low = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
 
   const { jamming, fKey, sKey, tKey, id } = certificate
   const jamming_low = utils.sha512(
-    utils.concatUint8Array(jamming, keysExchange.SK1 as Uint8Array)
+    utils.concatUint8Array(jamming, keysExchange[0].sharedKey)
   )
   const jamming_high = utils.sha512(
-    utils.concatUint8Array(jamming, keysExchange?.SK2 as Uint8Array)
+    utils.concatUint8Array(jamming, keysExchange[1].sharedKey)
   )
 
-  const position_jamming_low = jamming[1] ^ (keysExchange.SK1?.[1] as number)
-  const position_jamming_high = jamming[2] ^ (keysExchange.SK1?.[2] as number)
+  const position_jamming_low = jamming[1] ^ keysExchange[0].sharedKey[1]
+  const position_jamming_high = jamming[2] ^ keysExchange[0].sharedKey[2]
 
   const jammingValueOnLength_low =
-    // eslint-disable-next-line unicorn/consistent-destructuring
-    (certificate.sKey[0] ^ (keysExchange.SK1?.[3] as number)) &
-    (jamming_low.length - 1)
+    (sKey[0] ^ keysExchange[0].sharedKey[3]) & (jamming_low.length - 1)
   const jammingValueOnLength_high =
-    // eslint-disable-next-line unicorn/consistent-destructuring
-    (certificate.tKey[0] ^ (keysExchange.SK1?.[4] as number)) &
-    (jamming_high.length - 1)
+    (tKey[0] ^ keysExchange[0].sharedKey[4]) & (jamming_high.length - 1)
 
-  const shift_jamming_low =
-    jamming[0] + ((keysExchange.SK1?.[5] as number) << 8)
-  const shift_jamming_high =
-    jamming[1] + ((keysExchange.SK1?.[6] as number) << 8)
+  const shift_jamming_low = jamming[0] + (keysExchange[0].sharedKey[5] << 8)
+  const shift_jamming_high = jamming[1] + (keysExchange[0].sharedKey[6] << 8)
 
   const unjam_low = removeJamming(
     jamming_low,
@@ -208,11 +182,13 @@ export const fetchKeys = async (
   const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
   const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
   const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+
   const nFkey = utils.xor(SK1, fKey)
   const nSkey = utils.xor(SK2, sKey)
   const nTkey = utils.xor(SK3, tKey)
   const nId = utils.xor(SKid, id)
   const nJam = utils.xor(SK4, jamming)
+
   const newCertificate = new Certificate({
     fKey: nFkey,
     sKey: nSkey,
