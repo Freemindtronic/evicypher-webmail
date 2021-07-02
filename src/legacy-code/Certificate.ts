@@ -1,10 +1,10 @@
 /* eslint-disable unicorn/filename-case */
 import Base64 from 'base64-arraybuffer'
+import type { Serialize } from './lanUtils'
 
 import * as utils from './utils'
 
 export interface CertData {
-  name: string
   id: Uint8Array
   jamming: Uint8Array
   fKey: Uint8Array
@@ -12,17 +12,7 @@ export interface CertData {
   tKey: Uint8Array
 }
 
-export interface CertDataB64 {
-  name: string
-  id: string
-  jamming: string
-  fKey: string
-  sKey: string
-  tKey: string
-}
-
-export class Certificate {
-  name: string
+export class Certificate implements CertData {
   id: Uint8Array
   jamming: Uint8Array
   fKey: Uint8Array
@@ -30,7 +20,6 @@ export class Certificate {
   tKey: Uint8Array
 
   constructor(data: CertData) {
-    this.name = data.name
     this.id = data.id
     this.jamming = data.jamming
     this.fKey = data.fKey
@@ -50,9 +39,8 @@ export class Certificate {
     return new Certificate(data)
   }
 
-  static fromJSON(data: CertDataB64): Certificate {
+  static fromJSON(data: Serialize<CertData>): Certificate {
     return new Certificate({
-      name: data.name,
       id: utils.b64ToUint8Array(data.id),
       jamming: utils.b64ToUint8Array(data.jamming),
       fKey: utils.b64ToUint8Array(data.fKey),
@@ -61,9 +49,8 @@ export class Certificate {
     })
   }
 
-  toJSON(): Record<string, unknown> {
+  toJSON(): Serialize<CertData> {
     return {
-      name: this.name,
       id: Base64.encode(this.id),
       jamming: Base64.encode(this.jamming),
       fKey: Base64.encode(this.fKey),

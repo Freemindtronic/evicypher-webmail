@@ -235,7 +235,6 @@ export const fetchKeys = async (
   const nId = utils.xor(SKid, id)
   const nJam = utils.xor(SK4, jamming)
   const newCertificate = new Certificate({
-    name: crypt.KEY.name,
     fKey: nFkey,
     sKey: nSkey,
     tKey: nTkey,
