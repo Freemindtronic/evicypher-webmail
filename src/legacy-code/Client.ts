@@ -55,6 +55,7 @@ export const fetchKeys = async (
     t: certificate.id,
   })
 
+  // Prepare the three shared secrets for the rest of the exchange
   const keysExchange = ([1, 2, 3] as const).map((i) =>
     encryptKey(
       pingResponse[`iv${i}` as const],
@@ -64,7 +65,7 @@ export const fetchKeys = async (
     )
   )
 
-  let secondData: CipherKeyRequest = {
+  let cipherKeyRequest: CipherKeyRequest = {
     i1: keysExchange[0].iv,
     i2: keysExchange[1].iv,
     i3: keysExchange[2].iv,
@@ -76,76 +77,86 @@ export const fetchKeys = async (
     d3: keysExchange[2].encryptedKey,
   }
 
+  // If we want a specific key, add its signature to the payload
   if (keyToGet !== undefined) {
     const ivd = utils.random(16)
     const saltd = utils.random(16)
     const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
     const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
-    secondData = {
-      ...secondData,
+    cipherKeyRequest = {
+      ...cipherKeyRequest,
       ih: ivd,
       sh: saltd,
       dh: encd,
     }
   }
 
-  const answer = await lanUtil.sendRequest({
+  // Ask the phone for some more random data
+  const {
+    i: highInitializationVector,
+    s: highSalt,
+    d: highDataJam,
+    i2: lowInitializationVector,
+    s2: lowSalt,
+    d2: lowDataJam,
+  } = await lanUtil.sendRequest({
     ip,
     port,
     type: Request.CIPHER_KEY,
-    data: secondData,
+    data: cipherKeyRequest,
   })
 
-  const iv_low = answer.i2
-  const salt_low = answer.s2
-  const data_low_jam = answer.d2
-
-  const iv_high = answer.i
-  const salt_high = answer.s
-  const data_high_jam = answer.d
-
-  const key_high = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
-  const key_low = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
-
-  const { jamming, fKey, sKey, tKey, id } = certificate
-  const jamming_low = utils.sha512(
-    utils.concatUint8Array(jamming, keysExchange[0].sharedKey)
+  // What you're about to read does not even come close to looking like cryptography
+  const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
+  const highJamming = utils.sha512(
+    utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
   )
-  const jamming_high = utils.sha512(
-    utils.concatUint8Array(jamming, keysExchange[1].sharedKey)
+  const highJammingPosition =
+    certificate.jamming[2] ^ keysExchange[0].sharedKey[2]
+  const highJammingValueOnLength =
+    (certificate.tKey[0] ^ keysExchange[0].sharedKey[4]) &
+    (highJamming.length - 1)
+  const highJammingShift =
+    certificate.jamming[1] + (keysExchange[0].sharedKey[6] << 8)
+  const highUnjam = removeJamming(
+    highJamming,
+    highDataJam,
+    highJammingValueOnLength,
+    highJammingPosition,
+    highJammingShift
+  )
+  // Here is the only "sane" thing: actual AES
+  const high = AES.decryptCTR(
+    highInitializationVector,
+    highSalt,
+    highKey,
+    highUnjam
   )
 
-  const position_jamming_low = jamming[1] ^ keysExchange[0].sharedKey[1]
-  const position_jamming_high = jamming[2] ^ keysExchange[0].sharedKey[2]
-
+  const lowKey = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
+  const lowJamming = utils.sha512(
+    utils.concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
+  )
+  const lowPositionJamming =
+    certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
   const jammingValueOnLength_low =
-    (sKey[0] ^ keysExchange[0].sharedKey[3]) & (jamming_low.length - 1)
-  const jammingValueOnLength_high =
-    (tKey[0] ^ keysExchange[0].sharedKey[4]) & (jamming_high.length - 1)
-
-  const shift_jamming_low = jamming[0] + (keysExchange[0].sharedKey[5] << 8)
-  const shift_jamming_high = jamming[1] + (keysExchange[0].sharedKey[6] << 8)
-
-  const unjam_low = removeJamming(
-    jamming_low,
-    data_low_jam,
+    (certificate.sKey[0] ^ keysExchange[0].sharedKey[3]) &
+    (lowJamming.length - 1)
+  const lowJammingShift =
+    certificate.jamming[0] + (keysExchange[0].sharedKey[5] << 8)
+  const lowUnjam = removeJamming(
+    lowJamming,
+    lowDataJam,
     jammingValueOnLength_low,
-    position_jamming_low,
-    shift_jamming_low
+    lowPositionJamming,
+    lowJammingShift
   )
+  const low = AES.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
 
-  const unjam_high = removeJamming(
-    jamming_high,
-    data_high_jam,
-    jammingValueOnLength_high,
-    position_jamming_high,
-    shift_jamming_high
-  )
-
-  const low = AES.decryptCTR(iv_low, salt_low, key_low, unjam_low)
-  const high = AES.decryptCTR(iv_high, salt_high, key_high, unjam_high)
-
+  // The two keys we asked for
   const keys = { high, low }
+
+  // To ensure forward secrecy, we share a new secret
   const newShare = {
     id: axlsign.generateKeyPair(utils.random(32)),
     k1: axlsign.generateKeyPair(utils.random(32)),
@@ -154,19 +165,17 @@ export const fetchKeys = async (
     k4: axlsign.generateKeyPair(utils.random(32)),
   }
 
-  const dataToSend = {
-    id: newShare.id.public,
-    k1: newShare.k1.public,
-    k2: newShare.k2.public,
-    k3: newShare.k3.public,
-    k4: newShare.k4.public,
-  }
-
   const newKey = await lanUtil.sendRequest({
     ip,
     port,
     type: Request.END,
-    data: dataToSend,
+    data: {
+      id: newShare.id.public,
+      k1: newShare.k1.public,
+      k2: newShare.k2.public,
+      k3: newShare.k3.public,
+      k4: newShare.k4.public,
+    },
   })
   const newId = { d: axlsign.sharedKey(newShare.k4.private, newKey.k4) }
 
@@ -183,18 +192,12 @@ export const fetchKeys = async (
   const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
   const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
 
-  const nFkey = utils.xor(SK1, fKey)
-  const nSkey = utils.xor(SK2, sKey)
-  const nTkey = utils.xor(SK3, tKey)
-  const nId = utils.xor(SKid, id)
-  const nJam = utils.xor(SK4, jamming)
-
   const newCertificate = new Certificate({
-    fKey: nFkey,
-    sKey: nSkey,
-    tKey: nTkey,
-    id: nId,
-    jamming: nJam,
+    fKey: utils.xor(SK1, certificate.fKey),
+    sKey: utils.xor(SK2, certificate.sKey),
+    tKey: utils.xor(SK3, certificate.tKey),
+    id: utils.xor(SKid, certificate.id),
+    jamming: utils.xor(SK4, certificate.jamming),
   })
 
   return [keys, newCertificate]
