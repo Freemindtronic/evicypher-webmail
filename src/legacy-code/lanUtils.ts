@@ -104,7 +104,6 @@ const searchLoop = async <T extends keyof RequestMap>(
         })
       }
     )
-    // eslint-disable-next-line unicorn/require-post-message-target-origin
     nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
 
     // Wait for either a response or a timeout

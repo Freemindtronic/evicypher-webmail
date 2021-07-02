@@ -24,6 +24,7 @@ module.exports = {
     complexity: ['error', 6],
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
+    'unicorn/require-post-message-target-origin': 'off',
     'sonarjs/cognitive-complexity': ['error', 8],
   },
   overrides: [
