@@ -4,31 +4,10 @@ import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
 import * as lanUtil from './lanUtils'
-import { CipherKeyRequest, Request } from './protocol'
+import { CipherKeyRequest, CipherKeyResponse, Request } from './protocol'
 import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
-
-/** Does some encryption stuff, it's still unclear at this time of refactoring. */
-const encryptKey = (
-  iv: Uint8Array,
-  salt: Uint8Array,
-  passPhrase: Uint8Array,
-  cipherText: Uint8Array
-): {
-  sharedKey: Uint8Array
-  iv: Uint8Array
-  salt: Uint8Array
-  encryptedKey: Uint8Array
-} => {
-  const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
-  const k = axlsign.generateKeyPair(utils.random(32))
-  const sharedKey = axlsign.sharedKey(k.private, ecc)
-  const newIv = utils.random(16)
-  const newSalt = utils.random(16)
-  const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
-  return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
-}
 
 export interface KeyPair {
   high: Uint8Array
@@ -91,69 +70,14 @@ export const fetchKeys = async (
   }
 
   // Ask the phone for some more random data
-  const {
-    i: highInitializationVector,
-    s: highSalt,
-    d: highDataJam,
-    i2: lowInitializationVector,
-    s2: lowSalt,
-    d2: lowDataJam,
-  } = await lanUtil.sendRequest({
+  const cipherKeyResponse = await lanUtil.sendRequest({
     ip,
     port,
     type: Request.CIPHER_KEY,
     data: cipherKeyRequest,
   })
 
-  // What you're about to read does not even come close to looking like cryptography
-  const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
-  const highJamming = utils.sha512(
-    utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
-  )
-  const highJammingPosition =
-    certificate.jamming[2] ^ keysExchange[0].sharedKey[2]
-  const highJammingValueOnLength =
-    (certificate.tKey[0] ^ keysExchange[0].sharedKey[4]) &
-    (highJamming.length - 1)
-  const highJammingShift =
-    certificate.jamming[1] + (keysExchange[0].sharedKey[6] << 8)
-  const highUnjam = removeJamming(
-    highJamming,
-    highDataJam,
-    highJammingValueOnLength,
-    highJammingPosition,
-    highJammingShift
-  )
-  // Here is the only "sane" thing: actual AES
-  const high = AES.decryptCTR(
-    highInitializationVector,
-    highSalt,
-    highKey,
-    highUnjam
-  )
-
-  const lowKey = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
-  const lowJamming = utils.sha512(
-    utils.concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
-  )
-  const lowPositionJamming =
-    certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
-  const lowJammingValueOnLength =
-    (certificate.sKey[0] ^ keysExchange[0].sharedKey[3]) &
-    (lowJamming.length - 1)
-  const lowJammingShift =
-    certificate.jamming[0] + (keysExchange[0].sharedKey[5] << 8)
-  const lowUnjam = removeJamming(
-    lowJamming,
-    lowDataJam,
-    lowJammingValueOnLength,
-    lowPositionJamming,
-    lowJammingShift
-  )
-  const low = AES.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
-
-  // The two keys we asked for
-  const keys = { high, low }
+  const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
 
   // To ensure forward secrecy, we share a new secret
   const newShare = {
@@ -202,4 +126,93 @@ export const fetchKeys = async (
   })
 
   return [keys, newCertificate]
+}
+
+/** Does some encryption stuff, it's still unclear at this time of refactoring. */
+const encryptKey = (
+  iv: Uint8Array,
+  salt: Uint8Array,
+  passPhrase: Uint8Array,
+  cipherText: Uint8Array
+): {
+  sharedKey: Uint8Array
+  iv: Uint8Array
+  salt: Uint8Array
+  encryptedKey: Uint8Array
+} => {
+  const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
+  const k = axlsign.generateKeyPair(utils.random(32))
+  const sharedKey = axlsign.sharedKey(k.private, ecc)
+  const newIv = utils.random(16)
+  const newSalt = utils.random(16)
+  const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
+  return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
+}
+
+/** What you're about to read does not even come close to looking like cryptography. */
+function unjamKeys(
+  keysExchange: {
+    sharedKey: Uint8Array
+    iv: Uint8Array
+    salt: Uint8Array
+    encryptedKey: Uint8Array
+  }[],
+  certificate: Certificate,
+  {
+    i: highInitializationVector,
+    s: highSalt,
+    d: highDataJam,
+    i2: lowInitializationVector,
+    s2: lowSalt,
+    d2: lowDataJam,
+  }: CipherKeyResponse
+) {
+  const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
+  const highJamming = utils.sha512(
+    utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
+  )
+  const highJammingPosition =
+    certificate.jamming[2] ^ keysExchange[0].sharedKey[2]
+  const highJammingValueOnLength =
+    (certificate.tKey[0] ^ keysExchange[0].sharedKey[4]) &
+    (highJamming.length - 1)
+  const highJammingShift =
+    certificate.jamming[1] + (keysExchange[0].sharedKey[6] << 8)
+  const highUnjam = removeJamming(
+    highJamming,
+    highDataJam,
+    highJammingValueOnLength,
+    highJammingPosition,
+    highJammingShift
+  )
+  // Here is the only "sane" thing: actual AES
+  const high = AES.decryptCTR(
+    highInitializationVector,
+    highSalt,
+    highKey,
+    highUnjam
+  )
+
+  const lowKey = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
+  const lowJamming = utils.sha512(
+    utils.concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
+  )
+  const lowPositionJamming =
+    certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
+  const lowJammingValueOnLength =
+    (certificate.sKey[0] ^ keysExchange[0].sharedKey[3]) &
+    (lowJamming.length - 1)
+  const lowJammingShift =
+    certificate.jamming[0] + (keysExchange[0].sharedKey[5] << 8)
+  const lowUnjam = removeJamming(
+    lowJamming,
+    lowDataJam,
+    lowJammingValueOnLength,
+    lowPositionJamming,
+    lowJammingShift
+  )
+  const low = AES.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
+
+  // The two keys we asked for
+  return { high, low }
 }
