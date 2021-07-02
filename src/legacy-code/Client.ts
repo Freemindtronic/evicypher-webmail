@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/filename-case */
-/* eslint-disable camelcase */
 import axlsign from 'axlsign'
 import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
@@ -139,7 +138,7 @@ export const fetchKeys = async (
   )
   const lowPositionJamming =
     certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
-  const jammingValueOnLength_low =
+  const lowJammingValueOnLength =
     (certificate.sKey[0] ^ keysExchange[0].sharedKey[3]) &
     (lowJamming.length - 1)
   const lowJammingShift =
@@ -147,7 +146,7 @@ export const fetchKeys = async (
   const lowUnjam = removeJamming(
     lowJamming,
     lowDataJam,
-    jammingValueOnLength_low,
+    lowJammingValueOnLength,
     lowPositionJamming,
     lowJammingShift
   )
@@ -165,6 +164,7 @@ export const fetchKeys = async (
     k4: axlsign.generateKeyPair(utils.random(32)),
   }
 
+  // Send the new secret to the phone
   const newKey = await lanUtil.sendRequest({
     ip,
     port,
@@ -179,6 +179,7 @@ export const fetchKeys = async (
   })
   const newId = { d: axlsign.sharedKey(newShare.k4.private, newKey.k4) }
 
+  // Send an acknowledgement to the phone, to close the exchange
   await lanUtil.sendRequest({
     ip,
     port,
