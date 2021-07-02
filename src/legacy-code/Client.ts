@@ -10,30 +10,6 @@ import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
 
-interface Crypt {
-  KEY: Certificate
-  ECC1: Uint8Array
-  ECC2: Uint8Array
-  ECC3: Uint8Array
-  URL: string
-}
-
-/**
- * A ping response, as sent by the application. It contains important
- * information such as keys.
- */
-export interface PingResponse {
-  iv1: Uint8Array
-  sa1: Uint8Array
-  k1: Uint8Array
-  iv2: Uint8Array
-  sa2: Uint8Array
-  k2: Uint8Array
-  iv3: Uint8Array
-  sa3: Uint8Array
-  k3: Uint8Array
-}
-
 export interface KeyPair {
   high: Uint8Array
   low: Uint8Array
@@ -46,36 +22,39 @@ export interface KeyPair {
  *   was renewed during the exchange.
  */
 export const fetchKeys = async (
-  phone: Phone,
+  { certificate }: Phone,
   keyToGet?: Uint8Array
 ): Promise<[KeyPair, Certificate]> => {
-  // For protocol "details", see https://github.com/Freemindtronic/Evitoken_Android/blob/master/app/src/main/java/com/fulltoken/NetworkManage/http/HttpServer.java
-  const firstResponse = await lanUtil.search(Request.PING, {
-    t: phone.certificate.id,
+  // Find a phone matching the certificate
+  const {
+    ip,
+    port,
+    data: pingResponse,
+  } = await lanUtil.search(Request.PING, {
+    t: certificate.id,
   })
-  const firstData = firstResponse.data
-  const crypt: Crypt = {
-    KEY: phone.certificate,
+
+  const crypt = {
     ECC1: AES.decryptCTR(
-      firstData.iv1,
-      firstData.sa1,
-      phone.certificate.tKey,
-      firstData.k1
+      pingResponse.iv1,
+      pingResponse.sa1,
+      certificate.tKey,
+      pingResponse.k1
     ),
     ECC2: AES.decryptCTR(
-      firstData.iv2,
-      firstData.sa2,
-      phone.certificate.tKey,
-      firstData.k2
+      pingResponse.iv2,
+      pingResponse.sa2,
+      certificate.tKey,
+      pingResponse.k2
     ),
     ECC3: AES.decryptCTR(
-      firstData.iv3,
-      firstData.sa3,
-      phone.certificate.tKey,
-      firstData.k3
+      pingResponse.iv3,
+      pingResponse.sa3,
+      certificate.tKey,
+      pingResponse.k3
     ),
-    URL: firstResponse.origin,
   }
+
   const keysExchange: {
     SK1: Uint8Array | undefined
     SK2: Uint8Array | undefined
@@ -99,7 +78,7 @@ export const fetchKeys = async (
     keysExchange[sk] = axlsign.sharedKey(k.private, crypt[ecc] as Uint8Array)
     const iv = utils.random(16)
     const salt = utils.random(16)
-    const enc = AES.encryptCTR(iv, salt, crypt.KEY.tKey, k.public)
+    const enc = AES.encryptCTR(iv, salt, certificate.tKey, k.public)
     ivList.push(iv)
     saltList.push(salt)
     encList.push(enc)
@@ -120,7 +99,7 @@ export const fetchKeys = async (
   if (keyToGet !== undefined) {
     const ivd = utils.random(16)
     const saltd = utils.random(16)
-    const keyd = utils.xor(keysExchange.SK2 as Uint8Array, crypt.KEY.sKey)
+    const keyd = utils.xor(keysExchange.SK2 as Uint8Array, certificate.sKey)
     const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
     secondData = {
       ...secondData,
@@ -131,8 +110,8 @@ export const fetchKeys = async (
   }
 
   const answer = await lanUtil.sendRequest({
-    ip: firstResponse.ip,
-    port: firstResponse.port,
+    ip,
+    port,
     type: Request.CIPHER_KEY,
     data: secondData,
   })
@@ -145,10 +124,10 @@ export const fetchKeys = async (
   const salt_high = answer.s
   const data_high_jam = answer.d
 
-  const key_high = utils.xor(keysExchange.SK3 as Uint8Array, crypt.KEY.fKey)
-  const key_low = utils.xor(keysExchange.SK2 as Uint8Array, crypt.KEY.fKey)
+  const key_high = utils.xor(keysExchange.SK3 as Uint8Array, certificate.fKey)
+  const key_low = utils.xor(keysExchange.SK2 as Uint8Array, certificate.fKey)
 
-  const { jamming, fKey, sKey, tKey, id } = crypt.KEY
+  const { jamming, fKey, sKey, tKey, id } = certificate
   const jamming_low = utils.sha512(
     utils.concatUint8Array(jamming, keysExchange.SK1 as Uint8Array)
   )
@@ -161,11 +140,11 @@ export const fetchKeys = async (
 
   const jammingValueOnLength_low =
     // eslint-disable-next-line unicorn/consistent-destructuring
-    (crypt.KEY.sKey[0] ^ (keysExchange.SK1?.[3] as number)) &
+    (certificate.sKey[0] ^ (keysExchange.SK1?.[3] as number)) &
     (jamming_low.length - 1)
   const jammingValueOnLength_high =
     // eslint-disable-next-line unicorn/consistent-destructuring
-    (crypt.KEY.tKey[0] ^ (keysExchange.SK1?.[4] as number)) &
+    (certificate.tKey[0] ^ (keysExchange.SK1?.[4] as number)) &
     (jamming_high.length - 1)
 
   const shift_jamming_low =
@@ -210,16 +189,16 @@ export const fetchKeys = async (
   }
 
   const newKey = await lanUtil.sendRequest({
-    ip: firstResponse.ip,
-    port: firstResponse.port,
+    ip,
+    port,
     type: Request.END,
     data: dataToSend,
   })
   const newId = { d: axlsign.sharedKey(newShare.k4.private, newKey.k4) }
 
   await lanUtil.sendRequest({
-    ip: firstResponse.ip,
-    port: firstResponse.port,
+    ip,
+    port,
     type: Request.END_OK,
     data: newId,
   })
