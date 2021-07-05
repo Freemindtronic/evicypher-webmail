@@ -1,6 +1,5 @@
 /* eslint-disable unicorn/filename-case */
 import axlsign from 'axlsign'
-import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
 import * as lanUtil from './lanUtils'
@@ -27,17 +26,34 @@ export interface KeyPair {
  *   was renewed during the exchange.
  */
 export const fetchKeys = async (
-  { certificate }: Phone,
-  keyToGet?: Uint8Array
+  certificate: Certificate,
+  {
+    keyToGet,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    reporter = () => {},
+    signal = new AbortController().signal,
+  }: {
+    keyToGet?: Uint8Array
+    reporter?: (state: string) => void
+    signal?: AbortSignal
+  } = {}
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
+  reporter('Starting')
+
   // Find a phone matching the certificate
   const {
     ip,
     port,
     data: pingResponse,
-  } = await lanUtil.search(Request.PING, {
-    t: certificate.id,
-  })
+  } = await lanUtil.search(
+    Request.PING,
+    {
+      t: certificate.id,
+    },
+    { signal }
+  )
+
+  reporter('Device found')
 
   // Prepare the three shared secrets for the rest of the exchange
   const keysExchange = ([1, 2, 3] as const).map((i) =>
@@ -83,6 +99,8 @@ export const fetchKeys = async (
     data: cipherKeyRequest,
   })
 
+  reporter('Keys received')
+
   const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
 
   // To ensure forward secrecy, we share a new secret
@@ -122,6 +140,8 @@ export const fetchKeys = async (
     type: Request.END_OK,
     data: acknowledgement,
   })
+
+  reporter('Exchange complete')
 
   return { keys, newCertificate }
 }
