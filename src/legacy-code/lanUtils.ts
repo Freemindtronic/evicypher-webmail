@@ -17,7 +17,6 @@ export interface WebAnswer<T> {
   data: T
   ip: string
   port: number
-  origin: string
 }
 
 /**
@@ -155,7 +154,6 @@ const searchLoop = async <T extends keyof RequestMap>(
           data: responseData,
           ip,
           port: requestPort,
-          origin: formatURL(ip, requestPort),
         }
       }
 
