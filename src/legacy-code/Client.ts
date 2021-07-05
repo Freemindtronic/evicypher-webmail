@@ -38,7 +38,7 @@ export const fetchKeys = async (
     signal?: AbortSignal
   } = {}
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  reporter('Starting')
+  reporter('Open the app on your phone')
 
   // Find a phone matching the certificate
   const {

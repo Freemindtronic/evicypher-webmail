@@ -3,10 +3,26 @@ import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
 /** Send a request to the background script to encrypt the given string. */
-const encryptString = async (string: string): Promise<string> =>
-  browser.runtime.sendMessage({
-    type: 'encrypt-request',
-    string,
+const encryptString = async (
+  string: string,
+  reporter: (message: string) => void
+): Promise<string> =>
+  new Promise((resolve) => {
+    const port = browser.runtime.connect(undefined, { name: 'encryption' })
+    port.postMessage(string)
+    port.onMessage.addListener(
+      (
+        message:
+          | { type: 'report'; message: string }
+          | { type: 'response'; response: string }
+      ) => {
+        if (message.type === 'report') reporter(message.message)
+        else {
+          resolve(message.response)
+          port.disconnect()
+        }
+      }
+    )
   })
 
 /** Send a request to the background script to decrypt the given string. */
@@ -76,7 +92,9 @@ const handleToolbar = (toolbar: HTMLElement) => {
       .closest('.iN')
       ?.querySelector('[contenteditable] > :first-child')
     if (!mail || !mail.textContent) return
-    mail.textContent = await encryptString(mail.textContent)
+    mail.textContent = await encryptString(mail.textContent, (state) => {
+      button.$set({ state })
+    })
   })
 }
 
@@ -93,7 +111,7 @@ new MutationObserver((mutations) => {
     }
 
     // The user starts writing a mail
-    else if ((mutation.target as HTMLElement)?.classList.contains('bAK')) {
+    else if ((mutation.target as HTMLElement)?.classList.contains('btx')) {
       const toolbar = mutation.target as HTMLElement
       handleToolbar(toolbar)
     }
