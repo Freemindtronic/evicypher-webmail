@@ -43,12 +43,7 @@ const decrypt = async (str: string) => {
 
   // Decrypt the text
   const evi = new EviCrypt(keys)
-  const decrypted = evi.decryptText(str)
-
-  // A new certificate is created at the end of each exchange
-  phones.update((phones) => phones)
-
-  return decrypted
+  return evi.decryptText(str)
 }
 
 // Handle messages sent by content scripts
