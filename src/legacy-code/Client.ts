@@ -4,7 +4,13 @@ import type { Phone } from 'phones'
 import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from './Certificate'
 import * as lanUtil from './lanUtils'
-import { CipherKeyRequest, CipherKeyResponse, Request } from './protocol'
+import {
+  CipherKeyRequest,
+  CipherKeyResponse,
+  EndOkRequest,
+  EndResponse,
+  Request,
+} from './protocol'
 import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
@@ -101,28 +107,20 @@ export const fetchKeys = async (
       k4: newShare.k4.public,
     },
   })
-  const newId = { d: axlsign.sharedKey(newShare.k4.private, newKey.k4) }
+
+  // Create a new certificate with the new secret
+  const { acknowledgement, newCertificate } = createNewCertificate(
+    newShare,
+    newKey,
+    certificate
+  )
 
   // Send an acknowledgement to the phone, to close the exchange
   await lanUtil.sendRequest({
     ip,
     port,
     type: Request.END_OK,
-    data: newId,
-  })
-
-  const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
-  const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
-  const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
-  const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
-  const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
-
-  const newCertificate = new Certificate({
-    fKey: utils.xor(SK1, certificate.fKey),
-    sKey: utils.xor(SK2, certificate.sKey),
-    tKey: utils.xor(SK3, certificate.tKey),
-    id: utils.xor(SKid, certificate.id),
-    jamming: utils.xor(SK4, certificate.jamming),
+    data: acknowledgement,
   })
 
   return [keys, newCertificate]
@@ -150,7 +148,7 @@ const encryptKey = (
 }
 
 /** What you're about to read does not even come close to looking like cryptography. */
-function unjamKeys(
+const unjamKeys = (
   keysExchange: {
     sharedKey: Uint8Array
     iv: Uint8Array
@@ -166,7 +164,7 @@ function unjamKeys(
     s2: lowSalt,
     d2: lowDataJam,
   }: CipherKeyResponse
-) {
+): { high: Uint8Array; low: Uint8Array } => {
   const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
   const highJamming = utils.sha512(
     utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
@@ -215,4 +213,36 @@ function unjamKeys(
 
   // The two keys we asked for
   return { high, low }
+}
+
+/** Create a new certificate with the old one. */
+const createNewCertificate = (
+  newShare: {
+    id: axlsign.KeyPair
+    k1: axlsign.KeyPair
+    k2: axlsign.KeyPair
+    k3: axlsign.KeyPair
+    k4: axlsign.KeyPair
+  },
+  newKey: EndResponse,
+  certificate: Certificate
+): { acknowledgement: EndOkRequest; newCertificate: Certificate } => {
+  const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
+  const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
+  const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
+  const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
+  const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+
+  const newCertificate = new Certificate({
+    id: utils.xor(SKid, certificate.id),
+    fKey: utils.xor(SK1, certificate.fKey),
+    sKey: utils.xor(SK2, certificate.sKey),
+    tKey: utils.xor(SK3, certificate.tKey),
+    jamming: utils.xor(SK4, certificate.jamming),
+  })
+
+  const acknowledgement = {
+    d: axlsign.sharedKey(newShare.k4.private, newKey.k4),
+  }
+  return { acknowledgement, newCertificate }
 }
