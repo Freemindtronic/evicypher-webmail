@@ -331,6 +331,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@humanwhocodes/config-array@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@humanwhocodes/config-array@npm:0.5.0"
+  dependencies:
+    "@humanwhocodes/object-schema": ^1.2.0
+    debug: ^4.1.1
+    minimatch: ^3.0.4
+  checksum: 44ee6a9f05d93dd9d5935a006b17572328ba9caff8002442f601736cbda79c580cc0f5a49ce9eb88fbacc5c3a6b62098357c2e95326cd17bb9f1a6c61d6e95e7
+  languageName: node
+  linkType: hard
+
+"@humanwhocodes/object-schema@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@humanwhocodes/object-schema@npm:1.2.0"
+  checksum: 40b75480376de8104d65f7c44a7dd76d30fb57823ca8ba3a3239b2b568323be894d93440578a72fd8e5e2cc3df3577ce0d2f0fe308b990dd51cf35392bf3c9a2
+  languageName: node
+  linkType: hard
+
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
@@ -2109,12 +2127,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-sonarjs@npm:^0.8.0-125":
-  version: 0.8.0-125
-  resolution: "eslint-plugin-sonarjs@npm:0.8.0-125"
+"eslint-plugin-sonarjs@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "eslint-plugin-sonarjs@npm:0.9.0"
   peerDependencies:
     eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
-  checksum: bc0d9d6218660cb3e9db1adfda55571d179f9914f882c611b1f51629acabecac4dbfd926f917d50129ac9203024d863ca29f75bb99803bbe232b00af5c59bb7a
+  checksum: b16e1bb5dd4c2ab5d1a7a1b39d1eb3e62b224cfa89c2fc87f7bda58ae4e65c20a2d3ab04d2f65232f7f1472678a097de3217f8a5d6210e691dbaf6df19c4a54b
   languageName: node
   linkType: hard
 
@@ -2209,12 +2227,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.29.0":
-  version: 7.29.0
-  resolution: "eslint@npm:7.29.0"
+"eslint@npm:^7.30.0":
+  version: 7.30.0
+  resolution: "eslint@npm:7.30.0"
   dependencies:
     "@babel/code-frame": 7.12.11
     "@eslint/eslintrc": ^0.4.2
+    "@humanwhocodes/config-array": ^0.5.0
     ajv: ^6.10.0
     chalk: ^4.0.0
     cross-spawn: ^7.0.2
@@ -2254,7 +2273,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 8a18377c761560a29fb48b27458517f260f7854882e40cf7e2d38f0ba60ac1038f39404e0ea849abdda18699530fe055adc5bdbf1ef726ce91ac1482cac9d38c
+  checksum: 872f90844b164dd61ec1bb949d2e33e7fbd189e0652fabe2cbbd0bdce1e4cd7ed08e72fa213795a453ae39fe24460771800608e765febb9e778deb28b9db3cc1
   languageName: node
   linkType: hard
 
@@ -6414,12 +6433,12 @@ __metadata:
     axlsign: "git+ssh://git@github.com:Freemindtronic/lib_axlsign"
     base64-arraybuffer: ^0.2.0
     crypto-js: ^4.0.0
-    eslint: ^7.29.0
+    eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
     eslint-plugin-html: ^6.1.2
     eslint-plugin-prettier: ^3.4.0
-    eslint-plugin-sonarjs: ^0.8.0-125
+    eslint-plugin-sonarjs: ^0.9.0
     eslint-plugin-svelte3: ^3.2.0
     eslint-plugin-unicorn: ^34.0.1
     husky: ^7.0.0
@@ -6445,7 +6464,7 @@ __metadata:
     tslib: ^2.3.0
     typedoc: ^0.21.2
     typescript: ^4.3.5
-    webextension-polyfill-ts: ^0.25.0
+    webextension-polyfill-ts: ^0.26.0
   languageName: unknown
   linkType: soft
 
@@ -7144,19 +7163,19 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"webextension-polyfill-ts@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "webextension-polyfill-ts@npm:0.25.0"
+"webextension-polyfill-ts@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "webextension-polyfill-ts@npm:0.26.0"
   dependencies:
-    webextension-polyfill: ^0.7.0
-  checksum: c4dc82c86e34cea717a26af549f2822d63e92af52632f5e909ea13b5e7bd9d6110781f10313e36ada2b54c770ebca018bc3784756d12ba3b0b623d285f1a14a7
+    webextension-polyfill: ^0.8.0
+  checksum: cf9e21da6b1237e760d3774f707d9694c6e51e9629c15ebdac5b43e0c7b02fffe18570aeab1f5b3126e24fbb4bf6f523c56d5c9a92d944d900e7182c1fd81066
   languageName: node
   linkType: hard
 
-"webextension-polyfill@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "webextension-polyfill@npm:0.7.0"
-  checksum: fb738a5de07feb593875e02f25c3ab4276c8736118929556c8d4bdf965bb0f11c96ea263cd397b9b21259e8faf2dce2eaaa42ce08c922d96de7adb5896ec7d10
+"webextension-polyfill@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "webextension-polyfill@npm:0.8.0"
+  checksum: 56286e6216e15834fdcdc3dcf611000d96b49c9d925de3d657eb5f1e294074180dd3efe78a0966223eb311ac3a0ac5fdf71d324b836bf05724455ffd6c7c98c3
   languageName: node
   linkType: hard
 

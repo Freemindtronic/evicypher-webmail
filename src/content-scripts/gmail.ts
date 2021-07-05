@@ -8,7 +8,7 @@ const encryptString = async (
   reporter: (message: string) => void
 ): Promise<string> =>
   new Promise((resolve) => {
-    const port = browser.runtime.connect(undefined, { name: 'encryption' })
+    const port = browser.runtime.connect({ name: 'encryption' })
     port.postMessage(string)
     port.onMessage.addListener(
       (
