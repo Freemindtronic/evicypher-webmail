@@ -1,3 +1,4 @@
+import { backgroundTask, Task } from 'task'
 import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -13,24 +14,7 @@ const FLAG = 'freemindtronicButtonAdded'
 const encryptString = async (
   string: string,
   reporter: (message: string) => void
-): Promise<string> =>
-  new Promise((resolve) => {
-    const port = browser.runtime.connect({ name: 'encryption' })
-    port.postMessage(string)
-    port.onMessage.addListener(
-      (
-        message:
-          | { type: 'report'; message: string }
-          | { type: 'response'; response: string }
-      ) => {
-        if (message.type === 'report') reporter(message.message)
-        else {
-          resolve(message.response)
-          port.disconnect()
-        }
-      }
-    )
-  })
+): Promise<string> => backgroundTask(Task.ENCRYPT, string, reporter)
 
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (string: string): Promise<string> =>

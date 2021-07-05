@@ -1,7 +1,7 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import type { Message } from 'messages'
+import { Task } from 'task'
 import { favoritePhone, phones } from 'phones'
 import { get } from 'svelte/store'
 import { browser, Runtime } from 'webextension-polyfill-ts'
@@ -46,6 +46,13 @@ const decrypt = async (str: string) => {
   return evi.decryptText(str)
 }
 
+interface DecryptRequest {
+  type: 'decrypt-request'
+  string: string
+}
+
+type Message = DecryptRequest
+
 // Handle messages sent by content scripts
 browser.runtime.onMessage.addListener(async (message: Message) => {
   if (
@@ -67,7 +74,7 @@ browser.runtime.onMessage.addListener(async (message: Message) => {
 browser.runtime.onConnect.addListener((port) => {
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (port.name) {
-    case 'encryption':
+    case Task.ENCRYPT:
       handleEncryption(port)
       return
     default:
@@ -103,7 +110,7 @@ const getMessage = async (port: Runtime.Port) =>
 async function handleEncryption(port: Runtime.Port) {
   const string = (await getMessage(port)) as string
   const response = await encrypt(string, (message) =>
-    port.postMessage({ type: 'report', message })
+    port.postMessage({ type: 'report', value: message })
   )
-  port.postMessage({ type: 'response', response })
+  port.postMessage({ type: 'response', value: response })
 }
