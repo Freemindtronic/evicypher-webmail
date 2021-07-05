@@ -22,7 +22,7 @@ export interface ZeroconfResponse {
     url: string
     /** Additional information. */
     txt: string[] | null
-  }>
+  }> | null
 }
 
 /** @returns Whether the Zeroconf service is properly installed. */

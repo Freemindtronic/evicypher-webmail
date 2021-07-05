@@ -100,14 +100,17 @@ const searchLoop = async <T extends keyof RequestMap>(
         // Ask the service for a list of connected devices
         nativePort.onMessage.addListener((response: ZeroconfResponse) => {
           // Return an array of {ip, port}
-          resolve(response.result.map(({ a: ip, port }) => ({ ip, port })))
+          resolve(
+            // The Zeroconf service returns `null` instead of an empty array
+            response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
+          )
         })
       }
     )
     nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
 
     // Wait for either a response or a timeout
-    const timeOut = 2500
+    const timeOut = 5000
     const devicesFound = await Promise.race([
       zeroconfResponse,
       new Promise<void>((resolve) => {
