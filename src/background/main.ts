@@ -16,7 +16,7 @@ const encrypt = async (str: string) => {
   if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const [keys, newCertificate] = await fetchKeys(phone)
+  const { keys, newCertificate } = await fetchKeys(phone)
   phone.certificate = newCertificate
   phones.update((phones) => phones)
 
@@ -35,7 +35,7 @@ const decrypt = async (str: string) => {
   if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const [keys, newCertificate] = await fetchKeys(phone)
+  const { keys, newCertificate } = await fetchKeys(phone)
   phone.certificate = newCertificate
   phones.update((phones) => phones)
 

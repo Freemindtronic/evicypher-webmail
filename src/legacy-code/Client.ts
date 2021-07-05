@@ -29,7 +29,7 @@ export interface KeyPair {
 export const fetchKeys = async (
   { certificate }: Phone,
   keyToGet?: Uint8Array
-): Promise<[KeyPair, Certificate]> => {
+): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
   // Find a phone matching the certificate
   const {
     ip,
@@ -123,7 +123,7 @@ export const fetchKeys = async (
     data: acknowledgement,
   })
 
-  return [keys, newCertificate]
+  return { keys, newCertificate }
 }
 
 /** Does some encryption stuff, it's still unclear at this time of refactoring. */
