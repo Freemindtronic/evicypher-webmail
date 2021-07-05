@@ -20,7 +20,7 @@ const encrypt = async (str: string, reporter: (message: string) => void) => {
     reporter,
   })
   phone.certificate = newCertificate
-  phones.update((phones) => phones)
+  phones.update(($phones) => $phones)
 
   // Encrypt the text
   const evi = new EviCrypt(keys)
