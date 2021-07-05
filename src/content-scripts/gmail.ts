@@ -2,6 +2,13 @@ import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
+const Class = {
+  MAIL_CONTENT: 'aiL',
+  TOOLBAR: 'btx',
+}
+
+const FLAG = 'freemindtronicButtonAdded'
+
 /** Send a request to the background script to encrypt the given string. */
 const encryptString = async (
   string: string,
@@ -45,8 +52,8 @@ const handleEncryptedMailElement = (
   mailElement: HTMLElement,
   mailString: string
 ) => {
-  if ('freemindtronicButtonAdded' in mailElement.dataset) return
-  mailElement.dataset.freemindtronicButtonAdded = '1'
+  if (FLAG in mailElement.dataset) return
+  mailElement.dataset[FLAG] = '1'
 
   mailElement.style.position = 'relative'
   mailElement.style.outline = '3px solid orange'
@@ -80,8 +87,8 @@ const handleEncryptedMailElement = (
 }
 
 const handleToolbar = (toolbar: HTMLElement) => {
-  if ('freemindtronicButtonAdded' in toolbar.dataset) return
-  toolbar.dataset.freemindtronicButtonAdded = '1'
+  if (FLAG in toolbar.dataset) return
+  toolbar.dataset[FLAG] = '1'
 
   const button = new EncryptButton({
     target: toolbar,
@@ -101,7 +108,9 @@ const handleToolbar = (toolbar: HTMLElement) => {
 new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     // The user opens a mail
-    if ((mutation.target as HTMLElement)?.classList.contains('aiL')) {
+    if (
+      (mutation.target as HTMLElement)?.classList.contains(Class.MAIL_CONTENT)
+    ) {
       const mailElement = mutation.target as HTMLElement
       const mailString = mailElement.textContent
       // If it's not an encrypted mail, ignore it
@@ -111,7 +120,9 @@ new MutationObserver((mutations) => {
     }
 
     // The user starts writing a mail
-    else if ((mutation.target as HTMLElement)?.classList.contains('btx')) {
+    else if (
+      (mutation.target as HTMLElement)?.classList.contains(Class.TOOLBAR)
+    ) {
       const toolbar = mutation.target as HTMLElement
       handleToolbar(toolbar)
     }
