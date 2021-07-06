@@ -36,10 +36,6 @@
       })
     })
     yield true
-
-    // The pairing completed successfully
-    // TODO this value should be ignored, replaced by the return value of the background task
-    return true
   }
 
   /** Start the interactive process to register a new phone. */

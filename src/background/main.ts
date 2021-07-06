@@ -163,15 +163,15 @@ async function handlePairing(port: Runtime.Port) {
     port.postMessage({ type: 'report', state, details })
   }) as Reporter)
   let result = await generator.next()
-  port.postMessage({ type: 'request', request: result.value })
   while (!result.done) {
+    port.postMessage({ type: 'request', request: result.value })
+
     // eslint-disable-next-line no-await-in-loop
     const message = await getMessage<MessageFromFrontToBack>(port)
 
     if (message.type === 'response') {
       // eslint-disable-next-line no-await-in-loop
       result = await generator.next(message.response as boolean)
-      port.postMessage({ type: 'request', request: result.value })
       continue
     }
 
@@ -179,5 +179,6 @@ async function handlePairing(port: Runtime.Port) {
       console.error('Aborting...')
     }
   }
-  // TODO send result.value as the result value of the client-side generator
+
+  port.postMessage({ type: 'result', result: result.value })
 }

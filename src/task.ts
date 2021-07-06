@@ -44,6 +44,10 @@ export type MessageFromBackToFront =
       type: 'request'
       request: unknown
     }
+  | {
+      type: 'result'
+      result: unknown
+    }
   | ReportMessage<StateKey>
 
 export type MessageFromFrontToBack =
@@ -85,6 +89,7 @@ export const runBackgroundTask = async <
   report: ReporterImpl
 ): Promise<ResponseMap[T]> => {
   await generator.next()
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   return new Promise((resolve) => {
     const port = browser.runtime.connect({ name: task })
     port.onMessage.addListener(async (message: MessageFromBackToFront) => {
@@ -95,13 +100,19 @@ export const runBackgroundTask = async <
 
       if (message.type === 'request') {
         const result = await generator.next(message.request)
-        if (result.done) {
-          resolve(result.value as ResponseMap[T])
-          return
-        }
-
+        if (result.done)
+          console.warn('Generator exhausted, this is probably an error.')
         port.postMessage({ type: 'response', response: result.value })
+        return
       }
+
+      if (message.type === 'result') {
+        resolve(message.result as ResponseMap[T])
+        port.disconnect()
+        return
+      }
+
+      throw new Error('Unexpected message')
     })
     port.postMessage(message)
   })
