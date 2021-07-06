@@ -1,14 +1,7 @@
 <script lang="ts">
-  import { clientHello, PairingKey } from 'legacy-code/device'
-  import {
-    favoritePhone,
-    favoritePhoneId,
-    nextPhoneId,
-    Phone,
-    phones,
-  } from 'phones'
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
+  import { backgroundTask, Task } from 'task'
 
   const dispatch = createEventDispatcher()
 
@@ -24,31 +17,11 @@
 
   /** Start the interactive process to register a new phone. */
   onMount(async () => {
-    // Create a new pairing key
-    const pairingKey = new PairingKey()
+    const success = await backgroundTask(Task.PAIR, phoneName, (pairingKey) =>
+      toCanvas(qr, pairingKey.toString())
+    )
 
-    // Display the pairing QR code
-    toCanvas(qr, pairingKey.toString())
-
-    // Wait for the user to scan the code
-    const device = await clientHello(pairingKey, pairingController.signal)
-    const key = await device.clientKeyExchange()
-
-    // Show the UID
-    uid = key.UUID
-
-    // Send the confirmation request
-    const certificate = await device.sendNameInfo(phoneName, key.ECC)
-    const phone = new Phone(await nextPhoneId(), phoneName, certificate)
-
-    $phones = [...$phones, phone]
-
-    // Show a success message
-    console.log('Pairing successful')
-
-    if ($favoritePhone === undefined) {
-      $favoritePhoneId = phone.id
-    }
+    if (success) console.log('Pairing successful')
 
     phoneName = ''
 

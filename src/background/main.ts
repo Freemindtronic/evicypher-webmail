@@ -2,9 +2,16 @@ import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
 import { Task } from 'task'
-import { favoritePhone, phones } from 'phones'
+import {
+  favoritePhone,
+  favoritePhoneId,
+  nextPhoneId,
+  Phone,
+  phones,
+} from 'phones'
 import { get } from 'svelte/store'
 import { browser, Runtime } from 'webextension-polyfill-ts'
+import { clientHello, PairingKey } from 'legacy-code/device'
 
 /** Send an encryption request to the phone, return the encrypted text. */
 const encrypt = async (str: string, reporter: (message: string) => void) => {
@@ -46,6 +53,32 @@ const decrypt = async (str: string) => {
   return evi.decryptText(str)
 }
 
+const pair = async (phoneName: string, reporter: (message: string) => void) => {
+  const pairingKey = new PairingKey()
+
+  // Display the pairing QR code
+  reporter(pairingKey.toString())
+
+  // Wait for the user to scan the code
+  const device = await clientHello(pairingKey)
+  const key = await device.clientKeyExchange()
+
+  // Show the UID
+  console.log(key.UUID)
+
+  // Send the confirmation request
+  const certificate = await device.sendNameInfo(phoneName, key.ECC)
+  const phone = new Phone(await nextPhoneId(), phoneName, certificate)
+
+  phones.update(($phones) => [...$phones, phone])
+
+  if (get(favoritePhone) === undefined) {
+    favoritePhoneId.set(phone.id)
+  }
+
+  return true
+}
+
 interface DecryptRequest {
   type: 'decrypt-request'
   string: string
@@ -72,10 +105,12 @@ browser.runtime.onMessage.addListener(async (message: Message) => {
 })
 
 browser.runtime.onConnect.addListener((port) => {
-  // eslint-disable-next-line sonarjs/no-small-switch
   switch (port.name) {
     case Task.ENCRYPT:
       handleEncryption(port)
+      return
+    case Task.PAIR:
+      handlePairing(port)
       return
     default:
       throw new Error('Unexpected connection.')
@@ -110,6 +145,14 @@ const getMessage = async (port: Runtime.Port) =>
 async function handleEncryption(port: Runtime.Port) {
   const string = (await getMessage(port)) as string
   const response = await encrypt(string, (message) =>
+    port.postMessage({ type: 'report', value: message })
+  )
+  port.postMessage({ type: 'response', value: response })
+}
+
+async function handlePairing(port: Runtime.Port) {
+  const phoneName = (await getMessage(port)) as string
+  const response = await pair(phoneName, (message) =>
     port.postMessage({ type: 'report', value: message })
   )
   port.postMessage({ type: 'response', value: response })
