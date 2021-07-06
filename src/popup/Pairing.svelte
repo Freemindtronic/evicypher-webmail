@@ -1,9 +1,12 @@
 <script lang="ts">
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
+  import { writable } from 'svelte/store'
   import { runBackgroundTask, Task } from 'task'
 
   const dispatch = createEventDispatcher()
+
+  const confirm = writable(false)
 
   /** Name of the phone to be added. */
   export let phoneName = ''
@@ -25,6 +28,11 @@
     uid = yield
 
     // Yield true if the user confirmed pairing
+    await new Promise<void>((resolve) => {
+      confirm.subscribe((value) => {
+        if (value) resolve()
+      })
+    })
     yield true
 
     // The pairing completed successfully
@@ -59,7 +67,9 @@
 </p>
 <p>
   {#if uid !== undefined}
-    Pairing with phone {uid} in progress...
+    Is the code {uid} correct?
+    <button type="button" on:click={() => ($confirm = true)}>Yes!</button>
+    <button on:click={() => cancelPairing()}>No</button>
   {:else}
     Please scan this QR code with the application Freemindtronic.
   {/if}

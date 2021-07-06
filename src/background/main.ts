@@ -158,15 +158,12 @@ async function handleEncryption(port: Runtime.Port) {
 }
 
 async function handlePairing(port: Runtime.Port) {
-  console.log('handlePairing1')
   const phoneName = (await getMessage(port)) as string
-  console.log('handlePairing2')
   const generator = pair(phoneName, (message: unknown) => {
     console.log(message)
   })
   let result = await generator.next()
   port.postMessage(result.value)
-  console.log('handlePairing3')
   while (!result.done) {
     // eslint-disable-next-line no-await-in-loop
     result = await generator.next((await getMessage(port)) as boolean)
