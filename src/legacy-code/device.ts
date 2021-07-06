@@ -84,8 +84,6 @@ export class Device {
     UUID: string
     ECC: Uint8Array
   }> {
-    if (this.IP === undefined) throw new Error('IP undefined')
-
     const ivS = utils.random(16)
     const enc = this.pairingKey.AES.encryptCTR(
       ivS,
@@ -105,35 +103,27 @@ export class Device {
       },
     })
 
-    let iv = data.ik
-    let salt = utils.xor(this.pairingKey.salt, data.sk)
-    let cipherText = data.ek
+    const salt = utils.xor(this.pairingKey.salt, data.sk)
     const ECC = this.pairingKey.AES.decryptCTR(
-      iv,
+      data.ik,
       salt,
       this.pairingKey.key,
-      cipherText
+      data.ek
     )
     const sharedKey = axlsign.sharedKey(this.pairingKey.k1.private, ECC)
 
-    iv = data.in
-    salt = data.sn
-    cipherText = data.n
     const name = this.pairingKey.AES.decryptCTR(
-      iv,
-      salt,
+      data.in,
+      data.sn,
       this.pairingKey.Tkey,
-      cipherText
+      data.n
     )
 
-    iv = data.iu
-    salt = data.su
-    cipherText = data.u
     const UUID_U8 = this.pairingKey.AES.decryptCTR(
-      iv,
-      salt,
+      data.iu,
+      data.su,
       this.pairingKey.Tkey,
-      cipherText
+      data.u
     )
     const UUID = utils.uint8ToHex(UUID_U8)
 
