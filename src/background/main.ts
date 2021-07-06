@@ -1,7 +1,7 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import { Task } from 'task'
+import { MessageFromFrontToBack, Task } from 'task'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -128,9 +128,9 @@ browser.runtime.onConnect.addListener((port) => {
  * Returns a promise on the next message of the port. Throws if disconnected
  * before a message is received.
  */
-const getMessage = async (port: Runtime.Port) =>
-  new Promise((resolve, reject) => {
-    const onMessage = (message: unknown) => {
+const getMessage = async <T = unknown>(port: Runtime.Port) =>
+  new Promise<T>((resolve, reject) => {
+    const onMessage = (message: T) => {
       removeListeners()
       resolve(message)
     }
@@ -150,7 +150,7 @@ const getMessage = async (port: Runtime.Port) =>
   })
 
 async function handleEncryption(port: Runtime.Port) {
-  const string = (await getMessage(port)) as string
+  const string = await getMessage<string>(port)
   const response = await encrypt(string, (message) => {
     port.postMessage({ type: 'report', value: message })
   })
@@ -158,16 +158,26 @@ async function handleEncryption(port: Runtime.Port) {
 }
 
 async function handlePairing(port: Runtime.Port) {
-  const phoneName = (await getMessage(port)) as string
-  const generator = pair(phoneName, (message: unknown) => {
-    console.log(message)
-  })
+  const phoneName = await getMessage<string>(port)
+  const generator = pair(phoneName, ((state: unknown, details: unknown) => {
+    port.postMessage({ type: 'report', state, details })
+  }) as Reporter)
   let result = await generator.next()
-  port.postMessage(result.value)
+  port.postMessage({ type: 'request', request: result.value })
   while (!result.done) {
     // eslint-disable-next-line no-await-in-loop
-    result = await generator.next((await getMessage(port)) as boolean)
-    port.postMessage(result.value)
+    const message = await getMessage<MessageFromFrontToBack>(port)
+
+    if (message.type === 'response') {
+      // eslint-disable-next-line no-await-in-loop
+      result = await generator.next(message.response as boolean)
+      port.postMessage({ type: 'request', request: result.value })
+      continue
+    }
+
+    if (message.type === 'abort') {
+      console.error('Aborting...')
+    }
   }
   // TODO send result.value as the result value of the client-side generator
 }

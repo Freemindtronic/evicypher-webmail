@@ -25,6 +25,12 @@ export type Reporter = (<T extends keyof ReportDetails>(
 ) => void) &
   (<T extends Exclude<StateKey, keyof ReportDetails>>(state: T) => void)
 
+/** A less strict version of the `Reporter` to make implementation easier. */
+export type ReporterImpl = <T extends StateKey>(
+  state: T,
+  details: T extends keyof ReportDetails ? ReportDetails[T] : undefined
+) => void
+
 /** A reporter that does nothing. */
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const defaultReporter: Reporter = () => {}

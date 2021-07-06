@@ -16,6 +16,8 @@
   /** A canvas to draw the QR code. */
   let qr: HTMLCanvasElement
 
+  let state = 'Loading...'
+
   const pairingController = new AbortController()
 
   /** Interacts with the background script to pair a new device. */
@@ -42,7 +44,14 @@
 
   /** Start the interactive process to register a new phone. */
   onMount(async () => {
-    const success = await runBackgroundTask(Task.PAIR, phoneName, pair())
+    const success = await runBackgroundTask(
+      Task.PAIR,
+      phoneName,
+      pair(),
+      (st) => {
+        state = st
+      }
+    )
 
     if (success) console.log('Pairing successful')
 
@@ -61,6 +70,7 @@
 
 <p>
   <button on:click={() => cancelPairing()}>X</button>
+  {state}
 </p>
 <p>
   <canvas bind:this={qr} />

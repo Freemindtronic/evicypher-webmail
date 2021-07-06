@@ -1,3 +1,4 @@
+import type { ReportDetails, ReporterImpl, StateKey } from 'legacy-code/report'
 import { browser } from 'webextension-polyfill-ts'
 
 export type State = string
@@ -32,6 +33,26 @@ export interface MessageMap {
     | { type: 'response'; value: ResponseMap[typeof Task.PAIR] }
 }
 
+export type ReportMessage<T extends StateKey> = {
+  type: 'report'
+  state: T
+  details: T extends keyof ReportDetails ? ReportDetails[T] : undefined
+}
+
+export type MessageFromBackToFront =
+  | {
+      type: 'request'
+      request: unknown
+    }
+  | ReportMessage<StateKey>
+
+export type MessageFromFrontToBack =
+  | {
+      type: 'response'
+      response: unknown
+    }
+  | { type: 'abort' }
+
 export const backgroundTask = async <T extends typeof Task[keyof typeof Task]>(
   task: T,
   message: RequestMap[T],
@@ -60,19 +81,27 @@ export const runBackgroundTask = async <
 >(
   task: T,
   message: RequestMap[T],
-  generator: AsyncGenerator<void | boolean, boolean, string>
+  generator: AsyncGenerator<void | boolean, boolean>,
+  report: ReporterImpl
 ): Promise<ResponseMap[T]> => {
   await generator.next()
   return new Promise((resolve) => {
     const port = browser.runtime.connect({ name: task })
-    port.onMessage.addListener(async (message) => {
-      const result = await generator.next(message)
-      if (result.done) {
-        resolve(result.value as ResponseMap[T])
+    port.onMessage.addListener(async (message: MessageFromBackToFront) => {
+      if (message.type === 'report') {
+        report(message.state, message.details)
         return
       }
 
-      port.postMessage(result.value)
+      if (message.type === 'request') {
+        const result = await generator.next(message.request)
+        if (result.done) {
+          resolve(result.value as ResponseMap[T])
+          return
+        }
+
+        port.postMessage({ type: 'response', response: result.value })
+      }
     })
     port.postMessage(message)
   })
