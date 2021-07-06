@@ -134,8 +134,6 @@ export class Device {
     name: string,
     sharedKey: Uint8Array
   ): Promise<Certificate> {
-    if (this.IP === undefined) throw new Error('Certificate undefined')
-
     const ivS = utils.random(16)
     const saltb = utils.random(16)
     const enc = this.pairingKey.AES.encryptCTR(
