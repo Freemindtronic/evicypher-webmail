@@ -7,7 +7,7 @@ import {
   getZeroconfService,
   isZeroconfServiceInstalled,
   ZeroconfResponse,
-} from './zeroconf-service'
+} from '../background/zeroconf-service'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
