@@ -122,7 +122,9 @@ const searchLoop = async <T extends keyof RequestMap>(
     const devicesFound = await Promise.race([
       zeroconfResponse,
       new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), timeOut)
+        setTimeout(() => {
+          resolve()
+        }, timeOut)
       }),
     ])
 
@@ -139,8 +141,12 @@ const searchLoop = async <T extends keyof RequestMap>(
 
     // Create an AbortController to trigger a timeout
     const controller = new AbortController()
-    setTimeout(() => controller.abort(), timeOut)
-    signal.addEventListener('abort', () => controller.abort())
+    setTimeout(() => {
+      controller.abort()
+    }, timeOut)
+    signal.addEventListener('abort', () => {
+      controller.abort()
+    })
 
     // Try to reach all the devices found
     const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
@@ -215,7 +221,10 @@ export const sendRequest = async <T extends keyof RequestMap>({
 }): Promise<ResponseMap[T]> => {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
-  if (timeout) setTimeout(() => controller.abort(), timeout)
+  if (timeout)
+    setTimeout(() => {
+      controller.abort()
+    }, timeout)
 
   // Send a POST request
   const response = await fetch(formatURL(ip, port, type), {
@@ -227,6 +236,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
 
   if (response.status >= 300) throw new Error(response.statusText)
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const responseData: Serialize<ResponseMap[T]> = await response.json()
   return unserialize(responseData)
 }

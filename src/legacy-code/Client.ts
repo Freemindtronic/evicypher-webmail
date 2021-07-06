@@ -169,12 +169,12 @@ const encryptKey = (
 
 /** What you're about to read does not even come close to looking like cryptography. */
 const unjamKeys = (
-  keysExchange: {
+  keysExchange: Array<{
     sharedKey: Uint8Array
     iv: Uint8Array
     salt: Uint8Array
     encryptedKey: Uint8Array
-  }[],
+  }>,
   certificate: Certificate,
   {
     i: highInitializationVector,

@@ -65,7 +65,9 @@ export async function clientHello(
       report: <T extends typeof State[keyof typeof State]>(
         state: T,
         details?: unknown
-      ) => console.log(state, details),
+      ) => {
+        console.log(state, details)
+      },
     }
   )
   return new Device(answer.ip, pairingKey)

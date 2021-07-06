@@ -10,6 +10,7 @@ module.exports = {
     'plugin:unicorn/recommended',
     'plugin:sonarjs/recommended',
     'xo',
+    'xo-typescript',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',

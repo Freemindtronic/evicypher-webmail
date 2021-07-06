@@ -18,6 +18,7 @@ const encryptString = async (
 
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (string: string): Promise<string> =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   browser.runtime.sendMessage({
     type: 'decrypt-request',
     string,
@@ -28,7 +29,7 @@ const containsEncryptedText = (string: string) => string.includes('AAAAF')
 
 /** Return all encrypted messages found in a string. */
 const extractEncryptedStrings = (string: string) => [
-  ...(string.match(/AAAAF\S+/gs) || []),
+  ...(string.match(/AAAAF\S+/gs) ?? []),
 ]
 
 /** Add a button to a given element to decrypt `mailString`. */
@@ -59,7 +60,8 @@ const handleEncryptedMailElement = (
     }
 
     for (const string of encryptedStrings) {
-      decryptString(string).then((decryptedString) => {
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      void decryptString(string).then((decryptedString) => {
         const frame: HTMLIFrameElement = document.createElement('iframe')
         frame.srcdoc = decryptedString
         frame.sandbox.value = ''

@@ -7,6 +7,9 @@ import { browser, Storage } from 'webextension-polyfill-ts'
  * @typeParam T - Type of the wrapped variable
  */
 export class BrowserStore<T> implements Writable<T> {
+  /** A promise resolved when all known BrowserStores are hydrated. */
+  static allLoaded: Promise<void> = Promise.resolve()
+
   /** Storage key. */
   readonly name: string
 
@@ -15,9 +18,6 @@ export class BrowserStore<T> implements Writable<T> {
 
   /** A promise resolved when the store is hydrated with the persisted data. */
   readonly loadPromise: Promise<void>
-
-  /** A promise resolved when all known BrowserStores are hydrated. */
-  static allLoaded: Promise<void> = Promise.resolve()
 
   /**
    * Instanciate a writable store backed by a local storage.
@@ -61,7 +61,7 @@ export class BrowserStore<T> implements Writable<T> {
     // Asynchronously load data from browser storage
     this.loadPromise = new Promise((resolve) => {
       this.writable.update((value) => {
-        storage
+        void storage
           .get({ [this.name]: JSON.stringify(value) })
           .then(({ [this.name]: value }) => transformer(JSON.parse(value)))
           .then((value) => {
@@ -76,13 +76,15 @@ export class BrowserStore<T> implements Writable<T> {
     // Make changes persistent
     this.writable.subscribe((value) => {
       if (!loaded) return
-      storage.set({ [this.name]: JSON.stringify(value) })
+      void storage.set({ [this.name]: JSON.stringify(value) })
       // Do not trigger the event listener below
       ignoreNextEvent = true
     })
 
     // Make a nice promise chain
-    BrowserStore.allLoaded = BrowserStore.allLoaded.then(() => this.loadPromise)
+    BrowserStore.allLoaded = BrowserStore.allLoaded.then(
+      async () => this.loadPromise
+    )
 
     // Listen for changes in other tabs/processes
     // eslint-disable-next-line complexity
@@ -106,7 +108,7 @@ export class BrowserStore<T> implements Writable<T> {
       loaded = false
 
       // We need to wrap the output of `transformer` in case it is not asynchronous
-      Promise.resolve(
+      void Promise.resolve(
         transformer(JSON.parse(changes[this.name].newValue))
       ).then((value) => {
         this.writable.set(value)
@@ -116,11 +118,11 @@ export class BrowserStore<T> implements Writable<T> {
   }
 
   set(value: T): void {
-    return this.writable.set(value)
+    this.writable.set(value)
   }
 
   update(updater: Updater<T>): void {
-    return this.writable.update(updater)
+    this.writable.update(updater)
   }
 
   subscribe(

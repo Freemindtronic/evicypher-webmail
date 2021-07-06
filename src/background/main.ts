@@ -93,24 +93,24 @@ browser.runtime.onMessage.addListener(async (message: Message) => {
     typeof message !== 'object' ||
     typeof message?.type !== 'string'
   )
-    throw new Error(`Unexpected message ${message}`)
+    throw new Error(`Unexpected message ${typeof message}`)
 
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (message.type) {
     case 'decrypt-request':
       return decrypt(message.string)
     default:
-      throw new Error(`Unexpected message type ${(message as Message).type}`)
+      throw new Error(`Unexpected message type ${message.type as string}`)
   }
 })
 
 browser.runtime.onConnect.addListener((port) => {
   switch (port.name) {
     case Task.ENCRYPT:
-      handleEncryption(port)
+      void handleEncryption(port)
       return
     case Task.PAIR:
-      handlePairing(port)
+      void handlePairing(port)
       return
     default:
       throw new Error('Unexpected connection.')
@@ -144,16 +144,16 @@ const getMessage = async (port: Runtime.Port) =>
 
 async function handleEncryption(port: Runtime.Port) {
   const string = (await getMessage(port)) as string
-  const response = await encrypt(string, (message) =>
+  const response = await encrypt(string, (message) => {
     port.postMessage({ type: 'report', value: message })
-  )
+  })
   port.postMessage({ type: 'response', value: response })
 }
 
 async function handlePairing(port: Runtime.Port) {
   const phoneName = (await getMessage(port)) as string
-  const response = await pair(phoneName, (message) =>
+  const response = await pair(phoneName, (message) => {
     port.postMessage({ type: 'report', value: message })
-  )
+  })
   port.postMessage({ type: 'response', value: response })
 }

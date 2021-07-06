@@ -2092,6 +2092,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-config-xo-typescript@npm:^0.43.0":
+  version: 0.43.0
+  resolution: "eslint-config-xo-typescript@npm:0.43.0"
+  dependencies:
+    typescript: ">=4.3"
+  peerDependencies:
+    "@typescript-eslint/eslint-plugin": ">=4.28.1"
+    eslint: ">=7.30.0"
+    typescript: ">=4.3"
+  checksum: 1145ea3c3949ce9a83c0d5ae02e18681085663f9116d04a808f97f04acdfc7c16cb5ebc63fae9ea93ee24450fd4d6c31b90429720999b91ba65da42b93f66bbc
+  languageName: node
+  linkType: hard
+
 "eslint-config-xo@npm:^0.37.0":
   version: 0.37.0
   resolution: "eslint-config-xo@npm:0.37.0"
@@ -6436,6 +6449,7 @@ __metadata:
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
+    eslint-config-xo-typescript: ^0.43.0
     eslint-plugin-html: ^6.1.2
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-sonarjs: ^0.9.0
@@ -6858,7 +6872,7 @@ typescript@*:
   languageName: node
   linkType: hard
 
-typescript@^4.3.5:
+"typescript@>=4.3, typescript@^4.3.5":
   version: 4.3.5
   resolution: "typescript@npm:4.3.5"
   bin:
@@ -6878,7 +6892,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.3.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@>=4.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.3.5#~builtin<compat/typescript>":
   version: 4.3.5
   resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"
   bin:
