@@ -5,6 +5,7 @@ import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
 import { search, sendRequest } from './lanUtils'
 import { Request } from './protocol'
+import type { State } from './report'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -61,6 +62,10 @@ export async function clientHello(
     {
       signal,
       portOverride: pairingKey.port,
+      report: <T extends typeof State[keyof typeof State]>(
+        state: T,
+        details?: unknown
+      ) => console.log(state, details),
     }
   )
   return new Device(answer.ip, pairingKey)

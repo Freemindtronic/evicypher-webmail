@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import Base64 from 'base64-arraybuffer'
 import type { RequestMap, ResponseMap } from './protocol'
+import { defaultReporter, Reporter, State } from './report'
 import { b64ToUint8Array } from './utils'
 import {
   getZeroconfService,
@@ -36,6 +37,7 @@ export const search = async <T extends keyof RequestMap>(
     signal = new AbortController().signal,
     portOverride,
     maxNumberOfSearches = 100,
+    report = defaultReporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
     signal?: AbortSignal
@@ -43,6 +45,8 @@ export const search = async <T extends keyof RequestMap>(
     portOverride?: number
     /** Max number of tries before aborting. */
     maxNumberOfSearches?: number
+    /** A function to call every time the process advances. */
+    report?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]>> => {
   // Check that the Zeroconf service is reachable
@@ -54,9 +58,11 @@ export const search = async <T extends keyof RequestMap>(
     // Shall we continue?
     if (signal.aborted) throw new Error('Cancel by user.')
 
+    report(State.LOOKING_FOR_DEVICES, { triesLeft: maxNumberOfSearches })
+
     // Run the search loop
     // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(type, data, { signal, portOverride })
+    const res = await searchLoop(type, data, { signal, portOverride, report })
     if (res !== undefined) return res
 
     maxNumberOfSearches--
@@ -82,11 +88,14 @@ const searchLoop = async <T extends keyof RequestMap>(
   {
     signal = new AbortController().signal,
     portOverride,
+    report = defaultReporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
     signal?: AbortSignal
     /** If set, ignore the connection port advertised by the devices. */
     portOverride?: number
+    /** A function to call every time the process advances. */
+    report?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]> | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
@@ -119,11 +128,11 @@ const searchLoop = async <T extends keyof RequestMap>(
 
     // Check it the request timed out
     if (devicesFound === undefined) {
-      console.warn('Zeroconf timed out.')
+      report(State.ZEROCONF_TIMED_OUT)
       return
     }
 
-    console.log(`${devicesFound.length} devices found.`)
+    report(State.DEVICES_FOUND, { found: devicesFound.length })
 
     // Abort the operation if no device is found
     if (devicesFound.length === 0) return
@@ -164,7 +173,7 @@ const searchLoop = async <T extends keyof RequestMap>(
     // Wait for either a device to pair, or an AggregateError
     return await Promise.any(requestsSent)
   } catch {
-    console.warn('No device accepted to pair.')
+    report(State.ALL_DEVICES_REFUSED)
   } finally {
     // Properly disconnect
     nativePort.disconnect()
