@@ -12,6 +12,7 @@ import {
 import { get } from 'svelte/store'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { clientHello, PairingKey } from 'legacy-code/device'
+import type { Reporter } from 'legacy-code/report'
 
 /** Send an encryption request to the phone, return the encrypted text. */
 const encrypt = async (str: string, reporter: (message: string) => void) => {
@@ -53,18 +54,24 @@ const decrypt = async (str: string) => {
   return evi.decryptText(str)
 }
 
-const pair = async (phoneName: string, reporter: (message: string) => void) => {
+async function* pair(
+  phoneName: string,
+  reporter: Reporter
+): AsyncGenerator<string, boolean, boolean> {
   const pairingKey = new PairingKey()
 
-  // Display the pairing QR code
-  reporter(pairingKey.toString())
+  // Send the pairing QR code
+  yield pairingKey.toString()
 
   // Wait for the user to scan the code
-  const device = await clientHello(pairingKey)
+  const device = await clientHello(pairingKey, undefined, reporter)
   const key = await device.clientKeyExchange()
 
-  // Show the UID
-  console.log(key.UUID)
+  // Send the UID
+  const confirmation: boolean = yield key.UUID
+
+  // Wait for the confirmation
+  if (!confirmation) return false
 
   // Send the confirmation request
   const certificate = await device.sendNameInfo(phoneName, key.ECC)
@@ -151,9 +158,19 @@ async function handleEncryption(port: Runtime.Port) {
 }
 
 async function handlePairing(port: Runtime.Port) {
+  console.log('handlePairing1')
   const phoneName = (await getMessage(port)) as string
-  const response = await pair(phoneName, (message) => {
-    port.postMessage({ type: 'report', value: message })
+  console.log('handlePairing2')
+  const generator = pair(phoneName, (message: unknown) => {
+    console.log(message)
   })
-  port.postMessage({ type: 'response', value: response })
+  let result = await generator.next()
+  port.postMessage(result.value)
+  console.log('handlePairing3')
+  while (!result.done) {
+    // eslint-disable-next-line no-await-in-loop
+    result = await generator.next((await getMessage(port)) as boolean)
+    port.postMessage(result.value)
+  }
+  // TODO send result.value as the result value of the client-side generator
 }

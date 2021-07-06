@@ -1,7 +1,7 @@
 <script lang="ts">
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
-  import { backgroundTask, Task } from 'task'
+  import { runBackgroundTask, Task } from 'task'
 
   const dispatch = createEventDispatcher()
 
@@ -15,11 +15,26 @@
 
   const pairingController = new AbortController()
 
+  /** Interacts with the background script to pair a new device. */
+  async function* pair(): AsyncGenerator<void | boolean, boolean, string> {
+    // Display the QR code generated
+    const key = yield
+    toCanvas(qr, key)
+
+    // Display the UID of the device that scanned the QR code
+    uid = yield
+
+    // Yield true if the user confirmed pairing
+    yield true
+
+    // The pairing completed successfully
+    // TODO this value should be ignored, replaced by the return value of the background task
+    return true
+  }
+
   /** Start the interactive process to register a new phone. */
   onMount(async () => {
-    const success = await backgroundTask(Task.PAIR, phoneName, (pairingKey) =>
-      toCanvas(qr, pairingKey.toString())
-    )
+    const success = await runBackgroundTask(Task.PAIR, phoneName, pair())
 
     if (success) console.log('Pairing successful')
 

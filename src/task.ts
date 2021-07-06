@@ -54,3 +54,26 @@ export const backgroundTask = async <T extends typeof Task[keyof typeof Task]>(
     })
     port.postMessage(message)
   })
+
+export const runBackgroundTask = async <
+  T extends typeof Task[keyof typeof Task]
+>(
+  task: T,
+  message: RequestMap[T],
+  generator: AsyncGenerator<void | boolean, boolean, string>
+): Promise<ResponseMap[T]> => {
+  await generator.next()
+  return new Promise((resolve) => {
+    const port = browser.runtime.connect({ name: task })
+    port.onMessage.addListener(async (message) => {
+      const result = await generator.next(message)
+      if (result.done) {
+        resolve(result.value as ResponseMap[T])
+        return
+      }
+
+      port.postMessage(result.value)
+    })
+    port.postMessage(message)
+  })
+}
