@@ -6,6 +6,8 @@ export const State = {
   ALL_DEVICES_REFUSED: 'All devices refused to connect.',
 } as const
 
+export type StateKey = typeof State[keyof typeof State]
+
 /** If an update has additional details, they are defined here. */
 export interface ReportDetails {
   [State.LOOKING_FOR_DEVICES]: { triesLeft: number }
@@ -21,9 +23,7 @@ export type Reporter = (<T extends keyof ReportDetails>(
   state: T,
   details: ReportDetails[T]
 ) => void) &
-  (<T extends Exclude<typeof State[keyof typeof State], keyof ReportDetails>>(
-    state: T
-  ) => void)
+  (<T extends Exclude<StateKey, keyof ReportDetails>>(state: T) => void)
 
 /** A reporter that does nothing. */
 // eslint-disable-next-line @typescript-eslint/no-empty-function
