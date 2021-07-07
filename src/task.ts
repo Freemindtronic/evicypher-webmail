@@ -89,7 +89,8 @@ export const backgroundTask = async <T extends typeof Task[keyof typeof Task]>(
 /** A background task is an asynchronous generator piped with a foreground task. */
 export type BackgroundTask<TInitialValue, TReturn> = (
   initialValue: TInitialValue,
-  reporter: Reporter
+  reporter: Reporter,
+  signal: AbortSignal
 ) => AsyncGenerator<unknown, TReturn>
 
 /** Retreive the initial value from a background task. */
@@ -103,12 +104,16 @@ export const runBackgroundTask = async <
   task: T,
   initialValue: InitialValue<typeof pair>,
   generator: AsyncGenerator<void | boolean, void>,
-  report: ReporterImpl
+  report: ReporterImpl,
+  signal: AbortSignal
 ): Promise<ResponseMap[T]> => {
   await generator.next()
   // eslint-disable-next-line sonarjs/cognitive-complexity
   return new Promise((resolve) => {
     const port = browser.runtime.connect({ name: task })
+    signal.addEventListener('abort', () => {
+      port.postMessage({ type: 'abort' })
+    })
     port.onMessage.addListener(async (message: MessageFromBackToFront) => {
       if (message.type === 'report') {
         report(message.state, message.details)

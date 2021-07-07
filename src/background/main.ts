@@ -55,14 +55,14 @@ const decrypt = async (str: string) => {
 }
 
 export const pair: BackgroundTask<{ phoneName: string }, boolean> =
-  async function* ({ phoneName }, reporter) {
+  async function* ({ phoneName }, reporter, signal) {
     const pairingKey = new PairingKey()
 
     // Send the pairing QR code
     yield pairingKey.toString()
 
     // Wait for the user to scan the code
-    const device = await clientHello(pairingKey, undefined, reporter)
+    const device = await clientHello(pairingKey, signal, reporter)
     const key = await device.clientKeyExchange()
 
     // Send the UID
@@ -155,16 +155,26 @@ async function handleEncryption(port: Runtime.Port) {
   port.postMessage({ type: 'response', value: response })
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
+  const controller = new AbortController()
   const initialValue = await getMessage<T>(port)
   const generator = task(
     initialValue,
     (state: StateKey, details?: ReportDetails[keyof ReportDetails]) => {
-      port.postMessage({ type: 'report', state, details })
-    }
+      if (!controller.signal.aborted)
+        port.postMessage({ type: 'report', state, details })
+    },
+    controller.signal
   )
+  port.onDisconnect.addListener(() => {
+    controller.abort()
+  })
+  port.onMessage.addListener((message: MessageFromFrontToBack) => {
+    if (message.type === 'abort') controller.abort()
+  })
   let result = await generator.next()
-  while (!result.done) {
+  while (!result.done && !controller.signal.aborted) {
     port.postMessage({ type: 'request', request: result.value })
 
     // eslint-disable-next-line no-await-in-loop
@@ -177,9 +187,12 @@ async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
     }
 
     if (message.type === 'abort') {
-      console.error('Aborting...')
+      // Abort requests are handled above, no need to handle them twice
+      continue
     }
+
+    throw new Error(`Message received: ${message as string}`)
   }
 
-  port.postMessage({ type: 'result', result: result.value })
+  if (result.done) port.postMessage({ type: 'result', result: result.value })
 }

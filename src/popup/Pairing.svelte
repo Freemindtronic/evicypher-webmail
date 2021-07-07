@@ -46,7 +46,8 @@
       pair(),
       (st) => {
         state = st
-      }
+      },
+      pairingController.signal
     )
 
     if (success) console.log('Pairing successful')
