@@ -1,4 +1,4 @@
-import { runBackgroundTask, Task } from 'background/main'
+import { runBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 

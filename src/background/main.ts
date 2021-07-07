@@ -1,28 +1,6 @@
-import type { ReportDetails, ReporterImpl, StateKey } from 'legacy-code/report'
-import type {
-  BackgroundTask,
-  ForegroundTask,
-  InitialValue,
-  MessageFromBackToFront,
-  MessageFromFrontToBack,
-  ReturnValue,
-} from 'task'
+import type { ReportDetails, StateKey } from 'legacy-code/report'
+import { BackgroundTask, MessageFromFrontToBack, TaskMap } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
-import { pair } from './tasks/pair'
-import { decrypt } from './tasks/decrypt'
-import { encrypt } from './tasks/encrypt'
-
-export const Task = {
-  ENCRYPT: 'encrypt',
-  DECRYPT: 'decrypt',
-  PAIR: 'pair',
-} as const
-
-export const TaskMap = {
-  [Task.PAIR]: pair,
-  [Task.ENCRYPT]: encrypt,
-  [Task.DECRYPT]: decrypt,
-} as const
 
 browser.runtime.onConnect.addListener((port) => {
   const task = TaskMap[port.name as keyof typeof TaskMap]
@@ -102,47 +80,4 @@ async function startTask<T, U, V, W>(
   }
 
   if (result.done) port.postMessage({ type: 'result', result: result.value })
-}
-
-export const runBackgroundTask = async <T extends keyof typeof TaskMap>(
-  taskName: T,
-  task: ForegroundTask<typeof TaskMap[T]>,
-  initialValue: InitialValue<typeof TaskMap[T]>,
-  report: ReporterImpl,
-  signal: AbortSignal
-): Promise<ReturnValue<typeof TaskMap[T]>> => {
-  const generator = task()
-  await generator.next()
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  return new Promise((resolve) => {
-    const port = browser.runtime.connect({ name: taskName })
-    signal.addEventListener('abort', () => {
-      port.postMessage({ type: 'abort' })
-    })
-    port.onMessage.addListener(
-      async (message: MessageFromBackToFront<typeof TaskMap[T]>) => {
-        if (message.type === 'report') {
-          report(message.state, message.details)
-          return
-        }
-
-        if (message.type === 'request') {
-          const result = await generator.next(message.request)
-          if (result.done)
-            console.warn('Generator exhausted, this is probably an error.')
-          port.postMessage({ type: 'response', response: result.value })
-          return
-        }
-
-        if (message.type === 'result') {
-          resolve(message.result as ReturnValue<typeof TaskMap[T]>)
-          port.disconnect()
-          return
-        }
-
-        throw new Error('Unexpected message')
-      }
-    )
-    port.postMessage(initialValue)
-  })
 }
