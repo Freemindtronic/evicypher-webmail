@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf extension/build",
-    "build": "yarn rollup -c",
-    "start": "yarn rollup -c -w",
-    "check": "yarn tsc --noEmit && yarn eslint --fix 'src/**/*.{ts,js,svelte}' && yarn stylelint --fix 'src/**/*' && yarn svelte-check --tsconfig ./tsconfig.json",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "check": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
     "postinstall": "husky install",
     "test": "echo 'No tests defined' && exit 1",
     "doc": "typedoc src"
