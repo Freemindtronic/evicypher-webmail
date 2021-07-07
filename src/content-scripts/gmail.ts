@@ -52,7 +52,7 @@ const handleEncryptedMailElement = (
     target: mailElement,
   })
 
-  const encryptedStrings = [extractEncryptedStrings(mailString)[0]]
+  const encryptedString = extractEncryptedStrings(mailString)[0]
 
   let paragraphs: HTMLElement[] = []
   let toggle = true
@@ -64,16 +64,13 @@ const handleEncryptedMailElement = (
       return
     }
 
-    for (const string of encryptedStrings) {
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
-      void decryptString(string).then((decryptedString) => {
-        const frame: HTMLIFrameElement = document.createElement('iframe')
-        frame.srcdoc = decryptedString
-        frame.sandbox.value = ''
-        mailElement.append(frame)
-        paragraphs.push(frame)
-      })
-    }
+    void decryptString(encryptedString).then((decryptedString) => {
+      const frame: HTMLIFrameElement = document.createElement('iframe')
+      frame.srcdoc = decryptedString
+      frame.sandbox.value = ''
+      mailElement.append(frame)
+      paragraphs.push(frame)
+    })
   })
 }
 
