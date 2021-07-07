@@ -2,7 +2,7 @@ import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { clientHello, PairingKey } from 'legacy-code/device'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import type { ReportDetails, StateKey } from 'legacy-code/report'
+import type { ReportDetails, ReporterImpl, StateKey } from 'legacy-code/report'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -11,7 +11,14 @@ import {
   phones,
 } from 'phones'
 import { get } from 'svelte/store'
-import { BackgroundTask, MessageFromFrontToBack, Task } from 'task'
+import type {
+  BackgroundTask,
+  ForegroundTask,
+  InitialValue,
+  MessageFromBackToFront,
+  MessageFromFrontToBack,
+  ReturnValue,
+} from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 
 /** Send an encryption request to the phone, return the encrypted text. */
@@ -102,6 +109,18 @@ export const pair: BackgroundTask<
   return true
 }
 
+export const Task = {
+  ENCRYPT: 'encrypt',
+  DECRYPT: 'decrypt',
+  PAIR: 'pair',
+} as const
+
+export const TaskMap = {
+  [Task.PAIR]: pair,
+  [Task.ENCRYPT]: encrypt,
+  [Task.DECRYPT]: decrypt,
+} as const
+
 browser.runtime.onConnect.addListener((port) => {
   switch (port.name) {
     case Task.PAIR:
@@ -162,7 +181,7 @@ async function startTask<T, U, V, W>(
   port.onDisconnect.addListener(() => {
     controller.abort()
   })
-  port.onMessage.addListener((message: MessageFromFrontToBack<W>) => {
+  port.onMessage.addListener((message: MessageFromFrontToBack<typeof task>) => {
     if (message.type === 'abort') controller.abort()
   })
   let result = await generator.next()
@@ -170,7 +189,7 @@ async function startTask<T, U, V, W>(
     port.postMessage({ type: 'request', request: result.value })
 
     // eslint-disable-next-line no-await-in-loop
-    const message = await getMessage<MessageFromFrontToBack<W>>(port)
+    const message = await getMessage<MessageFromFrontToBack<typeof task>>(port)
 
     if (message.type === 'response') {
       // eslint-disable-next-line no-await-in-loop
@@ -187,4 +206,47 @@ async function startTask<T, U, V, W>(
   }
 
   if (result.done) port.postMessage({ type: 'result', result: result.value })
+}
+
+export const runBackgroundTask = async <T extends keyof typeof TaskMap>(
+  taskName: T,
+  task: ForegroundTask<typeof TaskMap[T]>,
+  initialValue: InitialValue<typeof TaskMap[T]>,
+  report: ReporterImpl,
+  signal: AbortSignal
+): Promise<ReturnValue<typeof TaskMap[T]>> => {
+  const generator = task()
+  await generator.next()
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  return new Promise((resolve) => {
+    const port = browser.runtime.connect({ name: taskName })
+    signal.addEventListener('abort', () => {
+      port.postMessage({ type: 'abort' })
+    })
+    port.onMessage.addListener(
+      async (message: MessageFromBackToFront<typeof TaskMap[T]>) => {
+        if (message.type === 'report') {
+          report(message.state, message.details)
+          return
+        }
+
+        if (message.type === 'request') {
+          const result = await generator.next(message.request)
+          if (result.done)
+            console.warn('Generator exhausted, this is probably an error.')
+          port.postMessage({ type: 'response', response: result.value })
+          return
+        }
+
+        if (message.type === 'result') {
+          resolve(message.result as ReturnValue<typeof TaskMap[T]>)
+          port.disconnect()
+          return
+        }
+
+        throw new Error('Unexpected message')
+      }
+    )
+    port.postMessage(initialValue)
+  })
 }
