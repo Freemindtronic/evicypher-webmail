@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { pair as pairTask, runBackgroundTask, Task } from 'background/main'
+  import { runBackgroundTask, Task } from 'background/main'
+  import type { pair as pairTask } from 'background/tasks/pair'
   import type { StateKey } from 'legacy-code/report'
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'

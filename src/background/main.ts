@@ -1,16 +1,4 @@
-import { BrowserStore } from 'browser-store'
-import { fetchKeys } from 'legacy-code/Client'
-import { clientHello, PairingKey } from 'legacy-code/device'
-import { EviCrypt } from 'legacy-code/EviCrypt'
 import type { ReportDetails, ReporterImpl, StateKey } from 'legacy-code/report'
-import {
-  favoritePhone,
-  favoritePhoneId,
-  nextPhoneId,
-  Phone,
-  phones,
-} from 'phones'
-import { get } from 'svelte/store'
 import type {
   BackgroundTask,
   ForegroundTask,
@@ -20,94 +8,9 @@ import type {
   ReturnValue,
 } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
-
-/** Send an encryption request to the phone, return the encrypted text. */
-// eslint-disable-next-line require-yield
-const encrypt: BackgroundTask<string, never, string, never> = async function* (
-  str,
-  reporter,
-  signal
-) {
-  await BrowserStore.allLoaded
-
-  // Fetch the cerificate of the favorite phone in browser storage
-  const phone = get(favoritePhone)
-
-  if (phone === undefined) throw new Error('No favorite device set.')
-
-  // Send a request to the FMT app
-  const { keys, newCertificate } = await fetchKeys(phone.certificate, {
-    reporter,
-    signal,
-  })
-  phone.certificate = newCertificate
-  phones.update(($phones) => $phones)
-
-  // Encrypt the text
-  const evi = new EviCrypt(keys)
-  return evi.encryptText(str)
-}
-
-/** Send an decryption request to the phone, return the decrypted text. */
-// eslint-disable-next-line require-yield
-const decrypt: BackgroundTask<string, never, string, never> = async function* (
-  str,
-  reporter,
-  signal
-) {
-  await BrowserStore.allLoaded
-
-  // Fetch the cerificate of the favorite phone in browser storage
-  const phone = get(favoritePhone)
-
-  if (phone === undefined) throw new Error('No favorite device set.')
-
-  // Send a request to the FMT app
-  const { keys, newCertificate } = await fetchKeys(phone.certificate, {
-    reporter,
-    signal,
-  })
-  phone.certificate = newCertificate
-  phones.update((phones) => phones)
-
-  // Decrypt the text
-  const evi = new EviCrypt(keys)
-  return evi.decryptText(str)
-}
-
-export const pair: BackgroundTask<
-  { phoneName: string },
-  string,
-  boolean,
-  boolean | undefined
-> = async function* ({ phoneName }, reporter, signal) {
-  const pairingKey = new PairingKey()
-
-  // Send the pairing QR code
-  yield pairingKey.toString()
-
-  // Wait for the user to scan the code
-  const device = await clientHello(pairingKey, signal, reporter)
-  const key = await device.clientKeyExchange()
-
-  // Send the UID
-  const confirmation = yield key.UUID
-
-  // Wait for the confirmation
-  if (!confirmation) return false
-
-  // Send the confirmation request
-  const certificate = await device.sendNameInfo(phoneName, key.ECC)
-  const phone = new Phone(await nextPhoneId(), phoneName, certificate)
-
-  phones.update(($phones) => [...$phones, phone])
-
-  if (get(favoritePhone) === undefined) {
-    favoritePhoneId.set(phone.id)
-  }
-
-  return true
-}
+import { pair } from './tasks/pair'
+import { decrypt } from './tasks/decrypt'
+import { encrypt } from './tasks/encrypt'
 
 export const Task = {
   ENCRYPT: 'encrypt',
@@ -122,19 +25,12 @@ export const TaskMap = {
 } as const
 
 browser.runtime.onConnect.addListener((port) => {
-  switch (port.name) {
-    case Task.PAIR:
-      void startTask(pair, port)
-      return
-    case Task.ENCRYPT:
-      void startTask(encrypt, port)
-      return
-    case Task.DECRYPT:
-      void startTask(decrypt, port)
-      return
-    default:
-      throw new Error('Unexpected connection.')
-  }
+  const task = TaskMap[port.name as keyof typeof TaskMap]
+  if (task === undefined) throw new Error('Unexpected connection.')
+  void startTask(
+    task as BackgroundTask<unknown, unknown, unknown, unknown>,
+    port
+  )
 })
 
 /**
