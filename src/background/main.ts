@@ -54,35 +54,39 @@ const decrypt = async (str: string) => {
   return evi.decryptText(str)
 }
 
-export const pair: BackgroundTask<{ phoneName: string }, boolean> =
-  async function* ({ phoneName }, reporter, signal) {
-    const pairingKey = new PairingKey()
+export const pair: BackgroundTask<
+  { phoneName: string },
+  string,
+  boolean,
+  boolean | undefined
+> = async function* ({ phoneName }, reporter, signal) {
+  const pairingKey = new PairingKey()
 
-    // Send the pairing QR code
-    yield pairingKey.toString()
+  // Send the pairing QR code
+  yield pairingKey.toString()
 
-    // Wait for the user to scan the code
-    const device = await clientHello(pairingKey, signal, reporter)
-    const key = await device.clientKeyExchange()
+  // Wait for the user to scan the code
+  const device = await clientHello(pairingKey, signal, reporter)
+  const key = await device.clientKeyExchange()
 
-    // Send the UID
-    const confirmation = (yield key.UUID) as boolean
+  // Send the UID
+  const confirmation = yield key.UUID
 
-    // Wait for the confirmation
-    if (!confirmation) return false
+  // Wait for the confirmation
+  if (!confirmation) return false
 
-    // Send the confirmation request
-    const certificate = await device.sendNameInfo(phoneName, key.ECC)
-    const phone = new Phone(await nextPhoneId(), phoneName, certificate)
+  // Send the confirmation request
+  const certificate = await device.sendNameInfo(phoneName, key.ECC)
+  const phone = new Phone(await nextPhoneId(), phoneName, certificate)
 
-    phones.update(($phones) => [...$phones, phone])
+  phones.update(($phones) => [...$phones, phone])
 
-    if (get(favoritePhone) === undefined) {
-      favoritePhoneId.set(phone.id)
-    }
-
-    return true
+  if (get(favoritePhone) === undefined) {
+    favoritePhoneId.set(phone.id)
   }
+
+  return true
+}
 
 interface DecryptRequest {
   type: 'decrypt-request'
@@ -156,7 +160,10 @@ async function handleEncryption(port: Runtime.Port) {
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
+async function startTask<T, U, V, W>(
+  task: BackgroundTask<T, V, U, W>,
+  port: Runtime.Port
+) {
   const controller = new AbortController()
   const initialValue = await getMessage<T>(port)
   const generator = task(
@@ -170,7 +177,7 @@ async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
   port.onDisconnect.addListener(() => {
     controller.abort()
   })
-  port.onMessage.addListener((message: MessageFromFrontToBack) => {
+  port.onMessage.addListener((message: MessageFromFrontToBack<W>) => {
     if (message.type === 'abort') controller.abort()
   })
   let result = await generator.next()
@@ -178,7 +185,7 @@ async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
     port.postMessage({ type: 'request', request: result.value })
 
     // eslint-disable-next-line no-await-in-loop
-    const message = await getMessage<MessageFromFrontToBack>(port)
+    const message = await getMessage<MessageFromFrontToBack<W>>(port)
 
     if (message.type === 'response') {
       // eslint-disable-next-line no-await-in-loop

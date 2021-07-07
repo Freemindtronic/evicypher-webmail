@@ -45,21 +45,21 @@ export type ReportMessage<T extends StateKey> = {
   details: T extends keyof ReportDetails ? ReportDetails[T] : undefined
 }
 
-export type MessageFromBackToFront =
+export type MessageFromBackToFront<T, U> =
   | {
       type: 'request'
-      request: unknown
+      request: T
     }
   | {
       type: 'result'
-      result: unknown
+      result: U
     }
   | ReportMessage<StateKey>
 
-export type MessageFromFrontToBack =
+export type MessageFromFrontToBack<T> =
   | {
       type: 'response'
-      response: unknown
+      response: T
     }
   | { type: 'abort' }
 
@@ -87,55 +87,70 @@ export const backgroundTask = async <T extends typeof Task[keyof typeof Task]>(
   })
 
 /** A background task is an asynchronous generator piped with a foreground task. */
-export type BackgroundTask<TInitialValue, TReturn> = (
+export type BackgroundTask<TInitialValue, TYielded, TReturn, TNext> = (
   initialValue: TInitialValue,
   reporter: Reporter,
   signal: AbortSignal
-) => AsyncGenerator<unknown, TReturn>
+) => AsyncGenerator<TYielded, TReturn, TNext>
+
+export type ForegroundTask<T> = T extends BackgroundTask<
+  never,
+  infer U,
+  unknown,
+  infer V
+>
+  ? () => AsyncGenerator<V, void, U>
+  : never
 
 /** Retreive the initial value from a background task. */
-export type InitialValue<T> = T extends BackgroundTask<infer U, unknown>
+export type InitialValue<T> = T extends BackgroundTask<
+  infer U,
+  unknown,
+  unknown,
+  unknown
+>
   ? U
   : never
 
-export const runBackgroundTask = async <
-  T extends typeof Task[keyof typeof Task]
->(
-  task: T,
+export const runBackgroundTask = async <T, U, V, W>(
+  taskName: string,
+  task: ForegroundTask<BackgroundTask<T, U, V, W>>,
   initialValue: InitialValue<typeof pair>,
-  generator: AsyncGenerator<void | boolean, void>,
   report: ReporterImpl,
   signal: AbortSignal
-): Promise<ResponseMap[T]> => {
+): Promise<V> => {
+  const generator = task()
   await generator.next()
   // eslint-disable-next-line sonarjs/cognitive-complexity
   return new Promise((resolve) => {
-    const port = browser.runtime.connect({ name: task })
+    const port = browser.runtime.connect({ name: taskName })
     signal.addEventListener('abort', () => {
       port.postMessage({ type: 'abort' })
     })
-    port.onMessage.addListener(async (message: MessageFromBackToFront) => {
-      if (message.type === 'report') {
-        report(message.state, message.details)
-        return
-      }
+    port.onMessage.addListener(
+      async (message: MessageFromBackToFront<U, V>) => {
+        if (message.type === 'report') {
+          report(message.state, message.details)
+          return
+        }
 
-      if (message.type === 'request') {
-        const result = await generator.next(message.request)
-        if (result.done)
-          console.warn('Generator exhausted, this is probably an error.')
-        port.postMessage({ type: 'response', response: result.value })
-        return
-      }
+        if (message.type === 'request') {
+          const result = await generator.next(message.request)
+          if (result.done)
+            console.warn('Generator exhausted, this is probably an error.')
+          port.postMessage({ type: 'response', response: result.value })
+          return
+        }
 
-      if (message.type === 'result') {
-        resolve(message.result as ResponseMap[T])
-        port.disconnect()
-        return
-      }
+        if (message.type === 'result') {
+          resolve(message.result)
+          port.disconnect()
+          return
+        }
 
-      throw new Error('Unexpected message')
-    })
+        throw new Error('Unexpected message')
+      }
+    )
     port.postMessage(initialValue)
   })
 }
