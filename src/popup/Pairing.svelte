@@ -21,7 +21,7 @@
   const pairingController = new AbortController()
 
   /** Interacts with the background script to pair a new device. */
-  async function* pair(): AsyncGenerator<void | boolean, boolean, string> {
+  async function* pair(): AsyncGenerator<void | boolean, void, string> {
     // Display the QR code generated
     const key = yield
     toCanvas(qr, key)

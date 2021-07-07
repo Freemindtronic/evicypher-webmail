@@ -85,7 +85,7 @@ export const runBackgroundTask = async <
 >(
   task: T,
   message: RequestMap[T],
-  generator: AsyncGenerator<void | boolean, boolean>,
+  generator: AsyncGenerator<void | boolean, void>,
   report: ReporterImpl
 ): Promise<ResponseMap[T]> => {
   await generator.next()
