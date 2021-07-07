@@ -77,11 +77,13 @@ export default [
   },
   {
     input: 'src/content-scripts/gmail.ts',
+    external: ['crypto'],
     output: {
       sourcemap: !production,
       format: 'iife',
       name: 'app',
       file: 'extension/build/content-script-gmail.js',
+      globals: { crypto: 'crypto' },
     },
     plugins: [
       svelte({
