@@ -1,4 +1,4 @@
-import { runBackgroundTask, Task } from 'task'
+import { emptyForegroundTask, runBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
@@ -15,21 +15,13 @@ const encryptString = async (
   reporter: (message: string) => void,
   signal = new AbortController().signal
 ): Promise<string> =>
-  runBackgroundTask(
-    Task.ENCRYPT,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    async function* () {},
-    string,
-    reporter,
-    signal
-  )
+  runBackgroundTask(Task.ENCRYPT, emptyForegroundTask, string, reporter, signal)
 
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (string: string): Promise<string> =>
   runBackgroundTask(
     Task.DECRYPT,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    async function* () {},
+    emptyForegroundTask,
     string,
     (...args) => {
       console.log(...args)
