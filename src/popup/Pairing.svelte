@@ -3,7 +3,8 @@
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
-  import { ForegroundTask, runBackgroundTask, Task } from 'task'
+  import type { ForegroundTask } from 'task'
+  import { runBackgroundTask, Task } from 'task'
 
   const dispatch = createEventDispatcher()
 

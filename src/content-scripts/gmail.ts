@@ -1,5 +1,4 @@
-import { backgroundTask, Task } from 'task'
-import { browser } from 'webextension-polyfill-ts'
+import { runBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
@@ -13,16 +12,30 @@ const FLAG = 'freemindtronicButtonAdded'
 /** Send a request to the background script to encrypt the given string. */
 const encryptString = async (
   string: string,
-  reporter: (message: string) => void
-): Promise<string> => backgroundTask(Task.ENCRYPT, string, reporter)
+  reporter: (message: string) => void,
+  signal = new AbortController().signal
+): Promise<string> =>
+  runBackgroundTask(
+    Task.ENCRYPT,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    async function* () {},
+    string,
+    reporter,
+    signal
+  )
 
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (string: string): Promise<string> =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  browser.runtime.sendMessage({
-    type: 'decrypt-request',
+  runBackgroundTask(
+    Task.DECRYPT,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    async function* () {},
     string,
-  })
+    (...args) => {
+      console.log(...args)
+    },
+    new AbortController().signal
+  )
 
 /** Return whether the given string contains a known encryption header and footer. */
 const containsEncryptedText = (string: string) => string.includes('AAAAF')

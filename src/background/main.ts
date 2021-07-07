@@ -1,7 +1,8 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
+import { clientHello, PairingKey } from 'legacy-code/device'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import { BackgroundTask, MessageFromFrontToBack, Task } from 'task'
+import type { ReportDetails, StateKey } from 'legacy-code/report'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -10,12 +11,16 @@ import {
   phones,
 } from 'phones'
 import { get } from 'svelte/store'
+import { BackgroundTask, MessageFromFrontToBack, Task } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
-import { clientHello, PairingKey } from 'legacy-code/device'
-import type { ReportDetails, StateKey } from 'legacy-code/report'
 
 /** Send an encryption request to the phone, return the encrypted text. */
-const encrypt = async (str: string, reporter: (message: string) => void) => {
+// eslint-disable-next-line require-yield
+const encrypt: BackgroundTask<string, never, string, never> = async function* (
+  str,
+  reporter,
+  signal
+) {
   await BrowserStore.allLoaded
 
   // Fetch the cerificate of the favorite phone in browser storage
@@ -26,6 +31,7 @@ const encrypt = async (str: string, reporter: (message: string) => void) => {
   // Send a request to the FMT app
   const { keys, newCertificate } = await fetchKeys(phone.certificate, {
     reporter,
+    signal,
   })
   phone.certificate = newCertificate
   phones.update(($phones) => $phones)
@@ -36,7 +42,12 @@ const encrypt = async (str: string, reporter: (message: string) => void) => {
 }
 
 /** Send an decryption request to the phone, return the decrypted text. */
-const decrypt = async (str: string) => {
+// eslint-disable-next-line require-yield
+const decrypt: BackgroundTask<string, never, string, never> = async function* (
+  str,
+  reporter,
+  signal
+) {
   await BrowserStore.allLoaded
 
   // Fetch the cerificate of the favorite phone in browser storage
@@ -45,7 +56,10 @@ const decrypt = async (str: string) => {
   if (phone === undefined) throw new Error('No favorite device set.')
 
   // Send a request to the FMT app
-  const { keys, newCertificate } = await fetchKeys(phone.certificate)
+  const { keys, newCertificate } = await fetchKeys(phone.certificate, {
+    reporter,
+    signal,
+  })
   phone.certificate = newCertificate
   phones.update((phones) => phones)
 
@@ -88,38 +102,16 @@ export const pair: BackgroundTask<
   return true
 }
 
-interface DecryptRequest {
-  type: 'decrypt-request'
-  string: string
-}
-
-type Message = DecryptRequest
-
-// Handle messages sent by content scripts
-browser.runtime.onMessage.addListener(async (message: Message) => {
-  if (
-    message === null ||
-    typeof message !== 'object' ||
-    typeof message?.type !== 'string'
-  )
-    throw new Error(`Unexpected message ${typeof message}`)
-
-  // eslint-disable-next-line sonarjs/no-small-switch
-  switch (message.type) {
-    case 'decrypt-request':
-      return decrypt(message.string)
-    default:
-      throw new Error(`Unexpected message type ${message.type as string}`)
-  }
-})
-
 browser.runtime.onConnect.addListener((port) => {
   switch (port.name) {
-    case Task.ENCRYPT:
-      void handleEncryption(port)
-      return
     case Task.PAIR:
       void startTask(pair, port)
+      return
+    case Task.ENCRYPT:
+      void startTask(encrypt, port)
+      return
+    case Task.DECRYPT:
+      void startTask(decrypt, port)
       return
     default:
       throw new Error('Unexpected connection.')
@@ -151,14 +143,6 @@ const getMessage = async <T = unknown>(port: Runtime.Port) =>
     port.onDisconnect.addListener(onDisconnect)
   })
 
-async function handleEncryption(port: Runtime.Port) {
-  const string = await getMessage<string>(port)
-  const response = await encrypt(string, (message) => {
-    port.postMessage({ type: 'report', value: message })
-  })
-  port.postMessage({ type: 'response', value: response })
-}
-
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function startTask<T, U, V, W>(
   task: BackgroundTask<T, V, U, W>,
@@ -169,6 +153,7 @@ async function startTask<T, U, V, W>(
   const generator = task(
     initialValue,
     (state: StateKey, details?: ReportDetails[keyof ReportDetails]) => {
+      console.log(state, details)
       if (!controller.signal.aborted)
         port.postMessage({ type: 'report', state, details })
     },
