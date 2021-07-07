@@ -1,12 +1,7 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import {
-  BackgroundTask,
-  InitialValue,
-  MessageFromFrontToBack,
-  Task,
-} from 'task'
+import { BackgroundTask, MessageFromFrontToBack, Task } from 'task'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -17,7 +12,7 @@ import {
 import { get } from 'svelte/store'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { clientHello, PairingKey } from 'legacy-code/device'
-import type { Reporter } from 'legacy-code/report'
+import type { ReportDetails, StateKey } from 'legacy-code/report'
 
 /** Send an encryption request to the phone, return the encrypted text. */
 const encrypt = async (str: string, reporter: (message: string) => void) => {
@@ -120,7 +115,7 @@ browser.runtime.onConnect.addListener((port) => {
       void handleEncryption(port)
       return
     case Task.PAIR:
-      void handlePairing(port)
+      void startTask(pair, port)
       return
     default:
       throw new Error('Unexpected connection.')
@@ -160,11 +155,14 @@ async function handleEncryption(port: Runtime.Port) {
   port.postMessage({ type: 'response', value: response })
 }
 
-async function handlePairing(port: Runtime.Port) {
-  const initialValue = await getMessage<InitialValue<typeof pair>>(port)
-  const generator = pair(initialValue, ((state: unknown, details: unknown) => {
-    port.postMessage({ type: 'report', state, details })
-  }) as Reporter)
+async function startTask<T, U>(task: BackgroundTask<T, U>, port: Runtime.Port) {
+  const initialValue = await getMessage<T>(port)
+  const generator = task(
+    initialValue,
+    (state: StateKey, details?: ReportDetails[keyof ReportDetails]) => {
+      port.postMessage({ type: 'report', state, details })
+    }
+  )
   let result = await generator.next()
   while (!result.done) {
     port.postMessage({ type: 'request', request: result.value })
@@ -174,7 +172,7 @@ async function handlePairing(port: Runtime.Port) {
 
     if (message.type === 'response') {
       // eslint-disable-next-line no-await-in-loop
-      result = await generator.next(message.response as boolean)
+      result = await generator.next(message.response)
       continue
     }
 
