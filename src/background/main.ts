@@ -1,4 +1,4 @@
-import type { ReportDetails, StateKey } from 'legacy-code/report'
+import type { ReportDetails, StateKey } from 'report'
 import { BackgroundTask, MessageFromFrontToBack, TaskMap } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 

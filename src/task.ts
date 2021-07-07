@@ -1,12 +1,7 @@
 import { decrypt } from 'background/tasks/decrypt'
 import { encrypt } from 'background/tasks/encrypt'
 import { pair } from 'background/tasks/pair'
-import type {
-  ReportDetails,
-  Reporter,
-  ReporterImpl,
-  StateKey,
-} from 'legacy-code/report'
+import type { ReportDetails, Reporter, ReporterImpl, StateKey } from 'report'
 import { browser } from 'webextension-polyfill-ts'
 
 export type ReportMessage<T extends StateKey> = {

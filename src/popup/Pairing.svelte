@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { pair as pairTask } from 'background/tasks/pair'
-  import type { StateKey } from 'legacy-code/report'
   import { toCanvas } from 'qrcode'
+  import type { StateKey } from 'report'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
-  import { Task, runBackgroundTask } from 'task'
+  import { runBackgroundTask, Task } from 'task'
 
   /** Name of the phone to be added. */
   export let phoneName = ''

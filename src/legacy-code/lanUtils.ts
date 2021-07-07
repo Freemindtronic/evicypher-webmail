@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import Base64 from 'base64-arraybuffer'
-import type { RequestMap, ResponseMap } from './protocol'
-import { defaultReporter, Reporter, State } from './report'
+import type { RequestMap, ResponseMap } from '../background/protocol'
+import { defaultReporter, Reporter, State } from '../report'
 import { b64ToUint8Array } from './utils'
 import {
   getZeroconfService,

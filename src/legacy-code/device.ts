@@ -4,8 +4,8 @@ import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
 import * as Base64 from 'base64-arraybuffer'
 import { search, sendRequest } from './lanUtils'
-import { Request } from './protocol'
-import type { Reporter } from './report'
+import { Request } from '../background/protocol'
+import type { Reporter } from '../report'
 
 export class PairingKey {
   readonly certificate: Certificate

@@ -9,7 +9,7 @@ import {
   EndOkRequest,
   EndResponse,
   Request,
-} from './protocol'
+} from '../background/protocol'
 import * as utils from './utils'
 
 const AES = new AesUtil(256, 1000)
