@@ -42,7 +42,7 @@
   onMount(async () => {
     const success = await runBackgroundTask(
       Task.PAIR,
-      phoneName,
+      { phoneName },
       pair(),
       (st) => {
         state = st

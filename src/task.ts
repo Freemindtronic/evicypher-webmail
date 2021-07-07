@@ -1,4 +1,10 @@
-import type { ReportDetails, ReporterImpl, StateKey } from 'legacy-code/report'
+import type { pair } from 'background/main'
+import type {
+  ReportDetails,
+  Reporter,
+  ReporterImpl,
+  StateKey,
+} from 'legacy-code/report'
 import { browser } from 'webextension-polyfill-ts'
 
 export type State = string
@@ -80,11 +86,22 @@ export const backgroundTask = async <T extends typeof Task[keyof typeof Task]>(
     port.postMessage(message)
   })
 
+/** A background task is an asynchronous generator piped with a foreground task. */
+export type BackgroundTask<TInitialValue, TReturn> = (
+  initialValue: TInitialValue,
+  reporter: Reporter
+) => AsyncGenerator<unknown, TReturn>
+
+/** Retreive the initial value from a background task. */
+export type InitialValue<T> = T extends BackgroundTask<infer U, unknown>
+  ? U
+  : never
+
 export const runBackgroundTask = async <
   T extends typeof Task[keyof typeof Task]
 >(
   task: T,
-  message: RequestMap[T],
+  initialValue: InitialValue<typeof pair>,
   generator: AsyncGenerator<void | boolean, void>,
   report: ReporterImpl
 ): Promise<ResponseMap[T]> => {
@@ -114,6 +131,6 @@ export const runBackgroundTask = async <
 
       throw new Error('Unexpected message')
     })
-    port.postMessage(message)
+    port.postMessage(initialValue)
   })
 }

@@ -1,7 +1,12 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
-import { MessageFromFrontToBack, Task } from 'task'
+import {
+  BackgroundTask,
+  InitialValue,
+  MessageFromFrontToBack,
+  Task,
+} from 'task'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -54,37 +59,35 @@ const decrypt = async (str: string) => {
   return evi.decryptText(str)
 }
 
-async function* pair(
-  phoneName: string,
-  reporter: Reporter
-): AsyncGenerator<string, boolean, boolean> {
-  const pairingKey = new PairingKey()
+export const pair: BackgroundTask<{ phoneName: string }, boolean> =
+  async function* ({ phoneName }, reporter) {
+    const pairingKey = new PairingKey()
 
-  // Send the pairing QR code
-  yield pairingKey.toString()
+    // Send the pairing QR code
+    yield pairingKey.toString()
 
-  // Wait for the user to scan the code
-  const device = await clientHello(pairingKey, undefined, reporter)
-  const key = await device.clientKeyExchange()
+    // Wait for the user to scan the code
+    const device = await clientHello(pairingKey, undefined, reporter)
+    const key = await device.clientKeyExchange()
 
-  // Send the UID
-  const confirmation: boolean = yield key.UUID
+    // Send the UID
+    const confirmation = (yield key.UUID) as boolean
 
-  // Wait for the confirmation
-  if (!confirmation) return false
+    // Wait for the confirmation
+    if (!confirmation) return false
 
-  // Send the confirmation request
-  const certificate = await device.sendNameInfo(phoneName, key.ECC)
-  const phone = new Phone(await nextPhoneId(), phoneName, certificate)
+    // Send the confirmation request
+    const certificate = await device.sendNameInfo(phoneName, key.ECC)
+    const phone = new Phone(await nextPhoneId(), phoneName, certificate)
 
-  phones.update(($phones) => [...$phones, phone])
+    phones.update(($phones) => [...$phones, phone])
 
-  if (get(favoritePhone) === undefined) {
-    favoritePhoneId.set(phone.id)
+    if (get(favoritePhone) === undefined) {
+      favoritePhoneId.set(phone.id)
+    }
+
+    return true
   }
-
-  return true
-}
 
 interface DecryptRequest {
   type: 'decrypt-request'
@@ -158,8 +161,8 @@ async function handleEncryption(port: Runtime.Port) {
 }
 
 async function handlePairing(port: Runtime.Port) {
-  const phoneName = await getMessage<string>(port)
-  const generator = pair(phoneName, ((state: unknown, details: unknown) => {
+  const initialValue = await getMessage<InitialValue<typeof pair>>(port)
+  const generator = pair(initialValue, ((state: unknown, details: unknown) => {
     port.postMessage({ type: 'report', state, details })
   }) as Reporter)
   let result = await generator.next()
