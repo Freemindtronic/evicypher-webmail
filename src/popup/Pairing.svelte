@@ -5,7 +5,7 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
-  import { runBackgroundTask, Task } from 'task'
+  import { startBackgroundTask, Task } from 'task'
 
   /** Name of the phone to be added. */
   export let phoneName = ''
@@ -39,28 +39,25 @@
     // Display the UID of the device that scanned the QR code
     uid = yield
 
-    // Yield true when the user confirms the UID
+    // Yield the name of the phone when the user confirms the UID
     await new Promise<void>((resolve) => {
       // Wait for an update to the $confirmed variable
       confirmed.subscribe((value) => {
         if (value) resolve()
       })
     })
-    yield true
+    yield phoneName
   }
 
   /** Start the pairing process when the component is loaded. */
   onMount(async () => {
     // Wait for the background task to finish
-    const success = await runBackgroundTask(
-      Task.PAIR,
-      pair,
-      { phoneName },
-      (st) => {
+    const success = await startBackgroundTask(Task.PAIR, pair, {
+      report: (st) => {
         state = st
       },
-      controller.signal
-    )
+      signal: controller.signal,
+    })
 
     // The pairing process completed successfully
     if (success) console.log('Pairing successful')

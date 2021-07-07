@@ -6,9 +6,10 @@ import { get } from 'svelte/store'
 import type { BackgroundTask } from 'task'
 
 /** Send an encryption request to the phone, return the encrypted text. */
-export const encrypt: BackgroundTask<string, never, string, never> =
-  // eslint-disable-next-line require-yield
-  async function* (str, reporter, signal) {
+export const encrypt: BackgroundTask<undefined, string, string> =
+  async function* (context, reporter, signal) {
+    const str = yield
+
     await BrowserStore.allLoaded
 
     // Fetch the cerificate of the favorite phone in browser storage

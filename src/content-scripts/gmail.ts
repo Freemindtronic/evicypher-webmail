@@ -1,4 +1,5 @@
-import { emptyForegroundTask, runBackgroundTask, Task } from 'task'
+import type { ReporterImpl } from 'report'
+import { startBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
@@ -12,21 +13,33 @@ const FLAG = 'freemindtronicButtonAdded'
 /** Send a request to the background script to encrypt the given string. */
 const encryptString = async (
   string: string,
-  reporter: (message: string) => void,
+  report: ReporterImpl,
   signal = new AbortController().signal
 ): Promise<string> =>
-  runBackgroundTask(Task.ENCRYPT, emptyForegroundTask, string, reporter, signal)
+  startBackgroundTask(
+    Task.ENCRYPT,
+    async function* () {
+      yield string
+    },
+    {
+      report,
+      signal,
+    }
+  )
 
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (string: string): Promise<string> =>
-  runBackgroundTask(
+  startBackgroundTask(
     Task.DECRYPT,
-    emptyForegroundTask,
-    string,
-    (...args) => {
-      console.log(...args)
+    async function* () {
+      yield string
     },
-    new AbortController().signal
+    {
+      report: (...args) => {
+        console.log(...args)
+      },
+      signal: new AbortController().signal,
+    }
   )
 
 /** Return whether the given string contains a known encryption header and footer. */
@@ -54,22 +67,12 @@ const handleEncryptedMailElement = (
 
   const encryptedString = extractEncryptedStrings(mailString)[0]
 
-  let paragraphs: HTMLElement[] = []
-  let toggle = true
   button.$on('click', () => {
-    toggle = !toggle
-    if (toggle) {
-      for (const p of paragraphs) p.parentNode?.removeChild(p)
-      paragraphs = []
-      return
-    }
-
     void decryptString(encryptedString).then((decryptedString) => {
       const frame: HTMLIFrameElement = document.createElement('iframe')
       frame.srcdoc = decryptedString
       frame.sandbox.value = ''
       mailElement.append(frame)
-      paragraphs.push(frame)
     })
   })
 }

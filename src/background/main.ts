@@ -5,10 +5,7 @@ import { browser, Runtime } from 'webextension-polyfill-ts'
 browser.runtime.onConnect.addListener((port) => {
   const task = TaskMap[port.name as keyof typeof TaskMap]
   if (task === undefined) throw new Error('Unexpected connection.')
-  void startTask(
-    task as BackgroundTask<unknown, unknown, unknown, unknown>,
-    port
-  )
+  void startTask(task as BackgroundTask<unknown, unknown, unknown>, port)
 })
 
 /**
@@ -37,14 +34,13 @@ const getMessage = async <T = unknown>(port: Runtime.Port) =>
   })
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function startTask<T, U, V, W>(
-  task: BackgroundTask<T, V, U, W>,
+async function startTask<TSent, TReceived, TReturn>(
+  task: BackgroundTask<TSent, TReceived, TReturn>,
   port: Runtime.Port
 ) {
   const controller = new AbortController()
-  const initialValue = await getMessage<T>(port)
   const generator = task(
-    initialValue,
+    {},
     (state: StateKey, details?: ReportDetails[keyof ReportDetails]) => {
       console.log(state, details)
       if (!controller.signal.aborted)

@@ -9,36 +9,31 @@ import {
 import { get } from 'svelte/store'
 import type { BackgroundTask } from 'task'
 
-export const pair: BackgroundTask<
-  { phoneName: string },
-  string,
-  boolean,
-  boolean | undefined
-> = async function* ({ phoneName }, reporter, signal) {
-  const pairingKey = new PairingKey()
+export const pair: BackgroundTask<string, string | undefined, boolean> =
+  async function* (context, reporter, signal) {
+    const pairingKey = new PairingKey()
 
-  // Send the pairing QR code
-  yield pairingKey.toString()
+    // Send the pairing QR code
+    yield pairingKey.toString()
 
-  // Wait for the user to scan the code
-  const device = await clientHello(pairingKey, signal, reporter)
-  const key = await device.clientKeyExchange()
+    // Wait for the user to scan the code
+    const device = await clientHello(pairingKey, signal, reporter)
+    const key = await device.clientKeyExchange()
 
-  // Send the UID
-  const confirmation = yield key.UUID
+    // Send the UID
+    const phoneName = yield key.UUID
 
-  // Wait for the confirmation
-  if (!confirmation) return false
+    if (!phoneName) throw new Error('Empty phone name.')
 
-  // Send the confirmation request
-  const certificate = await device.sendNameInfo(phoneName, key.ECC)
-  const phone = new Phone(await nextPhoneId(), phoneName, certificate)
+    // Send the confirmation request
+    const certificate = await device.sendNameInfo(phoneName, key.ECC)
+    const phone = new Phone(await nextPhoneId(), phoneName, certificate)
 
-  phones.update(($phones) => [...$phones, phone])
+    phones.update(($phones) => [...$phones, phone])
 
-  if (get(favoritePhone) === undefined) {
-    favoritePhoneId.set(phone.id)
+    if (get(favoritePhone) === undefined) {
+      favoritePhoneId.set(phone.id)
+    }
+
+    return true
   }
-
-  return true
-}
