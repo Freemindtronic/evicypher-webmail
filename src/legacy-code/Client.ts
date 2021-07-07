@@ -11,6 +11,7 @@ import {
   Request,
 } from '../background/protocol'
 import * as utils from './utils'
+import type { TaskContext } from 'task'
 
 const AES = new AesUtil(256, 1000)
 
@@ -26,6 +27,7 @@ export interface KeyPair {
  *   was renewed during the exchange.
  */
 export const fetchKeys = async (
+  context: TaskContext,
   certificate: Certificate,
   {
     keyToGet,
@@ -46,11 +48,12 @@ export const fetchKeys = async (
     port,
     data: pingResponse,
   } = await lanUtil.search(
+    context,
     Request.PING,
     {
       t: certificate.id,
     },
-    { signal }
+    { signal, report: reporter }
   )
 
   reporter('Device found')

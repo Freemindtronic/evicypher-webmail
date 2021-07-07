@@ -3,11 +3,7 @@ import Base64 from 'base64-arraybuffer'
 import type { RequestMap, ResponseMap } from '../background/protocol'
 import { defaultReporter, Reporter, State } from '../report'
 import { b64ToUint8Array } from './utils'
-import {
-  getZeroconfService,
-  isZeroconfServiceInstalled,
-  ZeroconfResponse,
-} from '../background/zeroconf-service'
+import type { TaskContext } from 'task'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -31,6 +27,7 @@ export interface WebAnswer<T> {
  *   is aborted or if the Zeroconf service is not properly installed
  */
 export const search = async <T extends keyof RequestMap>(
+  context: TaskContext,
   type: T,
   data: RequestMap[T],
   {
@@ -49,10 +46,6 @@ export const search = async <T extends keyof RequestMap>(
     report?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]>> => {
-  // Check that the Zeroconf service is reachable
-  if (!(await isZeroconfServiceInstalled()))
-    throw new Error('Zeroconf service not installed.')
-
   // Try `maxNumberOfSearches` times to reach a phone
   while (maxNumberOfSearches > 0) {
     // Shall we continue?
@@ -62,8 +55,19 @@ export const search = async <T extends keyof RequestMap>(
 
     // Run the search loop
     // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(type, data, { signal, portOverride, report })
+    const res = await searchLoop(context, type, data, {
+      signal,
+      portOverride,
+      report,
+    })
     if (res !== undefined) return res
+
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 2000)
+    })
 
     maxNumberOfSearches--
   }
@@ -83,6 +87,7 @@ export const search = async <T extends keyof RequestMap>(
  *   devices refused the connection
  */
 const searchLoop = async <T extends keyof RequestMap>(
+  context: TaskContext,
   type: T,
   data: RequestMap[T],
   {
@@ -99,90 +104,55 @@ const searchLoop = async <T extends keyof RequestMap>(
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]> | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
-  const nativePort = getZeroconfService()
+  const devicesFound = context.devices
+
+  report(State.SCAN_COMPLETE, { found: devicesFound.length })
+
+  // Abort the operation if no device is found
+  if (devicesFound.length === 0) return
+
+  // Create an AbortController to trigger a timeout
+  const controller = new AbortController()
+  setTimeout(() => {
+    controller.abort()
+  }, 2500)
+  signal.addEventListener('abort', () => {
+    controller.abort()
+  })
+
+  // Try to reach all the devices found
+  const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
+  for (const { ip, port } of devicesFound) {
+    // If `portOverride` is set, ignore, the port found by Zeroconf
+    const requestPort = portOverride ?? port
+
+    // URL to send the request to
+    const url = formatURL(ip, requestPort, type)
+
+    const send = async () => {
+      const responseData = await sendRequest({
+        ip,
+        port: requestPort,
+        type,
+        data,
+      })
+      return {
+        url,
+        data: responseData,
+        ip,
+        port: requestPort,
+      }
+    }
+
+    // Send the request to the device
+    requestsSent.push(send())
+  }
 
   try {
-    // A promise to a list of connected devices
-    const zeroconfResponse = new Promise<Array<{ ip: string; port: number }>>(
-      (resolve) => {
-        // Ask the service for a list of connected devices
-        nativePort.onMessage.addListener((response: ZeroconfResponse) => {
-          // Return an array of {ip, port}
-          resolve(
-            // The Zeroconf service returns `null` instead of an empty array
-            response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
-          )
-        })
-      }
-    )
-    nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
-
-    // Wait for either a response or a timeout
-    const timeOut = 5000
-    const devicesFound = await Promise.race([
-      zeroconfResponse,
-      new Promise<void>((resolve) => {
-        setTimeout(() => {
-          resolve()
-        }, timeOut)
-      }),
-    ])
-
-    // Check it the request timed out
-    if (devicesFound === undefined) {
-      report(State.ZEROCONF_TIMED_OUT)
-      return
-    }
-
-    report(State.DEVICES_FOUND, { found: devicesFound.length })
-
-    // Abort the operation if no device is found
-    if (devicesFound.length === 0) return
-
-    // Create an AbortController to trigger a timeout
-    const controller = new AbortController()
-    setTimeout(() => {
-      controller.abort()
-    }, timeOut)
-    signal.addEventListener('abort', () => {
-      controller.abort()
-    })
-
-    // Try to reach all the devices found
-    const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
-    for (const { ip, port } of devicesFound) {
-      // If `portOverride` is set, ignore, the port found by Zeroconf
-      const requestPort = portOverride ?? port
-
-      // URL to send the request to
-      const url = formatURL(ip, requestPort, type)
-
-      const send = async () => {
-        const responseData = await sendRequest({
-          ip,
-          port: requestPort,
-          type,
-          data,
-        })
-        return {
-          url,
-          data: responseData,
-          ip,
-          port: requestPort,
-        }
-      }
-
-      // Send the request to the device
-      requestsSent.push(send())
-    }
-
     // Wait for either a device to pair, or an AggregateError
     return await Promise.any(requestsSent)
   } catch {
     report(State.ALL_DEVICES_REFUSED)
-  } finally {
-    // Properly disconnect
-    nativePort.disconnect()
   }
 }
 

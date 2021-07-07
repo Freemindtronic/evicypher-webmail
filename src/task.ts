@@ -15,7 +15,7 @@ import { browser } from 'webextension-polyfill-ts'
  *   {@link startBackgroundTask}
  */
 export type BackgroundTask<TSent, TReceived, TReturn> = (
-  context: unknown,
+  context: TaskContext,
   reporter: Reporter,
   signal: AbortSignal
 ) => AsyncGenerator<TSent, TReturn, TReceived>
@@ -29,7 +29,7 @@ export type ForegroundTask<T> = T extends BackgroundTask<
   infer TReceived,
   unknown
 >
-  ? () => AsyncGenerator<TReceived, void, TSent>
+  ? () => AsyncGenerator<TReceived | undefined, void, TSent>
   : never
 
 /** Retrieve the sent type from a background task. */
@@ -127,6 +127,13 @@ export const TaskMap = {
   [Task.DECRYPT]: decrypt,
 } as const
 
+export interface TaskContext {
+  devices: Array<{
+    ip: string
+    port: number
+  }>
+}
+
 /**
  * Starts a background task by opening a runtime port. Every background task has
  * a foreground counterpart that may do nothing.
@@ -150,6 +157,7 @@ export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
   } = {}
 ): Promise<ReturnType<typeof TaskMap[T]>> => {
   const generator = task()
+  await generator.next()
   // eslint-disable-next-line sonarjs/cognitive-complexity
   return new Promise((resolve) => {
     const port = browser.runtime.connect({ name: taskName })

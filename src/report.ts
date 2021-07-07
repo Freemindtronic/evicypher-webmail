@@ -2,7 +2,7 @@
 export const State = {
   LOOKING_FOR_DEVICES: 'Looking for devices.',
   ZEROCONF_TIMED_OUT: 'Zeroconf timed out.',
-  DEVICES_FOUND: 'Devices found.',
+  SCAN_COMPLETE: 'Scan complete.',
   ALL_DEVICES_REFUSED: 'All devices refused to connect.',
 } as const
 
@@ -11,7 +11,7 @@ export type StateKey = typeof State[keyof typeof State]
 /** If an update has additional details, they are defined here. */
 export interface ReportDetails {
   [State.LOOKING_FOR_DEVICES]: { triesLeft: number }
-  [State.DEVICES_FOUND]: { found: number }
+  [State.SCAN_COMPLETE]: { found: number }
 }
 
 /**

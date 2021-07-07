@@ -6,6 +6,7 @@ import * as Base64 from 'base64-arraybuffer'
 import { search, sendRequest } from './lanUtils'
 import { Request } from '../background/protocol'
 import type { Reporter } from '../report'
+import type { TaskContext } from 'task'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -53,11 +54,13 @@ export class PairingKey {
 }
 
 export async function clientHello(
+  context: TaskContext,
   pairingKey: PairingKey,
   signal?: AbortSignal,
   report?: Reporter
 ): Promise<Device> {
   const answer = await search(
+    context,
     Request.PAIRING_START,
     { t: utils.sha256(pairingKey.certificate.id) },
     {

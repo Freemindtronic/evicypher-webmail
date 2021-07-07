@@ -19,6 +19,7 @@ const encryptString = async (
   startBackgroundTask(
     Task.ENCRYPT,
     async function* () {
+      yield
       yield string
     },
     {
@@ -32,6 +33,7 @@ const decryptString = async (string: string): Promise<string> =>
   startBackgroundTask(
     Task.DECRYPT,
     async function* () {
+      yield
       yield string
     },
     {

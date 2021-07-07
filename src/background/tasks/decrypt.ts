@@ -18,10 +18,14 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     if (phone === undefined) throw new Error('No favorite device set.')
 
     // Send a request to the FMT app
-    const { keys, newCertificate } = await fetchKeys(phone.certificate, {
-      reporter,
-      signal,
-    })
+    const { keys, newCertificate } = await fetchKeys(
+      context,
+      phone.certificate,
+      {
+        reporter,
+        signal,
+      }
+    )
     phone.certificate = newCertificate
     phones.update((phones) => phones)
 
