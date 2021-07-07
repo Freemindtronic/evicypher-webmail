@@ -87,16 +87,9 @@ export class BrowserStore<T> implements Writable<T> {
     )
 
     // Listen for changes in other tabs/processes
-    // eslint-disable-next-line complexity
-    browser.storage.onChanged.addListener((changes, area) => {
+    browser.storage.onChanged.addListener((changes, storageName) => {
       // Ignore unrelated storages and keys
-      if (
-        (area === 'sync' && storage !== browser.storage.sync) ||
-        (area === 'local' && storage !== browser.storage.local) ||
-        (area === 'managed' && storage !== browser.storage.managed) ||
-        !(this.name in changes)
-      )
-        return
+      if (!sameStorage(storageName, storage) || !(this.name in changes)) return
 
       // If the change was local, ignore it
       if (ignoreNextEvent) {
@@ -132,3 +125,9 @@ export class BrowserStore<T> implements Writable<T> {
     return this.writable.subscribe(run, invalidate)
   }
 }
+
+/** @returns Whether the storage given matches the name given. */
+const sameStorage = (storageName: string, storage: Storage.StorageArea) =>
+  (storageName === 'sync' && storage === browser.storage.sync) ||
+  (storageName === 'local' && storage === browser.storage.local) ||
+  (storageName === 'managed' && storage === browser.storage.managed)
