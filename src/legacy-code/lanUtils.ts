@@ -106,23 +106,23 @@ const searchLoop = async <T extends keyof RequestMap>(
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.devices
 
-  report(State.SCAN_COMPLETE, { found: devicesFound.length })
+  report(State.SCAN_COMPLETE, { found: devicesFound.size })
 
   // Abort the operation if no device is found
-  if (devicesFound.length === 0) return
+  if (devicesFound.size === 0) return
 
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
   setTimeout(() => {
     controller.abort()
-  }, 2500)
+  }, 1000)
   signal.addEventListener('abort', () => {
     controller.abort()
   })
 
   // Try to reach all the devices found
   const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
-  for (const { ip, port } of devicesFound) {
+  for (const [ip, { port }] of devicesFound) {
     // If `portOverride` is set, ignore, the port found by Zeroconf
     const requestPort = portOverride ?? port
 

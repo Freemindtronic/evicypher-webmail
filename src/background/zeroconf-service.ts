@@ -1,3 +1,4 @@
+import type { TaskContext } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 
 const APPLICATION_ID = 'com.freemindtronic.evidns'
@@ -38,3 +39,40 @@ export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
 /** Open a connection to the Zeroconf service. */
 export const getZeroconfService = (): Runtime.Port =>
   browser.runtime.connectNative(APPLICATION_ID)
+
+export const startZeroconfService = async (
+  context: TaskContext
+): Promise<never> => {
+  while (true) {
+    const nativePort = getZeroconfService()
+
+    // A promise to a list of connected devices
+    const zeroconfResponse = new Promise<Array<{ ip: string; port: number }>>(
+      (resolve) => {
+        const listener = (response: ZeroconfResponse) => {
+          // Return an array of {ip, port}
+          resolve(
+            // The Zeroconf service returns `null` instead of an empty array
+            response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
+          )
+          nativePort.onMessage.removeListener(listener)
+        }
+
+        // Ask the service for a list of connected devices
+        nativePort.onMessage.addListener(listener)
+      }
+    )
+
+    nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
+
+    // eslint-disable-next-line no-await-in-loop
+    const devicesFound = await zeroconfResponse
+    nativePort.disconnect()
+
+    for (const { ip, port } of devicesFound) {
+      context.devices.set(ip, {
+        port,
+      })
+    }
+  }
+}

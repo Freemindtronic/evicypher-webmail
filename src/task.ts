@@ -128,10 +128,12 @@ export const TaskMap = {
 } as const
 
 export interface TaskContext {
-  devices: Array<{
-    ip: string
-    port: number
-  }>
+  devices: Map<
+    string,
+    {
+      port: number
+    }
+  >
 }
 
 /**

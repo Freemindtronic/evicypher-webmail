@@ -6,39 +6,14 @@ import {
   TaskMap,
 } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
-import { getZeroconfService, ZeroconfResponse } from './zeroconf-service'
+import { startZeroconfService } from './zeroconf-service'
 
+/** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
-  devices: [],
+  devices: new Map(),
 }
 
-const runZeroconfService = async (context: TaskContext) => {
-  while (true) {
-    const nativePort = getZeroconfService()
-    // A promise to a list of connected devices
-    const zeroconfResponse = new Promise<Array<{ ip: string; port: number }>>(
-      (resolve) => {
-        const listener = (response: ZeroconfResponse) => {
-          // Return an array of {ip, port}
-          resolve(
-            // The Zeroconf service returns `null` instead of an empty array
-            response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
-          )
-          nativePort.onMessage.removeListener(listener)
-        }
-
-        // Ask the service for a list of connected devices
-        nativePort.onMessage.addListener(listener)
-      }
-    )
-    nativePort.postMessage({ cmd: 'Lookup', type: '_evitoken._tcp.' })
-    // eslint-disable-next-line no-await-in-loop
-    context.devices = await zeroconfResponse
-    console.log('Found:', zeroconfResponse)
-  }
-}
-
-void runZeroconfService(context)
+void startZeroconfService(context)
 
 browser.runtime.onConnect.addListener((port) => {
   const task = TaskMap[port.name as keyof typeof TaskMap]
