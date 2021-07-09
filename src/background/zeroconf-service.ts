@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import type { TaskContext } from 'task'
 import { browser } from 'webextension-polyfill-ts'
 import debug from 'debug'

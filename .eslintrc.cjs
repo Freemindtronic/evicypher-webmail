@@ -21,6 +21,7 @@ module.exports = {
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
     complexity: ['error', 6],
+    'no-await-in-loop': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
     'unicorn/require-post-message-target-origin': 'off',

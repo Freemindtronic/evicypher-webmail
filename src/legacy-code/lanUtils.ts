@@ -56,7 +56,6 @@ export const search = async <T extends keyof RequestMap>(
       if (signal.aborted) throw new Error('Cancelled by user.')
 
       // Run the search loop
-      // eslint-disable-next-line no-await-in-loop
       const res = await searchLoop(context, type, data, {
         signal,
         portOverride,
@@ -64,7 +63,6 @@ export const search = async <T extends keyof RequestMap>(
       })
       if (res !== undefined) return res
 
-      // eslint-disable-next-line no-await-in-loop
       await new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve()

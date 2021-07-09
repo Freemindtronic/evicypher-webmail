@@ -83,7 +83,6 @@ const startTask = async <TSent, TReceived, TReturn>(
 
   let result = await generator.next()
   while (!result.done && !controller.signal.aborted) {
-    // eslint-disable-next-line no-await-in-loop
     result = await handleMessage<typeof task, TSent, TReturn, TReceived>(
       generator,
       result,
