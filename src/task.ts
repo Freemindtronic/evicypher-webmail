@@ -108,11 +108,11 @@ export type MessageFromFrontToBack<T> = T extends BackgroundTask<
   : never
 
 /** All the tasks available. */
-export const Task = {
-  ENCRYPT: 'encrypt',
-  DECRYPT: 'decrypt',
-  PAIR: 'pair',
-} as const
+export enum Task {
+  ENCRYPT = 'encrypt',
+  DECRYPT = 'decrypt',
+  PAIR = 'pair',
+}
 
 /** A convenient way to retreive an actual task from its name. */
 export const TaskMap = {
