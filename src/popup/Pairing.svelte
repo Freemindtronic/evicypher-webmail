@@ -3,7 +3,7 @@
   import { toCanvas } from 'qrcode'
   import type { Report } from 'report'
   import { State } from 'report'
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
   import { startBackgroundTask, Task } from 'task'
@@ -81,8 +81,6 @@
 
     dispatch('success')
   })
-
-  onDestroy(cancelPairing)
 </script>
 
 <p>

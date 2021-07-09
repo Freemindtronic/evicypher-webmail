@@ -40,8 +40,6 @@ export const startZeroconfService = async (
       type: '_evitoken._tcp.',
     })) as ZeroconfResponse | undefined
 
-    console.log('getZeroconfService', performance.now(), response)
-
     if (response) handleResponse(context, response)
 
     if (context.scanFaster.get()) continue
@@ -49,7 +47,7 @@ export const startZeroconfService = async (
     await Promise.race([
       context.scanFaster.observe(),
       new Promise((resolve) => {
-        setTimeout(resolve, 10_000)
+        setTimeout(resolve, 20_000)
       }),
     ])
   }
