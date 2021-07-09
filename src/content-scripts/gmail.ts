@@ -63,6 +63,7 @@ const handleEncryptedMailElement = (
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
 
+  mailElement.style.overflow = 'visible'
   mailElement.style.position = 'relative'
   mailElement.style.outline = '3px solid orange'
 
