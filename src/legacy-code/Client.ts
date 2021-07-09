@@ -12,7 +12,7 @@ import {
 } from '../background/protocol'
 import * as utils from './utils'
 import type { TaskContext } from 'task'
-import { Reporter, State } from 'report'
+import { defaultReporter, Reporter, State } from 'report'
 
 export interface KeyPair {
   high: Uint8Array
@@ -30,8 +30,7 @@ export const fetchKeys = async (
   certificate: Certificate,
   {
     keyToGet,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    reporter = () => {},
+    reporter = defaultReporter,
     signal = new AbortController().signal,
   }: {
     keyToGet?: Uint8Array

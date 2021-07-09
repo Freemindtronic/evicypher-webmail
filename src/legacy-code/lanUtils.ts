@@ -206,7 +206,6 @@ export const sendRequest = async <T extends keyof RequestMap>({
 
   if (response.status >= 300) throw new Error(response.statusText)
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const responseData: Serialize<ResponseMap[T]> = await response.json()
+  const responseData = (await response.json()) as Serialize<ResponseMap[T]>
   return unserialize(responseData)
 }
