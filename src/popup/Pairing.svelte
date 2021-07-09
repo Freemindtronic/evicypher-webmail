@@ -2,7 +2,7 @@
   import type { pair as pairTask } from 'background/tasks/pair'
   import { toCanvas } from 'qrcode'
   import type { StateKey } from 'report'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
   import { startBackgroundTask, Task } from 'task'
@@ -49,6 +49,13 @@
     yield phoneName
   }
 
+  /** Cancel the pairing process. */
+  const cancelPairing = () => {
+    phoneName = ''
+    controller.abort()
+    dispatch('cancel')
+  }
+
   /** Start the pairing process when the component is loaded. */
   onMount(async () => {
     // Wait for the background task to finish
@@ -67,12 +74,7 @@
     dispatch('success')
   })
 
-  /** Cancel the pairing process. */
-  const cancelPairing = () => {
-    phoneName = ''
-    controller.abort()
-    dispatch('cancel')
-  }
+  onDestroy(cancelPairing)
 </script>
 
 <p>

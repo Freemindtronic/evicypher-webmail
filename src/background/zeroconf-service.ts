@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import type { TaskContext } from 'task'
 import { browser } from 'webextension-polyfill-ts'
 
@@ -26,16 +27,6 @@ export interface ZeroconfResponse {
   }> | null
 }
 
-/** @returns Whether the Zeroconf service is properly installed. */
-export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
-  try {
-    await browser.runtime.sendNativeMessage(APPLICATION_ID, { cmd: 'Version' })
-    return browser.runtime.lastError === null
-  } catch {
-    return false
-  }
-}
-
 export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
@@ -44,23 +35,47 @@ export const startZeroconfService = async (
 
   while (true) {
     // A promise to a list of connected devices
-    // eslint-disable-next-line no-await-in-loop
     const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
       cmd: 'Lookup',
       type: '_evitoken._tcp.',
     })) as ZeroconfResponse | undefined
 
-    console.log('getZeroconfService', response)
+    console.log('getZeroconfService', performance.now(), response)
 
-    if (!response) continue
+    if (response) handleResponse(context, response)
 
-    const devicesFound =
-      response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
+    if (context.scanFaster.get()) continue
 
-    for (const { ip, port } of devicesFound) {
-      context.devices.set(ip, {
-        port,
-      })
-    }
+    await Promise.race([
+      context.scanFaster.observe(),
+      new Promise((resolve) => {
+        setTimeout(resolve, 10_000)
+      }),
+    ])
+  }
+}
+
+/** @returns Whether the Zeroconf service is properly installed. */
+const isZeroconfServiceInstalled = async (): Promise<boolean> => {
+  try {
+    await browser.runtime.sendNativeMessage(APPLICATION_ID, { cmd: 'Version' })
+    return browser.runtime.lastError === null
+  } catch {
+    return false
+  }
+}
+
+/** Updates the context with `response`. */
+const handleResponse = (
+  context: TaskContext,
+  response: ZeroconfResponse
+): void => {
+  const devicesFound =
+    response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
+
+  for (const { ip, port } of devicesFound) {
+    context.devices.set(ip, {
+      port,
+    })
   }
 }

@@ -1,3 +1,4 @@
+import { Observable } from 'observable'
 import type { ReportDetails, StateKey } from 'report'
 import {
   BackgroundTask,
@@ -11,6 +12,7 @@ import { startZeroconfService } from './zeroconf-service'
 /** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
   devices: new Map(),
+  scanFaster: new Observable<boolean>(false),
 }
 
 void startZeroconfService(context)

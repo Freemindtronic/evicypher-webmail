@@ -46,33 +46,40 @@ export const search = async <T extends keyof RequestMap>(
     report?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]>> => {
-  // Try `maxNumberOfSearches` times to reach a phone
-  while (maxNumberOfSearches > 0) {
-    // Shall we continue?
-    if (signal.aborted) throw new Error('Cancel by user.')
+  // Make the Zeroconf service run without cooldown
+  context.scanFaster.set(true)
 
-    report(State.LOOKING_FOR_DEVICES, { triesLeft: maxNumberOfSearches })
+  try {
+    // Try `maxNumberOfSearches` times to reach a phone
+    while (maxNumberOfSearches > 0) {
+      // Shall we continue?
+      if (signal.aborted) throw new Error('Cancelled by user.')
 
-    // Run the search loop
-    // eslint-disable-next-line no-await-in-loop
-    const res = await searchLoop(context, type, data, {
-      signal,
-      portOverride,
-      report,
-    })
-    if (res !== undefined) return res
+      report(State.LOOKING_FOR_DEVICES, { triesLeft: maxNumberOfSearches })
 
-    // eslint-disable-next-line no-await-in-loop
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 2000)
-    })
+      // Run the search loop
+      // eslint-disable-next-line no-await-in-loop
+      const res = await searchLoop(context, type, data, {
+        signal,
+        portOverride,
+        report,
+      })
+      if (res !== undefined) return res
 
-    maxNumberOfSearches--
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+
+      maxNumberOfSearches--
+    }
+
+    throw new Error('Too many tries.')
+  } finally {
+    context.scanFaster.set(false)
   }
-
-  throw new Error('Too many tries.')
 }
 
 /**

@@ -1,6 +1,7 @@
 import { decrypt } from 'background/tasks/decrypt'
 import { encrypt } from 'background/tasks/encrypt'
 import { pair } from 'background/tasks/pair'
+import type { Observable } from 'observable'
 import type { ReportDetails, Reporter, ReporterImpl, StateKey } from 'report'
 import { defaultReporter } from 'report'
 import { browser } from 'webextension-polyfill-ts'
@@ -127,13 +128,17 @@ export const TaskMap = {
   [Task.DECRYPT]: decrypt,
 } as const
 
+/** Background context shared between background tasks. */
 export interface TaskContext {
+  /** List of devices found by the Zeroconf service. */
   devices: Map<
     string,
     {
       port: number
     }
   >
+  /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */
+  scanFaster: Observable<boolean>
 }
 
 /**
