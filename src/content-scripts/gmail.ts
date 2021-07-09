@@ -13,17 +13,18 @@ const FLAG = 'freemindtronicButtonAdded'
 /** Send a request to the background script to encrypt the given string. */
 const encryptString = async (
   string: string,
-  report: Reporter,
+  reporter: Reporter,
   signal = new AbortController().signal
 ): Promise<string> =>
   startBackgroundTask(
     Task.ENCRYPT,
     async function* () {
+      // Suspend the foreground task until the background task asks for a string
       yield
       yield string
     },
     {
-      report,
+      reporter,
       signal,
     }
   )
@@ -31,7 +32,7 @@ const encryptString = async (
 /** Send a request to the background script to decrypt the given string. */
 const decryptString = async (
   string: string,
-  report: Reporter,
+  reporter: Reporter,
   signal = new AbortController().signal
 ): Promise<string> =>
   startBackgroundTask(
@@ -41,7 +42,7 @@ const decryptString = async (
       yield string
     },
     {
-      report,
+      reporter,
       signal,
     }
   )

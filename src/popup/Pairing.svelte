@@ -57,7 +57,7 @@
     dispatch('cancel')
   }
 
-  const report = (report: Report) => {
+  const reporter = (report: Report) => {
     if (report.state === State.SCAN_COMPLETE) {
       tip =
         report.found === 0
@@ -70,7 +70,7 @@
   onMount(async () => {
     // Wait for the background task to finish
     const success = await startBackgroundTask(Task.PAIR, pair, {
-      report,
+      reporter,
       signal: controller.signal,
     })
 

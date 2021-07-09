@@ -138,32 +138,38 @@ export interface TaskContext {
  * Starts a background task by opening a runtime port. Every background task has
  * a foreground counterpart that may do nothing.
  *
- * @param taskName
- * @param task
- * @param initialValue
- * @param report
- * @param signal
- * @returns
+ * @param taskName - Name of the port used
+ * @param task - Foreground task that will respond to the requests of the background
+ * @returns The return value of the background task, sent to the front end
  */
 export const startBackgroundTask = async <T extends keyof TaskMap>(
   taskName: T,
   task: ForegroundTask<TaskMap[T]>,
   {
-    report = defaultReporter,
+    reporter = defaultReporter,
     signal = new AbortController().signal,
   }: {
-    report?: Reporter
+    /** A {@link Reporter | reporter} function that will receive asynchrounous updates. */
+    reporter?: Reporter
+    /** An abort signal. */
     signal?: AbortSignal
   } = {}
 ): Promise<ReturnType<TaskMap[T]>> => {
+  // Start the foreground task
   const generator = task()
   await generator.next()
+
   return new Promise((resolve) => {
+    // Start the background task
     const port = browser.runtime.connect({ name: taskName })
+
+    // Forward abort signal to the back end
     signal.addEventListener('abort', () => {
       port.postMessage({ type: 'abort' })
     })
-    port.onMessage.addListener(messageListener<T>(generator, report, resolve))
+
+    // Handle messages sent by the background task
+    port.onMessage.addListener(messageListener<T>(generator, reporter, resolve))
   })
 }
 
