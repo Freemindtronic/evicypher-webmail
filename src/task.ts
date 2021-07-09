@@ -5,6 +5,7 @@ import type { Observable } from 'observable'
 import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
 import { browser, Runtime } from 'webextension-polyfill-ts'
+import debug, { Debugger } from 'debug'
 
 /**
  * A background task is an asynchronous generator transparently connected to a
@@ -155,6 +156,9 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
     signal?: AbortSignal
   } = {}
 ): Promise<ReturnType<TaskMap[T]>> => {
+  const log = debug(`task:${taskName}:foreground`)
+  log('Starting foreground task')
+
   // Start the foreground task
   const generator = task()
   await generator.next()
@@ -165,11 +169,14 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
 
     // Forward abort signal to the back end
     signal.addEventListener('abort', () => {
+      log('Aborting task %o', taskName)
       port.postMessage({ type: 'abort' })
     })
 
     // Handle messages sent by the background task
-    port.onMessage.addListener(messageListener<T>(generator, reporter, resolve))
+    port.onMessage.addListener(
+      messageListener<T>(generator, reporter, resolve, log)
+    )
   })
 }
 
@@ -178,9 +185,12 @@ const messageListener =
   <T extends keyof TaskMap>(
     generator: AsyncGenerator,
     reporter: Reporter,
-    resolve: (value: ReturnType<TaskMap[T]>) => void
+    resolve: (value: ReturnType<TaskMap[T]>) => void,
+    log: Debugger
   ) =>
   async (message: MessageFromBackToFront<TaskMap[T]>, port: Runtime.Port) => {
+    log('Message received: %o', message)
+
     // If we received a report, give it to the reporter
     if (message.type === 'report') {
       reporter(message.report)

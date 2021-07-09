@@ -35,14 +35,11 @@ export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
   const log = debug('zeroconf')
-  log('Starting Zeroconf service')
 
   if (!(await isZeroconfServiceInstalled()))
     throw new Error('Please install EviDNS.')
 
   while (true) {
-    log('Starting scan...')
-
     // A promise to a list of connected devices
     const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
       cmd: 'Lookup',

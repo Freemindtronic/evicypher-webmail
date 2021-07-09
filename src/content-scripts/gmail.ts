@@ -1,7 +1,11 @@
+import { debug } from 'debug'
 import { Reporter, State } from 'report'
 import { startBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
+
+// Enable logging in the page console (not the extension console)
+debug.enable('*')
 
 const Class = {
   MAIL_CONTENT: 'aiL',
