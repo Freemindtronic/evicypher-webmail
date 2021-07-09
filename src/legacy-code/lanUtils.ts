@@ -55,8 +55,6 @@ export const search = async <T extends keyof RequestMap>(
       // Shall we continue?
       if (signal.aborted) throw new Error('Cancelled by user.')
 
-      report(State.LOOKING_FOR_DEVICES, { triesLeft: maxNumberOfSearches })
-
       // Run the search loop
       // eslint-disable-next-line no-await-in-loop
       const res = await searchLoop(context, type, data, {
@@ -113,7 +111,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.devices
 
-  report(State.SCAN_COMPLETE, { found: devicesFound.size })
+  report({ state: State.SCAN_COMPLETE, found: devicesFound.size })
 
   // Abort the operation if no device is found
   if (devicesFound.size === 0) return
@@ -159,12 +157,11 @@ const searchLoop = async <T extends keyof RequestMap>(
     // Wait for either a device to pair, or an AggregateError
     return await Promise.any(requestsSent)
   } catch {
-    report(State.ALL_DEVICES_REFUSED)
+    report({ state: State.ALL_DEVICES_REFUSED })
   }
 }
 
 export type Serialize<T> = {
-  // eslint-disable-next-line no-unused-vars
   [K in keyof T]: string
 }
 

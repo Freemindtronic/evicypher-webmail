@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { pair as pairTask } from 'background/tasks/pair'
   import { toCanvas } from 'qrcode'
-  import type { StateKey } from 'report'
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
+  import type { Report } from 'report'
+  import { State } from 'report'
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
   import { startBackgroundTask, Task } from 'task'
@@ -17,7 +18,7 @@
   let uid: string | undefined
 
   /** Current state of the pairing process. */
-  let state: StateKey
+  let tip = 'Loading...'
 
   /** A writable store updated when the user confirms the UID. */
   const confirmed = writable(false)
@@ -56,13 +57,20 @@
     dispatch('cancel')
   }
 
+  const report = (report: Report) => {
+    if (report.state === State.SCAN_COMPLETE) {
+      tip =
+        report.found === 0
+          ? 'Make sure your phone and your computer are on the same network.'
+          : 'Scan the QR code with the application.'
+    }
+  }
+
   /** Start the pairing process when the component is loaded. */
   onMount(async () => {
     // Wait for the background task to finish
     const success = await startBackgroundTask(Task.PAIR, pair, {
-      report: (st) => {
-        state = st
-      },
+      report,
       signal: controller.signal,
     })
 
@@ -79,7 +87,7 @@
 
 <p>
   <button on:click={() => cancelPairing()}>X</button>
-  {state}
+  {tip}
 </p>
 <p>
   <canvas bind:this={qr} />

@@ -1,4 +1,4 @@
-import type { ReporterImpl } from 'report'
+import type { Reporter } from 'report'
 import { startBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -13,7 +13,7 @@ const FLAG = 'freemindtronicButtonAdded'
 /** Send a request to the background script to encrypt the given string. */
 const encryptString = async (
   string: string,
-  report: ReporterImpl,
+  report: Reporter,
   signal = new AbortController().signal
 ): Promise<string> =>
   startBackgroundTask(
@@ -93,7 +93,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
       ?.querySelector('[contenteditable] > :first-child')
     if (!mail || !mail.textContent) return
     mail.textContent = await encryptString(mail.textContent, (state) => {
-      button.$set({ state })
+      button.$set({ state: state.state })
     })
   })
 }

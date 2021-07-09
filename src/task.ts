@@ -2,7 +2,7 @@ import { decrypt } from 'background/tasks/decrypt'
 import { encrypt } from 'background/tasks/encrypt'
 import { pair } from 'background/tasks/pair'
 import type { Observable } from 'observable'
-import type { ReportDetails, Reporter, ReporterImpl, StateKey } from 'report'
+import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
 import { browser } from 'webextension-polyfill-ts'
 
@@ -61,16 +61,6 @@ export type ReturnType<T> = T extends BackgroundTask<
   : never
 
 /**
- * A report message is a message from the back to the front containing
- * {@link ReportDetails | useful details} on the progression of a task.
- */
-export type ReportMessage<T extends StateKey> = {
-  type: 'report'
-  state: T
-  details: T extends keyof ReportDetails ? ReportDetails[T] : undefined
-}
-
-/**
  * A message sent by the background task to the front end. It may be:
  *
  * - A `request`: the request content is returned by the `yield` keyword in the
@@ -92,7 +82,10 @@ export type MessageFromBackToFront<T> = T extends BackgroundTask<
           type: 'result'
           result: TReturn
         }
-      | ReportMessage<StateKey>
+      | {
+          type: 'report'
+          report: Report
+        }
   : never
 
 /**
@@ -159,7 +152,7 @@ export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
     report = defaultReporter,
     signal = new AbortController().signal,
   }: {
-    report?: ReporterImpl
+    report?: Reporter
     signal?: AbortSignal
   } = {}
 ): Promise<ReturnType<typeof TaskMap[T]>> => {
@@ -174,7 +167,7 @@ export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
     port.onMessage.addListener(
       async (message: MessageFromBackToFront<typeof TaskMap[T]>) => {
         if (message.type === 'report') {
-          report(message.state, message.details)
+          report(message.report)
           return
         }
 

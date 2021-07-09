@@ -12,6 +12,7 @@ import {
 } from '../background/protocol'
 import * as utils from './utils'
 import type { TaskContext } from 'task'
+import type { Reporter } from 'report'
 
 const AES = new AesUtil(256, 1000)
 
@@ -36,12 +37,10 @@ export const fetchKeys = async (
     signal = new AbortController().signal,
   }: {
     keyToGet?: Uint8Array
-    reporter?: (state: string) => void
+    reporter?: Reporter
     signal?: AbortSignal
   } = {}
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  reporter('Open the app on your phone')
-
   // Find a phone matching the certificate
   const {
     ip,
@@ -55,8 +54,6 @@ export const fetchKeys = async (
     },
     { signal, report: reporter }
   )
-
-  reporter('Device found')
 
   // Prepare the three shared secrets for the rest of the exchange
   const keysExchange = ([1, 2, 3] as const).map((i) =>
@@ -102,8 +99,6 @@ export const fetchKeys = async (
     data: cipherKeyRequest,
   })
 
-  reporter('Keys received')
-
   const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
 
   // To ensure forward secrecy, we share a new secret
@@ -143,8 +138,6 @@ export const fetchKeys = async (
     type: Request.END_OK,
     data: acknowledgement,
   })
-
-  reporter('Exchange complete')
 
   return { keys, newCertificate }
 }

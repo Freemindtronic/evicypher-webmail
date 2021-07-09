@@ -1,5 +1,5 @@
 import { Observable } from 'observable'
-import type { ReportDetails, StateKey } from 'report'
+import type { Report } from 'report'
 import {
   BackgroundTask,
   MessageFromFrontToBack,
@@ -56,10 +56,10 @@ async function startTask<TSent, TReceived, TReturn>(
   const controller = new AbortController()
   const generator = task(
     context,
-    (state: StateKey, details?: ReportDetails[keyof ReportDetails]) => {
-      console.log(state, details)
+    (report: Report) => {
+      console.log(report)
       if (!controller.signal.aborted)
-        port.postMessage({ type: 'report', state, details })
+        port.postMessage({ type: 'report', report })
     },
     controller.signal
   )
