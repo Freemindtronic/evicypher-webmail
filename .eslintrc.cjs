@@ -20,8 +20,6 @@ module.exports = {
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
-    'no-return-assign': ['error', 'except-parens'],
-    'no-unused-vars': ['error', { args: 'none' }],
     complexity: ['error', 6],
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
