@@ -14,8 +14,6 @@ import * as utils from './utils'
 import type { TaskContext } from 'task'
 import { Reporter, State } from 'report'
 
-const AES = new AesUtil(256, 1000)
-
 export interface KeyPair {
   high: Uint8Array
   low: Uint8Array
@@ -82,6 +80,7 @@ export const fetchKeys = async (
     const ivd = utils.random(16)
     const saltd = utils.random(16)
     const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
+    const AES = new AesUtil(256, 1000)
     const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
     cipherKeyRequest = {
       ...cipherKeyRequest,
@@ -156,6 +155,7 @@ const encryptKey = (
   salt: Uint8Array
   encryptedKey: Uint8Array
 } => {
+  const AES = new AesUtil(256, 1000)
   const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
   const k = axlsign.generateKeyPair(utils.random(32))
   const sharedKey = axlsign.sharedKey(k.private, ecc)
@@ -183,6 +183,8 @@ const unjamKeys = (
     d2: lowDataJam,
   }: CipherKeyResponse
 ): { high: Uint8Array; low: Uint8Array } => {
+  const AES = new AesUtil(256, 1000)
+
   const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
   const highJamming = utils.sha512(
     utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)

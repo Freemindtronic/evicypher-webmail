@@ -8,7 +8,6 @@ import {
 } from './AesUtil'
 import * as utils from './utils'
 
-const AES = new AesUtil(256, 1000)
 const ID_MESSAGE = new Uint8Array([0, 0, 0, 21])
 
 interface Keys {
@@ -26,6 +25,7 @@ export class EviCrypt {
   encryptText(plainText: string): string {
     const iv = utils.random(16)
     const salt = utils.random(32)
+    const AES = new AesUtil(256, 1000)
     const enc = AES.encryptCTR(
       iv,
       salt,
@@ -65,6 +65,7 @@ export class EviCrypt {
     const iv = dataToDecipher.data.slice(0, 16)
     const salt = dataToDecipher.data.slice(16, 48)
 
+    const AES = new AesUtil(256, 1000)
     const dec = AES.decryptCTR(iv, salt, this.keys.high, dataText.slice(offset))
 
     return utils.uint8ArrayToUTF8(dec)
