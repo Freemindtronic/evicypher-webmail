@@ -21,6 +21,8 @@ Run `yarn build`
 - Run tests `yarn test` (not implemented yet)
 - Read the API documentation `yarn doc && cat docs/index.html`
 
+**Note:** commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write conforming commit messages.
+
 ## Details
 
 ### Technologies
