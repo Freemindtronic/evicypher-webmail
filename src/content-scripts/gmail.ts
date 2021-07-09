@@ -29,7 +29,11 @@ const encryptString = async (
   )
 
 /** Send a request to the background script to decrypt the given string. */
-const decryptString = async (string: string): Promise<string> =>
+const decryptString = async (
+  string: string,
+  report: Reporter,
+  signal = new AbortController().signal
+): Promise<string> =>
   startBackgroundTask(
     Task.DECRYPT,
     async function* () {
@@ -37,10 +41,8 @@ const decryptString = async (string: string): Promise<string> =>
       yield string
     },
     {
-      report: (...args) => {
-        console.log(...args)
-      },
-      signal: new AbortController().signal,
+      report,
+      signal,
     }
   )
 
@@ -56,6 +58,7 @@ const extractEncryptedStrings = (string: string) => [
 const handleEncryptedMailElement = (
   mailElement: HTMLElement,
   mailString: string
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 ) => {
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
@@ -69,13 +72,26 @@ const handleEncryptedMailElement = (
 
   const encryptedString = extractEncryptedStrings(mailString)[0]
 
-  button.$on('click', () => {
-    void decryptString(encryptedString).then((decryptedString) => {
-      const frame: HTMLIFrameElement = document.createElement('iframe')
-      frame.srcdoc = decryptedString
-      frame.sandbox.value = ''
-      mailElement.append(frame)
+  button.$on('click', async () => {
+    const decryptedString = await decryptString(encryptedString, (report) => {
+      let tooltip = 'Loading...'
+      if (report.state === State.SCAN_COMPLETE) {
+        tooltip =
+          report.found === 0
+            ? 'Make sure your phone and your computer are on the same network.'
+            : 'Trying to reach your phone...'
+      } else if (report.state === State.NOTIFICATION_SENT) {
+        tooltip = 'Click on the notification you received.'
+      }
+
+      button.$set({ tooltip })
     })
+
+    const frame: HTMLIFrameElement = document.createElement('iframe')
+    frame.srcdoc = decryptedString
+    frame.sandbox.value = ''
+    mailElement.append(frame)
+    button.$set({ tooltip: '' })
   })
 }
 
@@ -95,6 +111,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
 
     if (!mail || !mail.textContent) return
 
+    // eslint-disable-next-line sonarjs/no-identical-functions
     mail.textContent = await encryptString(mail.textContent, (report) => {
       let tooltip = 'Loading...'
       if (report.state === State.SCAN_COMPLETE) {
@@ -103,7 +120,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
             ? 'Make sure your phone and your computer are on the same network.'
             : 'Trying to reach your phone...'
       } else if (report.state === State.NOTIFICATION_SENT) {
-        tooltip = 'Click the notification you received.'
+        tooltip = 'Click on the notification you received.'
       }
 
       button.$set({ tooltip })
