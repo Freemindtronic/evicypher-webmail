@@ -85,14 +85,13 @@
 
 <p>
   <button on:click={() => cancelPairing()}>X</button>
-  {tip}
 </p>
 <p>
   <canvas bind:this={qr} />
 </p>
 <p>
   {#if uid === undefined}
-    Please scan this QR code with the application Freemindtronic.
+    {tip}
   {:else}
     Is the code {uid} correct?
     <button type="button" on:click={() => ($confirmed = true)}>Yes</button>
