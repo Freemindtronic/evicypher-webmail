@@ -3,8 +3,6 @@ import type { TaskContext } from 'task'
 import { browser } from 'webextension-polyfill-ts'
 import debug from 'debug'
 
-const log = debug('zeroconf')
-
 const APPLICATION_ID = 'com.freemindtronic.evidns'
 
 /** Time (in ms) between two scans. */
@@ -36,6 +34,7 @@ export interface ZeroconfResponse {
 export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
+  const log = debug('zeroconf')
   log('Starting Zeroconf service')
 
   if (!(await isZeroconfServiceInstalled()))
