@@ -4,7 +4,7 @@ import type { pair } from 'background/tasks/pair'
 import type { Observable } from 'observable'
 import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
-import { browser } from 'webextension-polyfill-ts'
+import { browser, Runtime } from 'webextension-polyfill-ts'
 
 /**
  * A background task is an asynchronous generator transparently connected to a
@@ -158,35 +158,44 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
 ): Promise<ReturnType<TaskMap[T]>> => {
   const generator = task()
   await generator.next()
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   return new Promise((resolve) => {
     const port = browser.runtime.connect({ name: taskName })
     signal.addEventListener('abort', () => {
       port.postMessage({ type: 'abort' })
     })
-    port.onMessage.addListener(
-      async (message: MessageFromBackToFront<TaskMap[T]>) => {
-        if (message.type === 'report') {
-          report(message.report)
-          return
-        }
-
-        if (message.type === 'request') {
-          const result = await generator.next(message.request as never)
-          if (result.done)
-            console.warn('Generator exhausted, this is probably an error.')
-          port.postMessage({ type: 'response', response: result.value })
-          return
-        }
-
-        if (message.type === 'result') {
-          resolve(message.result as never)
-          port.disconnect()
-          return
-        }
-
-        throw new Error('Unexpected message')
-      }
-    )
+    port.onMessage.addListener(messageListener<T>(generator, report, resolve))
   })
 }
+
+/** Produces a function that handles messages received. */
+const messageListener =
+  <T extends keyof TaskMap>(
+    generator: AsyncGenerator,
+    reporter: Reporter,
+    resolve: (value: ReturnType<TaskMap[T]>) => void
+  ) =>
+  async (message: MessageFromBackToFront<TaskMap[T]>, port: Runtime.Port) => {
+    // If we received a report, give it to the reporter
+    if (message.type === 'report') {
+      reporter(message.report)
+      return
+    }
+
+    // If we received a request, resume the foreground task until a response is produced
+    if (message.type === 'request') {
+      const result = await generator.next(message.request)
+      if (result.done)
+        console.warn('Generator exhausted, this is probably an error.')
+      port.postMessage({ type: 'response', response: result.value as never })
+      return
+    }
+
+    // If we received the result, end the task with the result value
+    if (message.type === 'result') {
+      resolve(message.result as never)
+      port.disconnect()
+      return
+    }
+
+    throw new Error('Unexpected message')
+  }
