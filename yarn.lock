@@ -2127,7 +2127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cz-conventional-changelog@npm:3.3.0":
+"cz-conventional-changelog@npm:^3.3.0":
   version: 3.3.0
   resolution: "cz-conventional-changelog@npm:3.3.0"
   dependencies:
@@ -7285,7 +7285,7 @@ __metadata:
     base64-arraybuffer: ^0.2.0
     commitizen: ^4.2.4
     crypto-js: ^4.0.0
-    cz-conventional-changelog: 3.3.0
+    cz-conventional-changelog: ^3.3.0
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
