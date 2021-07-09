@@ -41,7 +41,7 @@ export class BrowserStore<T> implements Writable<T> {
        * @param parsed - The output of `JSON.parse`
        * @returns A value to {@link set | `set`} the store to
        */
-      transformer?: (parsed: unknown) => T | Promise<T>
+      transformer?: (parsed: unknown) => T | PromiseLike<T>
 
       /**
        * Where to physically store data.
