@@ -1909,7 +1909,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commitizen@npm:^4.0.3":
+"commitizen@npm:^4.0.3, commitizen@npm:^4.2.4":
   version: 4.2.4
   resolution: "commitizen@npm:4.2.4"
   dependencies:
@@ -7283,6 +7283,7 @@ __metadata:
     "@typescript-eslint/parser": ^4.28.2
     axlsign: "git+ssh://git@github.com:Freemindtronic/lib_axlsign"
     base64-arraybuffer: ^0.2.0
+    commitizen: ^4.2.4
     crypto-js: ^4.0.0
     cz-conventional-changelog: 3.3.0
     eslint: ^7.30.0
