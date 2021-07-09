@@ -1,10 +1,13 @@
 /** All possible updates from all the background tasks. */
 export enum State {
   SCAN_COMPLETE = 'Scan complete.',
+  NOTIFICATION_SENT = 'Notification sent.',
 }
 
 /** If an update has additional details, they are defined here. */
-export type Report = { state: State.SCAN_COMPLETE; found: number }
+export type Report =
+  | { state: State.SCAN_COMPLETE; found: number }
+  | { state: State.NOTIFICATION_SENT }
 
 /**
  * A reporter is a function that receives updates from the background process to

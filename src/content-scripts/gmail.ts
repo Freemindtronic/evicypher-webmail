@@ -1,4 +1,4 @@
-import type { Reporter } from 'report'
+import { Reporter, State } from 'report'
 import { startBackgroundTask, Task } from 'task'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -79,6 +79,7 @@ const handleEncryptedMailElement = (
   })
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const handleToolbar = (toolbar: HTMLElement) => {
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
@@ -91,10 +92,24 @@ const handleToolbar = (toolbar: HTMLElement) => {
     const mail = toolbar
       .closest('.iN')
       ?.querySelector('[contenteditable] > :first-child')
+
     if (!mail || !mail.textContent) return
-    mail.textContent = await encryptString(mail.textContent, (state) => {
-      button.$set({ state: state.state })
+
+    mail.textContent = await encryptString(mail.textContent, (report) => {
+      let tooltip = 'Loading...'
+      if (report.state === State.SCAN_COMPLETE) {
+        tooltip =
+          report.found === 0
+            ? 'Make sure your phone and your computer are on the same network.'
+            : 'Trying to reach your phone...'
+      } else if (report.state === State.NOTIFICATION_SENT) {
+        tooltip = 'Click the notification you received.'
+      }
+
+      button.$set({ tooltip })
     })
+
+    button.$set({ tooltip: '' })
   })
 }
 

@@ -12,7 +12,7 @@ import {
 } from '../background/protocol'
 import * as utils from './utils'
 import type { TaskContext } from 'task'
-import type { Reporter } from 'report'
+import { Reporter, State } from 'report'
 
 const AES = new AesUtil(256, 1000)
 
@@ -90,6 +90,8 @@ export const fetchKeys = async (
       dh: encd,
     }
   }
+
+  reporter({ state: State.NOTIFICATION_SENT })
 
   // Ask the phone for some more random data
   const cipherKeyResponse = await lanUtil.sendRequest({
