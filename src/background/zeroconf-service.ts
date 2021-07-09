@@ -1,8 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import type { TaskContext } from 'task'
 import { browser } from 'webextension-polyfill-ts'
+import debug from 'debug'
+
+const log = debug('zeroconf')
 
 const APPLICATION_ID = 'com.freemindtronic.evidns'
+
+/** Time (in ms) between two scans. */
+const DEFAULT_COOLDOWN = 20_000
 
 /** A response object, sent by EviDNS v1. */
 export interface ZeroconfResponse {
@@ -30,15 +36,21 @@ export interface ZeroconfResponse {
 export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
+  log('Starting Zeroconf service')
+
   if (!(await isZeroconfServiceInstalled()))
     throw new Error('Please install EviDNS.')
 
   while (true) {
+    log('Starting scan...')
+
     // A promise to a list of connected devices
     const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
       cmd: 'Lookup',
       type: '_evitoken._tcp.',
     })) as ZeroconfResponse | undefined
+
+    log('Scan results: %o', response)
 
     if (response) handleResponse(context, response)
 
@@ -47,7 +59,7 @@ export const startZeroconfService = async (
     await Promise.race([
       context.scanFaster.observe(),
       new Promise((resolve) => {
-        setTimeout(resolve, 20_000)
+        setTimeout(resolve, DEFAULT_COOLDOWN)
       }),
     ])
   }

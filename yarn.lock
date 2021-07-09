@@ -746,6 +746,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debug@npm:^4":
+  version: 4.1.6
+  resolution: "@types/debug@npm:4.1.6"
+  checksum: b4c5d07fb383527b1416ab7911dd85c47da276d32f4a337425c0d54f84f36c55cac76ff2d5cd3c5b5f32d213912fcc4e5aa44aa5206e49929328b465bb63f310
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*":
   version: 0.0.48
   resolution: "@types/estree@npm:0.0.48"
@@ -2152,7 +2159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.0":
+"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.3.2":
   version: 4.3.2
   resolution: "debug@npm:4.3.2"
   dependencies:
@@ -7278,6 +7285,7 @@ __metadata:
     "@rollup/plugin-typescript": ^8.2.1
     "@tsconfig/svelte": ^2.0.1
     "@types/crypto-js": ^4.0.2
+    "@types/debug": ^4
     "@types/qrcode": ^1.4.0
     "@typescript-eslint/eslint-plugin": ^4.28.2
     "@typescript-eslint/parser": ^4.28.2
@@ -7286,6 +7294,7 @@ __metadata:
     commitizen: ^4.2.4
     crypto-js: ^4.0.0
     cz-conventional-changelog: ^3.3.0
+    debug: ^4.3.2
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
