@@ -1,12 +1,10 @@
 import { Observable } from 'observable'
 import type { Report } from 'report'
-import {
-  BackgroundTask,
-  MessageFromFrontToBack,
-  TaskContext,
-  TaskMap,
-} from 'task'
+import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
+import { decrypt } from './tasks/decrypt'
+import { encrypt } from './tasks/encrypt'
+import { pair } from './tasks/pair'
 import { startZeroconfService } from './zeroconf-service'
 
 /** The background context, used to share information between tasks and services. */
@@ -18,7 +16,11 @@ const context: TaskContext = {
 void startZeroconfService(context)
 
 browser.runtime.onConnect.addListener((port) => {
-  const task = TaskMap[port.name as keyof typeof TaskMap]
+  const task = {
+    [Task.PAIR]: pair,
+    [Task.ENCRYPT]: encrypt,
+    [Task.DECRYPT]: decrypt,
+  }[port.name]
   if (task === undefined) throw new Error('Unexpected connection.')
   void startTask(task as BackgroundTask<unknown, unknown, unknown>, port)
 })

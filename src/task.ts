@@ -1,6 +1,6 @@
-import { decrypt } from 'background/tasks/decrypt'
-import { encrypt } from 'background/tasks/encrypt'
-import { pair } from 'background/tasks/pair'
+import type { decrypt } from 'background/tasks/decrypt'
+import type { encrypt } from 'background/tasks/encrypt'
+import type { pair } from 'background/tasks/pair'
 import type { Observable } from 'observable'
 import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
@@ -115,11 +115,11 @@ export enum Task {
 }
 
 /** A convenient way to retreive an actual task from its name. */
-export const TaskMap = {
-  [Task.PAIR]: pair,
-  [Task.ENCRYPT]: encrypt,
-  [Task.DECRYPT]: decrypt,
-} as const
+export type TaskMap = {
+  [Task.PAIR]: typeof pair
+  [Task.ENCRYPT]: typeof encrypt
+  [Task.DECRYPT]: typeof decrypt
+}
 
 /** Background context shared between background tasks. */
 export interface TaskContext {
@@ -145,9 +145,9 @@ export interface TaskContext {
  * @param signal
  * @returns
  */
-export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
+export const startBackgroundTask = async <T extends keyof TaskMap>(
   taskName: T,
-  task: ForegroundTask<typeof TaskMap[T]>,
+  task: ForegroundTask<TaskMap[T]>,
   {
     report = defaultReporter,
     signal = new AbortController().signal,
@@ -155,7 +155,7 @@ export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
     report?: Reporter
     signal?: AbortSignal
   } = {}
-): Promise<ReturnType<typeof TaskMap[T]>> => {
+): Promise<ReturnType<TaskMap[T]>> => {
   const generator = task()
   await generator.next()
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -165,7 +165,7 @@ export const startBackgroundTask = async <T extends keyof typeof TaskMap>(
       port.postMessage({ type: 'abort' })
     })
     port.onMessage.addListener(
-      async (message: MessageFromBackToFront<typeof TaskMap[T]>) => {
+      async (message: MessageFromBackToFront<TaskMap[T]>) => {
         if (message.type === 'report') {
           report(message.report)
           return
