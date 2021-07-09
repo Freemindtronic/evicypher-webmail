@@ -156,9 +156,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   try {
     // Wait for either a device to pair, or an AggregateError
     return await Promise.any(requestsSent)
-  } catch {
-    report({ state: State.ALL_DEVICES_REFUSED })
-  }
+  } catch {}
 }
 
 export type Serialize<T> = {
