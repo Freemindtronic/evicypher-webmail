@@ -6,12 +6,12 @@ import {
   containsEncryptedText,
   decryptString,
   encryptString,
-  extractEncryptedStrings,
 } from './encryption'
 
 // Enable logging in the page console (not the extension console)
 debug.enable('*')
 
+/** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {
   MAIL_CONTENT: '.a3s.aiL',
   PLACEHOLDER: '.adf.ads',
@@ -21,23 +21,39 @@ const Selector = {
 const FLAG = 'freemindtronicButtonAdded'
 
 /** Add a button to a given element to decrypt `mailString`. */
-const handleEncryptedMailElement = (
-  mailElement: HTMLElement,
-  mailString: string
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-) => {
+const handleEncryptedMailElement = (mailElement: HTMLElement) => {
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
 
   mailElement.style.overflow = 'visible'
   mailElement.style.position = 'relative'
-  mailElement.style.outline = '3px solid orange'
 
-  const button = new DecryptButton({
-    target: mailElement,
-  })
+  const treeWalker = document.createTreeWalker(
+    mailElement,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: (textNode: Text) =>
+        textNode.data.trimStart().startsWith('AAAAF')
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_SKIP,
+    }
+  )
 
-  const encryptedString = extractEncryptedStrings(mailString)[0]
+  let node = treeWalker.nextNode()
+  while (node) {
+    handleEncryptedString(node as Text)
+    node = treeWalker.nextNode()
+  }
+}
+
+// eslint-disable-next-line sonarjs/cognitive-complexity
+function handleEncryptedString(node: Text) {
+  const target = document.createElement('span')
+  const button = new DecryptButton({ target })
+  node.before(target)
+
+  const encryptedString = node.parentNode?.textContent?.match(/AAAAF\S+/s)?.[0]
+  if (!encryptedString) return
 
   button.$on('click', async () => {
     const decryptedString = await decryptString(encryptedString, (report) => {
@@ -55,9 +71,12 @@ const handleEncryptedMailElement = (
     })
 
     const frame: HTMLIFrameElement = document.createElement('iframe')
+    frame.style.display = 'block'
+    frame.style.width = '100%'
+    frame.style.maxWidth = '100%'
     frame.srcdoc = decryptedString
     frame.sandbox.value = ''
-    mailElement.append(frame)
+    node.parentNode?.append(frame)
     button.$set({ tooltip: '' })
   })
 }
@@ -103,11 +122,11 @@ new MutationObserver((mutations) => {
     // The user opens a mail
     if ((mutation.target as HTMLElement)?.matches(Selector.MAIL_CONTENT)) {
       const mailElement = mutation.target as HTMLElement
-      const mailString = mailElement.textContent
       // If it's not an encrypted mail, ignore it
+      const mailString = mailElement.textContent
       if (mailString === null || !containsEncryptedText(mailString)) continue
       // `mailElement` contains an encrypted mail, let's add a button to decrypt it
-      handleEncryptedMailElement(mailElement, mailString)
+      handleEncryptedMailElement(mailElement)
       continue
     }
 
@@ -125,7 +144,7 @@ new MutationObserver((mutations) => {
       // If it's not an encrypted mail, ignore it
       if (mailString === null || !containsEncryptedText(mailString)) continue
       // `mailElement` contains an encrypted mail, let's add a button to decrypt it
-      handleEncryptedMailElement(mailElement, mailString)
+      handleEncryptedMailElement(mailElement)
       continue
     }
 

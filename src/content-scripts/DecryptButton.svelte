@@ -24,17 +24,15 @@
   }
 
   .wrapper {
-    position: absolute;
-    top: 0;
-    right: 0;
+    position: relative;
   }
 
   .tooltip {
     $bg: rgba(0, 0, 0, 0.8);
 
     position: absolute;
-    top: 3em;
-    right: 0;
+    top: 2em;
+    left: 0;
     z-index: 1;
     min-width: 200px;
     max-width: 30em;
@@ -52,7 +50,7 @@
     &::after {
       position: absolute;
       top: -10px;
-      right: 3em;
+      left: 3em;
       border: 5px solid transparent;
       border-bottom-color: $bg;
       content: '';
