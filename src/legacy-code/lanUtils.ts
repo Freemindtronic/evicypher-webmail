@@ -63,10 +63,8 @@ export const search = async <T extends keyof RequestMap>(
       })
       if (res !== undefined) return res
 
-      await new Promise<void>((resolve) => {
-        setTimeout(() => {
-          resolve()
-        }, 2000)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 2000)
       })
 
       maxNumberOfSearches--
