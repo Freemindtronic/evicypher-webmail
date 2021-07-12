@@ -7,6 +7,9 @@ const APPLICATION_ID = 'com.freemindtronic.evidns'
 /** Time (in ms) between two scans. */
 const DEFAULT_COOLDOWN = 20_000
 
+/** Minimum time between two scans, even if `scanFaster` is set to true. */
+const MINIMUM_COOLDOWN = 1000
+
 /** A response object, sent by EviDNS v1. */
 export interface ZeroconfResponse {
   /** Name of the service. */
@@ -39,6 +42,8 @@ export const startZeroconfService = async (
     throw new Error('Please install EviDNS.')
 
   while (true) {
+    const start = performance.now()
+
     // A promise to a list of connected devices
     const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
       cmd: 'Lookup',
@@ -48,6 +53,13 @@ export const startZeroconfService = async (
     log('Scan results: %o', response)
 
     if (response) handleResponse(context, response)
+
+    // Avoid scan spamming
+    const duration = performance.now() - start
+    if (duration < MINIMUM_COOLDOWN)
+      await new Promise((resolve) => {
+        setTimeout(resolve, MINIMUM_COOLDOWN - duration)
+      })
 
     if (context.scanFaster.get()) continue
 
