@@ -97,7 +97,7 @@ debug.enable('*')
 void startZeroconfService(context)
 
 // Every connection maps to a background task
-browser.runtime.onConnect.addListener((port) => {
+browser.runtime.onConnect.addListener(async (port) => {
   const task = {
     [Task.PAIR]: pair,
     [Task.ENCRYPT]: encrypt,
@@ -107,5 +107,16 @@ browser.runtime.onConnect.addListener((port) => {
 
   // Start the task with its own logger
   const log = debug(`task:${port.name}:background`)
-  void startTask(task as BackgroundTask<unknown, unknown, unknown>, port, log)
+
+  try {
+    await startTask(
+      task as BackgroundTask<unknown, unknown, unknown>,
+      port,
+      log
+    )
+  } catch (error: unknown) {
+    log('%o', error)
+    if (error instanceof Error)
+      port.postMessage({ type: 'error', error: error.message })
+  }
 })

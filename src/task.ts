@@ -87,6 +87,10 @@ export type MessageFromBackToFront<T> = T extends BackgroundTask<
           type: 'report'
           report: Report
         }
+      | {
+          type: 'error'
+          error: string
+        }
   : never
 
 /**
@@ -163,7 +167,7 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
   const generator = task()
   await generator.next()
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     // Start the background task
     const port = browser.runtime.connect({ name: taskName })
 
@@ -175,19 +179,26 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
 
     // Handle messages sent by the background task
     port.onMessage.addListener(
-      messageListener<T>(generator, reporter, resolve, log)
+      messageListener<T>({ generator, reporter, resolve, reject, log })
     )
   })
 }
 
 /** Produces a function that handles messages received. */
 const messageListener =
-  <T extends keyof TaskMap>(
-    generator: AsyncGenerator,
-    reporter: Reporter,
-    resolve: (value: ReturnType<TaskMap[T]>) => void,
+  <T extends keyof TaskMap>({
+    generator,
+    reporter,
+    resolve,
+    reject,
+    log,
+  }: {
+    generator: AsyncGenerator
+    reporter: Reporter
+    resolve: (value: ReturnType<TaskMap[T]>) => void
+    reject: (error: Error) => void
     log: Debugger
-  ) =>
+  }) =>
   async (message: MessageFromBackToFront<TaskMap[T]>, port: Runtime.Port) => {
     log('Message received: %o', message)
 
@@ -209,6 +220,13 @@ const messageListener =
     // If we received the result, end the task with the result value
     if (message.type === 'result') {
       resolve(message.result as never)
+      port.disconnect()
+      return
+    }
+
+    // If we received an error, rethrow it
+    if (message.type === 'error') {
+      reject(new Error(message.error))
       port.disconnect()
       return
     }

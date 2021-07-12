@@ -56,28 +56,33 @@ function handleEncryptedString(node: Text) {
   if (!encryptedString) return
 
   button.$on('click', async () => {
-    const decryptedString = await decryptString(encryptedString, (report) => {
-      let tooltip = 'Loading...'
-      if (report.state === State.SCAN_COMPLETE) {
-        tooltip =
-          report.found === 0
-            ? 'Make sure your phone and your computer are on the same network.'
-            : 'Trying to reach your phone...'
-      } else if (report.state === State.NOTIFICATION_SENT) {
-        tooltip = 'Click on the notification you received.'
-      }
+    try {
+      const decryptedString = await decryptString(encryptedString, (report) => {
+        let tooltip = 'Loading...'
+        if (report.state === State.SCAN_COMPLETE) {
+          tooltip =
+            report.found === 0
+              ? 'Make sure your phone and your computer are on the same network.'
+              : 'Trying to reach your phone...'
+        } else if (report.state === State.NOTIFICATION_SENT) {
+          tooltip = 'Click on the notification you received.'
+        }
 
-      button.$set({ tooltip })
-    })
+        button.$set({ tooltip })
+      })
 
-    const frame: HTMLIFrameElement = document.createElement('iframe')
-    frame.style.display = 'block'
-    frame.style.width = '100%'
-    frame.style.maxWidth = '100%'
-    frame.srcdoc = decryptedString
-    frame.sandbox.value = ''
-    node.parentNode?.append(frame)
-    button.$set({ tooltip: undefined })
+      const frame: HTMLIFrameElement = document.createElement('iframe')
+      frame.style.display = 'block'
+      frame.style.width = '100%'
+      frame.style.maxWidth = '100%'
+      frame.srcdoc = decryptedString
+      frame.sandbox.value = ''
+      node.parentNode?.append(frame)
+      button.$set({ tooltip: undefined })
+    } catch (error: unknown) {
+      console.log(error)
+      if (error instanceof Error) button.$set({ tooltip: error.message })
+    }
   })
 }
 
