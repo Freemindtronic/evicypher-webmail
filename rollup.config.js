@@ -6,10 +6,11 @@ import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
 import json from '@rollup/plugin-json'
+import replace from '@rollup/plugin-replace'
 
 const production = !process.env.ROLLUP_WATCH
 
-const build = [
+const plugins = [
   // If you have external dependencies installed from
   // npm, you'll most likely need these plugins. In
   // some cases you'll need additional configuration -
@@ -25,6 +26,14 @@ const build = [
   typescript({
     sourceMap: !production,
     inlineSources: !production,
+  }),
+  replace({
+    values: {
+      'process.env.NODE_ENV': JSON.stringify(
+        production ? 'production' : 'development'
+      ),
+    },
+    preventAssignment: true,
   }),
 
   // If we're building for production (npm run build
@@ -54,7 +63,7 @@ export default [
       // We'll extract any component CSS out into
       // a separate file - better for performance
       css({ output: 'popup.css' }),
-      ...build,
+      ...plugins,
     ],
     watch: {
       clearScreen: false,
@@ -70,7 +79,7 @@ export default [
       file: 'extension/build/background.js',
       globals: { crypto: 'crypto' },
     },
-    plugins: build,
+    plugins,
     watch: {
       clearScreen: false,
     },
@@ -94,7 +103,7 @@ export default [
         },
         emitCss: false,
       }),
-      ...build,
+      ...plugins,
     ],
     watch: {
       clearScreen: false,
