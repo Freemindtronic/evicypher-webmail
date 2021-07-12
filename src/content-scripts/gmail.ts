@@ -12,10 +12,10 @@ import {
 // Enable logging in the page console (not the extension console)
 debug.enable('*')
 
-const Class = {
-  MAIL_CONTENT: 'aiL',
-  PLACEHOLDER: 'adf',
-  TOOLBAR: 'btx',
+const Selector = {
+  MAIL_CONTENT: '.a3s.aiL',
+  PLACEHOLDER: '.adf.ads',
+  TOOLBAR: '.btx',
 }
 
 const FLAG = 'freemindtronicButtonAdded'
@@ -101,9 +101,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
 new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     // The user opens a mail
-    if (
-      (mutation.target as HTMLElement)?.classList.contains(Class.MAIL_CONTENT)
-    ) {
+    if ((mutation.target as HTMLElement)?.matches(Selector.MAIL_CONTENT)) {
       const mailElement = mutation.target as HTMLElement
       const mailString = mailElement.textContent
       // If it's not an encrypted mail, ignore it
@@ -115,13 +113,13 @@ new MutationObserver((mutations) => {
 
     // The user clicks on a "small" mail item
     if (
-      (mutation.previousSibling as HTMLElement | null)?.classList.contains(
-        Class.PLACEHOLDER
+      (mutation.previousSibling as HTMLElement | null)?.matches(
+        Selector.PLACEHOLDER
       )
     ) {
       const mailElement = (
         mutation.target as HTMLElement
-      ).querySelector<HTMLElement>(`.${Class.MAIL_CONTENT}`)
+      ).querySelector<HTMLElement>(Selector.MAIL_CONTENT)
       if (!mailElement) continue
       const mailString = mailElement.textContent
       // If it's not an encrypted mail, ignore it
@@ -132,13 +130,12 @@ new MutationObserver((mutations) => {
     }
 
     // The user starts writing a mail
-    if ((mutation.target as HTMLElement)?.classList.contains(Class.TOOLBAR)) {
+    if ((mutation.target as HTMLElement)?.matches(Selector.TOOLBAR)) {
       const toolbar = mutation.target as HTMLElement
       handleToolbar(toolbar)
     }
   }
 }).observe(document.body, {
-  attributeFilter: ['class'],
   subtree: true,
   childList: true,
 })
