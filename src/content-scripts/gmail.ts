@@ -14,6 +14,7 @@ debug.enable('*')
 
 const Class = {
   MAIL_CONTENT: 'aiL',
+  PLACEHOLDER: 'adf',
   TOOLBAR: 'btx',
 }
 
@@ -96,6 +97,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
   })
 }
 
+// eslint-disable-next-line complexity, sonarjs/cognitive-complexity
 new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     // The user opens a mail
@@ -108,12 +110,29 @@ new MutationObserver((mutations) => {
       if (mailString === null || !containsEncryptedText(mailString)) continue
       // `mailElement` contains an encrypted mail, let's add a button to decrypt it
       handleEncryptedMailElement(mailElement, mailString)
+      continue
+    }
+
+    // The user clicks on a "small" mail item
+    if (
+      (mutation.previousSibling as HTMLElement | null)?.classList.contains(
+        Class.PLACEHOLDER
+      )
+    ) {
+      const mailElement = (
+        mutation.target as HTMLElement
+      ).querySelector<HTMLElement>(`.${Class.MAIL_CONTENT}`)
+      if (!mailElement) continue
+      const mailString = mailElement.textContent
+      // If it's not an encrypted mail, ignore it
+      if (mailString === null || !containsEncryptedText(mailString)) continue
+      // `mailElement` contains an encrypted mail, let's add a button to decrypt it
+      handleEncryptedMailElement(mailElement, mailString)
+      continue
     }
 
     // The user starts writing a mail
-    else if (
-      (mutation.target as HTMLElement)?.classList.contains(Class.TOOLBAR)
-    ) {
+    if ((mutation.target as HTMLElement)?.classList.contains(Class.TOOLBAR)) {
       const toolbar = mutation.target as HTMLElement
       handleToolbar(toolbar)
     }
