@@ -30,6 +30,7 @@
       hideOnClick: false,
       theme: 'light-border',
       interactive: true,
+      placement: 'bottom-start',
     })
   })
 </script>
