@@ -1,59 +1,54 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import tippy from 'tippy.js'
+  import type { Instance } from 'tippy.js'
+  import { createEventDispatcher, onMount } from 'svelte'
 
-  export let tooltip = ''
+  export let tooltip: string | undefined = undefined
+
+  let button: HTMLButtonElement
+  let tippyElement: HTMLElement
+  let tip: Instance
 
   const dispatch = createEventDispatcher<{ click: undefined }>()
+
+  const onclick = () => {
+    tip.show()
+    tip.setProps({ trigger: 'manual' })
+    dispatch('click')
+  }
+
+  $: {
+    if (tooltip === undefined) {
+      tip?.hide()
+      tip?.setProps({ trigger: tippy.defaultProps.trigger })
+    }
+  }
+
+  onMount(() => {
+    tip = tippy(button, {
+      content: tippyElement,
+      hideOnClick: false,
+      theme: 'light-border',
+      interactive: true,
+    })
+  })
 </script>
 
 <span class="wrapper">
-  <button on:click={() => dispatch('click')}>🔓 Decrypt</button>
-  <span>
-    <span class="tooltip">{tooltip}</span>
-  </span>
+  <button on:click={onclick} bind:this={button}>🔓 Decrypt</button>
 </span>
 
+<span bind:this={tippyElement}
+  >{tooltip ?? 'Click to decrypt this message'}</span
+>
+
 <style lang="scss">
-  * {
-    box-sizing: border-box;
+  :global {
+    @import './tooltip';
   }
 
   button {
     all: revert;
-    padding: 1em 2em;
-  }
-
-  .wrapper {
-    position: relative;
-  }
-
-  .tooltip {
-    $bg: rgba(0, 0, 0, 0.8);
-
-    position: absolute;
-    top: 2em;
-    left: 0;
-    z-index: 1;
-    min-width: 200px;
-    max-width: 30em;
-    padding: 0.25em;
-    color: #fff;
-    font-size: 1.125rem;
-    white-space: normal;
-    background-color: $bg;
-    border-radius: 4px;
-
-    &:empty {
-      display: none;
-    }
-
-    &::after {
-      position: absolute;
-      top: -10px;
-      left: 3em;
-      border: 5px solid transparent;
-      border-bottom-color: $bg;
-      content: '';
-    }
+    padding: 0.5em 1em;
   }
 </style>

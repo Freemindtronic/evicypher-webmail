@@ -77,7 +77,7 @@ function handleEncryptedString(node: Text) {
     frame.srcdoc = decryptedString
     frame.sandbox.value = ''
     node.parentNode?.append(frame)
-    button.$set({ tooltip: '' })
+    button.$set({ tooltip: undefined })
   })
 }
 
