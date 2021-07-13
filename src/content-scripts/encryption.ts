@@ -1,4 +1,4 @@
-import type { Reporter } from 'report'
+import { Report, Reporter, State } from 'report'
 import { startBackgroundTask, Task } from 'task'
 
 export enum ButtonState {
@@ -60,3 +60,18 @@ export const extractEncryptedString = (string: string): string => {
   if (!extracted) throw new Error('Nothing to extract')
   return extracted
 }
+
+/** Process a report to produce a helpful message, than passed as first argument to `f`. */
+export const reporter =
+  (f: (tooltip: string) => void) =>
+  (report: Report): void => {
+    if (report.state === State.SCAN_COMPLETE) {
+      f(
+        report.found === 0
+          ? 'Make sure your phone and your computer are on the same network.'
+          : 'Trying to reach your phone...'
+      )
+    } else if (report.state === State.NOTIFICATION_SENT) {
+      f('Click on the notification you received.')
+    }
+  }

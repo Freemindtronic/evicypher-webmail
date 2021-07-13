@@ -1,6 +1,5 @@
 import { debug } from 'debug'
 import { Observable } from 'observable'
-import { Report, State } from 'report'
 import type { Writable } from 'svelte/store'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -11,6 +10,7 @@ import {
   encryptString,
   extractEncryptedString,
   isEncryptedText,
+  reporter,
 } from './encryption'
 
 // Enable logging in the page console (not the extension console)
@@ -26,10 +26,14 @@ const Selector = {
 const FLAG = 'freemindtronicButtonAdded'
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
-const handleEncryptedMailElement = (mailElement: HTMLElement) => {
+const handleMailElement = (mailElement: HTMLElement) => {
   // Mark the element
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
+
+  // If it's not an encrypted mail, ignore it
+  const mailString = mailElement.textContent
+  if (!mailString || !containsEncryptedText(mailString)) return
 
   // Find all encrypted parts
   const treeWalker = document.createTreeWalker(
@@ -47,7 +51,7 @@ const handleEncryptedMailElement = (mailElement: HTMLElement) => {
   while (node) {
     // Add a "Decrypt" button next to the node
     if (!node.parentNode?.textContent) continue
-    const encryptedString = extractEncryptedString(node.parentNode?.textContent)
+    const encryptedString = extractEncryptedString(node.parentNode.textContent)
     addDecryptButton(node as Text, encryptedString)
     node = treeWalker.nextNode()
   }
@@ -77,6 +81,7 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
 
+  // When the button is clicked, start the decryption process
   button.$on('click', async () => {
     if (state.get() === ButtonState.DONE) {
       frame.parentNode?.removeChild(frame)
@@ -126,18 +131,6 @@ const startDecryption = async (
   }
 }
 
-const reporter = (f: (tooltip: string) => void) => (report: Report) => {
-  if (report.state === State.SCAN_COMPLETE) {
-    f(
-      report.found === 0
-        ? 'Make sure your phone and your computer are on the same network.'
-        : 'Trying to reach your phone...'
-    )
-  } else if (report.state === State.NOTIFICATION_SENT) {
-    f('Click on the notification you received.')
-  }
-}
-
 const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
   const frame = document.createElement('iframe')
   Object.assign(frame.style, {
@@ -152,7 +145,6 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
   return frame
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const handleToolbar = (toolbar: HTMLElement) => {
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
@@ -175,7 +167,6 @@ const handleToolbar = (toolbar: HTMLElement) => {
     state.set(ButtonState.IDLE)
   })
 
-  // eslint-disable-next-line complexity
   button.$on('click', async () => {
     // Prevent the process from running twice
     if (state.get() === ButtonState.IN_PROGRESS) return
@@ -183,67 +174,72 @@ const handleToolbar = (toolbar: HTMLElement) => {
     state.set(ButtonState.IN_PROGRESS)
     controller = new AbortController()
 
-    try {
-      // Retrieve the mail content
-      const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
-      if (!mail || !mail.textContent) throw new Error('Please write a mail.')
+    const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
 
-      // Encrypt and replace
-      mail.textContent = await encryptString(
-        mail.textContent,
-        reporter((tooltip: string) => {
-          button.$set({ tooltip })
-        }),
-        controller.signal
-      )
+    if (!mail) return
 
-      state.set(ButtonState.DONE)
-    } catch (error: unknown) {
-      if (controller.signal.aborted) return
-      state.set(ButtonState.FAILED)
-      if (error instanceof Error) button.$set({ tooltip: error.message })
-    }
+    void startEncryption(mail, button, controller.signal, state)
   })
 }
 
-// eslint-disable-next-line complexity, sonarjs/cognitive-complexity
-new MutationObserver((mutations) => {
-  for (const mutation of mutations) {
-    // The user opens a mail
-    if ((mutation.target as HTMLElement)?.matches(Selector.MAIL_CONTENT)) {
-      const mailElement = mutation.target as HTMLElement
-      // If it's not an encrypted mail, ignore it
-      const mailString = mailElement.textContent
-      if (mailString === null || !containsEncryptedText(mailString)) continue
-      // `mailElement` contains an encrypted mail, let's add a button to decrypt it
-      handleEncryptedMailElement(mailElement)
-      continue
-    }
+const startEncryption = async (
+  mail: Element,
+  button: EncryptButton,
+  signal: AbortSignal,
+  state: Writable<ButtonState>
+) => {
+  try {
+    // Retrieve the mail content
+    if (!mail.textContent) throw new Error('Please write a mail.')
 
-    // The user clicks on a "small" mail item
-    if (
-      (mutation.previousSibling as HTMLElement | null)?.matches(
-        Selector.PLACEHOLDER
-      )
-    ) {
-      const mailElement = (
-        mutation.target as HTMLElement
-      ).querySelector<HTMLElement>(Selector.MAIL_CONTENT)
-      if (!mailElement) continue
-      const mailString = mailElement.textContent
-      // If it's not an encrypted mail, ignore it
-      if (mailString === null || !containsEncryptedText(mailString)) continue
-      // `mailElement` contains an encrypted mail, let's add a button to decrypt it
-      handleEncryptedMailElement(mailElement)
-      continue
-    }
+    // Encrypt and replace
+    mail.textContent = await encryptString(
+      mail.textContent,
+      reporter((tooltip: string) => {
+        button.$set({ tooltip })
+      }),
+      signal
+    )
 
-    // The user starts writing a mail
-    if ((mutation.target as HTMLElement)?.matches(Selector.TOOLBAR)) {
-      const toolbar = mutation.target as HTMLElement
-      handleToolbar(toolbar)
-    }
+    state.set(ButtonState.DONE)
+  } catch (error: unknown) {
+    if (signal.aborted) return
+    state.set(ButtonState.FAILED)
+    if (error instanceof Error) button.$set({ tooltip: error.message })
   }
+}
+
+/**
+ * Handles mutations observed by the `MutationObserver` below, i.e.
+ * notifications of elements added or removed from the page.
+ */
+const handleMutation = (mutation: MutationRecord) => {
+  const target = mutation.target as HTMLElement
+
+  // The user opens a mail
+  if (target.matches(Selector.MAIL_CONTENT)) {
+    handleMailElement(target)
+  }
+
+  // The user clicks on a "small" mail item
+  else if (
+    (mutation.previousSibling as HTMLElement | null)?.matches(
+      Selector.PLACEHOLDER
+    )
+  ) {
+    const mailElement = target.querySelector<HTMLElement>(Selector.MAIL_CONTENT)
+    if (mailElement) handleMailElement(mailElement)
+  }
+
+  // The user starts writing a mail
+  else if (target.matches(Selector.TOOLBAR)) {
+    handleToolbar(target)
+  }
+}
+
+// Start observing the DOM for changes
+new MutationObserver((mutations) => {
+  for (const mutation of mutations) handleMutation(mutation)
 }).observe(document.body, {
   subtree: true,
   childList: true,
