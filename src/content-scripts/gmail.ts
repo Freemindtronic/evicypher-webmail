@@ -161,26 +161,51 @@ const handleToolbar = (toolbar: HTMLElement) => {
     target: toolbar,
   })
 
-  button.$on('click', async () => {
-    const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
+  /** Current state of the process. */
+  const state = new Observable(ButtonState.IDLE)
+  state.subscribe((state) => {
+    // Reflect all changes to the button
+    button.$set({ state })
+  })
 
+  /** Abort controller, bound to a button in the tooltip. */
+  let controller: AbortController
+  button.$on('abort', () => {
+    controller.abort()
+    state.set(ButtonState.IDLE)
+  })
+
+  // eslint-disable-next-line complexity
+  button.$on('click', async () => {
+    // Prevent the process from running twice
+    if (
+      state.get() === ButtonState.DONE ||
+      state.get() === ButtonState.IN_PROGRESS
+    )
+      return
+    state.set(ButtonState.IN_PROGRESS)
+    controller = new AbortController()
+
+    // Retrieve the mail content
+    const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
     if (!mail || !mail.textContent) return
 
-    mail.textContent = await encryptString(mail.textContent, (report) => {
-      let tooltip = 'Loading...'
-      if (report.state === State.SCAN_COMPLETE) {
-        tooltip =
-          report.found === 0
-            ? 'Make sure your phone and your computer are on the same network.'
-            : 'Trying to reach your phone...'
-      } else if (report.state === State.NOTIFICATION_SENT) {
-        tooltip = 'Click on the notification you received.'
-      }
+    try {
+      // Encrypt and replace
+      mail.textContent = await encryptString(
+        mail.textContent,
+        reporter((tooltip: string) => {
+          button.$set({ tooltip })
+        }),
+        controller.signal
+      )
 
-      button.$set({ tooltip })
-    })
-
-    button.$set({ tooltip: '' })
+      state.set(ButtonState.DONE)
+    } catch (error: unknown) {
+      if (controller.signal.aborted) return
+      state.set(ButtonState.FAILED)
+      if (error instanceof Error) button.$set({ tooltip: error.message })
+    }
   })
 }
 

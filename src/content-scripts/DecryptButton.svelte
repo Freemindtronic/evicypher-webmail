@@ -1,7 +1,7 @@
 <script lang="ts">
-  import tippy from 'tippy.js'
+  import { afterUpdate, createEventDispatcher, onMount, tick } from 'svelte'
   import type { Instance } from 'tippy.js'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
   import { ButtonState } from './encryption'
 
@@ -31,6 +31,10 @@
       interactive: true,
       placement: 'bottom-start',
     })
+  })
+
+  afterUpdate(() => {
+    tippyInstance?.setContent(tippyElement)
   })
 </script>
 

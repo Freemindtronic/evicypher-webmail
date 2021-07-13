@@ -1,58 +1,85 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { afterUpdate, createEventDispatcher, onMount, tick } from 'svelte'
+  import type { Instance } from 'tippy.js'
+  import tippy from 'tippy.js'
+  import { browser } from 'webextension-polyfill-ts'
+  import { ButtonState } from './encryption'
 
-  export let tooltip = ''
+  export let tooltip: string | undefined = undefined
+  export let state: ButtonState = ButtonState.IDLE
 
-  const dispatch = createEventDispatcher<{ click: undefined }>()
+  let button: HTMLButtonElement
+  let tippyElement: HTMLElement
+  let tippyInstance: Instance
+
+  const dispatch =
+    createEventDispatcher<{ click: undefined; abort: undefined }>()
+
+  $: if (tooltip === undefined) tippyInstance?.hide()
+  else tippyInstance?.show()
+
+  $: tippyInstance?.setProps({
+    trigger:
+      state === ButtonState.IN_PROGRESS ? 'manual' : tippy.defaultProps.trigger,
+  })
+
+  onMount(() => {
+    tippyInstance = tippy(button, {
+      content: tippyElement,
+      hideOnClick: false,
+      theme: 'light-border',
+      interactive: true,
+      placement: 'top-end',
+    })
+  })
+
+  afterUpdate(() => {
+    tippyInstance?.setContent(tippyElement)
+  })
 </script>
 
 <span class="wrapper">
-  <button on:click={() => dispatch('click')}>🔐</button>
-  <span>
-    <span class="tooltip">{tooltip}</span>
-  </span>
+  <button on:click={() => dispatch('click')} bind:this={button}>
+    {#if state === ButtonState.IDLE}
+      🔒
+    {:else if state === ButtonState.IN_PROGRESS}
+      <img
+        src={browser.runtime.getURL('/loading.gif')}
+        alt="..."
+        width="16"
+        height="16"
+      />
+    {:else if state === ButtonState.DONE}
+      ✔
+    {:else if state === ButtonState.FAILED}
+      ❌
+    {/if}
+  </button>
+</span>
+
+<span bind:this={tippyElement}>
+  {#if state === ButtonState.IDLE}
+    Click to encrypt this message.
+  {:else if state === ButtonState.IN_PROGRESS}
+    {tooltip}
+    <br />
+    <button on:click={() => dispatch('abort')}>Abort</button>
+  {:else if state === ButtonState.DONE}
+    Mail encrypted successfully!
+  {:else if state === ButtonState.FAILED}
+    {tooltip}
+    <br />
+    Click to retry.
+  {/if}
 </span>
 
 <style lang="scss">
-  * {
-    box-sizing: border-box;
+  :global {
+    @import './tooltip';
   }
 
   button {
     all: revert;
-  }
-
-  .wrapper {
-    position: relative;
-  }
-
-  .tooltip {
-    $bg: rgba(0, 0, 0, 0.8);
-
-    position: absolute;
-    right: 0;
-    bottom: 1.67em;
-    z-index: 1;
-    min-width: 200px;
-    max-width: 30em;
-    padding: 0.25em;
-    color: #fff;
-    font-size: 1.125rem;
-    white-space: normal;
-    background-color: $bg;
-    border-radius: 4px;
-
-    &:empty {
-      display: none;
-    }
-
-    &::after {
-      position: absolute;
-      right: 11px;
-      bottom: -10px;
-      border: 5px solid transparent;
-      border-top-color: $bg;
-      content: '';
-    }
+    padding: 0.5em;
   }
 </style>
