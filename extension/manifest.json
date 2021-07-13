@@ -20,5 +20,6 @@
     "gecko": {
       "id": "evitoken@freemindtronic.com"
     }
-  }
+  },
+  "web_accessible_resources": ["loading.gif"]
 }

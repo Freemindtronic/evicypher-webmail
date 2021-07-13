@@ -1,11 +1,14 @@
 import { debug } from 'debug'
-import { State } from 'report'
+import { Report, State } from 'report'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
+  ButtonState,
   containsEncryptedText,
   decryptString,
   encryptString,
+  extractEncryptedString,
+  isEncryptedText,
 } from './encryption'
 
 // Enable logging in the page console (not the extension console)
@@ -20,20 +23,19 @@ const Selector = {
 
 const FLAG = 'freemindtronicButtonAdded'
 
-/** Add a button to a given element to decrypt `mailString`. */
+/** Add a button to a given element to decrypt all encrypted parts found. */
 const handleEncryptedMailElement = (mailElement: HTMLElement) => {
+  // Mark the element
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
 
-  mailElement.style.overflow = 'visible'
-  mailElement.style.position = 'relative'
-
+  // Find all encrypted parts
   const treeWalker = document.createTreeWalker(
     mailElement,
     NodeFilter.SHOW_TEXT,
     {
       acceptNode: (textNode: Text) =>
-        textNode.data.trimStart().startsWith('AAAAF')
+        isEncryptedText(textNode.data)
           ? NodeFilter.FILTER_ACCEPT
           : NodeFilter.FILTER_SKIP,
     }
@@ -41,49 +43,110 @@ const handleEncryptedMailElement = (mailElement: HTMLElement) => {
 
   let node = treeWalker.nextNode()
   while (node) {
-    handleEncryptedString(node as Text)
+    // Add a "Decrypt" button next to the node
+    if (!node.parentNode?.textContent) continue
+    const encryptedString = extractEncryptedString(node.parentNode?.textContent)
+    addDecryptButton(node as Text, encryptedString)
     node = treeWalker.nextNode()
   }
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
-function handleEncryptedString(node: Text) {
+/** Add a button next to the text node given. */
+const addDecryptButton = (node: Text, encryptedString: string) => {
+  // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
   const button = new DecryptButton({ target })
   node.before(target)
 
-  const encryptedString = node.parentNode?.textContent?.match(/AAAAF\S+/s)?.[0]
-  if (!encryptedString) return
+  const controller = new AbortController()
 
-  button.$on('click', async () => {
-    try {
-      const decryptedString = await decryptString(encryptedString, (report) => {
-        let tooltip = 'Loading...'
-        if (report.state === State.SCAN_COMPLETE) {
-          tooltip =
-            report.found === 0
-              ? 'Make sure your phone and your computer are on the same network.'
-              : 'Trying to reach your phone...'
-        } else if (report.state === State.NOTIFICATION_SENT) {
-          tooltip = 'Click on the notification you received.'
-        }
+  let state = ButtonState.IDLE
 
-        button.$set({ tooltip })
-      })
+  let frame: HTMLIFrameElement | undefined
 
-      const frame: HTMLIFrameElement = document.createElement('iframe')
-      frame.style.display = 'block'
-      frame.style.width = '100%'
-      frame.style.maxWidth = '100%'
-      frame.srcdoc = decryptedString
-      frame.sandbox.value = ''
-      node.parentNode?.append(frame)
-      button.$set({ tooltip: undefined })
-    } catch (error: unknown) {
-      console.log(error)
-      if (error instanceof Error) button.$set({ tooltip: error.message })
-    }
+  button.$on('abort', () => {
+    controller.abort()
+    state = ButtonState.IDLE
+    button.$set({ state })
   })
+
+  // eslint-disable-next-line complexity
+  button.$on('click', async () => {
+    if (state === ButtonState.DONE && frame) {
+      console.log(frame)
+      frame.parentNode?.removeChild(frame)
+      frame = undefined
+      state = ButtonState.IDLE
+      button.$set({ state })
+      return
+    }
+
+    // Prevent the process from running twice
+    if (state !== ButtonState.IDLE) return
+    state = ButtonState.IN_PROGRESS
+    button.$set({ state })
+
+    // Decrypt and display
+    const decryptedString = await startDecryption(
+      encryptedString,
+      button,
+      controller.signal
+    )
+
+    state = decryptedString ? ButtonState.DONE : ButtonState.FAILED
+
+    if (decryptedString && node.parentNode)
+      frame = displayDecryptedMail(decryptedString, node.parentNode)
+  })
+}
+
+const startDecryption = async (
+  encryptedString: string,
+  button: DecryptButton,
+  signal: AbortSignal
+) => {
+  try {
+    const decryptedString = await decryptString(
+      encryptedString,
+      reporter((tooltip: string) => {
+        button.$set({ tooltip })
+      }),
+      signal
+    )
+    button.$set({ tooltip: undefined, state: ButtonState.DONE })
+    return decryptedString
+  } catch (error: unknown) {
+    if (signal.aborted) return
+    console.log(error)
+    button.$set({ state: ButtonState.FAILED })
+    if (error instanceof Error) button.$set({ tooltip: error.message })
+  }
+}
+
+const reporter = (f: (tooltip: string) => void) => (report: Report) => {
+  if (report.state === State.SCAN_COMPLETE) {
+    f(
+      report.found === 0
+        ? 'Make sure your phone and your computer are on the same network.'
+        : 'Trying to reach your phone...'
+    )
+  } else if (report.state === State.NOTIFICATION_SENT) {
+    f('Click on the notification you received.')
+  }
+}
+
+const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
+  const frame = document.createElement('iframe')
+  Object.assign(frame.style, {
+    display: 'block',
+    width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+  })
+  frame.srcdoc = decryptedString
+  frame.sandbox.value = ''
+  parent.append(frame)
+  return frame
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -96,13 +159,10 @@ const handleToolbar = (toolbar: HTMLElement) => {
   })
 
   button.$on('click', async () => {
-    const mail = toolbar
-      .closest('.iN')
-      ?.querySelector('[contenteditable] > :first-child')
+    const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
 
     if (!mail || !mail.textContent) return
 
-    // eslint-disable-next-line sonarjs/no-identical-functions
     mail.textContent = await encryptString(mail.textContent, (report) => {
       let tooltip = 'Loading...'
       if (report.state === State.SCAN_COMPLETE) {
