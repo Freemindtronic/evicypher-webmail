@@ -43,9 +43,7 @@ export class Observable<T> {
   /** Sets a new value and triggers observers. */
   set(value: T): void {
     this.value = value
-    while (this.resolves.length > 0) {
-      this.resolves.pop()?.()
-    }
+    while (this.resolves.length > 0) this.resolves.pop()?.()
   }
 
   /**
