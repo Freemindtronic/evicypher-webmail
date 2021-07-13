@@ -1,3 +1,5 @@
+import type { Writable } from 'svelte/store'
+
 /**
  * An observable offers a simple way to `await` changes.
  *
@@ -6,7 +8,7 @@
  * const connected = new Observable(0)
  *
  * function connect(): void {
- *   connected.set(connected.get() + 1)
+ *   connected.update((n) => n + 1)
  * }
  *
  * async function count(): Promise<never> {
@@ -25,10 +27,13 @@
  * connect() // 1 person is connected
  * setTimeout(connect, 500) // 2 people are connected
  * ```
+ *
+ * @typeParam T - Type of the value held
  */
-export class Observable<T> {
+export class Observable<T> implements Writable<T> {
   private value: T
-  private readonly resolves: Array<() => void> = []
+  private readonly resolvers: Array<() => void> = []
+  private readonly subscribers: Array<(value: T) => void> = []
 
   /** Initializes the observer with a value. */
   constructor(value: T) {
@@ -43,7 +48,24 @@ export class Observable<T> {
   /** Sets a new value and triggers observers. */
   set(value: T): void {
     this.value = value
-    while (this.resolves.length > 0) this.resolves.pop()?.()
+    while (this.resolvers.length > 0) this.resolvers.pop()?.()
+    for (const subscriber of this.subscribers) subscriber(value)
+  }
+
+  /**
+   * Gets and sets, but shorter.
+   *
+   * ```ts
+   * // With get and set:
+   * x.set(x.get() + 1)
+   * // With update:
+   * x.update((n) => n + 1)
+   * ```
+   *
+   * @param f - A function that produces the new value from the old one
+   */
+  update(f: (value: T) => T): void {
+    this.set(f(this.get()))
   }
 
   /**
@@ -71,7 +93,20 @@ export class Observable<T> {
     const promise = new Promise<void>((resolve) => {
       _resolve = resolve
     })
-    this.resolves.push(_resolve)
+    this.resolvers.push(_resolve)
     return promise
+  }
+
+  /**
+   * Subscribes on value changes.
+   *
+   * @param subscriber - Subscription callback
+   * @returns A function that removes the subscriber
+   */
+  subscribe(subscriber: (value: T) => void): () => void {
+    this.subscribers.push(subscriber)
+    return () => {
+      this.subscribers.splice(this.subscribers.indexOf(subscriber), 1)
+    }
   }
 }

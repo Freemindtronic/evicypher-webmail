@@ -1,5 +1,7 @@
 import { debug } from 'debug'
+import { Observable } from 'observable'
 import { Report, State } from 'report'
+import type { Writable } from 'svelte/store'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
@@ -23,7 +25,7 @@ const Selector = {
 
 const FLAG = 'freemindtronicButtonAdded'
 
-/** Add a button to a given element to decrypt all encrypted parts found. */
+/** Adds a button to a given element to decrypt all encrypted parts found. */
 const handleEncryptedMailElement = (mailElement: HTMLElement) => {
   // Mark the element
   if (FLAG in mailElement.dataset) return
@@ -51,49 +53,50 @@ const handleEncryptedMailElement = (mailElement: HTMLElement) => {
   }
 }
 
-/** Add a button next to the text node given. */
+/** Adds a button next to the text node given. */
 const addDecryptButton = (node: Text, encryptedString: string) => {
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
   const button = new DecryptButton({ target })
   node.before(target)
 
-  const controller = new AbortController()
-
-  let state = ButtonState.IDLE
-
-  let frame: HTMLIFrameElement | undefined
-
-  button.$on('abort', () => {
-    controller.abort()
-    state = ButtonState.IDLE
+  /** Current state of the process. */
+  const state = new Observable(ButtonState.IDLE)
+  state.subscribe((state) => {
+    // Reflect all changes to the button
     button.$set({ state })
   })
 
-  // eslint-disable-next-line complexity
+  /** Abort controller, bound to a button in the tooltip. */
+  const controller = new AbortController()
+  button.$on('abort', () => {
+    controller.abort()
+    state.set(ButtonState.IDLE)
+  })
+
+  /** Frame containing the decrypted mail. */
+  let frame: HTMLIFrameElement | undefined
+
   button.$on('click', async () => {
-    if (state === ButtonState.DONE && frame) {
+    if (state.get() === ButtonState.DONE && frame) {
       console.log(frame)
       frame.parentNode?.removeChild(frame)
       frame = undefined
-      state = ButtonState.IDLE
-      button.$set({ state })
+      state.set(ButtonState.IDLE)
       return
     }
 
     // Prevent the process from running twice
-    if (state !== ButtonState.IDLE) return
-    state = ButtonState.IN_PROGRESS
-    button.$set({ state })
+    if (state.get() !== ButtonState.IDLE) return
+    state.set(ButtonState.IN_PROGRESS)
 
     // Decrypt and display
     const decryptedString = await startDecryption(
       encryptedString,
+      state,
       button,
       controller.signal
     )
-
-    state = decryptedString ? ButtonState.DONE : ButtonState.FAILED
 
     if (decryptedString && node.parentNode)
       frame = displayDecryptedMail(decryptedString, node.parentNode)
@@ -102,6 +105,7 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
 
 const startDecryption = async (
   encryptedString: string,
+  state: Writable<ButtonState>,
   button: DecryptButton,
   signal: AbortSignal
 ) => {
@@ -113,12 +117,13 @@ const startDecryption = async (
       }),
       signal
     )
-    button.$set({ tooltip: undefined, state: ButtonState.DONE })
+    state.set(ButtonState.DONE)
+    button.$set({ tooltip: undefined })
     return decryptedString
   } catch (error: unknown) {
     if (signal.aborted) return
     console.log(error)
-    button.$set({ state: ButtonState.FAILED })
+    state.set(ButtonState.FAILED)
     if (error instanceof Error) button.$set({ tooltip: error.message })
   }
 }
