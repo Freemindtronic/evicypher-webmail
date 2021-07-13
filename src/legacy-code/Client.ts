@@ -97,6 +97,7 @@ export const fetchKeys = async (
     port,
     type: Request.CIPHER_KEY,
     data: cipherKeyRequest,
+    signal,
   })
 
   const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
@@ -122,6 +123,7 @@ export const fetchKeys = async (
       k3: newShare.k3.public,
       k4: newShare.k4.public,
     },
+    signal,
   })
 
   // Create a new certificate with the new secret
@@ -137,6 +139,7 @@ export const fetchKeys = async (
     port,
     type: Request.END_OK,
     data: acknowledgement,
+    signal,
   })
 
   return { keys, newCertificate }

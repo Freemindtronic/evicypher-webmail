@@ -68,7 +68,7 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
   })
 
   /** Abort controller, bound to a button in the tooltip. */
-  const controller = new AbortController()
+  let controller: AbortController
   button.$on('abort', () => {
     controller.abort()
     state.set(ButtonState.IDLE)
@@ -87,6 +87,7 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
     // Prevent the process from running twice
     if (state.get() === ButtonState.IN_PROGRESS) return
     state.set(ButtonState.IN_PROGRESS)
+    controller = new AbortController()
 
     // Decrypt and display
     const decryptedString = await startDecryption(
