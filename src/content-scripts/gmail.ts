@@ -178,19 +178,16 @@ const handleToolbar = (toolbar: HTMLElement) => {
   // eslint-disable-next-line complexity
   button.$on('click', async () => {
     // Prevent the process from running twice
-    if (
-      state.get() === ButtonState.DONE ||
-      state.get() === ButtonState.IN_PROGRESS
-    )
-      return
+    if (state.get() === ButtonState.IN_PROGRESS) return
+
     state.set(ButtonState.IN_PROGRESS)
     controller = new AbortController()
 
-    // Retrieve the mail content
-    const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
-    if (!mail || !mail.textContent) return
-
     try {
+      // Retrieve the mail content
+      const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
+      if (!mail || !mail.textContent) throw new Error('Please write a mail.')
+
       // Encrypt and replace
       mail.textContent = await encryptString(
         mail.textContent,

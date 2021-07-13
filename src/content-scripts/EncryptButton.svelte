@@ -71,7 +71,8 @@
     <br />
     <button on:click={() => dispatch('abort')}>Abort</button>
   {:else if state === ButtonState.DONE}
-    Mail encrypted successfully!
+    Mail encrypted successfully!<br />
+    Click to encrypt once again.
   {:else if state === ButtonState.FAILED}
     {tooltip}
     <br />
