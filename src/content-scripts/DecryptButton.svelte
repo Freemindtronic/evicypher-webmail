@@ -10,21 +10,21 @@
 
   let button: HTMLButtonElement
   let tippyElement: HTMLElement
-  let tip: Instance
+  let tippyInstance: Instance
 
   const dispatch =
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 
-  $: if (tooltip === undefined) tip?.hide()
-  else tip?.show()
+  $: if (tooltip === undefined) tippyInstance?.hide()
+  else tippyInstance?.show()
 
-  $: tip?.setProps({
+  $: tippyInstance?.setProps({
     trigger:
       state === ButtonState.IN_PROGRESS ? 'manual' : tippy.defaultProps.trigger,
   })
 
   onMount(() => {
-    tip = tippy(button, {
+    tippyInstance = tippy(button, {
       content: tippyElement,
       hideOnClick: false,
       theme: 'light-border',
