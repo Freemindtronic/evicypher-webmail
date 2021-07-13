@@ -1,11 +1,14 @@
 <script lang="ts">
-  import { afterUpdate, createEventDispatcher, onMount, tick } from 'svelte'
+  import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import type { Instance } from 'tippy.js'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
   import { ButtonState } from './encryption'
 
+  /** Tooltip content. */
   export let tooltip: string | undefined = undefined
+
+  /** Button state. */
   export let state: ButtonState = ButtonState.IDLE
 
   let button: HTMLButtonElement
@@ -15,9 +18,11 @@
   const dispatch =
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 
+  // Show the tooltip when it's updated
   $: if (tooltip === undefined) tippyInstance?.hide()
   else tippyInstance?.show()
 
+  // Make the tooltip persistent when the task is running
   $: tippyInstance?.setProps({
     trigger:
       state === ButtonState.IN_PROGRESS ? 'manual' : tippy.defaultProps.trigger,
@@ -34,6 +39,7 @@
   })
 
   afterUpdate(() => {
+    // Recompute the location of the tooltip
     tippyInstance?.setContent(tippyElement)
   })
 </script>
