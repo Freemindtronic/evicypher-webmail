@@ -180,12 +180,14 @@ export const sendRequest = async <T extends keyof RequestMap>({
   type,
   data,
   timeout,
+  signal,
 }: {
   ip: string
   port: number
   type: T
   data: RequestMap[T]
   timeout?: number // TODO re-introduce a default timeout
+  signal?: AbortSignal
 }): Promise<ResponseMap[T]> => {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
@@ -193,6 +195,10 @@ export const sendRequest = async <T extends keyof RequestMap>({
     setTimeout(() => {
       controller.abort()
     }, timeout)
+  if (signal?.aborted) throw new Error('Aborted before the request.')
+  signal?.addEventListener('abort', () => {
+    controller.abort()
+  })
 
   // Send a POST request
   const response = await fetch(formatURL(ip, port, type), {
