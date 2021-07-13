@@ -211,8 +211,7 @@ const messageListener =
     // If we received a request, resume the foreground task until a response is produced
     if (message.type === 'request') {
       const result = await generator.next(message.request)
-      if (result.done)
-        console.warn('Generator exhausted, this is probably an error.')
+      if (result.done) log('Generator exhausted, this is probably an error.')
       port.postMessage({ type: 'response', response: result.value as never })
       return
     }
