@@ -64,6 +64,8 @@
     Click to close the decrypted mail.
   {:else if state === ButtonState.FAILED}
     {tooltip}
+    <br />
+    Click to retry.
   {/if}
 </span>
 

@@ -75,19 +75,17 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
   })
 
   /** Frame containing the decrypted mail. */
-  let frame: HTMLIFrameElement | undefined
+  let frame: HTMLIFrameElement
 
   button.$on('click', async () => {
-    if (state.get() === ButtonState.DONE && frame) {
-      console.log(frame)
+    if (state.get() === ButtonState.DONE) {
       frame.parentNode?.removeChild(frame)
-      frame = undefined
       state.set(ButtonState.IDLE)
       return
     }
 
     // Prevent the process from running twice
-    if (state.get() !== ButtonState.IDLE) return
+    if (state.get() === ButtonState.IN_PROGRESS) return
     state.set(ButtonState.IN_PROGRESS)
 
     // Decrypt and display
@@ -122,7 +120,6 @@ const startDecryption = async (
     return decryptedString
   } catch (error: unknown) {
     if (signal.aborted) return
-    console.log(error)
     state.set(ButtonState.FAILED)
     if (error instanceof Error) button.$set({ tooltip: error.message })
   }
