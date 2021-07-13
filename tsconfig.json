@@ -8,7 +8,7 @@
       "~*": ["../*"]
     },
     "lib": ["ES2021", "DOM"],
-    "types": ["svelte"]
+    "types": ["svelte", "node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "extension/*"]

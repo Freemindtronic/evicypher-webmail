@@ -833,6 +833,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "@types/node@npm:16.3.1"
+  checksum: 2a9d69db32540157827a06893a80dcbc9c86a6287dace38e1ff27490f34ec4b4164426165f2c4146c412eca451bf1b782be17d5ce57a935b1fd1e7c5fae89f43
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -7766,6 +7773,7 @@ __metadata:
     "@tsconfig/svelte": ^2.0.1
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4
+    "@types/node": ^16.3.1
     "@types/qrcode": ^1.4.0
     "@typescript-eslint/eslint-plugin": ^4.28.2
     "@typescript-eslint/parser": ^4.28.2

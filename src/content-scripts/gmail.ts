@@ -14,7 +14,7 @@ import {
 } from './encryption'
 
 // Enable logging in the page console (not the extension console)
-debug.enable('*')
+if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 /** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {

@@ -90,8 +90,8 @@ const nextStep = async <TSent, TReceived, TReturn>(
   throw new Error(`Message received: ${message as string}`)
 }
 
-// Enable all logs by default
-debug.enable('*')
+// Enable logging
+if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // Start the Zeroconf scanning service
 void startZeroconfService(context)
