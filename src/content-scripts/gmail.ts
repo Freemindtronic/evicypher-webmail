@@ -70,6 +70,7 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
     }
 
     state.set(ButtonState.IN_PROGRESS)
+    button.$set({ tooltip: 'Loading...' })
 
     // Decrypt and display
     const decryptedString = await decryptString(
@@ -101,6 +102,8 @@ const handleToolbar = (toolbar: HTMLElement) => {
 
     const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
     if (!mail || !mail.textContent) throw new Error('Please write a mail.')
+
+    button.$set({ tooltip: 'Loading...' })
 
     // Encrypt and replace
     mail.textContent = await encryptString(
