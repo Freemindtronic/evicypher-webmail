@@ -1,4 +1,4 @@
-import { Certificate } from './Certificate'
+import { Certificate } from 'certificate'
 import * as utils from './utils'
 import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'

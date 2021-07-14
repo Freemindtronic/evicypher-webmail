@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import axlsign from 'axlsign'
 import { AesUtil, removeJamming } from './AesUtil'
-import { Certificate } from './Certificate'
+import { Certificate } from 'certificate'
 import * as lanUtil from './lanUtils'
 import {
   CipherKeyRequest,

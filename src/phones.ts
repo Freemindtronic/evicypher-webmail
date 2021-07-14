@@ -1,5 +1,5 @@
 import { BrowserStore } from 'browser-store'
-import { CertData, Certificate } from 'legacy-code/Certificate'
+import { Certificate } from 'certificate'
 import type { Serialize } from 'legacy-code/lanUtils'
 import { derived, writable, Writable } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
@@ -29,7 +29,7 @@ export class Phone {
   }: {
     id: number
     name: string
-    certificate: Serialize<CertData>
+    certificate: Serialize<Certificate>
   }): Phone {
     return new Phone(id, name, Certificate.fromJSON(certificate))
   }
@@ -58,7 +58,7 @@ export const phones: Writable<Phone[]> = new BrowserStore(
         x as Array<{
           id: number
           name: string
-          certificate: Serialize<CertData>
+          certificate: Serialize<Certificate>
         }>
       ).map((obj) => Phone.fromJSON(obj)),
   }

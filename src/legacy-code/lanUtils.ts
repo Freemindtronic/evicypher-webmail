@@ -156,16 +156,20 @@ const searchLoop = async <T extends keyof RequestMap>(
 }
 
 export type Serialize<T> = {
-  [K in keyof T]: string
+  readonly [K in keyof T as T[K] extends Uint8Array ? K : never]: string
 }
 
-function serialize<T>(obj: T): Serialize<T> {
+export function serialize<T>(obj: T): Serialize<T> {
   return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, Base64.encode(value)])
+    Object.entries(obj)
+      .filter<[string, Uint8Array]>(
+        (value): value is [string, Uint8Array] => value[1] instanceof Uint8Array
+      )
+      .map(([key, value]) => [key, Base64.encode(value)])
   ) as Serialize<T>
 }
 
-function unserialize<T>(obj: Serialize<T>): T {
+export function unserialize<T>(obj: Serialize<T>): T {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
