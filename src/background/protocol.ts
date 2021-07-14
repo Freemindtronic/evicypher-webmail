@@ -72,13 +72,15 @@ export interface CipherKeyRequestWithoutKey {
   d3: Uint8Array
 }
 
+export interface CipherKeyRequestWithKey extends CipherKeyRequestWithoutKey {
+  ih: Uint8Array
+  sh: Uint8Array
+  dh: Uint8Array
+}
+
 export type CipherKeyRequest =
   | CipherKeyRequestWithoutKey
-  | (CipherKeyRequestWithoutKey & {
-      ih: Uint8Array
-      sh: Uint8Array
-      dh: Uint8Array
-    })
+  | CipherKeyRequestWithKey
 
 export interface CipherKeyResponse {
   i: Uint8Array
