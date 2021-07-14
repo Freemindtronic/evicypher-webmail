@@ -15,7 +15,8 @@
   tooltipPlacement="top-end"
   idleIcon="🔒"
   idleTooltip="Click to encrypt this message."
-  doneTooltip="Mail encrypted successfully!\nClick to encrypt once again."
+  doneTooltip="Mail encrypted successfully!
+  Click to encrypt once again."
   on:click
   on:abort
 />
