@@ -71,6 +71,8 @@ export class EviCrypt {
     return utils.uint8ArrayToUTF8(dec)
   }
 }
+/** @returns The public identifier of the key used to encrypt `str`. */
+export const keyUsed = (str: string): Uint8Array => getArray(str).slice(4, 56)
 
 function getArray(base64: string) {
   return utils.b64ToUint8Array(utils.normal64(base64))

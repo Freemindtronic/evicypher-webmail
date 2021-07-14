@@ -1,6 +1,6 @@
 import { BrowserStore } from 'browser-store'
 import { fetchKeys } from 'legacy-code/Client'
-import { EviCrypt } from 'legacy-code/EviCrypt'
+import { EviCrypt, keyUsed } from 'legacy-code/EviCrypt'
 import { favoritePhone, phones } from 'phones'
 import { get } from 'svelte/store'
 import type { BackgroundTask } from 'task'
@@ -24,6 +24,7 @@ export const decrypt: BackgroundTask<undefined, string, string> =
       {
         reporter,
         signal,
+        keyToGet: keyUsed(str),
       }
     )
     phone.certificate = newCertificate
