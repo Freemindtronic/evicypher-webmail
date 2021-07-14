@@ -10,5 +10,5 @@
     "lib": ["ES2021", "DOM"],
     "types": ["svelte", "node", "cypress"]
   },
-  "exclude": ["node_modules/*", "extension/*"]
+  "exclude": ["node_modules/*", "extension/*", "docs/*"]
 }
