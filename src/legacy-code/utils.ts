@@ -5,6 +5,12 @@ export function b64ToUint8Array(data: string): Uint8Array {
   return new Uint8Array(Base64.decode(data))
 }
 
+/**
+ * @remarks
+ *   This should NOT be used to produce encryption keys.
+ *   https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues#usage_notes
+ * @returns An Uint8Array of `size` bytes
+ */
 export function random(size: number): Uint8Array {
   const array = new Uint8Array(size)
   return crypto.getRandomValues(array)
