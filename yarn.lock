@@ -277,6 +277,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@borderless/base64@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@borderless/base64@npm:1.0.1"
+  checksum: a66a01ce47067d84418a0c55aba2d41cef9862da1a71cd200a1498e75c55abae5cfda5b11b0634727185853973146a699069329c56baaa684b56303b1095b3bc
+  languageName: node
+  linkType: hard
+
 "@commitlint/cli@npm:^12.1.4":
   version: 12.1.4
   resolution: "@commitlint/cli@npm:12.1.4"
@@ -8481,6 +8488,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "svelte-app@workspace:."
   dependencies:
+    "@borderless/base64": ^1.0.1
     "@commitlint/cli": ^12.1.4
     "@commitlint/config-conventional": ^12.1.4
     "@rollup/plugin-commonjs": ^19.0.0

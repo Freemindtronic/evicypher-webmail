@@ -159,7 +159,7 @@ export type Serialize<T> = {
   readonly [K in keyof T as T[K] extends Uint8Array ? K : never]: string
 }
 
-export function serialize<T>(obj: T): Serialize<T> {
+function serialize<T>(obj: T): Serialize<T> {
   return Object.fromEntries(
     Object.entries(obj)
       .filter<[string, Uint8Array]>(
@@ -169,7 +169,7 @@ export function serialize<T>(obj: T): Serialize<T> {
   ) as Serialize<T>
 }
 
-export function unserialize<T>(obj: Serialize<T>): T {
+function unserialize<T>(obj: Serialize<T>): T {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
