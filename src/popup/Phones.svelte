@@ -24,7 +24,7 @@
 </script>
 
 <main>
-  <h1>{$_('phones')}</h1>
+  <h2>{$_('phones')}</h2>
   {#if pairingInProgress}
     <Pairing
       on:success={() => (pairingInProgress = false)}
@@ -36,13 +36,12 @@
       <PhoneItem {phone} on:delete={removePhone} />
     {/each}
     <form on:submit|preventDefault={addPhone}>
-      <h2>{$_('register-a-new-phone')}</h2>
+      <h3>{$_('register-a-new-phone')}</h3>
       <p>
         {$_('name')}
         <input type="text" bind:value={phoneName} required />
         <button type="submit">{$_('add')}</button>
       </p>
     </form>
-    <a href="/about/" use:link>{$_('about')}</a>
   {/if}
 </main>
