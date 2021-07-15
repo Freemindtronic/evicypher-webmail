@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
-  import { link } from 'svelte-spa-router'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 

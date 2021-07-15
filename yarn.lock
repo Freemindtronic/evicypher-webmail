@@ -1645,11 +1645,9 @@ __metadata:
     stylelint-config-rational-order: ^0.1.2
     stylelint-config-standard: ^22.0.0
     svelte: ^3.38.3
-    svelte-burger-menu: "git+ssh://git@github.com:jorisBarkema/svelte-burger-menu"
     svelte-check: ^2.2.2
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.7.4
-    svelte-spa-router: ^3.2.0
     tippy.js: ^6.3.1
     tslib: ^2.3.0
     typedoc: ^0.21.4
@@ -6899,13 +6897,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regexparam@npm:2.0.0":
-  version: 2.0.0
-  resolution: "regexparam@npm:2.0.0"
-  checksum: 8db9559041b5f5304fd224b5c87b33f12bbb97e07292e7f573a57d73690c0f2e3e2a956fefe6169527b5585d7d0828b8aecedcf61ce5fae40530185ebcae3031
-  languageName: node
-  linkType: hard
-
 "regexpp@npm:^3.1.0":
   version: 3.2.0
   resolution: "regexpp@npm:3.2.0"
@@ -8115,13 +8106,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte-burger-menu@git+ssh://git@github.com:jorisBarkema/svelte-burger-menu":
-  version: 1.0.5
-  resolution: "svelte-burger-menu@git+ssh://git@github.com:jorisBarkema/svelte-burger-menu#commit=df037f7d802bdc1b4f529da4a45a1c54a9d5409e"
-  checksum: 5f4622ac676ccc61990899759de9cb4edd9cfe6948fc5c9e6a592ddc3ea0339ec3f6820c9cd25f1417f410ccfdfd8ce54c1274eee6c911242a66d9bf32020a02
-  languageName: node
-  linkType: hard
-
 "svelte-check@npm:^2.2.2":
   version: 2.2.2
   resolution: "svelte-check@npm:2.2.2"
@@ -8251,15 +8235,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 566fd75e501673a956ddcd26347fbb8ede032b90c124d73b51be5bebeb056239788fceece70ed0a32e400a474e4498f0529844ea0e3ed0dab16831b0b719f258
-  languageName: node
-  linkType: hard
-
-"svelte-spa-router@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "svelte-spa-router@npm:3.2.0"
-  dependencies:
-    regexparam: 2.0.0
-  checksum: 7ac39d5477595fd04d8df7c0d8c62e7e0d3fe20fd8b763424a1419da82246b76e1a4e6f38fb1d2add7f272442bd98f2484b5e41e06570a69ac80bec09483720b
   languageName: node
   linkType: hard
 
