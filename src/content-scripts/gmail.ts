@@ -184,7 +184,7 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
     if (!frame.contentDocument) throw new Error('Cannot change frame content')
     frame.contentDocument.body.innerHTML = decryptedString
     // Make the frame as tall as its content
-    frame.height = `${(frame.contentDocument?.body.scrollHeight ?? 180) + 20}`
+    frame.height = `${frame.contentDocument.body.scrollHeight + 20}`
   })
 
   return frame
