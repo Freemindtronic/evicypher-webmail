@@ -1,5 +1,6 @@
 <script lang="ts">
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
+  import type { SvelteComponent } from 'svelte/internal'
   import type { Instance, Placement } from 'tippy.js'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
@@ -15,7 +16,7 @@
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
 
   /** Tooltip */
-  export let idleIcon: string
+  export let IdleIcon: new (...args: never[]) => SvelteComponent
   export let idleTooltip: string
   export let doneTooltip: string
 
@@ -53,32 +54,34 @@
   })
 </script>
 
-<span class="wrapper">
-  <button on:click={() => dispatch('click')} bind:this={button}>
-    {#if state === ButtonState.IDLE}
-      {idleIcon}
-    {:else if state === ButtonState.IN_PROGRESS}
-      <img
-        src={browser.runtime.getURL('/loading.gif')}
-        alt="..."
-        width="16"
-        height="16"
-      />
-    {:else if state === ButtonState.DONE}
-      ✔
-    {:else if state === ButtonState.FAILED}
-      ❌
-    {/if}
-  </button>
-</span>
+<button
+  on:click={() => dispatch('click')}
+  bind:this={button}
+  class:button={true}
+  {...$$restProps}
+>
+  {#if state === ButtonState.IDLE}
+    <svelte:component this={IdleIcon} width="16" height="16" />
+  {:else if state === ButtonState.IN_PROGRESS}
+    <img
+      src={browser.runtime.getURL('/loading.gif')}
+      alt="..."
+      width="16"
+      height="16"
+    />
+  {:else if state === ButtonState.DONE}
+    ✔
+  {:else if state === ButtonState.FAILED}
+    ❌
+  {/if}
+</button>
 
 <div bind:this={tippyElement} class="tooltip">
   {#if state === ButtonState.IDLE}
     {idleTooltip}
   {:else if state === ButtonState.IN_PROGRESS}
-    {tooltip}
-    <br />
-    <button on:click={() => dispatch('abort')}>Abort</button>
+    <span>{tooltip}</span>
+    <button on:click={() => dispatch('abort')}>Cancel</button>
   {:else if state === ButtonState.DONE}
     {doneTooltip}
   {:else if state === ButtonState.FAILED}
@@ -89,15 +92,46 @@
 
 <style lang="scss">
   :global {
-    @import './tooltip';
+    @import './assets/tippy';
   }
 
-  button {
+  .button {
     all: revert;
-    padding: 0.5em;
+    margin: 2px 5px;
+    padding: 3px;
+    background-color: #fff;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 8, 16, 0.7);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: box-shadow 0.1s;
+    }
+
+    :global(svg) {
+      vertical-align: bottom;
+      fill: #4a4a4a;
+    }
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 2px 6px rgba(0, 8, 16, 0.7);
+
+      :global(svg) {
+        fill: #1f1f1f;
+      }
+    }
+
+    &:active {
+      box-shadow: 0 1px 2px rgba(0, 8, 16, 0.4),
+        0 1px 2px rgba(0, 8, 16, 0.8) inset;
+    }
   }
 
   .tooltip {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
     width: max-content;
     max-width: 100%;
     white-space: pre-line;

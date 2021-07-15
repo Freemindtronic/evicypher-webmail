@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DecryptIdle from './assets/DecryptIdle.svelte'
   import Button from './Button.svelte'
   import { ButtonState } from './encryption'
 
@@ -13,7 +14,7 @@
   bind:tooltip
   bind:state
   tooltipPlacement="bottom-start"
-  idleIcon="🔓"
+  IdleIcon={DecryptIdle}
   idleTooltip="Click to decrypt this message."
   doneTooltip="Click to close the decrypted mail."
   on:click
