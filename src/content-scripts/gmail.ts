@@ -107,7 +107,8 @@ const handleToolbar = (toolbar: HTMLElement) => {
 
     // Encrypt and replace
     mail.textContent = await encryptString(
-      mail.textContent,
+      // Use innerHTML instead of textContent to support rich text
+      mail.innerHTML,
       reporter((tooltip: string) => {
         button.$set({ tooltip })
       }),
