@@ -25,8 +25,8 @@
 
 <style lang="scss">
   :global(.encrypt-button) {
-    // While `!important` is usually a bad practice, I'd rather not use hack
-    // to ensure that this css is computed after the one of Button
+    // While `!important` is usually a bad practice, I'd rather not use a
+    // hack to ensure that this css is computed after the one of Button
     margin-left: 14px !important;
   }
 </style>
