@@ -1,5 +1,6 @@
 import { debug } from 'debug'
 import { Observable } from 'observable'
+import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
@@ -173,9 +174,19 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
     maxWidth: '100%',
     boxSizing: 'border-box',
   })
-  frame.srcdoc = decryptedString
-  frame.sandbox.value = ''
+
+  // To address issues with Gmail's Content-Security-Policy,
+  // we need a local frame, that we modify once loaded
+  frame.src = browser.runtime.getURL('/blank.html')
+
   parent.append(frame)
+  frame.addEventListener('load', () => {
+    if (!frame.contentDocument) throw new Error('Cannot change frame content')
+    frame.contentDocument.body.innerHTML = decryptedString
+    // Make the frame as tall as its content
+    frame.height = `${(frame.contentDocument?.body.scrollHeight ?? 180) + 20}`
+  })
+
   return frame
 }
 
