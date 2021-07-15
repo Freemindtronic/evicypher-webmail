@@ -51,7 +51,6 @@
     "@types/qrcode": "^1.4.1",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
-    "@wemake-services/stylelint-config-scss": "^0.5.0",
     "commitizen": "^4.2.4",
     "cypress": "^7.7.0",
     "cz-conventional-changelog": "^3.3.0",
