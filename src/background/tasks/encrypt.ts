@@ -27,7 +27,7 @@ export const encrypt: BackgroundTask<undefined, string, string> =
       }
     )
     phone.certificate = newCertificate
-    phones.update(($phones) => $phones)
+    phones.update((phones) => phones)
 
     // Encrypt the text
     const evi = new EviCrypt(keys)
