@@ -119,4 +119,8 @@
   .p-canvas {
     text-align: center;
   }
+
+  canvas {
+    cursor: text;
+  }
 </style>
