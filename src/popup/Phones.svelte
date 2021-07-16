@@ -22,25 +22,54 @@
   }
 </script>
 
-<main>
-  <h2>{$_('phones')}</h2>
-  {#if pairingInProgress}
-    <Pairing
-      on:success={() => (pairingInProgress = false)}
-      on:cancel={() => (pairingInProgress = false)}
-      bind:phoneName
-    />
-  {:else}
+{#if pairingInProgress}
+  <Pairing
+    on:success={() => (pairingInProgress = false)}
+    on:cancel={() => (pairingInProgress = false)}
+    bind:phoneName
+  />
+{:else}
+  <section>
+    <h2>{$_('phones')}</h2>
+    {#if $phones.length === 0}
+      <p><em>{$_('register-a-phone-with-the-form-below')}</em></p>
+    {/if}
     {#each $phones as phone (phone.id)}
       <PhoneItem {phone} on:delete={removePhone} />
     {/each}
-    <form on:submit|preventDefault={addPhone}>
-      <h3>{$_('register-a-new-phone')}</h3>
-      <p>
-        {$_('name')}
-        <input type="text" bind:value={phoneName} required />
-        <button type="submit">{$_('add')}</button>
-      </p>
-    </form>
-  {/if}
-</main>
+  </section>
+  <hr />
+  <form on:submit|preventDefault={addPhone}>
+    <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
+    <p>
+      <label for="phone-name">{$_('name')}</label>
+      <input type="text" id="phone-name" bind:value={phoneName} required />
+      <button type="submit">{$_('add')}</button>
+    </p>
+  </form>
+{/if}
+
+<style lang="scss">
+  h2,
+  h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  section > p {
+    margin-top: 0;
+  }
+
+  form {
+    > p {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 0;
+
+      > input {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+</style>
