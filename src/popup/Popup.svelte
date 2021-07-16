@@ -12,3 +12,9 @@
     {/each}
   </select>
 </main>
+
+<style lang="scss">
+  :global {
+    @import './popup.scss';
+  }
+</style>

@@ -1640,6 +1640,7 @@ __metadata:
     rollup-plugin-css-only: ^3.1.0
     rollup-plugin-svelte: ^7.1.0
     rollup-plugin-terser: ^7.0.2
+    sanitize.css: ^12.0.1
     sass: ^1.35.2
     stylelint: ^13.13.1
     stylelint-config-rational-order: ^0.1.2
@@ -7315,6 +7316,13 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: cab8f25ae6f1434abee8d80023d7e72b598cf1327164ddab31003c51215526801e40b66c5e65d658a0af1e9d6478cadcb4c745f4bd6751f97d8644786c0978b0
+  languageName: node
+  linkType: hard
+
+"sanitize.css@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "sanitize.css@npm:12.0.1"
+  checksum: 9d1e26d5ae941a1c7dc92c6b0d93c66f0365bf786cd6eef549c0089666da9216171064410f692fc7c73085c8795c550fe64bc2642e19a540d2dbe032b460f112
   languageName: node
   linkType: hard
 
