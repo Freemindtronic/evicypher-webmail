@@ -1,5 +1,5 @@
 <script lang="ts">
-  import EncryptIdle from './assets/EncryptIdle.svelte'
+  import EncryptIdle from './assets/EncryptIdle.svg'
   import Button from './Button.svelte'
   import { ButtonState } from './encryption'
 

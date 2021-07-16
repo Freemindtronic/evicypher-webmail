@@ -1639,6 +1639,7 @@ __metadata:
     rollup: ^2.53.2
     rollup-plugin-css-only: ^3.1.0
     rollup-plugin-svelte: ^7.1.0
+    rollup-plugin-svelte-svg: ^1.0.0-beta.2
     rollup-plugin-terser: ^7.0.2
     sanitize.css: ^12.0.1
     sass: ^1.35.2
@@ -7193,6 +7194,17 @@ __metadata:
   peerDependencies:
     rollup: 1 || 2
   checksum: ea64ccb19f91ccefd6bcf5975d84c9da776028146ab1d485586c8bf67a0ba294ca8105b287cd9d3589ac427db7b1b3a4e83f6f01026369776dba2298df59b292
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-svelte-svg@npm:^1.0.0-beta.2":
+  version: 1.0.0-beta1.0.1
+  resolution: "rollup-plugin-svelte-svg@npm:1.0.0-beta1.0.1"
+  dependencies:
+    rollup-pluginutils: ^2.8.2
+  peerDependencies:
+    svelte: 3.x
+  checksum: fe57de4252bade5415dc51fc7341eda2c3699914c8b2edd3a95126aefc644c6a1f49eb2a2c852f3c0722ee003d0a1039f9d99555e20ebb6eccf41f741cf4f4bc
   languageName: node
   linkType: hard
 

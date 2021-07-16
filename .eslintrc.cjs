@@ -38,5 +38,5 @@ module.exports = {
     'svelte3/ignore-styles': () => true,
   },
   // Ignore config files
-  ignorePatterns: ['*.cjs'],
+  ignorePatterns: ['*.config.js', '*.cjs'],
 }

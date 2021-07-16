@@ -7,6 +7,7 @@ import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
 import json from '@rollup/plugin-json'
 import replace from '@rollup/plugin-replace'
+import { svelteSVG } from 'rollup-plugin-svelte-svg'
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -35,9 +36,9 @@ const plugins = [
     },
     preventAssignment: true,
   }),
+  svelteSVG({ dev: !production }),
 
-  // If we're building for production (npm run build
-  // instead of npm run dev), minify
+  // If we're building for production, minify
   production && terser(),
 ]
 
