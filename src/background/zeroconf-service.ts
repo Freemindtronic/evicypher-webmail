@@ -1,6 +1,10 @@
 import type { TaskContext } from 'task'
 import { browser } from 'webextension-polyfill-ts'
 import debug from 'debug'
+import { phones } from 'phones'
+import { get } from 'svelte/store'
+import { sendRequest } from 'legacy-code/lanUtils'
+import { Request } from './protocol'
 
 const APPLICATION_ID = 'com.freemindtronic.evidns'
 
@@ -52,7 +56,7 @@ export const startZeroconfService = async (
 
     log('Scan results: %o', response)
 
-    if (response) handleResponse(context, response)
+    if (response) await handleResponse(context, response)
 
     // Avoid scan spamming
     const duration = performance.now() - start
@@ -83,16 +87,57 @@ const isZeroconfServiceInstalled = async (): Promise<boolean> => {
 }
 
 /** Updates the context with `response`. */
-const handleResponse = (
+const handleResponse = async (
   context: TaskContext,
   response: ZeroconfResponse
-): void => {
+): Promise<void> => {
+  const log = debug('zeroconf:handleResponse')
+
   const devicesFound =
     response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
 
-  for (const { ip, port } of devicesFound) {
-    context.devices.set(ip, {
-      port,
+  // Parallelize all requests
+  await Promise.allSettled(
+    devicesFound.map(async ({ ip, port }) => {
+      // If the device is not yet known, try to associate it with its certificate
+      if (!context.devices.has(ip)) {
+        const phone = await pingNewPhone(ip, port)
+        context.devices.set(ip, { port, phone })
+        log(
+          'New device found at %o (known as %o)',
+          ip,
+          phone && get(phone).name
+        )
+      }
+
+      // Update the `lastSeen` property of the phone
+      const phone = context.devices.get(ip)?.phone
+      if (phone !== undefined) {
+        phone.update(($phone) => {
+          $phone.lastSeen = Date.now()
+          return $phone
+        })
+      }
     })
+  )
+}
+
+/** Tries to ping a phone to know if it's already saved. */
+const pingNewPhone = async (ip: string, port: number) => {
+  for (const phone of get(phones)) {
+    const $phone = get(phone)
+    try {
+      await sendRequest({
+        ip,
+        port,
+        type: Request.PING,
+        data: { t: $phone.certificate.id },
+      })
+
+      // The phone answer with a 2xx code, that's the right phone
+      return phone
+    } catch {
+      // The phone refused the connection, let's try the next certificate
+    }
   }
 }

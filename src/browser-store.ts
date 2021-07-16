@@ -30,6 +30,7 @@ export class BrowserStore<T> implements Writable<T> {
     writable: Writable<T>,
     {
       transformer = (x) => x as T,
+      fromJSON = (x: T) => x,
       storage = browser.storage.local,
     }: {
       /**
@@ -42,6 +43,9 @@ export class BrowserStore<T> implements Writable<T> {
        * @returns A value to {@link set | `set`} the store to
        */
       transformer?: (parsed: unknown) => T | PromiseLike<T>
+
+      /** The opposite operation: used to produce a `JSON.stringify`able object. */
+      fromJSON?: (x: T) => unknown
 
       /**
        * Where to physically store data.
@@ -76,9 +80,11 @@ export class BrowserStore<T> implements Writable<T> {
     // Make changes persistent
     this.writable.subscribe((value) => {
       if (!loaded) return
-      void storage.set({ [this.name]: JSON.stringify(value) })
+
       // Do not trigger the event listener below
       ignoreNextEvent = true
+
+      void storage.set({ [this.name]: JSON.stringify(fromJSON(value)) })
     })
 
     // Make a nice promise chain

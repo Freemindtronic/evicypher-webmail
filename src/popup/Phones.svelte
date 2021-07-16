@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
+  import { get } from 'svelte/store'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 
@@ -18,7 +19,7 @@
 
   /** Remove a phone. */
   const removePhone = ({ detail: phone }: CustomEvent<Phone>) => {
-    $phones = $phones.filter((p) => p.id !== phone.id)
+    $phones = $phones.filter((p) => get(p).id !== phone.id)
   }
 </script>
 
@@ -34,7 +35,7 @@
     {#if $phones.length === 0}
       <p><em>{$_('register-a-phone-with-the-form-below')}</em></p>
     {/if}
-    {#each $phones as phone (phone.id)}
+    {#each $phones as phone (phone)}
       <PhoneItem {phone} on:delete={removePhone} />
     {/each}
   </section>

@@ -6,6 +6,8 @@ import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import debug, { Debugger } from 'debug'
+import type { Phone } from 'phones'
+import type { Writable } from 'svelte/store'
 
 /**
  * A background task is an asynchronous generator transparently connected to a
@@ -133,6 +135,7 @@ export interface TaskContext {
     string,
     {
       port: number
+      phone: Writable<Phone> | undefined
     }
   >
   /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */
