@@ -7,7 +7,7 @@
 
 <h1>
   <Logo />
-  <select bind:value={$locale}>
+  <select class="input" bind:value={$locale}>
     {#each $locales as locale}
       <option value={locale}>{locale}</option>
     {/each}

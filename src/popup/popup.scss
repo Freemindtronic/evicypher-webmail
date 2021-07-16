@@ -43,8 +43,7 @@ h3 {
 }
 
 // Form elements
-input,
-select {
+.input {
   color: $text-color;
   background-color: $background-color;
   border: 1px solid $input-color;
@@ -61,11 +60,8 @@ select {
   }
 }
 
-button,
-input[type='button'],
-input[type='submit'],
-input[type='reset'] {
-  @extend input;
+.button {
+  @extend .input;
   color: $background-color;
   background-color: $input-color;
 

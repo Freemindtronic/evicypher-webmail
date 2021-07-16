@@ -88,7 +88,7 @@
 
 <h2>
   Pairing with {phoneName}
-  <button on:click={() => cancelPairing()}>Cancel</button>
+  <button class="button" on:click={() => cancelPairing()}>Cancel</button>
 </h2>
 <p class="p-canvas">
   <canvas bind:this={qr} width="147" height="147" />
@@ -98,8 +98,10 @@
     {tip}
   {:else}
     Is the code {uid} correct?
-    <button type="button" on:click={() => ($confirmed = true)}>Yes</button>
-    <button on:click={() => cancelPairing()}>No</button>
+    <button class="button" type="button" on:click={() => ($confirmed = true)}
+      >Yes</button
+    >
+    <button class="button" on:click={() => cancelPairing()}>No</button>
   {/if}
   <br />
 </p>

@@ -9,10 +9,32 @@
 
 <p>
   {#if $favoritePhoneId === phone.id}
-    <button on:click={() => ($favoritePhoneId = -1)}>★</button>
+    <button class="transparent" on:click={() => ($favoritePhoneId = -1)}
+      >★</button
+    >
   {:else}
-    <button on:click={() => ($favoritePhoneId = phone.id)}>☆</button>
+    <button class="transparent" on:click={() => ($favoritePhoneId = phone.id)}
+      >☆</button
+    >
   {/if}
-  {phone}
-  <button on:click={() => dispatch('delete', phone)}>{$_('delete')}</button>
+  <span>{phone}</span>
+  <button class="button" on:click={() => dispatch('delete', phone)}
+    >{$_('delete')}</button
+  >
 </p>
+
+<style lang="scss">
+  p {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .transparent {
+    padding: 0 0 4px;
+    color: $primary;
+    font-size: 1.5rem;
+    line-height: 1;
+    border: 0;
+  }
+</style>

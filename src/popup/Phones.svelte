@@ -43,8 +43,14 @@
     <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
     <p>
       <label for="phone-name">{$_('name')}</label>
-      <input type="text" id="phone-name" bind:value={phoneName} required />
-      <button type="submit">{$_('add')}</button>
+      <input
+        type="text"
+        id="phone-name"
+        class="input"
+        bind:value={phoneName}
+        required
+      />
+      <button type="submit" class="button">{$_('add')}</button>
     </p>
   </form>
 {/if}
