@@ -9,7 +9,7 @@ import { Request } from './protocol'
 const APPLICATION_ID = 'com.freemindtronic.evidns'
 
 /** Time (in ms) between two scans. */
-const DEFAULT_COOLDOWN = 20_000
+const DEFAULT_COOLDOWN = 5000
 
 /** Minimum time between two scans, even if `scanFaster` is set to true. */
 const MINIMUM_COOLDOWN = 1000
@@ -100,7 +100,14 @@ const handleResponse = async (
   await Promise.allSettled(
     devicesFound.map(async ({ ip, port }) => {
       // If the device is not yet known, try to associate it with its certificate
-      if (!context.devices.has(ip)) {
+      if (context.devices.has(ip)) {
+        const phone = context.devices.get(ip)?.phone
+        if (!phone) return
+        context.devices.set(ip, {
+          port,
+          phone: get(phones).find((p) => get(p).id === get(phone).id),
+        })
+      } else {
         const phone = await pingNewPhone(ip, port)
         context.devices.set(ip, { port, phone })
         log(

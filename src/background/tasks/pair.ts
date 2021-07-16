@@ -32,7 +32,14 @@ export const pair: BackgroundTask<string, string, boolean> = async function* (
 
   // Add the phone to the list, as favorite if none is defined
   const $phone = new Phone(await nextPhoneId(), phoneName, certificate)
-  phones.update(($phones) => [...$phones, writable($phone)])
+  const phone = writable($phone)
+
+  // Register the new phone in the background context
+  const backgroundPhone = context.devices.get(device.IP)
+  if (backgroundPhone) backgroundPhone.phone = phone
+
+  phones.update(($phones) => [...$phones, phone])
+
   if (get(favoritePhone) === undefined) favoritePhoneId.set($phone.id)
 
   // Pairing successful, send true to the front end

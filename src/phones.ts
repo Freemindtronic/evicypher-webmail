@@ -74,18 +74,22 @@ export const phones: Writable<Array<Writable<Phone>>> = new BrowserStore(
         }>
       ).map((obj) => writable(Phone.fromJSON(obj))),
 
-    fromJSON: (x: Array<Writable<Phone>>) => x.map((obj) => get(obj)),
+    toJSON: (x: Array<Writable<Phone>>) => x.map((obj) => get(obj)),
   }
 )
 
 phones.subscribe(($phones) => {
   for (const phone of $phones) {
     if ('subscribed' in phone) continue
-    phone.subscribe(() => {
-      phones.update(($phones) => $phones)
-    })
     // @ts-expect-error We add a "subscribed" property to avoid subscribing several times
     phone.subscribed = true
+    phone.subscribe(($phone) => {
+      console.log('zeroconf', $phone.name, $phone.lastSeen)
+      phones.update(($phones) => {
+        console.log($phones.map((phone) => [get(phone), get(phone) === $phone]))
+        return $phones
+      })
+    })
   }
 })
 
