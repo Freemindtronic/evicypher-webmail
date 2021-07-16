@@ -7,7 +7,6 @@ import css from 'rollup-plugin-css-only'
 import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
 import { terser } from 'rollup-plugin-terser'
-import sveltePreprocess from 'svelte-preprocess'
 
 import { config } from './svelte.config'
 
