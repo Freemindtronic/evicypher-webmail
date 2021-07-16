@@ -57,7 +57,7 @@ select {
 
   &:focus {
     outline: 0;
-    box-shadow: 0 1px 3px rgba($input-color, 0.5);
+    box-shadow: 0 1px 3px $input-color, 0 0 1px 1px $background-color;
   }
 }
 
