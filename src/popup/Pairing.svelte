@@ -91,7 +91,7 @@
   <button on:click={() => cancelPairing()}>Cancel</button>
 </h2>
 <p class="p-canvas">
-  <canvas bind:this={qr} />
+  <canvas bind:this={qr} width="147" height="147" />
 </p>
 <p>
   {#if uid === undefined}
