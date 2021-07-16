@@ -35,7 +35,10 @@
    */
   const pair: ForegroundTask<typeof pairTask> = async function* () {
     // Display the QR code generated
-    toCanvas(qr, yield)
+    toCanvas(qr, yield, {
+      margin: 0,
+      scale: 3,
+    })
 
     // Display the UID of the device that scanned the QR code
     uid = yield
@@ -83,10 +86,11 @@
   })
 </script>
 
-<p>
-  <button on:click={() => cancelPairing()}>X</button>
-</p>
-<p>
+<h2>
+  Pairing with {phoneName}
+  <button on:click={() => cancelPairing()}>Cancel</button>
+</h2>
+<p class="p-canvas">
   <canvas bind:this={qr} />
 </p>
 <p>
@@ -97,4 +101,22 @@
     <button type="button" on:click={() => ($confirmed = true)}>Yes</button>
     <button on:click={() => cancelPairing()}>No</button>
   {/if}
+  <br />
 </p>
+
+<style lang="scss">
+  h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    > button {
+      font-weight: normal;
+      font-size: 1rem;
+    }
+  }
+
+  .p-canvas {
+    text-align: center;
+  }
+</style>
