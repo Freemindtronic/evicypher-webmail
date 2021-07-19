@@ -1,4 +1,6 @@
+import { Request } from 'background/protocol'
 import { clientHello, PairingKey } from 'legacy-code/device'
+import { sendRequest } from 'legacy-code/lanUtils'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -36,7 +38,15 @@ export const pair: BackgroundTask<string, string, boolean> = async function* (
 
   // Register the new phone in the background context
   const backgroundPhone = context.network.get(device.IP)
-  if (backgroundPhone) backgroundPhone.phone = phone
+  if (backgroundPhone) {
+    backgroundPhone.phone = phone
+    backgroundPhone.keys = await sendRequest({
+      ip: device.IP,
+      port: backgroundPhone.port,
+      type: Request.PING,
+      data: { t: $phone.certificate.id },
+    })
+  }
 
   phones.update(($phones) => [...$phones, phone])
 

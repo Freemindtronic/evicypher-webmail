@@ -19,15 +19,11 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     const $phone = get(phone)
 
     // Send a request to the FMT app
-    const { keys, newCertificate } = await fetchKeys(
-      context,
-      $phone.certificate,
-      {
-        reporter,
-        signal,
-        keyToGet: keyUsed(str),
-      }
-    )
+    const { keys, newCertificate } = await fetchKeys(context, $phone, {
+      reporter,
+      signal,
+      keyToGet: keyUsed(str),
+    })
     $phone.certificate = newCertificate
     phone.update(($phone) => $phone)
 

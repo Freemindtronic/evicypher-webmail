@@ -1,13 +1,14 @@
+import type { PingResponse } from 'background/protocol'
 import type { decrypt } from 'background/tasks/decrypt'
 import type { encrypt } from 'background/tasks/encrypt'
 import type { pair } from 'background/tasks/pair'
+import debug, { Debugger } from 'debug'
 import type { Observable } from 'observable'
+import type { Phone } from 'phones'
 import type { Report, Reporter } from 'report'
 import { defaultReporter } from 'report'
-import { browser, Runtime } from 'webextension-polyfill-ts'
-import debug, { Debugger } from 'debug'
-import type { Phone } from 'phones'
 import type { Writable } from 'svelte/store'
+import { browser, Runtime } from 'webextension-polyfill-ts'
 
 /**
  * A background task is an asynchronous generator transparently connected to a
@@ -135,7 +136,8 @@ export interface TaskContext {
     string,
     {
       port: number
-      phone: Writable<Phone> | undefined
+      phone?: Writable<Phone>
+      keys?: PingResponse
     }
   >
   /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */

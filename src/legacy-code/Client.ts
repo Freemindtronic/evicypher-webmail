@@ -8,11 +8,14 @@ import {
   CipherKeyResponse,
   EndOkRequest,
   EndResponse,
+  PingResponse,
   Request,
 } from '../background/protocol'
 import * as utils from './utils'
 import type { TaskContext } from 'task'
 import { defaultReporter, Reporter, State } from 'report'
+import type { Phone } from 'phones'
+import { get, Writable } from 'svelte/store'
 
 export interface KeyPair {
   high: Uint8Array
@@ -27,7 +30,7 @@ export interface KeyPair {
  */
 export const fetchKeys = async (
   context: TaskContext,
-  certificate: Certificate,
+  phone: Phone,
   {
     keyToGet,
     reporter = defaultReporter,
@@ -38,19 +41,24 @@ export const fetchKeys = async (
     signal?: AbortSignal
   } = {}
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  // Find a phone matching the certificate
-  const {
-    ip,
-    port,
-    data: pingResponse,
-  } = await lanUtil.search(
-    context,
-    Request.PING,
+  const { certificate } = phone
+
+  type nonEmptyEntry = [
+    string,
     {
-      t: certificate.id,
-    },
-    { signal, reporter }
+      port: number
+      phone: Writable<Phone>
+      keys: PingResponse
+    }
+  ]
+  const networkPhone = [...context.network.entries()].find<nonEmptyEntry>(
+    (entry): entry is nonEmptyEntry =>
+      Boolean(entry[1].phone && get(entry[1].phone) === phone)
   )
+
+  if (!networkPhone) throw new Error('Device offline.')
+
+  const [ip, { port, keys: pingResponse }] = networkPhone
 
   // Prepare the three shared secrets for the rest of the exchange
   const keysExchange = ([1, 2, 3] as const).map((i) =>
@@ -140,6 +148,14 @@ export const fetchKeys = async (
     type: Request.END_OK,
     data: acknowledgement,
     signal,
+  })
+
+  // Send a ping to get the new keys
+  networkPhone[1].keys = await lanUtil.sendRequest({
+    ip,
+    port,
+    type: Request.PING,
+    data: { t: newCertificate.id },
   })
 
   return { keys, newCertificate }

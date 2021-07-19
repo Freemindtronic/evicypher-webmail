@@ -101,12 +101,23 @@ const handleResponse = async (
     devicesFound.map(async ({ ip, port }) => {
       // If the device is not yet known, try to associate it with its certificate
       if (!context.network.has(ip)) {
-        const phone = await pingNewPhone(ip, port)
-        context.network.set(ip, { port, phone })
+        const newPhone = await pingNewPhone(ip, port)
+
+        if (newPhone === undefined) {
+          context.network.set(ip, { port })
+          return
+        }
+
+        context.network.set(ip, {
+          port,
+          phone: newPhone.phone,
+          keys: newPhone.keys,
+        })
+
         log(
           'New device found at %o (known as %o)',
           ip,
-          phone && get(phone).name
+          get(newPhone.phone).name
         )
       }
 
@@ -127,7 +138,7 @@ const pingNewPhone = async (ip: string, port: number) => {
   for (const phone of get(phones)) {
     const $phone = get(phone)
     try {
-      await sendRequest({
+      const keys = await sendRequest({
         ip,
         port,
         type: Request.PING,
@@ -135,7 +146,7 @@ const pingNewPhone = async (ip: string, port: number) => {
       })
 
       // The phone answer with a 2xx code, that's the right phone
-      return phone
+      return { phone, keys }
     } catch {
       // The phone refused the connection, let's try the next certificate
     }
