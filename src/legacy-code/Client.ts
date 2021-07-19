@@ -49,7 +49,7 @@ export const fetchKeys = async (
     {
       t: certificate.id,
     },
-    { signal, report: reporter }
+    { signal, reporter }
   )
 
   // Prepare the three shared secrets for the rest of the exchange

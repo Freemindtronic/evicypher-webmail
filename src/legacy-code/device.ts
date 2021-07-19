@@ -57,7 +57,7 @@ export async function clientHello(
   context: TaskContext,
   pairingKey: PairingKey,
   signal?: AbortSignal,
-  report?: Reporter
+  reporter?: Reporter
 ): Promise<Device> {
   const answer = await search(
     context,
@@ -66,7 +66,7 @@ export async function clientHello(
     {
       signal,
       portOverride: pairingKey.port,
-      report,
+      reporter,
     }
   )
   return new Device(answer.ip, pairingKey)

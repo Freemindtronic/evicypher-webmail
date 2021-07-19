@@ -34,7 +34,7 @@ export const search = async <T extends keyof RequestMap>(
     signal = new AbortController().signal,
     portOverride,
     maxNumberOfSearches = 100,
-    report = defaultReporter,
+    reporter = defaultReporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
     signal?: AbortSignal
@@ -43,7 +43,7 @@ export const search = async <T extends keyof RequestMap>(
     /** Max number of tries before aborting. */
     maxNumberOfSearches?: number
     /** A function to call every time the process advances. */
-    report?: Reporter
+    reporter?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]>> => {
   // Make the Zeroconf service run without cooldown
@@ -59,7 +59,7 @@ export const search = async <T extends keyof RequestMap>(
       const res = await searchLoop(context, type, data, {
         signal,
         portOverride,
-        report,
+        reporter,
       })
       if (res !== undefined) return res
 
@@ -94,20 +94,20 @@ const searchLoop = async <T extends keyof RequestMap>(
   {
     signal = new AbortController().signal,
     portOverride,
-    report = defaultReporter,
+    reporter = defaultReporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
     signal?: AbortSignal
     /** If set, ignore the connection port advertised by the devices. */
     portOverride?: number
     /** A function to call every time the process advances. */
-    report?: Reporter
+    reporter?: Reporter
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]> | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.network
 
-  report({ state: State.SCANNING, found: devicesFound.size })
+  reporter({ state: State.SCANNING, found: devicesFound.size })
 
   // Abort the operation if no device is found
   if (devicesFound.size === 0) return
