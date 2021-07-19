@@ -142,6 +142,7 @@ export interface TaskContext {
   >
   /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */
   scanFaster: Observable<boolean>
+  newDeviceFound: Observable<void>
 }
 
 /**

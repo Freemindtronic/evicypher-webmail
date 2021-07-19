@@ -12,6 +12,7 @@ import { startZeroconfService } from './zeroconf-service'
 const context: TaskContext = {
   network: new Map(),
   scanFaster: new Observable<boolean>(false),
+  newDeviceFound: new Observable<void>(undefined),
 }
 
 /**

@@ -119,6 +119,8 @@ const handleResponse = async (
           ip,
           get(newPhone.phone).name
         )
+
+        context.newDeviceFound.set()
       }
 
       // Update the `lastSeen` property of the phone

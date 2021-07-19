@@ -15,7 +15,7 @@ import * as utils from './utils'
 import type { TaskContext } from 'task'
 import { defaultReporter, Reporter, State } from 'report'
 import type { Phone } from 'phones'
-import { get, Writable } from 'svelte/store'
+import { get } from 'svelte/store'
 
 export interface KeyPair {
   high: Uint8Array
@@ -40,6 +40,7 @@ export const fetchKeys = async (
     reporter?: Reporter
     signal?: AbortSignal
   } = {}
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
   const { certificate } = phone
 
@@ -47,14 +48,28 @@ export const fetchKeys = async (
     string,
     {
       port: number
-      phone: Writable<Phone>
       keys: PingResponse
     }
   ]
-  const networkPhone = [...context.network.entries()].find<nonEmptyEntry>(
-    (entry): entry is nonEmptyEntry =>
-      Boolean(entry[1].phone && get(entry[1].phone) === phone)
-  )
+
+  context.scanFaster.set(true)
+
+  const networkPhone = await (async (): Promise<nonEmptyEntry> => {
+    while (true) {
+      for (const [
+        ip,
+        { port, phone: networkPhone, keys },
+      ] of context.network.entries()) {
+        if (networkPhone && keys && get(networkPhone) === phone) {
+          return [ip, { port, keys }]
+        }
+      }
+
+      await context.newDeviceFound.observe()
+    }
+  })()
+
+  context.scanFaster.set(false)
 
   if (!networkPhone) throw new Error('Device offline.')
 
