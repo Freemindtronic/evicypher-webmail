@@ -64,7 +64,7 @@ export const phones: Writable<Array<Writable<Phone>>> = new BrowserStore(
   'phones',
   writable([]),
   {
-    transformer: (x) =>
+    fromJSON: (x) =>
       (
         x as Array<{
           id: number

@@ -29,7 +29,7 @@ export class BrowserStore<T> implements Writable<T> {
     name: string,
     writable: Writable<T>,
     {
-      transformer = (x) => x as T,
+      fromJSON = (x) => x as T,
       toJSON = (x: T) => x,
       storage = browser.storage.local,
     }: {
@@ -42,7 +42,7 @@ export class BrowserStore<T> implements Writable<T> {
        * @param parsed - The output of `JSON.parse`
        * @returns A value to {@link set | `set`} the store to
        */
-      transformer?: (parsed: unknown) => T | PromiseLike<T>
+      fromJSON?: (parsed: unknown) => T | PromiseLike<T>
 
       /** The opposite operation: used to produce a `JSON.stringify`able object. */
       toJSON?: (x: T) => unknown
@@ -67,7 +67,7 @@ export class BrowserStore<T> implements Writable<T> {
       this.writable.update((value) => {
         void storage
           .get({ [this.name]: JSON.stringify(value) })
-          .then(({ [this.name]: value }) => transformer(JSON.parse(value)))
+          .then(({ [this.name]: value }) => fromJSON(JSON.parse(value)))
           .then((value) => {
             this.writable.set(value)
             loaded = true
@@ -108,7 +108,7 @@ export class BrowserStore<T> implements Writable<T> {
 
       // We need to wrap the output of `transformer` in case it is not asynchronous
       void Promise.resolve(
-        transformer(JSON.parse(changes[this.name].newValue))
+        fromJSON(JSON.parse(changes[this.name].newValue))
       ).then((value) => {
         this.writable.set(value)
         loaded = true
