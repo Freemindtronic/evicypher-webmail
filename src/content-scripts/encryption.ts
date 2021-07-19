@@ -65,7 +65,7 @@ export const extractEncryptedString = (string: string): string => {
 export const reporter =
   (f: (tooltip: string) => void) =>
   (report: Report): void => {
-    if (report.state === State.SCAN_COMPLETE) {
+    if (report.state === State.SCANNING) {
       f(
         report.found === 0
           ? 'Make sure your phone and your computer are on the same network.'

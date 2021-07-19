@@ -61,7 +61,7 @@
   }
 
   const reporter = (report: Report) => {
-    if (report.state === State.SCAN_COMPLETE) {
+    if (report.state === State.SCANNING) {
       tip =
         report.found === 0
           ? 'Make sure your phone and your computer are on the same network.'

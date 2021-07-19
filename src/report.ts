@@ -1,12 +1,12 @@
 /** All possible updates from all the background tasks. */
 export enum State {
-  SCAN_COMPLETE = 'Scan complete.',
+  SCANNING = 'Scan complete.',
   NOTIFICATION_SENT = 'Notification sent.',
 }
 
 /** If an update has additional details, they are defined here. */
 export type Report =
-  | { state: State.SCAN_COMPLETE; found: number }
+  | { state: State.SCANNING; found: number }
   | { state: State.NOTIFICATION_SENT }
 
 /**

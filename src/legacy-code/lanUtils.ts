@@ -107,7 +107,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.devices
 
-  report({ state: State.SCAN_COMPLETE, found: devicesFound.size })
+  report({ state: State.SCANNING, found: devicesFound.size })
 
   // Abort the operation if no device is found
   if (devicesFound.size === 0) return
