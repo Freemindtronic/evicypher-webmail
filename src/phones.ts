@@ -78,18 +78,22 @@ export const phones: Writable<Array<Writable<Phone>>> = new BrowserStore(
   }
 )
 
+// Add a subscriber to every new phone
 phones.subscribe(($phones) => {
   for (const phone of $phones) {
     if ('subscribed' in phone) continue
     // @ts-expect-error We add a "subscribed" property to avoid subscribing several times
     phone.subscribed = true
-    phone.subscribe(($phone) => {
-      console.log('zeroconf', $phone.name, $phone.lastSeen)
-      phones.update(($phones) => {
-        console.log($phones.map((phone) => [get(phone), get(phone) === $phone]))
-        return $phones
-      })
+
+    // Do not run the listener on first subscription; if the listener is
+    // called on the first subscription, it would cause a load-save-load
+    // situation, leading to inconsistencies...
+    let first = true
+    phone.subscribe(() => {
+      if (first) return
+      phones.update(($phones) => $phones)
     })
+    first = false
   }
 })
 
