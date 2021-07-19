@@ -536,9 +536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/eslintrc@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "@eslint/eslintrc@npm:0.4.2"
+"@eslint/eslintrc@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "@eslint/eslintrc@npm:0.4.3"
   dependencies:
     ajv: ^6.12.4
     debug: ^4.1.1
@@ -549,7 +549,7 @@ __metadata:
     js-yaml: ^3.13.1
     minimatch: ^3.0.4
     strip-json-comments: ^3.1.1
-  checksum: 17f90cf07988dd2a5e4f510687c81334141977b8e0fa1b63ef0318b0578466e368fc988c101ddc7df55b6124dff8ecd1be67292c27901265761758ad22608e12
+  checksum: 03a7704150b868c318aab6a94d87a33d30dc2ec579d27374575014f06237ba1370ae11178db772f985ef680d469dc237e7b16a1c5d8edaaeb8c3733e7a95a6d3
   languageName: node
   linkType: hard
 
@@ -669,9 +669,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "@rollup/plugin-commonjs@npm:19.0.0"
+"@rollup/plugin-commonjs@npm:^19.0.1":
+  version: 19.0.1
+  resolution: "@rollup/plugin-commonjs@npm:19.0.1"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     commondir: ^1.0.1
@@ -682,7 +682,7 @@ __metadata:
     resolve: ^1.17.0
   peerDependencies:
     rollup: ^2.38.3
-  checksum: 83216ccd83c205f5b6ce278ce5233289a1ebf47fd859d6349d738b58e967bbb845395011f8605cf6a74175b728ed3b97fbfd9169bd0391caf5ee80c523652815
+  checksum: 49942cec59876a5ab3b576fe8ade861123c55d76e538fc43f225bb034dbc3c94934aba6df284350af19e50838fa0e3f8a239d9f6284e3b090bd0f4a708d097f3
   languageName: node
   linkType: hard
 
@@ -697,9 +697,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "@rollup/plugin-node-resolve@npm:13.0.0"
+"@rollup/plugin-node-resolve@npm:^13.0.2":
+  version: 13.0.2
+  resolution: "@rollup/plugin-node-resolve@npm:13.0.2"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     "@types/resolve": 1.17.1
@@ -709,25 +709,25 @@ __metadata:
     resolve: ^1.19.0
   peerDependencies:
     rollup: ^2.42.0
-  checksum: c0237e65f50d593efc176e07a2ddf734918bc7344f739fe2254a3bfaa4be37c6d4787d045ab79d741811d3658f7e8bbb1484e6aa25bbb9fe2a3c33472b3f371d
+  checksum: c4860734d5969076a5b26dc86a8f26ef1400fdd5ae54ef1ea565a728642cc25c80ca08d0027ca222fac824a992477769d3d81d761c165ac2a56392727eb1b94a
   languageName: node
   linkType: hard
 
-"@rollup/plugin-replace@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "@rollup/plugin-replace@npm:2.4.2"
+"@rollup/plugin-replace@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@rollup/plugin-replace@npm:3.0.0"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     magic-string: ^0.25.7
   peerDependencies:
     rollup: ^1.20.0 || ^2.0.0
-  checksum: b2f1618ee5526d288e2f8ae328dcb326e20e8dc8bd1f60d3e14d6708a5832e4aa44811f7d493f4aed2deeadca86e3b6b0503cd39bf50cfb4b595bb9da027fad0
+  checksum: 5a7c29e9ae3ff713b0f7ab56536a33c6482eb50158c3a422deeed796f3a25d31b7b3a7bbc65e2ef4dc60c9c42f65612b3b2a49a62119f4becbfd194cd523c230
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^8.2.1":
-  version: 8.2.1
-  resolution: "@rollup/plugin-typescript@npm:8.2.1"
+"@rollup/plugin-typescript@npm:^8.2.3":
+  version: 8.2.3
+  resolution: "@rollup/plugin-typescript@npm:8.2.3"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     resolve: ^1.17.0
@@ -735,7 +735,7 @@ __metadata:
     rollup: ^2.14.0
     tslib: "*"
     typescript: ">=3.7.0"
-  checksum: a9dbd2000ec0190742322c445e403b43db65c21f7f548279473e4f512a17f482b28f1b98b2a58373e63b24611c31aa193037043c6aea159756c67ea49658dff2
+  checksum: 1b93ad051e7b4613cf97b85b3786fa2e95fa631c1b492c62c7bc11dd345b6272cdd3031c6e942106638a0e9ba9a7efe9ff3171c0ef10dc747e2dcc8deb03e6bc
   languageName: node
   linkType: hard
 
@@ -885,10 +885,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.3.2":
-  version: 16.3.2
-  resolution: "@types/node@npm:16.3.2"
-  checksum: 242d23b6f9f93afa49eecac179444762000e99667a742c8b1de18c7875c7c952436ab319ea4fe3dca3e66bacb9e4f0ed69a25df9a155c6cedfc8cdaf52cb3453
+"@types/node@npm:^16.3.3":
+  version: 16.3.3
+  resolution: "@types/node@npm:16.3.3"
+  checksum: fa885b835e57a4a2fd15571e5cbfe361d4ac48278196416aa2690ebdfb118a116249dd81475078c61fbf2d95920324f8f3a66ae7f19fac424ae74ab87a41c1e4
   languageName: node
   linkType: hard
 
@@ -1601,15 +1601,15 @@ __metadata:
     "@borderless/base64": ^1.0.1
     "@commitlint/cli": ^12.1.4
     "@commitlint/config-conventional": ^12.1.4
-    "@rollup/plugin-commonjs": ^19.0.0
+    "@rollup/plugin-commonjs": ^19.0.1
     "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.0.0
-    "@rollup/plugin-replace": ^2.4.2
-    "@rollup/plugin-typescript": ^8.2.1
+    "@rollup/plugin-node-resolve": ^13.0.2
+    "@rollup/plugin-replace": ^3.0.0
+    "@rollup/plugin-typescript": ^8.2.3
     "@tsconfig/svelte": ^2.0.1
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4.1.6
-    "@types/node": ^16.3.2
+    "@types/node": ^16.3.3
     "@types/qrcode": ^1.4.1
     "@typescript-eslint/eslint-plugin": ^4.28.3
     "@typescript-eslint/parser": ^4.28.3
@@ -1620,7 +1620,7 @@ __metadata:
     cypress: ^7.7.0
     cz-conventional-changelog: ^3.3.0
     debug: ^4.3.2
-    eslint: ^7.30.0
+    eslint: ^7.31.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
     eslint-config-xo-typescript: ^0.43.0
@@ -1647,7 +1647,7 @@ __metadata:
     stylelint-config-rational-order: ^0.1.2
     stylelint-config-standard: ^22.0.0
     svelte: ^3.38.3
-    svelte-check: ^2.2.2
+    svelte-check: ^2.2.3
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.7.4
     tippy.js: ^6.3.1
@@ -3086,12 +3086,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.30.0":
-  version: 7.30.0
-  resolution: "eslint@npm:7.30.0"
+"eslint@npm:^7.31.0":
+  version: 7.31.0
+  resolution: "eslint@npm:7.31.0"
   dependencies:
     "@babel/code-frame": 7.12.11
-    "@eslint/eslintrc": ^0.4.2
+    "@eslint/eslintrc": ^0.4.3
     "@humanwhocodes/config-array": ^0.5.0
     ajv: ^6.10.0
     chalk: ^4.0.0
@@ -3132,7 +3132,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 872f90844b164dd61ec1bb949d2e33e7fbd189e0652fabe2cbbd0bdce1e4cd7ed08e72fa213795a453ae39fe24460771800608e765febb9e778deb28b9db3cc1
+  checksum: fd73d07ce0b73e5ea950b295a6eaf8d45914b4e56cba4ef49e55a36dc7e965a4865f63f618c0a096a01d089752d9e44180b80ba8657039b8e631dd40e0af1663
   languageName: node
   linkType: hard
 
@@ -8126,9 +8126,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte-check@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "svelte-check@npm:2.2.2"
+"svelte-check@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "svelte-check@npm:2.2.3"
   dependencies:
     chalk: ^4.0.0
     chokidar: ^3.4.1
@@ -8143,7 +8143,7 @@ __metadata:
     svelte: ^3.24.0
   bin:
     svelte-check: bin/svelte-check
-  checksum: 7262de5e465aa99b966bfe0e2c12c7b8cb560aecc10d2c69cc953eb3283e8e32e12ea25e0a0efe1ee044a3c0388001ca42c121687a08ce985e8069fa7bea0627
+  checksum: 0ec649aeb334e1bba3b8f8f8a3be08cd45ab077f9aeb984a9ba2ca35e84e9b366d391f77986e15739d3825970e59b400091aff7dadbf712a794433096fad33b1
   languageName: node
   linkType: hard
 
