@@ -104,6 +104,7 @@ export class Observable<T> implements Writable<T> {
    * @returns A function that removes the subscriber
    */
   subscribe(subscriber: (value: T) => void): () => void {
+    subscriber(this.value)
     this.subscribers.push(subscriber)
     return () => {
       this.subscribers.splice(this.subscribers.indexOf(subscriber), 1)
