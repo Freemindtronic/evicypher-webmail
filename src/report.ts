@@ -2,7 +2,8 @@
 export enum State {
   SCANNING = 'Scan complete.',
   NOTIFICATION_SENT = 'Notification sent.',
-  WAITING_FOR_PHONE = 'Waiting for the favorite phone to be reachable.',
+  WAITING_FOR_PHONE = 'Waiting for the favorite phone to be found.',
+  WAITING_FOR_FIRST_RESPONSE = 'Waiting for the favorite phone to answer.',
 }
 
 /** If an update has additional details, they are defined here. */
@@ -10,6 +11,7 @@ export type Report =
   | { state: State.SCANNING; found: number }
   | { state: State.NOTIFICATION_SENT }
   | { state: State.WAITING_FOR_PHONE }
+  | { state: State.WAITING_FOR_FIRST_RESPONSE }
 
 /**
  * A reporter is a function that receives updates from the background process to

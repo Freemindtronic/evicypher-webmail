@@ -12,6 +12,7 @@ export enum Request {
   PAIRING_START = '/t',
   PAIRING_SALT = '/c',
   PAIRING_NAME = '/n',
+  IS_ALIVE = '/is-alive',
 }
 
 /** Maps Request constants to the correct request type. */
@@ -23,6 +24,7 @@ export interface RequestMap {
   [Request.PAIRING_START]: PairingStartRequest
   [Request.PAIRING_SALT]: PairingSaltRequest
   [Request.PAIRING_NAME]: PairingNameRequest
+  [Request.IS_ALIVE]: IsAliveRequest
 }
 
 /** Maps Request constants to the correct response type. */
@@ -34,6 +36,7 @@ export interface ResponseMap {
   [Request.PAIRING_START]: PairingStartResponse
   [Request.PAIRING_SALT]: PairingSaltResponse
   [Request.PAIRING_NAME]: PairingNameResponse
+  [Request.IS_ALIVE]: IsAliveResponse
 }
 
 /**
@@ -163,3 +166,9 @@ export interface PairingNameRequest {
 export interface PairingNameResponse {
   h: Uint8Array
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IsAliveRequest {}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IsAliveResponse {}

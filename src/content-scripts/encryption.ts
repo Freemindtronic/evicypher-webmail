@@ -65,13 +65,27 @@ export const extractEncryptedString = (string: string): string => {
 export const reporter =
   (f: (tooltip: string) => void) =>
   (report: Report): void => {
-    if (report.state === State.SCANNING) {
-      f(
-        report.found === 0
-          ? 'Make sure your phone and your computer are on the same network.'
-          : 'Trying to reach your phone...'
-      )
-    } else if (report.state === State.NOTIFICATION_SENT) {
-      f('Click on the notification you received.')
+    switch (report.state) {
+      case State.SCANNING: {
+        f('Click on the notification you received.')
+        break
+      }
+
+      case State.WAITING_FOR_PHONE: {
+        f('Make sure your phone and your computer are on the same network.')
+        break
+      }
+
+      case State.WAITING_FOR_FIRST_RESPONSE: {
+        f('Make sure the app is opened.')
+        break
+      }
+
+      case State.NOTIFICATION_SENT: {
+        f('Click on the notification you received.')
+        break
+      }
+
+      // No default
     }
   }

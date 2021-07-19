@@ -65,6 +65,16 @@ export const fetchKeys = async (
   const [ip, { port, keys: pingResponse }] = networkEntry
 
   try {
+    // Try to reach the phone
+    reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
+    await lanUtil.sendRequest({
+      ip,
+      port,
+      signal,
+      type: Request.IS_ALIVE,
+      data: {},
+    })
+
     // Prepare the three shared secrets for the rest of the exchange
     const keysExchange = ([1, 2, 3] as const).map((i) =>
       encryptKey(
