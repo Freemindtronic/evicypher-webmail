@@ -8,7 +8,6 @@ import {
   CipherKeyResponse,
   EndOkRequest,
   EndResponse,
-  PingResponse,
   Request,
 } from '../background/protocol'
 import * as utils from './utils'
@@ -40,140 +39,132 @@ export const fetchKeys = async (
     reporter?: Reporter
     signal?: AbortSignal
   } = {}
-  // eslint-disable-next-line sonarjs/cognitive-complexity
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  const { certificate } = phone
+  reporter({ state: State.WAITING_FOR_PHONE })
+  let { certificate } = phone
 
-  type nonEmptyEntry = [
-    string,
-    {
-      port: number
-      keys: PingResponse
-    }
-  ]
+  // Get the phone already found by the background service
+  let networkEntry = [...context.network.entries()].find(
+    (entry) => entry[1].phone && get(entry[1].phone) === phone
+  )
 
+  // Tell the Zeroconf service to scan faster
   context.scanFaster.set(true)
 
-  const networkPhone = await (async (): Promise<nonEmptyEntry> => {
-    while (true) {
-      for (const [
-        ip,
-        { port, phone: networkPhone, keys },
-      ] of context.network.entries()) {
-        if (networkPhone && keys && get(networkPhone) === phone) {
-          return [ip, { port, keys }]
-        }
-      }
-
-      await context.newDeviceFound.observe()
-    }
-  })()
+  // If there is no such phone, wait for one to be found
+  while (networkEntry === undefined || networkEntry[1].keys === undefined) {
+    await context.newDeviceFound.observe()
+    networkEntry = [...context.network.entries()].find(
+      (entry) => entry[1].phone && get(entry[1].phone) === phone
+    )
+  }
 
   context.scanFaster.set(false)
 
-  if (!networkPhone) throw new Error('Device offline.')
+  // Extract the IP address, port, and keys
+  const [ip, { port, keys: pingResponse }] = networkEntry
 
-  const [ip, { port, keys: pingResponse }] = networkPhone
-
-  // Prepare the three shared secrets for the rest of the exchange
-  const keysExchange = ([1, 2, 3] as const).map((i) =>
-    encryptKey(
-      pingResponse[`iv${i}` as const],
-      pingResponse[`sa${i}` as const],
-      certificate.tKey,
-      pingResponse[`k${i}` as const]
+  try {
+    // Prepare the three shared secrets for the rest of the exchange
+    const keysExchange = ([1, 2, 3] as const).map((i) =>
+      encryptKey(
+        pingResponse[`iv${i}` as const],
+        pingResponse[`sa${i}` as const],
+        certificate.tKey,
+        pingResponse[`k${i}` as const]
+      )
     )
-  )
 
-  let cipherKeyRequest: CipherKeyRequest = {
-    i1: keysExchange[0].iv,
-    i2: keysExchange[1].iv,
-    i3: keysExchange[2].iv,
-    s1: keysExchange[0].salt,
-    s2: keysExchange[1].salt,
-    s3: keysExchange[2].salt,
-    d1: keysExchange[0].encryptedKey,
-    d2: keysExchange[1].encryptedKey,
-    d3: keysExchange[2].encryptedKey,
-  }
-
-  // If we want a specific key, add its signature to the payload
-  if (keyToGet !== undefined) {
-    const ivd = utils.random(16)
-    const saltd = utils.random(16)
-    const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
-    const AES = new AesUtil(256, 1000)
-    const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
-    cipherKeyRequest = {
-      ...cipherKeyRequest,
-      ih: ivd,
-      sh: saltd,
-      dh: encd,
+    let cipherKeyRequest: CipherKeyRequest = {
+      i1: keysExchange[0].iv,
+      i2: keysExchange[1].iv,
+      i3: keysExchange[2].iv,
+      s1: keysExchange[0].salt,
+      s2: keysExchange[1].salt,
+      s3: keysExchange[2].salt,
+      d1: keysExchange[0].encryptedKey,
+      d2: keysExchange[1].encryptedKey,
+      d3: keysExchange[2].encryptedKey,
     }
+
+    // If we want a specific key, add its signature to the payload
+    if (keyToGet !== undefined) {
+      const ivd = utils.random(16)
+      const saltd = utils.random(16)
+      const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
+      const AES = new AesUtil(256, 1000)
+      const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
+      cipherKeyRequest = {
+        ...cipherKeyRequest,
+        ih: ivd,
+        sh: saltd,
+        dh: encd,
+      }
+    }
+
+    reporter({ state: State.NOTIFICATION_SENT })
+
+    // Ask the phone for some more random data
+    const cipherKeyResponse = await lanUtil.sendRequest({
+      ip,
+      port,
+      type: Request.CIPHER_KEY,
+      data: cipherKeyRequest,
+      signal,
+    })
+
+    const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
+
+    // To ensure forward secrecy, we share a new secret
+    const newShare = {
+      id: axlsign.generateKeyPair(utils.random(32)),
+      k1: axlsign.generateKeyPair(utils.random(32)),
+      k2: axlsign.generateKeyPair(utils.random(32)),
+      k3: axlsign.generateKeyPair(utils.random(32)),
+      k4: axlsign.generateKeyPair(utils.random(32)),
+    }
+
+    // Send the new secret to the phone
+    const newKey = await lanUtil.sendRequest({
+      ip,
+      port,
+      type: Request.END,
+      data: {
+        id: newShare.id.public,
+        k1: newShare.k1.public,
+        k2: newShare.k2.public,
+        k3: newShare.k3.public,
+        k4: newShare.k4.public,
+      },
+      signal,
+    })
+
+    // Create a new certificate with the new secret
+    const { acknowledgement, newCertificate } = createNewCertificate(
+      newShare,
+      newKey,
+      certificate
+    )
+    certificate = newCertificate
+
+    // Send an acknowledgement to the phone, to close the exchange
+    await lanUtil.sendRequest({
+      ip,
+      port,
+      type: Request.END_OK,
+      data: acknowledgement,
+      signal,
+    })
+    return { keys, newCertificate }
+  } finally {
+    // Get the keys for the next exchange
+    networkEntry[1].keys = await lanUtil.sendRequest({
+      ip,
+      port,
+      type: Request.PING,
+      data: { t: certificate.id },
+    })
   }
-
-  reporter({ state: State.NOTIFICATION_SENT })
-
-  // Ask the phone for some more random data
-  const cipherKeyResponse = await lanUtil.sendRequest({
-    ip,
-    port,
-    type: Request.CIPHER_KEY,
-    data: cipherKeyRequest,
-    signal,
-  })
-
-  const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
-
-  // To ensure forward secrecy, we share a new secret
-  const newShare = {
-    id: axlsign.generateKeyPair(utils.random(32)),
-    k1: axlsign.generateKeyPair(utils.random(32)),
-    k2: axlsign.generateKeyPair(utils.random(32)),
-    k3: axlsign.generateKeyPair(utils.random(32)),
-    k4: axlsign.generateKeyPair(utils.random(32)),
-  }
-
-  // Send the new secret to the phone
-  const newKey = await lanUtil.sendRequest({
-    ip,
-    port,
-    type: Request.END,
-    data: {
-      id: newShare.id.public,
-      k1: newShare.k1.public,
-      k2: newShare.k2.public,
-      k3: newShare.k3.public,
-      k4: newShare.k4.public,
-    },
-    signal,
-  })
-
-  // Create a new certificate with the new secret
-  const { acknowledgement, newCertificate } = createNewCertificate(
-    newShare,
-    newKey,
-    certificate
-  )
-
-  // Send an acknowledgement to the phone, to close the exchange
-  await lanUtil.sendRequest({
-    ip,
-    port,
-    type: Request.END_OK,
-    data: acknowledgement,
-    signal,
-  })
-
-  // Send a ping to get the new keys
-  networkPhone[1].keys = await lanUtil.sendRequest({
-    ip,
-    port,
-    type: Request.PING,
-    data: { t: newCertificate.id },
-  })
-
-  return { keys, newCertificate }
 }
 
 /** Does some encryption stuff, it's still unclear at this time of refactoring. */
