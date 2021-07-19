@@ -100,9 +100,9 @@ const handleResponse = async (
   await Promise.allSettled(
     devicesFound.map(async ({ ip, port }) => {
       // If the device is not yet known, try to associate it with its certificate
-      if (!context.devices.has(ip)) {
+      if (!context.network.has(ip)) {
         const phone = await pingNewPhone(ip, port)
-        context.devices.set(ip, { port, phone })
+        context.network.set(ip, { port, phone })
         log(
           'New device found at %o (known as %o)',
           ip,
@@ -111,7 +111,7 @@ const handleResponse = async (
       }
 
       // Update the `lastSeen` property of the phone
-      const phone = context.devices.get(ip)?.phone
+      const phone = context.network.get(ip)?.phone
       if (phone !== undefined) {
         phone.update(($phone) => {
           $phone.lastSeen = Date.now()

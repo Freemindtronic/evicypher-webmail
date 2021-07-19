@@ -10,7 +10,7 @@ import { startZeroconfService } from './zeroconf-service'
 
 /** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
-  devices: new Map(),
+  network: new Map(),
   scanFaster: new Observable<boolean>(false),
 }
 

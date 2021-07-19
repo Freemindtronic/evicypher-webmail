@@ -35,7 +35,7 @@ export const pair: BackgroundTask<string, string, boolean> = async function* (
   const phone = writable($phone)
 
   // Register the new phone in the background context
-  const backgroundPhone = context.devices.get(device.IP)
+  const backgroundPhone = context.network.get(device.IP)
   if (backgroundPhone) backgroundPhone.phone = phone
 
   phones.update(($phones) => [...$phones, phone])

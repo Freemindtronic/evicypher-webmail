@@ -105,7 +105,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   } = {}
 ): Promise<WebAnswer<ResponseMap[T]> | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
-  const devicesFound = context.devices
+  const devicesFound = context.network
 
   report({ state: State.SCANNING, found: devicesFound.size })
 

@@ -131,7 +131,7 @@ export type TaskMap = {
 /** Background context shared between background tasks. */
 export interface TaskContext {
   /** List of devices found by the Zeroconf service. */
-  devices: Map<
+  network: Map<
     string,
     {
       port: number
