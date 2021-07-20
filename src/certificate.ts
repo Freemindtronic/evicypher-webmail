@@ -1,4 +1,4 @@
-import { decode, encode } from '@borderless/base64'
+import { fromUint8Array, toUint8Array } from 'js-base64'
 
 const KEY_SIZE = 16
 
@@ -56,11 +56,11 @@ export class Certificate {
     jamming,
   }: ReturnType<Certificate['toJSON']>): Certificate {
     return new Certificate({
-      id: decode(id),
-      fKey: decode(fKey),
-      sKey: decode(sKey),
-      tKey: decode(tKey),
-      jamming: decode(jamming),
+      id: toUint8Array(id),
+      fKey: toUint8Array(fKey),
+      sKey: toUint8Array(sKey),
+      tKey: toUint8Array(tKey),
+      jamming: toUint8Array(jamming),
     })
   }
 
@@ -73,11 +73,11 @@ export class Certificate {
     jamming: string
   } {
     return {
-      id: encode(this.id),
-      fKey: encode(this.fKey),
-      sKey: encode(this.sKey),
-      tKey: encode(this.tKey),
-      jamming: encode(this.jamming),
+      id: fromUint8Array(this.id),
+      fKey: fromUint8Array(this.fKey),
+      sKey: fromUint8Array(this.sKey),
+      tKey: fromUint8Array(this.tKey),
+      jamming: fromUint8Array(this.jamming),
     }
   }
 }

@@ -277,13 +277,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@borderless/base64@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@borderless/base64@npm:1.0.1"
-  checksum: a66a01ce47067d84418a0c55aba2d41cef9862da1a71cd200a1498e75c55abae5cfda5b11b0634727185853973146a699069329c56baaa684b56303b1095b3bc
-  languageName: node
-  linkType: hard
-
 "@commitlint/cli@npm:^12.1.4":
   version: 12.1.4
   resolution: "@commitlint/cli@npm:12.1.4"
@@ -1598,7 +1591,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "browser-extension@workspace:."
   dependencies:
-    "@borderless/base64": ^1.0.1
     "@commitlint/cli": ^12.1.4
     "@commitlint/config-conventional": ^12.1.4
     "@rollup/plugin-commonjs": ^19.0.1
@@ -1630,6 +1622,7 @@ __metadata:
     eslint-plugin-svelte3: ^3.2.0
     eslint-plugin-unicorn: ^34.0.1
     husky: ^7.0.1
+    js-base64: ^3.6.1
     lint-staged: ^11.0.1
     postcss: ^8.3.5
     prettier: ^2.3.2
@@ -4921,6 +4914,13 @@ __metadata:
     merge-stream: ^2.0.0
     supports-color: ^7.0.0
   checksum: f9afa3b88e3f12027901e4964ba3ff048285b5783b5225cab28fac25b4058cea8ad54001e9a1577ee2bed125fac3ccf5c80dc507b120300cc1bbcb368796533e
+  languageName: node
+  linkType: hard
+
+"js-base64@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "js-base64@npm:3.6.1"
+  checksum: 6e61ef7318836aec3e2f9f28b0d8332600efe2eb6360c9e857caf946640e115ba40f1562cb53999c80ffecdc7878ea6e1506554441891329aa69e5fc42358cb9
   languageName: node
   linkType: hard
 

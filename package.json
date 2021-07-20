@@ -14,7 +14,6 @@
     }
   ],
   "dependencies": {
-    "@borderless/base64": "^1.0.1",
     "@rollup/plugin-commonjs": "^19.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.2",
@@ -24,6 +23,7 @@
     "base64-arraybuffer": "^0.2.0",
     "crypto-js": "^4.0.0",
     "debug": "^4.3.2",
+    "js-base64": "^3.6.1",
     "postcss": "^8.3.5",
     "qrcode": "^1.4.4",
     "rollup": "^2.53.2",
