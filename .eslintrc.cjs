@@ -20,6 +20,7 @@ module.exports = {
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
+    camelcase: ['error', { properties: 'always' }],
     complexity: ['error', 6],
     'no-await-in-loop': 'off',
     'unicorn/prevent-abbreviations': 'off',
