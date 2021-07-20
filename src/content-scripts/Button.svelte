@@ -116,18 +116,11 @@
 
     :global(svg) {
       vertical-align: bottom;
-      // This is a Gmail color, using https://svelte.dev/docs#style_props
-      // would be nice in the future if more webmails are supported
-      fill: #4a4a4a;
     }
 
     &:hover,
     &:focus {
       box-shadow: 0 2px 6px rgba(0, 8, 16, 0.7);
-
-      :global(svg) {
-        fill: #1f1f1f;
-      }
     }
 
     &:active {
