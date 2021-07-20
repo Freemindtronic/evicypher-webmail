@@ -147,7 +147,7 @@ const pingNewPhone = async (ip: string, port: number) => {
         data: { t: $phone.certificate.id },
       })
 
-      // The phone answer with a 2xx code, that's the right phone
+      // The phone answered with a 2xx code, that's the right phone
       return { phone, keys }
     } catch {
       // The phone refused the connection, let's try the next certificate
