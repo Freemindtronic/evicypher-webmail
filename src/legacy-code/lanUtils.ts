@@ -1,9 +1,8 @@
 /* eslint-disable unicorn/filename-case */
-import Base64 from 'base64-arraybuffer'
 import type { RequestMap, ResponseMap } from '../background/protocol'
 import { defaultReporter, Reporter, State } from '../report'
-import { b64ToUint8Array } from './utils'
 import type { TaskContext } from 'task'
+import { fromUint8Array, toUint8Array } from 'js-base64'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -165,7 +164,7 @@ function serialize<T>(obj: T): Serialize<T> {
       .filter<[string, Uint8Array]>(
         (value): value is [string, Uint8Array] => value[1] instanceof Uint8Array
       )
-      .map(([key, value]) => [key, Base64.encode(value)])
+      .map(([key, value]) => [key, fromUint8Array(value)])
   ) as Serialize<T>
 }
 
@@ -173,7 +172,7 @@ function unserialize<T>(obj: Serialize<T>): T {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
-      typeof value === 'string' ? b64ToUint8Array(value) : value,
+      typeof value === 'string' ? toUint8Array(value) : value,
     ])
   ) as unknown as T
 }
@@ -215,5 +214,12 @@ export const sendRequest = async <T extends keyof RequestMap>({
   if (response.status >= 300) throw new Error(response.statusText)
 
   const responseData = (await response.json()) as Serialize<ResponseMap[T]>
+
+  // @ts-expect-error For some mysterious reason, there is sometimes an
+  // `n` field in the response, that contains a boolean (meaning "new"
+  // or something), but stored as a string. Since it breaks unserialization
+  // and it is not properly documented (ahah), we remove it.
+  if ('n' in responseData) delete responseData.n
+
   return unserialize(responseData)
 }
