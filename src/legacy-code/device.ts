@@ -1,12 +1,12 @@
-import { Certificate } from 'certificate'
-import * as utils from './utils'
-import { AesUtil } from './AesUtil'
 import axlsign, { KeyPair } from 'axlsign'
-import * as Base64 from 'base64-arraybuffer'
-import { search, sendRequest } from './lanUtils'
+import { Certificate } from 'certificate'
+import { fromUint8Array } from 'js-base64'
+import type { TaskContext } from 'task'
 import { Request } from '../background/protocol'
 import type { Reporter } from '../report'
-import type { TaskContext } from 'task'
+import { AesUtil } from './AesUtil'
+import { search, sendRequest } from './lanUtils'
+import * as utils from './utils'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -45,7 +45,7 @@ export class PairingKey {
       ...enc,
     ])
 
-    this.pairingKey = Base64.encode(cA)
+    this.pairingKey = fromUint8Array(cA)
   }
 
   toString(): string {

@@ -1484,13 +1484,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-arraybuffer@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "base64-arraybuffer@npm:0.2.0"
-  checksum: eaf06558fe9bc250f1c43fcd316e6c726da494e93cc195ff472da61874b75d3bb9e93f3a3d4fd0da13630214eb5a9dbeeec249d085b70d10c8b21990fdae8086
-  languageName: node
-  linkType: hard
-
 "base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
@@ -1606,7 +1599,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^4.28.4
     "@typescript-eslint/parser": ^4.28.4
     axlsign: "git+ssh://git@github.com:Freemindtronic/lib_axlsign"
-    base64-arraybuffer: ^0.2.0
     commitizen: ^4.2.4
     crypto-js: ^4.0.0
     cypress: ^8.0.0

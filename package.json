@@ -20,7 +20,6 @@
     "@rollup/plugin-typescript": "^8.2.3",
     "@tsconfig/svelte": "^2.0.1",
     "axlsign": "git+ssh://git@github.com:Freemindtronic/lib_axlsign",
-    "base64-arraybuffer": "^0.2.0",
     "crypto-js": "^4.0.0",
     "debug": "^4.3.2",
     "js-base64": "^3.6.1",

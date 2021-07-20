@@ -1,9 +1,4 @@
-import Base64 from 'base64-arraybuffer'
 import CryptoJS from 'crypto-js'
-
-export function b64ToUint8Array(data: string): Uint8Array {
-  return new Uint8Array(Base64.decode(data))
-}
 
 /**
  * @remarks
@@ -103,15 +98,4 @@ export function utf8ToUint8Array(str: string): Uint8Array {
 
 export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
   return new Uint8Array([...a, ...b])
-}
-
-export function webSafe64(base64: string): string {
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
-export function normal64(base64: string): string {
-  return (
-    base64.replace(/-/g, '+').replace(/_/g, '/') +
-    '=='.slice(0, Math.max(0, (3 * base64.length) % 4))
-  )
 }
