@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/filename-case */
-import Base64 from 'base64-arraybuffer'
+import { toUint8Array, fromUint8Array } from 'js-base64'
 
 import {
   AesUtil,
@@ -47,11 +47,11 @@ export class EviCrypt {
 
     const cA = new Uint8Array([...ID_MESSAGE, ...keyID, ...jam, ...enc])
 
-    return utils.webSafe64(Base64.encode(cA))
+    return fromUint8Array(cA, true)
   }
 
   decryptText(cipherText: string): string {
-    const dataText = getArray(cipherText)
+    const dataText = toUint8Array(cipherText)
 
     let offset = 24
 
@@ -71,9 +71,7 @@ export class EviCrypt {
     return utils.uint8ArrayToUTF8(dec)
   }
 }
-/** @returns The public identifier of the key used to encrypt `str`. */
-export const keyUsed = (str: string): Uint8Array => getArray(str).slice(4, 56)
 
-function getArray(base64: string) {
-  return utils.b64ToUint8Array(utils.normal64(base64))
-}
+/** @returns The public identifier of the key used to encrypt `str` */
+export const keyUsed = (str: string): Uint8Array =>
+  toUint8Array(str).slice(4, 56)
