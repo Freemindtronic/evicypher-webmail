@@ -17,14 +17,14 @@ import type { BackgroundTask } from 'task'
  * @remarks
  *   `BackgroundTask<string, string, boolean>` means that the task sends strings
  *   to the foreground (the QR code data and the UID), receives strings from the
- *   foreground (the name of the phone), and returns a boolean at the end
- *   (whether the pairing was successful).
+ *   foreground (the name of the phone), and returns true at the end (if an
+ *   error is encountered, an exception is thrown).
  * @param context - Background context
  * @param reporter - A callback called at every step of the task
  * @param signal - An abort signal
  * @returns Whether the pairing was successful
  */
-export const pair: BackgroundTask<string, string, boolean> = async function* (
+export const pair: BackgroundTask<string, string, true> = async function* (
   context,
   reporter,
   signal

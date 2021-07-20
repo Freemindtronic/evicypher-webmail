@@ -25,9 +25,9 @@
 
 {#if pairingInProgress}
   <Pairing
-    on:success={() => (pairingInProgress = false)}
+    on:success={() => ((phoneName = ''), (pairingInProgress = false))}
     on:cancel={() => (pairingInProgress = false)}
-    bind:phoneName
+    {phoneName}
   />
 {:else}
   <section>

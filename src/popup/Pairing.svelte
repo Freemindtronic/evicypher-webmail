@@ -1,3 +1,5 @@
+<svelte:options immutable />
+
 <script lang="ts">
   import type { pair as pairTask } from 'background/tasks/pair'
   import { toCanvas } from 'qrcode'
@@ -55,7 +57,6 @@
 
   /** Cancel the pairing process. */
   const cancelPairing = () => {
-    phoneName = ''
     controller.abort()
     dispatch('cancel')
   }
@@ -71,15 +72,18 @@
 
   /** Start the pairing process when the component is loaded. */
   onMount(async () => {
-    // Wait for the background task to finish
-    const success = await startBackgroundTask(Task.PAIR, pair, {
-      reporter,
-      signal: controller.signal,
-    })
+    try {
+      // Wait for the background task to finish
+      await startBackgroundTask(Task.PAIR, pair, {
+        reporter,
+        signal: controller.signal,
+      })
 
-    // The pairing process completed successfully
-    phoneName = ''
-    dispatch('success')
+      // The pairing process completed successfully
+      dispatch('success')
+    } catch (error) {
+      console.error(error)
+    }
   })
 </script>
 
@@ -87,7 +91,7 @@
   Pairing with {phoneName}
   <button class="button" on:click={() => cancelPairing()}>Cancel</button>
 </h2>
-<p class="p-canvas">
+<p class="center">
   <canvas bind:this={qr} width="147" height="147" />
 </p>
 <p>
@@ -115,7 +119,7 @@
     }
   }
 
-  .p-canvas {
+  .center {
     text-align: center;
   }
 
