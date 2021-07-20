@@ -5,13 +5,31 @@
  * - https://github.com/Freemindtronic/Evitoken_Android/blob/828431a90fd6449a769849ad537d3d04d1fedca7/app/src/main/java/com/fulltoken/NetworkManage/dialog/HttpServerPairing.java
  */
 export enum Request {
+  /**
+   * Not a ping at all. The request contains a certificate hash, and the
+   * response, the keys to use for the rest of the exchange. It's the first step
+   * of a handshake.
+   */
   PING = '/P',
+  /** A request to get encryption keys. */
   CIPHER_KEY = '/CK',
+  /** End of an exhange, producing a new certificate. */
   END = '/f2',
+  /** Acknowledgement of receipt of the `END` request. */
   END_OK = '/o',
+  /** The first request of the pairing process. */
   PAIRING_START = '/t',
+  /** A key exhange during the pairing process. */
   PAIRING_SALT = '/c',
+  /**
+   * The final part of the pairing process, when the response is received, the
+   * device have to be saved in persistent storage.
+   */
   PAIRING_NAME = '/n',
+  /**
+   * Implemented because the API is flawed: requests sent not matching a given
+   * pattern are responded with a 202 Accepted and an empty body.
+   */
   IS_ALIVE = '/is-alive',
 }
 

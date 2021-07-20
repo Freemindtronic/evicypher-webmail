@@ -3,10 +3,7 @@ import { random } from './legacy-code/utils'
 
 const KEY_SIZE = 16
 
-/**
- * An implementation of CertificateData, with methods to produce new
- * certificates and to serialize.
- */
+/** A class to produce new certificates and to serialize them. */
 export class Certificate {
   readonly id: Uint8Array
   readonly fKey: Uint8Array
@@ -68,7 +65,7 @@ export class Certificate {
     })
   }
 
-  /** Serializes the certificate. */
+  /** Produces a JSON-serializable object. */
   toJSON(): {
     id: string
     fKey: string

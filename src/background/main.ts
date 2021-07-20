@@ -56,7 +56,10 @@ const startTask = async <TSent, TReceived, TReturn>(
   if (result.done) port.postMessage({ type: 'result', result: result.value })
 }
 
-/** Runs one step of the generator, and returns the result. */
+/**
+ * Runs one step of the generator (i.e. the code of background task between two
+ * `yield`s), and returns the result.
+ */
 const nextStep = async <TSent, TReceived, TReturn>(
   generator: AsyncGenerator<TSent, TReturn, TReceived>,
   result: IteratorResult<TSent, TReturn>,
@@ -110,12 +113,14 @@ browser.runtime.onConnect.addListener(async (port) => {
   const log = debug(`task:${port.name}:background`)
 
   try {
+    // Run the task until completion
     await startTask(
       task as BackgroundTask<unknown, unknown, unknown>,
       port,
       log
     )
   } catch (error: unknown) {
+    // If an error is thrown, send it to the foreground
     log('%o', error)
     if (error instanceof Error)
       port.postMessage({ type: 'error', error: error.message })

@@ -20,6 +20,7 @@ const Selector = {
   TOOLBAR: '.btx',
 }
 
+/** A flag to mark already processed (having buttons added) HTML elements. */
 const FLAG = 'freemindtronicButtonAdded'
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
@@ -119,7 +120,12 @@ const handleToolbar = (toolbar: HTMLElement) => {
   })
 }
 
-/** Adds all the listeners necessary to make the button interactive. */
+/**
+ * Adds all the listeners necessary to make the button interactive.
+ *
+ * @remarks
+ *   This function ensures that the state of the button is always consistent.
+ */
 const addClickListener = (
   button: EncryptButton | DecryptButton,
   listener: (

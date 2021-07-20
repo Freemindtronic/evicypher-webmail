@@ -10,6 +10,7 @@
   export let state: ButtonState = ButtonState.IDLE
 </script>
 
+<!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
 <Button
   bind:tooltip
   bind:state

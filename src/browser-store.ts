@@ -132,7 +132,7 @@ export class BrowserStore<T> implements Writable<T> {
   }
 }
 
-/** @returns Whether the storage given matches the name given. */
+/** @returns Whether the storage given matches the name given */
 const sameStorage = (storageName: string, storage: Storage.StorageArea) =>
   (storageName === 'sync' && storage === browser.storage.sync) ||
   (storageName === 'local' && storage === browser.storage.local) ||

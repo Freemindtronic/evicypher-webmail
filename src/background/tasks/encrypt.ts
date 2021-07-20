@@ -5,7 +5,18 @@ import { favoritePhone } from 'phones'
 import { get } from 'svelte/store'
 import type { BackgroundTask } from 'task'
 
-/** Send an encryption request to the phone, return the encrypted text. */
+/**
+ * Sends an encryption request to the phone.
+ *
+ * @remarks
+ *   `BackgroundTask<undefined, string, string>` means that the task sends nothing
+ *   to the foreground, receives strings from the foreground (the string to
+ *   encrypt), and returns a string at the end (the encrypted string).
+ * @param context - Background context
+ * @param reporter - A callback called at every step of the task
+ * @param signal - An abort signal
+ * @returns The encrypted string
+ */
 export const encrypt: BackgroundTask<undefined, string, string> =
   async function* (context, reporter, signal) {
     const str = yield

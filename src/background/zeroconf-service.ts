@@ -37,6 +37,12 @@ export interface ZeroconfResponse {
   }> | null
 }
 
+/**
+ * Starts a persistent scanning service.
+ *
+ * @remarks
+ *   This function returns instantaneously, but the promise returned never resolves.
+ */
 export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
@@ -76,7 +82,7 @@ export const startZeroconfService = async (
   }
 }
 
-/** @returns Whether the Zeroconf service is properly installed. */
+/** @returns Whether the Zeroconf service is properly installed */
 const isZeroconfServiceInstalled = async (): Promise<boolean> => {
   try {
     await browser.runtime.sendNativeMessage(APPLICATION_ID, { cmd: 'Version' })
@@ -86,7 +92,7 @@ const isZeroconfServiceInstalled = async (): Promise<boolean> => {
   }
 }
 
-/** Updates the context with `response`. */
+/** Updates the `context` with the `response`. */
 const handleResponse = async (
   context: TaskContext,
   response: ZeroconfResponse
@@ -101,8 +107,10 @@ const handleResponse = async (
     devicesFound.map(async ({ ip, port }) => {
       // If the device is not yet known, try to associate it with its certificate
       if (!context.network.has(ip)) {
+        // Send a "ping" to get the name of the phone
         const newPhone = await pingNewPhone(ip, port)
 
+        // If it's not a paired phone, only register its port
         if (newPhone === undefined) {
           context.network.set(ip, { port })
           return
@@ -137,6 +145,8 @@ const handleResponse = async (
 
 /** Tries to ping a phone to know if it's already saved. */
 const pingNewPhone = async (ip: string, port: number) => {
+  // Try all known phones, even those that have already been found
+  // This could be improved by filtering out those that have already been found
   for (const phone of get(phones)) {
     const $phone = get(phone)
     try {

@@ -17,6 +17,7 @@ export class Phone {
   /** Public certificate for the device. */
   certificate: Certificate
 
+  /** Initializes a new phone with the arguments given. */
   constructor(
     id: number,
     name: string,
@@ -44,6 +45,7 @@ export class Phone {
     return new Phone(id, name, Certificate.fromJSON(certificate), lastSeen)
   }
 
+  /** Produces a JSON-serializable object. */
   toJSON(): Record<string, unknown> {
     return {
       id: this.id,

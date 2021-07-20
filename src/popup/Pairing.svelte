@@ -78,10 +78,7 @@
     })
 
     // The pairing process completed successfully
-    if (success) console.log('Pairing successful')
-
     phoneName = ''
-
     dispatch('success')
   })
 </script>

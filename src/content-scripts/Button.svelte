@@ -15,9 +15,13 @@
   /** Tootlip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
 
-  /** Tooltip */
+  /** Default icon, when the button is in idle state. */
   export let IdleIcon: new (...args: never[]) => SvelteComponent
+
+  /** Default tooltip content, when the button is in idle state. */
   export let idleTooltip: string
+
+  /** Tooltip content when the task completed successfully. */
   export let doneTooltip: string
 
   let button: HTMLButtonElement
@@ -38,6 +42,7 @@
   }
 
   onMount(() => {
+    // Create a new tippy instance when the component is mounted
     tippyInstance = tippy(button, {
       content: tippyElement,
       hideOnClick: false,
@@ -48,7 +53,7 @@
   })
 
   afterUpdate(() => {
-    // Recompute the location of the tooltip
+    // Recompute the location of the tooltip after each update
     tippyInstance?.setContent(tippyElement)
     if (state !== ButtonState.IDLE) tippyInstance?.show()
   })
@@ -104,12 +109,15 @@
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 8, 16, 0.7);
 
+    // Enable animations if the user have not disabled them
     @media (prefers-reduced-motion: no-preference) {
       transition: box-shadow 0.1s;
     }
 
     :global(svg) {
       vertical-align: bottom;
+      // This is a Gmail color, using https://svelte.dev/docs#style_props
+      // would be nice in the future if more webmails are supported
       fill: #4a4a4a;
     }
 
@@ -128,6 +136,8 @@
     }
   }
 
+  // Make the tooltip a flex container, to allow the Cancel button
+  // to be in the right-hand side of the tooltip
   .tooltip {
     display: flex;
     gap: 0.5em;

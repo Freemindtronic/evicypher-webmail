@@ -7,9 +7,11 @@
   import { _ } from 'svelte-i18n'
   import { readable } from 'svelte/store'
 
+  /** The phone to display. */
   export let phone: Writable<Phone>
 
-  export const time = readable(Date.now(), (set) => {
+  /** A store containing the current time, updated every 30 seconds. */
+  const time = readable(Date.now(), (set) => {
     const interval = setInterval(() => {
       set(Date.now())
     }, 30_000)

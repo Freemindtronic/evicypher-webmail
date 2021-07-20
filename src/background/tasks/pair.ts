@@ -11,7 +11,19 @@ import {
 import { get, writable } from 'svelte/store'
 import type { BackgroundTask } from 'task'
 
-/** Pairs the extension with a new phone. */
+/**
+ * Pairs the extension with a new phone.
+ *
+ * @remarks
+ *   `BackgroundTask<string, string, boolean>` means that the task sends strings
+ *   to the foreground (the QR code data and the UID), receives strings from the
+ *   foreground (the name of the phone), and returns a boolean at the end
+ *   (whether the pairing was successful).
+ * @param context - Background context
+ * @param reporter - A callback called at every step of the task
+ * @param signal - An abort signal
+ * @returns Whether the pairing was successful
+ */
 export const pair: BackgroundTask<string, string, boolean> = async function* (
   context,
   reporter,
@@ -50,6 +62,7 @@ export const pair: BackgroundTask<string, string, boolean> = async function* (
 
   phones.update(($phones) => [...$phones, phone])
 
+  // Mark the phone as favorite if none is defined
   if (get(favoritePhone) === undefined) favoritePhoneId.set($phone.id)
 
   // Pairing successful, send true to the front end
