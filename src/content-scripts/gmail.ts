@@ -44,13 +44,12 @@ const handleMailElement = (mailElement: HTMLElement) => {
     }
   )
 
-  let node = treeWalker.nextNode()
-  while (node) {
+  let node: Node | null
+  while ((node = treeWalker.nextNode())) {
     // Add a "Decrypt" button next to the node
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
     addDecryptButton(node as Text, encryptedString)
-    node = treeWalker.nextNode()
   }
 }
 
