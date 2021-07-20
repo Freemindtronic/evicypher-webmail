@@ -46,7 +46,7 @@ const plugins = [
 export default [
   {
     input: 'src/popup/main.ts',
-    external: ['crypto'],
+    external: ['crypto'], // `crypto` is required by the popup because of phones->certificate->utils
     output: {
       sourcemap: !production,
       format: 'iife',
@@ -61,9 +61,6 @@ export default [
       css({ output: 'popup.css' }),
       ...plugins,
     ],
-    watch: {
-      clearScreen: false,
-    },
   },
   {
     input: 'src/background/main.ts',
@@ -76,19 +73,14 @@ export default [
       globals: { crypto: 'crypto' },
     },
     plugins,
-    watch: {
-      clearScreen: false,
-    },
   },
   {
     input: 'src/content-scripts/gmail.ts',
-    external: ['crypto'],
     output: {
       sourcemap: !production,
       format: 'iife',
       name: 'app',
       file: 'extension/build/content-script-gmail.js',
-      globals: { crypto: 'crypto' },
     },
     plugins: [
       svelte({
@@ -97,8 +89,5 @@ export default [
       }),
       ...plugins,
     ],
-    watch: {
-      clearScreen: false,
-    },
   },
 ]
