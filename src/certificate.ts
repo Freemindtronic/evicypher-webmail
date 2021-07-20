@@ -1,5 +1,4 @@
 import { decode, encode } from '@borderless/base64'
-import { random } from './legacy-code/utils'
 
 const KEY_SIZE = 16
 
@@ -40,11 +39,11 @@ export class Certificate {
   /** Produces a new certificate, with random keys. */
   static generate(): Certificate {
     return new Certificate({
-      id: random(KEY_SIZE),
-      fKey: random(KEY_SIZE),
-      sKey: random(KEY_SIZE),
-      tKey: random(KEY_SIZE),
-      jamming: random(KEY_SIZE),
+      id: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      fKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      sKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      tKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      jamming: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
     })
   }
 
