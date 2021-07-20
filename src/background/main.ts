@@ -3,10 +3,10 @@ import { Observable } from 'observable'
 import type { Report } from 'report'
 import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
+import { startZeroconfService } from './services/zeroconf'
 import { decrypt } from './tasks/decrypt'
 import { encrypt } from './tasks/encrypt'
 import { pair } from './tasks/pair'
-import { startZeroconfService } from './zeroconf-service'
 
 /** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
