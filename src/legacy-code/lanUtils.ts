@@ -1,8 +1,8 @@
 /* eslint-disable unicorn/filename-case */
-import type { RequestMap, ResponseMap } from '../background/protocol'
-import { defaultReporter, Reporter, State } from '../report'
-import type { TaskContext } from 'task'
 import { fromUint8Array, toUint8Array } from 'js-base64'
+import type { TaskContext } from 'task'
+import { Request, RequestMap, ResponseMap } from '../background/protocol'
+import { defaultReporter, Reporter, State } from '../report'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -219,7 +219,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // `n` field in the response, that contains a boolean (meaning "new"
   // or something), but stored as a string. Since it breaks unserialization
   // and it is not properly documented (ahah), we remove it.
-  if ('n' in responseData) delete responseData.n
+  if (type !== Request.PAIRING_SALT) delete responseData.n
 
   return unserialize(responseData)
 }
