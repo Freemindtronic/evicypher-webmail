@@ -51,8 +51,8 @@ The extension is fully translatable thanks to [svelte-i18n](https://github.com/k
 ## Contributing
 
 1. Install [Volta](https://volta.sh/): `curl https://get.volta.sh | bash`;
-2. Install dependencies: `yarn install`;
-3. Clone the repository.
+2. Clone the repository;
+3. Install dependencies: `yarn install`.
 
 ### How to build
 
