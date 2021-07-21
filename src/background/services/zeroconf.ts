@@ -60,7 +60,7 @@ export const startZeroconfService = async (
       type: '_evitoken._tcp.',
     })) as ZeroconfResponse | undefined
 
-    log('Scan results: %o', response)
+    log('Scan results: %o', response?.result)
 
     if (response) await handleResponse(context, response)
 
@@ -155,6 +155,7 @@ const pingNewPhone = async (ip: string, port: number) => {
         port,
         type: Request.PING,
         data: { t: $phone.certificate.id },
+        timeout: 2000,
       })
 
       // The phone answered with a 2xx code, that's the right phone
