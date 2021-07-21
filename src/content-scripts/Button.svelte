@@ -5,6 +5,8 @@
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
   import { ButtonState } from './encryption'
+  import DoneIcon from './assets/done.svg'
+  import FailedIcon from './assets/failed.svg'
 
   /** Tooltip content. */
   export let tooltip: string | undefined = undefined
@@ -75,9 +77,9 @@
       height="16"
     />
   {:else if state === ButtonState.DONE}
-    ✔
+    <DoneIcon width="16" height="16" />
   {:else if state === ButtonState.FAILED}
-    ❌
+    <FailedIcon width="16" height="16" />
   {/if}
 </button>
 
@@ -114,7 +116,8 @@
       transition: box-shadow 0.1s;
     }
 
-    :global(svg) {
+    :global(svg),
+    :global(img) {
       vertical-align: bottom;
     }
 
