@@ -13,12 +13,12 @@ export function random(size: number): Uint8Array {
 
 export function sha256(data: Uint8Array): Uint8Array {
   // eslint-disable-next-line new-cap
-  return wordArrayToUint8Array(CryptoJS.SHA256(uint8ArrayToString(data)))
+  return wordArrayToUint8Array(CryptoJS.SHA256(String.fromCharCode(...data)))
 }
 
 export function sha512(data: Uint8Array): Uint8Array {
   // eslint-disable-next-line new-cap
-  return wordArrayToUint8Array(CryptoJS.SHA512(uint8ArrayToString(data)))
+  return wordArrayToUint8Array(CryptoJS.SHA512(String.fromCharCode(...data)))
 }
 
 export function uint8ArrayToWordArray(ba: Uint8Array): CryptoJS.lib.WordArray {
@@ -28,10 +28,6 @@ export function uint8ArrayToWordArray(ba: Uint8Array): CryptoJS.lib.WordArray {
   }
 
   return CryptoJS.lib.WordArray.create(wa, ba.length)
-}
-
-export function uint8ArrayToString(ta: Uint8Array): string {
-  return String.fromCharCode(...ta)
 }
 
 export function wordArrayToUint8Array(

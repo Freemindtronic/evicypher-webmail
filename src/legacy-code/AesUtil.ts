@@ -2,7 +2,6 @@
 import CryptoJS from 'crypto-js'
 import {
   concatUint8Array,
-  uint8ArrayToString,
   uint8ArrayToWordArray,
   wordArrayToUint8Array,
   xor,
@@ -26,7 +25,7 @@ export class AesUtil {
   ): CryptoJS.lib.WordArray {
     // eslint-disable-next-line new-cap
     return CryptoJS.PBKDF2(
-      uint8ArrayToString(passPhrase),
+      String.fromCharCode(...passPhrase),
       uint8ArrayToWordArray(salt),
       { keySize: this.keySize, iterations: this.iterationCount }
     )
