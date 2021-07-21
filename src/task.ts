@@ -136,6 +136,7 @@ export interface TaskContext {
     string,
     {
       port: number
+      lastSeen: number
       phone?: Writable<Phone>
       keys?: PingResponse
     }

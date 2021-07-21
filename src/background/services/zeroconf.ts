@@ -64,6 +64,9 @@ export const startZeroconfService = async (
 
     if (response) await handleResponse(context, response)
 
+    // Prune devices that haven't been seen for a while
+    pruneOldDevices(context)
+
     // Avoid scan spamming
     const duration = performance.now() - start
     if (duration < MINIMUM_COOLDOWN)
@@ -97,8 +100,6 @@ const handleResponse = async (
   context: TaskContext,
   response: ZeroconfResponse
 ): Promise<void> => {
-  const log = debug('zeroconf:handleResponse')
-
   const devicesFound =
     response.result?.map(({ a: ip, port }) => ({ ip, port })) ?? []
 
@@ -106,41 +107,50 @@ const handleResponse = async (
   await Promise.allSettled(
     devicesFound.map(async ({ ip, port }) => {
       // If the device is not yet known, try to associate it with its certificate
-      if (!context.network.has(ip)) {
-        // Send a "ping" to get the name of the phone
-        const newPhone = await pingNewPhone(context, ip, port)
-
-        // If it's not a paired phone, only register its port
-        if (newPhone === undefined) {
-          context.network.set(ip, { port })
-          return
-        }
-
-        context.network.set(ip, {
-          port,
-          phone: newPhone.phone,
-          keys: newPhone.keys,
-        })
-
-        log(
-          'New device found at %o (known as %o)',
-          ip,
-          get(newPhone.phone).name
-        )
-
-        context.newDeviceFound.set()
-      }
+      if (!context.network.has(ip)) await handleNewPhone(context, ip, port)
 
       // Update the `lastSeen` property of the phone
-      const phone = context.network.get(ip)?.phone
-      if (phone !== undefined) {
-        phone.update(($phone) => {
+      const entry = context.network.get(ip)
+      if (!entry) return
+
+      entry.lastSeen = Date.now()
+
+      if (entry.phone !== undefined) {
+        entry.phone.update(($phone) => {
           $phone.lastSeen = Date.now()
           return $phone
         })
       }
     })
   )
+}
+
+/** Handles a phone seen for the first time. */
+const handleNewPhone = async (
+  context: TaskContext,
+  ip: string,
+  port: number
+) => {
+  const log = debug('zeroconf:handleNewPhone')
+  // Send a "ping" to get the name of the phone
+  const newPhone = await pingNewPhone(context, ip, port)
+
+  // If it's not a paired phone, only register its port
+  if (newPhone === undefined) {
+    context.network.set(ip, { port, lastSeen: Date.now() })
+    return
+  }
+
+  context.network.set(ip, {
+    port,
+    lastSeen: Date.now(),
+    phone: newPhone.phone,
+    keys: newPhone.keys,
+  })
+
+  log('New device found at %o (known as %o)', ip, get(newPhone.phone).name)
+
+  context.newDeviceFound.set()
 }
 
 /** Tries to ping a phone to know if it's already saved. */
@@ -168,4 +178,10 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
       // The phone refused the connection, let's try the next certificate
     }
   }
+}
+
+/** Removes devices last seen a long time ago. */
+const pruneOldDevices = (context: TaskContext) => {
+  for (const [ip, { lastSeen }] of context.network.entries())
+    if (Date.now() > lastSeen + 60 * 60 * 1000) context.network.delete(ip)
 }
