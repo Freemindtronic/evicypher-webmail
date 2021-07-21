@@ -16,8 +16,20 @@ export function sha256(data: Uint8Array): Uint8Array {
   return wordArrayToUint8Array(CryptoJS.SHA256(String.fromCharCode(...data)))
 }
 
-export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> =>
-  new Uint8Array(await crypto.subtle.digest('SHA-256', data))
+export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> => {
+  // Because the previous developers had no idea that one cannot convert a
+  // `Uint8Array` to a string without messing with encodings, we now need
+  // this stupid workaround:
+  data = new TextEncoder().encode(String.fromCharCode(...data))
+  // For instance, 200 is the ASCII code for È, thus `String.fromCharCode(200)`
+  // produces `"È"`. However, JS strings are not ASCII but UCS-2.
+  // (see https://mathiasbynens.be/notes/javascript-encoding)
+  // When we convert the string back to a `Uint8Array`, we get the UTF-8
+  // sequence for È: `[195, 136]`; therefore `[200]` becomes `[195, 136]`.
+  // Values under 127 are encoded as a single byte, so they stay unchanged.
+
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', data))
+}
 
 export function sha512(data: Uint8Array): Uint8Array {
   // eslint-disable-next-line new-cap
