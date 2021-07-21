@@ -16,6 +16,9 @@ export function sha256(data: Uint8Array): Uint8Array {
   return wordArrayToUint8Array(CryptoJS.SHA256(String.fromCharCode(...data)))
 }
 
+export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> =>
+  new Uint8Array(await crypto.subtle.digest('SHA-256', data))
+
 export function sha512(data: Uint8Array): Uint8Array {
   // eslint-disable-next-line new-cap
   return wordArrayToUint8Array(CryptoJS.SHA512(String.fromCharCode(...data)))
