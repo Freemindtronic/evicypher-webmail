@@ -16,8 +16,6 @@ import {
 /** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {
   MAIL_CONTENT: '.a3s.aiL',
-  PLACEHOLDER: '.adf.ads, .ii.gt.adO',
-  MAIL_THREAD: '.nH.bh',
   TOOLBAR: '.btx',
 }
 
@@ -201,26 +199,18 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
  * notifications of elements added or removed from the page.
  */
 const handleMutation = (mutation: MutationRecord) => {
-  const target = mutation.target as HTMLElement
-
-  // The user opens a mail
-  if (target.matches(Selector.MAIL_CONTENT)) {
-    handleMailElement(target)
-  }
-
-  // The user opens a thread or clicks on a "small" mail item
-  else if (
-    target.matches(Selector.MAIL_THREAD) ||
-    (mutation.previousSibling as HTMLElement | null)?.matches(
-      Selector.PLACEHOLDER
-    )
-  ) {
-    const mailElement = target.querySelector<HTMLElement>(Selector.MAIL_CONTENT)
-    if (mailElement) handleMailElement(mailElement)
+  // A mail element is added
+  for (const addedNode of mutation.addedNodes as NodeListOf<HTMLElement>) {
+    for (const mailElement of addedNode.querySelectorAll<HTMLElement>(
+      Selector.MAIL_CONTENT
+    )) {
+      handleMailElement(mailElement)
+    }
   }
 
   // The user starts writing a mail
-  else if (target.matches(Selector.TOOLBAR)) {
+  const target = mutation.target as HTMLElement
+  if (target.matches(Selector.TOOLBAR)) {
     handleToolbar(target)
   }
 }
