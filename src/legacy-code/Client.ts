@@ -72,7 +72,7 @@ export const fetchKeys = async (
       port,
       signal,
       type: Request.IS_ALIVE,
-      data: {},
+      data: { oskour: 1 },
     })
 
     // Prepare the three shared secrets for the rest of the exchange

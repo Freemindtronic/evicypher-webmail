@@ -185,8 +185,13 @@ export interface PairingNameResponse {
   h: Uint8Array
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IsAliveRequest {}
+export interface IsAliveRequest {
+  /**
+   * The Android application crashes if the request body is empty, so let's add
+   * a dummy field.
+   */
+  oskour: 1
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IsAliveResponse {}
