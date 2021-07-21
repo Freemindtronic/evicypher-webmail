@@ -7,10 +7,10 @@ import type { Reporter } from '../report'
 import { AesUtil } from './AesUtil'
 import { search, sendRequest } from './lanUtils'
 import {
+  asyncSha256,
   concatUint8Array,
   longToByteArray,
   random,
-  sha256,
   uint8ArrayToUTF8,
   uint8ToHex,
   utf8ToUint8Array,
@@ -22,43 +22,72 @@ export class PairingKey {
   readonly port: number
   readonly key: Uint8Array
   readonly salt: Uint8Array
-  readonly AES: AesUtil
   readonly Tkey: Uint8Array
   readonly iv: Uint8Array
   readonly k1: KeyPair
-  readonly pairingKey: string
+  readonly qrData: string
 
-  constructor() {
-    this.port = Math.floor(Math.random() * 61_000) + 1025
-    this.AES = new AesUtil(256, 1000)
-    this.certificate = Certificate.generate()
-    this.k1 = axlsign.generateKeyPair(random(32))
-    this.key = random(16)
-    this.iv = random(16)
-    this.salt = random(16)
-    this.Tkey = sha256(concatUint8Array(this.iv, this.salt))
-
-    const enc = this.AES.encryptCTR(
-      this.iv,
-      this.salt,
-      this.key,
-      this.k1.public
-    )
-
-    const cA = new Uint8Array([
-      ...this.certificate.id,
-      ...longToByteArray(this.port),
-      ...this.iv,
-      ...this.certificate.sKey,
-      ...this.key,
-      ...enc,
-    ])
-
-    this.pairingKey = fromUint8Array(cA)
+  constructor({
+    certificate,
+    port,
+    key,
+    salt,
+    k1,
+    iv,
+    Tkey,
+    qrData,
+  }: {
+    certificate: Certificate
+    port: number
+    key: Uint8Array
+    salt: Uint8Array
+    k1: axlsign.KeyPair
+    iv: Uint8Array
+    Tkey: Uint8Array
+    qrData: string
+  }) {
+    this.certificate = certificate
+    this.port = port
+    this.key = key
+    this.salt = salt
+    this.k1 = k1
+    this.iv = iv
+    this.Tkey = Tkey
+    this.qrData = qrData
   }
 
-  toString(): string {
-    return this.pairingKey
+  static async generate(): Promise<PairingKey> {
+    const port = Math.floor(Math.random() * 61_000) + 1025
+    const certificate = Certificate.generate()
+    const k1 = axlsign.generateKeyPair(random(32))
+    const key = random(16)
+    const iv = random(16)
+    const salt = random(16)
+    const TkeyPromise = asyncSha256(concatUint8Array(iv, salt))
+
+    const enc = new AesUtil(256, 1000).encryptCTR(iv, salt, key, k1.public)
+
+    const qrData = fromUint8Array(
+      new Uint8Array([
+        ...certificate.id,
+        ...longToByteArray(port),
+        ...iv,
+        ...certificate.sKey,
+        ...key,
+        ...enc,
+      ])
+    )
+
+    return new PairingKey({
+      certificate,
+      port,
+      key,
+      salt,
+      k1,
+      iv,
+      Tkey: await TkeyPromise,
+      qrData,
+    })
   }
 }
 
@@ -71,7 +100,7 @@ export async function clientHello(
   const answer = await search(
     context,
     Request.PAIRING_START,
-    { t: sha256(pairingKey.certificate.id) },
+    { t: await asyncSha256(pairingKey.certificate.id) },
     {
       signal,
       portOverride: pairingKey.port,
@@ -86,12 +115,14 @@ export class Device {
   readonly pairingKey: PairingKey
   readonly certificate: Certificate
   readonly port: number
+  AES: AesUtil
 
   constructor(ip: string, pairingKey: PairingKey) {
     this.IP = ip
     this.port = pairingKey.port
     this.pairingKey = pairingKey
     this.certificate = pairingKey.certificate
+    this.AES = new AesUtil(256, 1000)
   }
 
   async clientKeyExchange(): Promise<{
@@ -100,7 +131,7 @@ export class Device {
     ECC: Uint8Array
   }> {
     const ivS = random(16)
-    const enc = this.pairingKey.AES.encryptCTR(
+    const enc = this.AES.encryptCTR(
       ivS,
       this.certificate.id,
       this.pairingKey.key,
@@ -112,29 +143,24 @@ export class Device {
       port: this.port,
       type: Request.PAIRING_SALT,
       data: {
-        t: sha256(xor(this.certificate.id, this.pairingKey.salt)),
+        t: await asyncSha256(xor(this.certificate.id, this.pairingKey.salt)),
         s: enc,
         i: ivS,
       },
     })
 
     const salt = xor(this.pairingKey.salt, data.sk)
-    const ECC = this.pairingKey.AES.decryptCTR(
-      data.ik,
-      salt,
-      this.pairingKey.key,
-      data.ek
-    )
+    const ECC = this.AES.decryptCTR(data.ik, salt, this.pairingKey.key, data.ek)
     const sharedKey = axlsign.sharedKey(this.pairingKey.k1.private, ECC)
 
-    const name = this.pairingKey.AES.decryptCTR(
+    const name = this.AES.decryptCTR(
       data.in,
       data.sn,
       this.pairingKey.Tkey,
       data.n
     )
 
-    const UUID_U8 = this.pairingKey.AES.decryptCTR(
+    const UUID_U8 = this.AES.decryptCTR(
       data.iu,
       data.su,
       this.pairingKey.Tkey,
@@ -151,7 +177,7 @@ export class Device {
   ): Promise<Certificate> {
     const ivS = random(16)
     const saltb = random(16)
-    const enc = this.pairingKey.AES.encryptCTR(
+    const enc = this.AES.encryptCTR(
       ivS,
       saltb,
       this.pairingKey.Tkey,
@@ -164,13 +190,23 @@ export class Device {
       data: { i: ivS, n: enc, s: saltb },
     })
 
+    // Paralellize hashes calculations
+    const hashes = {
+      id: asyncSha256(
+        concatUint8Array(this.pairingKey.Tkey, this.certificate.id)
+      ),
+      sKey: asyncSha256(this.certificate.sKey),
+      tKey: asyncSha256(this.pairingKey.key),
+      jamming: asyncSha256(concatUint8Array(this.pairingKey.iv, saltb)),
+    }
+
     const certData = {
       name,
+      id: await hashes.id,
       fKey: sharedKey,
-      sKey: sha256(this.certificate.sKey),
-      tKey: sha256(this.pairingKey.key),
-      jamming: sha256(concatUint8Array(this.pairingKey.iv, saltb)),
-      id: sha256(concatUint8Array(this.pairingKey.Tkey, this.certificate.id)),
+      sKey: await hashes.sKey,
+      tKey: await hashes.tKey,
+      jamming: await hashes.jamming,
     }
 
     // Return the permanent certificate for this device

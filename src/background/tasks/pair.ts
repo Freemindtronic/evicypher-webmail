@@ -30,8 +30,8 @@ export const pair: BackgroundTask<string, string, true> = async function* (
   signal
 ) {
   // Create a pairing QR code and send it to the front end
-  const pairingKey = new PairingKey()
-  yield pairingKey.toString()
+  const pairingKey = await PairingKey.generate()
+  yield pairingKey.qrData
 
   // Wait for the user to scan the code
   const device = await clientHello(context, pairingKey, signal, reporter)
