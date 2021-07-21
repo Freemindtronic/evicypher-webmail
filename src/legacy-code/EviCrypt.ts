@@ -1,12 +1,17 @@
 /* eslint-disable unicorn/filename-case */
-import { toUint8Array, fromUint8Array } from 'js-base64'
-
+import { fromUint8Array, toUint8Array } from 'js-base64'
 import {
-  AesUtil,
   addJammingSimpleText,
+  AesUtil,
   removeJammingSimpleText,
 } from './AesUtil'
-import * as utils from './utils'
+import {
+  concatUint8Array,
+  random,
+  sha256,
+  uint8ArrayToUTF8,
+  utf8ToUint8Array,
+} from './utils'
 
 const ID_MESSAGE = new Uint8Array([0, 0, 0, 21])
 
@@ -23,27 +28,25 @@ export class EviCrypt {
   }
 
   encryptText(plainText: string): string {
-    const iv = utils.random(16)
-    const salt = utils.random(32)
+    const iv = random(16)
+    const salt = random(32)
     const AES = new AesUtil(256, 1000)
     const enc = AES.encryptCTR(
       iv,
       salt,
       this.keys.high,
-      utils.utf8ToUint8Array(plainText)
+      utf8ToUint8Array(plainText)
     )
 
     const jam = addJammingSimpleText(
-      utils.concatUint8Array(iv, salt),
+      concatUint8Array(iv, salt),
       this.keys.low.slice(20),
       plainText.length
     )
 
-    const keyID = utils
-      .sha256(
-        utils.concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
-      )
-      .slice(0, 20)
+    const keyID = sha256(
+      concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
+    ).slice(0, 20)
 
     const cA = new Uint8Array([...ID_MESSAGE, ...keyID, ...jam, ...enc])
 
@@ -68,7 +71,7 @@ export class EviCrypt {
     const AES = new AesUtil(256, 1000)
     const dec = AES.decryptCTR(iv, salt, this.keys.high, dataText.slice(offset))
 
-    return utils.uint8ArrayToUTF8(dec)
+    return uint8ArrayToUTF8(dec)
   }
 }
 

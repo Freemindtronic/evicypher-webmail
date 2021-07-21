@@ -1,9 +1,11 @@
 /* eslint-disable unicorn/filename-case */
 import CryptoJS from 'crypto-js'
 import {
+  concatUint8Array,
   uint8ArrayToString,
   uint8ArrayToWordArray,
   wordArrayToUint8Array,
+  xor,
 } from './utils'
 
 type BlockCipherMode = typeof CryptoJS.mode.CBC
@@ -102,12 +104,6 @@ export class AesUtil {
   }
 }
 
-export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
-  return a.length > b.length
-    ? b.map((v, i) => v ^ a[i])
-    : a.map((v, i) => v ^ b[i])
-}
-
 // eslint-disable-next-line max-params
 export function removeJamming(
   jam: Uint8Array,
@@ -122,10 +118,6 @@ export function removeJamming(
   final = xor(shiftRight(final, shift), jam)
   const posValue = data[pos] ^ posjam
   return final.slice(0, posValue)
-}
-
-export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
-  return new Uint8Array([...a, ...b])
 }
 
 // eslint-disable-next-line complexity, sonarjs/cognitive-complexity

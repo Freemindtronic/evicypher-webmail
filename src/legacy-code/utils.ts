@@ -73,11 +73,9 @@ export const longToByteArray = (
 ]
 
 export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
-  if (a.length > b.length) {
-    return b.map((v, i) => v ^ a[i])
-  }
-
-  return a.map((v, i) => v ^ b[i])
+  return a.length > b.length
+    ? b.map((v, i) => v ^ a[i])
+    : a.map((v, i) => v ^ b[i])
 }
 
 export function uint8ArrayToUTF8(data: Uint8Array): string {

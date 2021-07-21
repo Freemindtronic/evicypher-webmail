@@ -1,8 +1,10 @@
 /* eslint-disable unicorn/filename-case */
 import axlsign from 'axlsign'
-import { AesUtil, removeJamming } from './AesUtil'
 import { Certificate } from 'certificate'
-import * as lanUtil from './lanUtils'
+import type { Phone } from 'phones'
+import { defaultReporter, Reporter, State } from 'report'
+import { get } from 'svelte/store'
+import type { TaskContext } from 'task'
 import {
   CipherKeyRequest,
   CipherKeyResponse,
@@ -10,11 +12,9 @@ import {
   EndResponse,
   Request,
 } from '../background/protocol'
-import * as utils from './utils'
-import type { TaskContext } from 'task'
-import { defaultReporter, Reporter, State } from 'report'
-import type { Phone } from 'phones'
-import { get } from 'svelte/store'
+import { AesUtil, removeJamming } from './AesUtil'
+import { sendRequest } from './lanUtils'
+import { concatUint8Array, random, sha512, xor } from './utils'
 
 export interface KeyPair {
   high: Uint8Array
@@ -67,7 +67,7 @@ export const fetchKeys = async (
   try {
     // Try to reach the phone
     reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
-    await lanUtil.sendRequest({
+    await sendRequest({
       ip,
       port,
       signal,
@@ -99,9 +99,9 @@ export const fetchKeys = async (
 
     // If we want a specific key, add its signature to the payload
     if (keyToGet !== undefined) {
-      const ivd = utils.random(16)
-      const saltd = utils.random(16)
-      const keyd = utils.xor(keysExchange[1].sharedKey, certificate.sKey)
+      const ivd = random(16)
+      const saltd = random(16)
+      const keyd = xor(keysExchange[1].sharedKey, certificate.sKey)
       const AES = new AesUtil(256, 1000)
       const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
       cipherKeyRequest = {
@@ -115,7 +115,7 @@ export const fetchKeys = async (
     reporter({ state: State.NOTIFICATION_SENT })
 
     // Ask the phone for some more random data
-    const cipherKeyResponse = await lanUtil.sendRequest({
+    const cipherKeyResponse = await sendRequest({
       ip,
       port,
       type: Request.CIPHER_KEY,
@@ -127,15 +127,15 @@ export const fetchKeys = async (
 
     // To ensure forward secrecy, we share a new secret
     const newShare = {
-      id: axlsign.generateKeyPair(utils.random(32)),
-      k1: axlsign.generateKeyPair(utils.random(32)),
-      k2: axlsign.generateKeyPair(utils.random(32)),
-      k3: axlsign.generateKeyPair(utils.random(32)),
-      k4: axlsign.generateKeyPair(utils.random(32)),
+      id: axlsign.generateKeyPair(random(32)),
+      k1: axlsign.generateKeyPair(random(32)),
+      k2: axlsign.generateKeyPair(random(32)),
+      k3: axlsign.generateKeyPair(random(32)),
+      k4: axlsign.generateKeyPair(random(32)),
     }
 
     // Send the new secret to the phone
-    const newKey = await lanUtil.sendRequest({
+    const newKey = await sendRequest({
       ip,
       port,
       type: Request.END,
@@ -158,7 +158,7 @@ export const fetchKeys = async (
     certificate = newCertificate
 
     // Send an acknowledgement to the phone, to close the exchange
-    await lanUtil.sendRequest({
+    await sendRequest({
       ip,
       port,
       type: Request.END_OK,
@@ -168,7 +168,7 @@ export const fetchKeys = async (
     return { keys, newCertificate }
   } finally {
     // Get the keys for the next exchange
-    networkEntry[1].keys = await lanUtil.sendRequest({
+    networkEntry[1].keys = await sendRequest({
       ip,
       port,
       type: Request.PING,
@@ -191,10 +191,10 @@ const encryptKey = (
 } => {
   const AES = new AesUtil(256, 1000)
   const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
-  const k = axlsign.generateKeyPair(utils.random(32))
+  const k = axlsign.generateKeyPair(random(32))
   const sharedKey = axlsign.sharedKey(k.private, ecc)
-  const newIv = utils.random(16)
-  const newSalt = utils.random(16)
+  const newIv = random(16)
+  const newSalt = random(16)
   const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
   return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
 }
@@ -219,9 +219,9 @@ const unjamKeys = (
 ): { high: Uint8Array; low: Uint8Array } => {
   const AES = new AesUtil(256, 1000)
 
-  const highKey = utils.xor(keysExchange[2].sharedKey, certificate.fKey)
-  const highJamming = utils.sha512(
-    utils.concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
+  const highKey = xor(keysExchange[2].sharedKey, certificate.fKey)
+  const highJamming = sha512(
+    concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
   )
   const highJammingPosition =
     certificate.jamming[2] ^ keysExchange[0].sharedKey[2]
@@ -245,9 +245,9 @@ const unjamKeys = (
     highUnjam
   )
 
-  const lowKey = utils.xor(keysExchange[1].sharedKey, certificate.fKey)
-  const lowJamming = utils.sha512(
-    utils.concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
+  const lowKey = xor(keysExchange[1].sharedKey, certificate.fKey)
+  const lowJamming = sha512(
+    concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
   )
   const lowPositionJamming =
     certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
@@ -288,11 +288,11 @@ const createNewCertificate = (
   const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
 
   const newCertificate = new Certificate({
-    id: utils.xor(SKid, certificate.id),
-    fKey: utils.xor(SK1, certificate.fKey),
-    sKey: utils.xor(SK2, certificate.sKey),
-    tKey: utils.xor(SK3, certificate.tKey),
-    jamming: utils.xor(SK4, certificate.jamming),
+    id: xor(SKid, certificate.id),
+    fKey: xor(SK1, certificate.fKey),
+    sKey: xor(SK2, certificate.sKey),
+    tKey: xor(SK3, certificate.tKey),
+    jamming: xor(SK4, certificate.jamming),
   })
 
   const acknowledgement = {
