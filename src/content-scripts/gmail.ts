@@ -201,6 +201,8 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
 const handleMutation = (mutation: MutationRecord) => {
   // A mail element is added
   for (const addedNode of mutation.addedNodes as NodeListOf<HTMLElement>) {
+    if (addedNode.matches(Selector.MAIL_CONTENT)) handleMailElement(addedNode)
+
     for (const mailElement of addedNode.querySelectorAll<HTMLElement>(
       Selector.MAIL_CONTENT
     )) {
