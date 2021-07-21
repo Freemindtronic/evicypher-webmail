@@ -108,7 +108,7 @@ const handleResponse = async (
       // If the device is not yet known, try to associate it with its certificate
       if (!context.network.has(ip)) {
         // Send a "ping" to get the name of the phone
-        const newPhone = await pingNewPhone(ip, port)
+        const newPhone = await pingNewPhone(context, ip, port)
 
         // If it's not a paired phone, only register its port
         if (newPhone === undefined) {
@@ -144,10 +144,14 @@ const handleResponse = async (
 }
 
 /** Tries to ping a phone to know if it's already saved. */
-const pingNewPhone = async (ip: string, port: number) => {
-  // Try all known phones, even those that have already been found
-  // This could be improved by filtering out those that have already been found
-  for (const phone of get(phones)) {
+const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
+  // Filter out phones that have already been found
+  const $phones = new Set(get(phones))
+  for (const { phone } of context.network.values())
+    if (phone) $phones.delete(phone)
+
+  // Try all other phones
+  for (const phone of $phones) {
     const $phone = get(phone)
     try {
       const keys = await sendRequest({
