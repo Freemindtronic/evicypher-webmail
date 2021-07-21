@@ -6,9 +6,9 @@ import {
   removeJammingSimpleText,
 } from './AesUtil'
 import {
+  asyncSha256,
   concatUint8Array,
   random,
-  sha256,
   uint8ArrayToUTF8,
   utf8ToUint8Array,
 } from './utils'
@@ -27,7 +27,7 @@ export class EviCrypt {
     this.keys = keys
   }
 
-  encryptText(plainText: string): string {
+  async encryptText(plainText: string): Promise<string> {
     const iv = random(16)
     const salt = random(32)
     const AES = new AesUtil(256, 1000)
@@ -44,8 +44,10 @@ export class EviCrypt {
       plainText.length
     )
 
-    const keyID = sha256(
-      concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
+    const keyID = (
+      await asyncSha256(
+        concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
+      )
     ).slice(0, 20)
 
     const cA = new Uint8Array([...ID_MESSAGE, ...keyID, ...jam, ...enc])

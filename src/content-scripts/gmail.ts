@@ -16,7 +16,8 @@ import {
 /** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {
   MAIL_CONTENT: '.a3s.aiL',
-  PLACEHOLDER: '.adf.ads',
+  PLACEHOLDER: '.adf.ads, .ii.gt.adO',
+  MAIL_THREAD: '.nH.bh',
   TOOLBAR: '.btx',
 }
 
@@ -207,8 +208,9 @@ const handleMutation = (mutation: MutationRecord) => {
     handleMailElement(target)
   }
 
-  // The user clicks on a "small" mail item
+  // The user opens a thread or clicks on a "small" mail item
   else if (
+    target.matches(Selector.MAIL_THREAD) ||
     (mutation.previousSibling as HTMLElement | null)?.matches(
       Selector.PLACEHOLDER
     )
