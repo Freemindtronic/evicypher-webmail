@@ -896,13 +896,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.3.3":
-  version: 16.3.3
-  resolution: "@types/node@npm:16.3.3"
-  checksum: fa885b835e57a4a2fd15571e5cbfe361d4ac48278196416aa2690ebdfb118a116249dd81475078c61fbf2d95920324f8f3a66ae7f19fac424ae74ab87a41c1e4
-  languageName: node
-  linkType: hard
-
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -1613,7 +1606,6 @@ __metadata:
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4.1.6
     "@types/dropzone": ^5
-    "@types/node": ^16.3.3
     "@types/qrcode": ^1.4.1
     "@typescript-eslint/eslint-plugin": ^4.28.4
     "@typescript-eslint/parser": ^4.28.4

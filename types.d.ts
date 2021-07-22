@@ -2,3 +2,9 @@
 declare module '*.svg' {
   export default Svelte2TsxComponent
 }
+
+declare let process: {
+  env: {
+    NODE_ENV: string
+  }
+}
