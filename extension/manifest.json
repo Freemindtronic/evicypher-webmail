@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "My Extension",
+  "name": "EviCypher Webmail",
   "version": "1.0.0",
   "permissions": ["storage", "nativeMessaging"],
   "background": {
