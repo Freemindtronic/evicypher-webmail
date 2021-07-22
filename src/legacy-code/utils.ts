@@ -11,11 +11,13 @@ export function random(size: number): Uint8Array {
   return crypto.getRandomValues(array)
 }
 
-export function sha256(data: Uint8Array): Uint8Array {
-  // eslint-disable-next-line new-cap
-  return wordArrayToUint8Array(CryptoJS.SHA256(String.fromCharCode(...data)))
-}
-
+/**
+ * Produces a SHA-256 hash of the data given.
+ *
+ * @remarks
+ *   This hash is not interoperable with other implementations of SHA-256 because
+ *   of a bug. See the comment in the source file for details.
+ */
 export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> => {
   // Because the previous developers had no idea that one cannot convert a
   // `Uint8Array` to a string without messing with encodings, we now need
