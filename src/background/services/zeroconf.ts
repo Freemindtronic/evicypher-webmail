@@ -12,7 +12,8 @@ const APPLICATION_ID = 'com.freemindtronic.evidns'
 const DEFAULT_COOLDOWN = 20_000
 
 /** Minimum time between two scans, even if `scanFaster` is set to true. */
-const MINIMUM_COOLDOWN = 1000
+const MINIMUM_COOLDOWN = 0
+// Set to 0 to address an issue with the Zeroconf service
 
 /** A response object, sent by EviDNS v1. */
 export interface ZeroconfResponse {
