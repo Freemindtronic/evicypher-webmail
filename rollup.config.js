@@ -7,17 +7,12 @@ import css from 'rollup-plugin-css-only'
 import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
 import { terser } from 'rollup-plugin-terser'
-
 import { config } from './svelte.config'
 
 const production = !process.env.ROLLUP_WATCH
 
+/** Plugins used for all files. */
 const plugins = [
-  // If you have external dependencies installed from
-  // npm, you'll most likely need these plugins. In
-  // some cases you'll need additional configuration -
-  // consult the documentation for details:
-  // https://github.com/rollup/plugins/tree/master/packages/commonjs
   resolve({
     browser: true,
     preferBuiltins: false,
@@ -38,48 +33,38 @@ const plugins = [
     preventAssignment: true,
   }),
   svelteSVG({ dev: !production }),
-
-  // If we're building for production, minify
   production && terser(),
 ]
 
 export default [
   {
     input: 'src/popup/main.ts',
-    external: ['crypto'], // `crypto` is required by the popup because of phones->certificate->utils
+    // `crypto` is required by the popup because of phones->certificate->utils
+    external: ['crypto'],
     output: {
-      sourcemap: !production,
-      format: 'iife',
-      name: 'app',
       file: 'extension/build/popup.js',
       globals: { crypto: 'crypto' },
     },
-    plugins: [
-      svelte(config(production)),
-      // We'll extract any component CSS out into
-      // a separate file - better for performance
-      css({ output: 'popup.css' }),
-      ...plugins,
-    ],
+    plugins: [svelte(config(production)), css({ output: 'popup.css' })],
+  },
+  {
+    input: 'src/evifile/main.ts',
+    output: {
+      file: 'extension/build/evifile.js',
+    },
+    plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
   {
     input: 'src/background/main.ts',
     external: ['crypto'],
     output: {
-      sourcemap: !production,
-      format: 'iife',
-      name: 'app',
       file: 'extension/build/background.js',
       globals: { crypto: 'crypto' },
     },
-    plugins,
   },
   {
     input: 'src/content-scripts/gmail.ts',
     output: {
-      sourcemap: !production,
-      format: 'iife',
-      name: 'app',
       file: 'extension/build/content-script-gmail.js',
     },
     plugins: [
@@ -87,7 +72,17 @@ export default [
         ...config(production),
         emitCss: false,
       }),
-      ...plugins,
     ],
   },
-]
+].map((entry) => ({
+  ...entry,
+  output: {
+    ...entry.output,
+    // Add common output configuration
+    sourcemap: !production,
+    format: 'iife',
+    name: 'main',
+  },
+  // Add common plugins
+  plugins: [...(entry.plugins ?? []), ...plugins],
+}))
