@@ -7,10 +7,10 @@ import type { Reporter } from '../report'
 import { AesUtil } from './AesUtil'
 import { search, sendRequest } from './lanUtils'
 import {
-  asyncSha256,
   concatUint8Array,
   longToByteArray,
   random,
+  sha256,
   uint8ArrayToUTF8,
   uint8ToHex,
   utf8ToUint8Array,
@@ -63,7 +63,7 @@ export class PairingKey {
     const key = random(16)
     const iv = random(16)
     const salt = random(16)
-    const TkeyPromise = asyncSha256(concatUint8Array(iv, salt))
+    const TkeyPromise = sha256(concatUint8Array(iv, salt))
 
     const enc = new AesUtil(256, 1000).encryptCTR(iv, salt, key, k1.public)
 
@@ -100,7 +100,7 @@ export async function clientHello(
   const answer = await search(
     context,
     Request.PAIRING_START,
-    { t: await asyncSha256(pairingKey.certificate.id) },
+    { t: await sha256(pairingKey.certificate.id) },
     {
       signal,
       portOverride: pairingKey.port,
@@ -143,7 +143,7 @@ export class Device {
       port: this.port,
       type: Request.PAIRING_SALT,
       data: {
-        t: await asyncSha256(xor(this.certificate.id, this.pairingKey.salt)),
+        t: await sha256(xor(this.certificate.id, this.pairingKey.salt)),
         s: enc,
         i: ivS,
       },
@@ -192,12 +192,10 @@ export class Device {
 
     // Paralellize hashes calculations
     const hashes = {
-      id: asyncSha256(
-        concatUint8Array(this.pairingKey.Tkey, this.certificate.id)
-      ),
-      sKey: asyncSha256(this.certificate.sKey),
-      tKey: asyncSha256(this.pairingKey.key),
-      jamming: asyncSha256(concatUint8Array(this.pairingKey.iv, saltb)),
+      id: sha256(concatUint8Array(this.pairingKey.Tkey, this.certificate.id)),
+      sKey: sha256(this.certificate.sKey),
+      tKey: sha256(this.pairingKey.key),
+      jamming: sha256(concatUint8Array(this.pairingKey.iv, saltb)),
     }
 
     const certData = {

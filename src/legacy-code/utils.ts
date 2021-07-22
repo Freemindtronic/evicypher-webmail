@@ -18,7 +18,7 @@ export function random(size: number): Uint8Array {
  *   This hash is not interoperable with other implementations of SHA-256 because
  *   of a bug. See the comment in the source file for details.
  */
-export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> => {
+export const sha256 = async (data: Uint8Array): Promise<Uint8Array> => {
   // Because the previous developers had no idea that one cannot convert a
   // `Uint8Array` to a string without messing with encodings, we now need
   // this stupid workaround:

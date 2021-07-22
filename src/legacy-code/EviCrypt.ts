@@ -6,9 +6,9 @@ import {
   removeJammingSimpleText,
 } from './AesUtil'
 import {
-  asyncSha256,
   concatUint8Array,
   random,
+  sha256,
   uint8ArrayToUTF8,
   utf8ToUint8Array,
 } from './utils'
@@ -45,7 +45,7 @@ export class EviCrypt {
     )
 
     const keyID = (
-      await asyncSha256(
+      await sha256(
         concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
       )
     ).slice(0, 20)
