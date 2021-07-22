@@ -87,6 +87,6 @@ export const reporter =
         break
       }
 
-      // No default
+      default:
     }
   }

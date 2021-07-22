@@ -16,7 +16,7 @@
       addRemoveLinks: true,
       maxFilesize: 1024 * 1024 * 1024 * 1,
       accept: async function (file, done) {
-        let { name, url } = await startBackgroundTask(
+        let { url } = await startBackgroundTask(
           Task.ENCRYPT_FILE,
           async function* () {
             yield
