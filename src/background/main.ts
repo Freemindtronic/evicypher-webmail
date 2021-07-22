@@ -5,7 +5,7 @@ import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { startZeroconfService } from './services/zeroconf'
 import { decrypt } from './tasks/decrypt'
-import { encrypt } from './tasks/encrypt'
+import { encrypt, encryptFile } from './tasks/encrypt'
 import { pair } from './tasks/pair'
 
 /** The background context, used to share information between tasks and services. */
@@ -105,6 +105,7 @@ browser.runtime.onConnect.addListener(async (port) => {
   const task = {
     [Task.PAIR]: pair,
     [Task.ENCRYPT]: encrypt,
+    [Task.ENCRYPT_FILE]: encryptFile,
     [Task.DECRYPT]: decrypt,
   }[port.name]
   if (task === undefined) throw new Error('Unexpected connection.')

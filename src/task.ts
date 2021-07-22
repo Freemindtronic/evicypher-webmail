@@ -1,6 +1,6 @@
 import type { PingResponse } from 'background/protocol'
 import type { decrypt } from 'background/tasks/decrypt'
-import type { encrypt } from 'background/tasks/encrypt'
+import type { encrypt, encryptFile } from 'background/tasks/encrypt'
 import type { pair } from 'background/tasks/pair'
 import debug, { Debugger } from 'debug'
 import type { Observable } from 'observable'
@@ -118,6 +118,7 @@ export type MessageFromFrontToBack<T> = T extends BackgroundTask<
 /** All the tasks available. */
 export enum Task {
   ENCRYPT = 'encrypt',
+  ENCRYPT_FILE = 'encrypt-file',
   DECRYPT = 'decrypt',
   PAIR = 'pair',
 }
@@ -126,6 +127,7 @@ export enum Task {
 export type TaskMap = {
   [Task.PAIR]: typeof pair
   [Task.ENCRYPT]: typeof encrypt
+  [Task.ENCRYPT_FILE]: typeof encryptFile
   [Task.DECRYPT]: typeof decrypt
 }
 

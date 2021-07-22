@@ -12,7 +12,9 @@ import {
   random,
   sha256,
   uint8ArrayToUTF8,
+  uint8ArrayToWordArray,
   utf8ToUint8Array,
+  wordArrayToUint8Array,
 } from './utils'
 
 const ID_MESSAGE = new Uint8Array([0, 0, 0, 21])
@@ -111,7 +113,7 @@ export class EviCrypt {
     ).slice(0, 20)
 
     const AES = new AesUtil(256, 1000)
-    const iv2 = random(16)
+    let iv2 = random(16)
     const salt2 = random(32)
     const temp0 = AES.encryptCTR(iv, salt, this.keys.high, uintFileName)
     const temp1 = concatUint8Array(salt2, temp0)
@@ -146,6 +148,8 @@ export class EviCrypt {
       )
       blobParts.push(block)
       j++
+
+      iv2 = incrementWordArray(iv2, blockSize / 16)
     }
 
     const blob = new Blob(blobParts, {
@@ -159,3 +163,9 @@ export class EviCrypt {
 /** @returns The public identifier of the key used to encrypt `str` */
 export const keyUsed = (str: string): Uint8Array =>
   toUint8Array(str).slice(4, 56)
+
+function incrementWordArray(arr: Uint8Array, increment: number) {
+  const wordArray = uint8ArrayToWordArray(arr)
+  wordArray.words[3] = Math.trunc(wordArray.words[3] + increment)
+  return wordArrayToUint8Array(wordArray)
+}

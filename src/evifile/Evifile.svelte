@@ -1,6 +1,8 @@
 <script lang="ts">
   import Dropzone from 'dropzone'
   import { onMount } from 'svelte'
+  import { startBackgroundTask, Task } from 'task'
+  import { browser } from 'webextension-polyfill-ts'
   Dropzone.autoDiscover = false
 
   let form: HTMLFormElement
@@ -10,20 +12,19 @@
       url: 'none',
       autoProcessQueue: false,
       addRemoveLinks: true,
-      accept: function (file, done) {
-        // https://stackoverflow.com/questions/33710825/getting-file-contents-when-using-dropzonejs
-        var reader = new FileReader()
-        reader.addEventListener('loadend', function (event) {
-          if (!event.target) {
-            dropzone.emit('error', file)
-            return
+      maxFilesize: 1024 * 1024 * 1024 * 1,
+      accept: async function (file, done) {
+        let { name, url } = await startBackgroundTask(
+          Task.ENCRYPT_FILE,
+          async function* () {
+            yield
+            yield { name: file.name, url: URL.createObjectURL(file) }
           }
-          console.log(event.target.result)
-          done()
-          dropzone.emit('success', file)
-          dropzone.emit('complete', file)
-        })
-        reader.readAsText(file)
+        )
+        window.location.href = url
+        done()
+        dropzone.emit('success', file)
+        dropzone.emit('complete', file)
       },
     })
   })
