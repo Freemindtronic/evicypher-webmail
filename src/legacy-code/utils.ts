@@ -33,10 +33,20 @@ export const asyncSha256 = async (data: Uint8Array): Promise<Uint8Array> => {
   return new Uint8Array(await crypto.subtle.digest('SHA-256', data))
 }
 
-export function sha512(data: Uint8Array): Uint8Array {
-  // eslint-disable-next-line new-cap
-  return wordArrayToUint8Array(CryptoJS.SHA512(String.fromCharCode(...data)))
-}
+/**
+ * Produces a SHA-512 hash of the data given.
+ *
+ * @remarks
+ *   This hash is not interoperable with other implementations of SHA-512 because
+ *   of a bug. {@see asyncSha256}
+ */
+export const sha512 = async (data: Uint8Array): Promise<Uint8Array> =>
+  new Uint8Array(
+    await crypto.subtle.digest(
+      'SHA-512',
+      new TextEncoder().encode(String.fromCharCode(...data))
+    )
+  )
 
 export function uint8ArrayToWordArray(ba: Uint8Array): CryptoJS.lib.WordArray {
   const wa: number[] = []

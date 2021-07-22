@@ -123,7 +123,7 @@ export const fetchKeys = async (
       signal,
     })
 
-    const keys = unjamKeys(keysExchange, certificate, cipherKeyResponse)
+    const keys = await unjamKeys(keysExchange, certificate, cipherKeyResponse)
 
     // To ensure forward secrecy, we share a new secret
     const newShare = {
@@ -200,7 +200,7 @@ const encryptKey = (
 }
 
 /** What you're about to read does not even come close to looking like cryptography. */
-const unjamKeys = (
+const unjamKeys = async (
   keysExchange: Array<{
     sharedKey: Uint8Array
     iv: Uint8Array
@@ -216,13 +216,18 @@ const unjamKeys = (
     s2: lowSalt,
     d2: lowDataJam,
   }: CipherKeyResponse
-): { high: Uint8Array; low: Uint8Array } => {
+): Promise<{ high: Uint8Array; low: Uint8Array }> => {
   const AES = new AesUtil(256, 1000)
 
-  const highKey = xor(keysExchange[2].sharedKey, certificate.fKey)
-  const highJamming = sha512(
+  const highHashPromise = sha512(
     concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
   )
+  const lowHashPromise = sha512(
+    concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
+  )
+
+  const highKey = xor(keysExchange[2].sharedKey, certificate.fKey)
+  const highJamming = await highHashPromise
   const highJammingPosition =
     certificate.jamming[2] ^ keysExchange[0].sharedKey[2]
   const highJammingValueOnLength =
@@ -246,9 +251,7 @@ const unjamKeys = (
   )
 
   const lowKey = xor(keysExchange[1].sharedKey, certificate.fKey)
-  const lowJamming = sha512(
-    concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
-  )
+  const lowJamming = await lowHashPromise
   const lowPositionJamming =
     certificate.jamming[1] ^ keysExchange[0].sharedKey[1]
   const lowJammingValueOnLength =
