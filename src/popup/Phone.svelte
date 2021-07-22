@@ -24,34 +24,25 @@
   const dispatch = createEventDispatcher<{ delete: Phone }>()
 </script>
 
-<p>
-  {#if $favoritePhoneId === $phone.id}
-    <button class="transparent" on:click={() => ($favoritePhoneId = -1)}>
-      ★
-    </button>
-  {:else}
-    <button class="transparent" on:click={() => ($favoritePhoneId = $phone.id)}>
-      ☆
-    </button>
-  {/if}
-  <span>
-    {$phone.name} (<span
-      title="Last seen {new Date($phone.lastSeen).toString()}"
-      >{#if $time < $phone.lastSeen + 120_000}online{:else}offline{/if}</span
-    >)
-  </span>
-  <button class="button" on:click={() => dispatch('delete', $phone)}>
-    {$_('delete')}
+{#if $favoritePhoneId === $phone.id}
+  <button class="transparent" on:click={() => ($favoritePhoneId = -1)}>
+    ★
   </button>
-</p>
+{:else}
+  <button class="transparent" on:click={() => ($favoritePhoneId = $phone.id)}>
+    ☆
+  </button>
+{/if}
+<span>
+  {$phone.name} (<span title="Last seen {new Date($phone.lastSeen).toString()}"
+    >{#if $time < $phone.lastSeen + 120_000}online{:else}offline{/if}</span
+  >)
+</span>
+<button class="button" on:click={() => dispatch('delete', $phone)}>
+  {$_('delete')}
+</button>
 
 <style lang="scss">
-  p {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
   .transparent {
     padding: 0 3px 4px;
     color: $primary;

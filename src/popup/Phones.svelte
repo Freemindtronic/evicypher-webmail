@@ -34,10 +34,13 @@
     <h2>{$_('phones')}</h2>
     {#if $phones.length === 0}
       <p><em>{$_('register-a-phone-with-the-form-below')}</em></p>
+    {:else}
+      <div class="grid">
+        {#each $phones as phone (phone)}
+          <PhoneItem {phone} on:delete={removePhone} />
+        {/each}
+      </div>
     {/if}
-    {#each $phones as phone (phone)}
-      <PhoneItem {phone} on:delete={removePhone} />
-    {/each}
   </section>
   <hr />
   <form on:submit|preventDefault={addPhone}>
@@ -78,5 +81,12 @@
         min-width: 0;
       }
     }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5em;
+    align-items: center;
   }
 </style>
