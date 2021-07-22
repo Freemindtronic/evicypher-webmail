@@ -1,5 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 import { fromUint8Array, toUint8Array } from 'js-base64'
+import { Reporter, State } from 'report'
 import {
   addJammingSimple,
   addJammingSimpleText,
@@ -85,7 +86,7 @@ export class EviCrypt {
     return uint8ArrayToUTF8(dec)
   }
 
-  async encryptFile(file: File): Promise<File> {
+  async encryptFile(file: File, reporter: Reporter): Promise<File> {
     if (file.name.endsWith(extensionName)) return file
 
     if (file.name.length > 256) throw new Error('Filename too long')
@@ -137,6 +138,8 @@ export class EviCrypt {
       reader.readAsArrayBuffer(file)
     })
 
+    reporter({ state: State.TASK_IN_PROGRESS, progress: 0 })
+
     // Encrypt each block separetely
     let j = 0
     while (j * blockSize < buffer.length) {
@@ -147,14 +150,33 @@ export class EviCrypt {
         buffer.slice(j * blockSize, (j + 1) * blockSize)
       )
       blobParts.push(block)
-      j++
 
+      reporter({
+        state: State.TASK_IN_PROGRESS,
+        progress: (j * blockSize) / buffer.length,
+      })
+
+      // We need to wait for the current task to finish and the event loop to
+      // start a new iteration for the report to be sent. We use `setTimeout`
+      // instead of `queueMicrotask` because:
+      // "Microtasks are another solution to this problem, providing a finer
+      // degree of access by **making it possible to schedule code to run before
+      // the next iteration** of the event loop begins, instead of having to
+      // wait until the next one."
+      // (https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide/In_depth#solutions)
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve)
+      })
+
+      j++
       iv2 = incrementWordArray(iv2, blockSize / 16)
     }
 
     const blob = new Blob(blobParts, {
       type: 'application/octet-stream; charset=utf-8',
     })
+
+    reporter({ state: State.TASK_IN_PROGRESS, progress: 1 })
 
     return new File([blob], name)
   }

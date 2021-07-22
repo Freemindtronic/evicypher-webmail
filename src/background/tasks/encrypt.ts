@@ -76,7 +76,7 @@ export const encryptFile: BackgroundTask<
   const file = new File([blob], name)
   URL.revokeObjectURL(url)
 
-  const encryptedFile = await evi.encryptFile(file)
+  const encryptedFile = await evi.encryptFile(file, reporter)
 
   return { name: encryptedFile.name, url: URL.createObjectURL(encryptedFile) }
 }

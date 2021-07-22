@@ -4,6 +4,7 @@ export enum State {
   NOTIFICATION_SENT = 'Notification sent.',
   WAITING_FOR_PHONE = 'Waiting for the favorite phone to be found.',
   WAITING_FOR_FIRST_RESPONSE = 'Waiting for the favorite phone to answer.',
+  TASK_IN_PROGRESS = 'Task in progress.',
 }
 
 /** If an update has additional details, they are defined here. */
@@ -12,6 +13,11 @@ export type Report =
   | { state: State.NOTIFICATION_SENT }
   | { state: State.WAITING_FOR_PHONE }
   | { state: State.WAITING_FOR_FIRST_RESPONSE }
+  | {
+      state: State.TASK_IN_PROGRESS
+      /** A number between 0 and 1. */
+      progress: number
+    }
 
 /**
  * A reporter is a function that receives updates from the background process to

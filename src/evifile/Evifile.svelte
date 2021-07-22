@@ -1,8 +1,10 @@
 <script lang="ts">
   import Dropzone from 'dropzone'
+  import type { Report } from 'report'
+  import { State } from 'report'
   import { onMount } from 'svelte'
   import { startBackgroundTask, Task } from 'task'
-  import { browser } from 'webextension-polyfill-ts'
+
   Dropzone.autoDiscover = false
 
   let form: HTMLFormElement
@@ -19,6 +21,12 @@
           async function* () {
             yield
             yield { name: file.name, url: URL.createObjectURL(file) }
+          },
+          {
+            reporter: (report: Report) => {
+              if (report.state === State.TASK_IN_PROGRESS)
+                dropzone.emit('uploadprogress', file, report.progress * 100)
+            },
           }
         )
         window.location.href = url
