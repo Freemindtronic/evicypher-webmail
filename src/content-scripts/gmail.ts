@@ -199,19 +199,17 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
  * notifications of elements added or removed from the page.
  */
 const handleMutation = (mutation: MutationRecord) => {
+  const target = mutation.target as HTMLElement
   // A mail element is added
-  for (const addedNode of mutation.addedNodes as NodeListOf<HTMLElement>) {
-    if (addedNode.matches(Selector.MAIL_CONTENT)) handleMailElement(addedNode)
+  if (target.matches(Selector.MAIL_CONTENT)) handleMailElement(target)
 
-    for (const mailElement of addedNode.querySelectorAll<HTMLElement>(
-      Selector.MAIL_CONTENT
-    )) {
-      handleMailElement(mailElement)
-    }
+  for (const mailElement of target.querySelectorAll<HTMLElement>(
+    Selector.MAIL_CONTENT
+  )) {
+    handleMailElement(mailElement)
   }
 
   // The user starts writing a mail
-  const target = mutation.target as HTMLElement
   if (target.matches(Selector.TOOLBAR)) {
     handleToolbar(target)
   }
