@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts">
   import { favoritePhoneId, Phone } from 'phones'
   import type { Writable } from 'svelte/store'

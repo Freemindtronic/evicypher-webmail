@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts">
   import type { pair as pairTask } from 'background/tasks/pair'
   import { toCanvas } from 'qrcode'
