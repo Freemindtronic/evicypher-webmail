@@ -810,6 +810,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dropzone@npm:^5":
+  version: 5.7.4
+  resolution: "@types/dropzone@npm:5.7.4"
+  dependencies:
+    "@types/jquery": "*"
+  checksum: ec7e5efa24e20ea686b24b52241e980225d7d3d59fc36f6f3080d673a692c8a5ce5b00c19a4443005bb17faffc47a5e1a3cafa90ddede60dfdbdf795fbdb1ddd
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*":
   version: 0.0.48
   resolution: "@types/estree@npm:0.0.48"
@@ -831,6 +840,15 @@ __metadata:
     "@types/minimatch": "*"
     "@types/node": "*"
   checksum: e0eef12285f548f15d887145590594a04ccce7f7e645fb047cbac18cb093f25d507ffbcc725312294c224bb78cf980fce33e5807de8d6f8a868b4186253499d4
+  languageName: node
+  linkType: hard
+
+"@types/jquery@npm:*":
+  version: 3.5.6
+  resolution: "@types/jquery@npm:3.5.6"
+  dependencies:
+    "@types/sizzle": "*"
+  checksum: 0ff97741ed79463545e2fd6969639579d112aeb316b70a9928c39ae031d68386e8096755d4b3c1b3aa252e024ae11d30a4ba47bc454e4fb9e232d5ded09f8f81
   languageName: node
   linkType: hard
 
@@ -940,7 +958,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sizzle@npm:^2.3.2":
+"@types/sizzle@npm:*, @types/sizzle@npm:^2.3.2":
   version: 2.3.3
   resolution: "@types/sizzle@npm:2.3.3"
   checksum: 586a9fb1f6ff3e325e0f2cc1596a460615f0bc8a28f6e276ac9b509401039dd242fa8b34496d3a30c52f5b495873922d09a9e76c50c2ab2bcc70ba3fb9c4e160
@@ -1594,6 +1612,7 @@ __metadata:
     "@tsconfig/svelte": ^2.0.1
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4.1.6
+    "@types/dropzone": ^5
     "@types/node": ^16.3.3
     "@types/qrcode": ^1.4.1
     "@typescript-eslint/eslint-plugin": ^4.28.4
@@ -1604,6 +1623,7 @@ __metadata:
     cypress: ^8.0.0
     cz-conventional-changelog: ^3.3.0
     debug: ^4.3.2
+    dropzone: ^5.9.2
     eslint: ^7.31.0
     eslint-config-prettier: ^8.3.0
     eslint-config-xo: ^0.37.0
@@ -2762,6 +2782,13 @@ __metadata:
   dependencies:
     is-obj: ^2.0.0
   checksum: d5775790093c234ef4bfd5fbe40884ff7e6c87573e5339432870616331189f7f5d86575c5b5af2dcf0f61172990f4f734d07844b1f23482fff09e3c4bead05ea
+  languageName: node
+  linkType: hard
+
+"dropzone@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "dropzone@npm:5.9.2"
+  checksum: 4c906f1e08421bbbb14f5e41ad37e5694317b6761f0a7e95d22c3037f6a05fe01ba48b722392187cccef367f18fdbaa18b1ae172c0b5cdb9a39ecba04ebb4f0a
   languageName: node
   linkType: hard
 
