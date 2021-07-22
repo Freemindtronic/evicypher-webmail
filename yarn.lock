@@ -1643,7 +1643,7 @@ __metadata:
     stylelint: ^13.13.1
     stylelint-config-rational-order: ^0.1.2
     stylelint-config-standard: ^22.0.0
-    svelte: ^3.40.0
+    svelte: 3.39.0
     svelte-check: ^2.2.3
     svelte-i18n: ^3.3.9
     svelte-preprocess: ^4.7.4
@@ -8181,10 +8181,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"svelte@npm:^3.40.0":
-  version: 3.40.0
-  resolution: "svelte@npm:3.40.0"
-  checksum: 9532e66fd090d3446e09372dd9506d08348d7929655890f9e8b51a96a207fc092217696fb89e0393fb165ce9c254d5c5589ef28f0a24912edd3b16fe554edea5
+"svelte@npm:3.39.0":
+  version: 3.39.0
+  resolution: "svelte@npm:3.39.0"
+  checksum: 8601c876e7506ebdd220fcb3235bdaadeb4cfabf3e41c76380e97529d3c030d010f1ede7256ea2cfcdc5458b2f81c701e0e8d72acf5fc12f01cda31a65557f42
   languageName: node
   linkType: hard
 
