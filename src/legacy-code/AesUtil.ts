@@ -253,3 +253,26 @@ export function removeJammingHelper(
     data: shiftRight(final.slice(start, end), shift),
   }
 }
+
+export function removeJammingSimple(
+  data: Uint8Array,
+  jam: Uint8Array
+): { size: number; data: Uint8Array } {
+  const pos = data[0] ^ jam[0]
+  const dataLen = data[1 + pos] ^ jam[1]
+  const shift = data[2 + pos] ^ jam[2]
+  const jamSize = data[3 + pos] ^ jam[3]
+
+  const part1 = data.slice(1, pos + 1)
+  const part2 = data.slice(pos + 4, data.length + 1)
+
+  const final = new Uint8Array([...part1, ...part2])
+
+  const start = jamSize
+  const end = start + dataLen
+
+  return {
+    size: jamSize + 4 + dataLen,
+    data: shiftRight(final.slice(start, end), shift),
+  }
+}

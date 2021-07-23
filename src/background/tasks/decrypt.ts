@@ -42,3 +42,42 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     const evi = new EviCrypt(keys)
     return evi.decryptText(str)
   }
+
+/**
+ * Same, but with files. Instead of sendings blobs directly, we use
+ * `URL.createObjectURL()`.
+ */
+export const decryptFile: BackgroundTask<
+  undefined,
+  { name: string; url: string },
+  { name: string; url: string }
+> = async function* (context, reporter, signal) {
+  const { name, url } = yield
+
+  await BrowserStore.allLoaded
+
+  // Fetch the cerificate of the favorite phone in browser storage
+  const phone = get(favoritePhone)
+
+  if (phone === undefined) throw new Error('No favorite device set.')
+  const $phone = get(phone)
+
+  // Send a request to the FMT app
+  const { keys, newCertificate } = await fetchKeys(context, $phone, {
+    reporter,
+    signal,
+  })
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+
+  // Encrypt the text
+  const evi = new EviCrypt(keys)
+
+  const blob = await (await fetch(url)).blob()
+  const file = new File([blob], name)
+  URL.revokeObjectURL(url)
+
+  const decryptedFile = await evi.decryptFile(file, reporter)
+
+  return { name: decryptedFile.name, url: URL.createObjectURL(decryptedFile) }
+}

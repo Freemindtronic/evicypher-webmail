@@ -4,7 +4,7 @@ import type { Report } from 'report'
 import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { startZeroconfService } from './services/zeroconf'
-import { decrypt } from './tasks/decrypt'
+import { decrypt, decryptFile } from './tasks/decrypt'
 import { encrypt, encryptFile } from './tasks/encrypt'
 import { pair } from './tasks/pair'
 
@@ -107,6 +107,7 @@ browser.runtime.onConnect.addListener(async (port) => {
     [Task.ENCRYPT]: encrypt,
     [Task.ENCRYPT_FILE]: encryptFile,
     [Task.DECRYPT]: decrypt,
+    [Task.DECRYPT_FILE]: decryptFile,
   }[port.name]
   if (task === undefined) throw new Error('Unexpected connection.')
 
