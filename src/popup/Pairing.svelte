@@ -96,7 +96,7 @@
   {#if uid === undefined}
     {tip}
   {:else}
-    Is the code {uid} correct?
+    Is the code {uid.toUpperCase()} correct?
     <button class="button" type="button" on:click={() => ($confirmed = true)}
       >Yes</button
     >
