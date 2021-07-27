@@ -76,7 +76,14 @@ export const encryptFile: BackgroundTask<
   const file = new File([blob], name)
   URL.revokeObjectURL(url)
 
-  const encryptedFile = await evi.encryptFile(file, reporter)
+  const encryptedName =
+    [...crypto.getRandomValues(new Uint8Array(8))]
+      .map((n) => String.fromCharCode(97 + (n % 26)))
+      .join('') + '.Evi'
+  const encryptedFile = new File(
+    await evi.encryptFile(file, reporter),
+    encryptedName
+  )
 
-  return { name: encryptedFile.name, url: URL.createObjectURL(encryptedFile) }
+  return { name: encryptedName, url: URL.createObjectURL(encryptedFile) }
 }

@@ -88,17 +88,10 @@ export class EviCrypt {
     return uint8ArrayToUTF8(dec)
   }
 
-  async encryptFile(file: File, reporter: Reporter): Promise<File> {
-    if (file.name.endsWith(extensionName)) return file
+  async encryptFile(file: File, reporter: Reporter): Promise<BlobPart[]> {
+    if (file.name.endsWith(extensionName)) throw new Error('Already encrypted')
 
     if (file.name.length > 256) throw new Error('Filename too long')
-
-    // Create a random name for the file, the real name is stored
-    // encrypted at the beginning of the file
-    const name =
-      [...crypto.getRandomValues(new Uint8Array(8))]
-        .map((n) => String.fromCharCode(97 + (n % 26)))
-        .join('') + extensionName
 
     const uintFileName = new TextEncoder().encode(file.name)
 
@@ -168,10 +161,13 @@ export class EviCrypt {
 
     reporter({ state: State.TASK_IN_PROGRESS, progress: 1 })
 
-    return new File(blobParts, name)
+    return blobParts
   }
 
-  async decryptFile(buffer: Uint8Array, reporter: Reporter): Promise<File> {
+  async decryptFileBuffer(
+    buffer: Uint8Array,
+    reporter: Reporter
+  ): Promise<File> {
     if (
       buffer.length < 122 || // 4 + 20 + 16 + 32 + 16 + 32 + 2
       !buffer.slice(0, 4).every((n, i) => n === ID_FILE[i])

@@ -80,7 +80,7 @@ export const decryptFile: BackgroundTask<
   // Encrypt the text
   const evi = new EviCrypt(keys)
 
-  const decryptedFile = await evi.decryptFile(buffer, reporter)
+  const decryptedFile = await evi.decryptFileBuffer(buffer, reporter)
 
   return { name: decryptedFile.name, url: URL.createObjectURL(decryptedFile) }
 }
