@@ -62,10 +62,17 @@ export const decryptFile: BackgroundTask<
   if (phone === undefined) throw new Error('No favorite device set.')
   const $phone = get(phone)
 
+  const blob = await (await fetch(url)).blob()
+  const file = new File([blob], name)
+  URL.revokeObjectURL(url)
+
+  const buffer = await readAsArrayBuffer(file)
+
   // Send a request to the FMT app
   const { keys, newCertificate } = await fetchKeys(context, $phone, {
     reporter,
     signal,
+    keyToGet: buffer.slice(5, 57),
   })
   $phone.certificate = newCertificate
   phone.update(($phone) => $phone)
@@ -73,11 +80,19 @@ export const decryptFile: BackgroundTask<
   // Encrypt the text
   const evi = new EviCrypt(keys)
 
-  const blob = await (await fetch(url)).blob()
-  const file = new File([blob], name)
-  URL.revokeObjectURL(url)
-
-  const decryptedFile = await evi.decryptFile(file, reporter)
+  const decryptedFile = await evi.decryptFile(buffer, reporter)
 
   return { name: decryptedFile.name, url: URL.createObjectURL(decryptedFile) }
 }
+
+const readAsArrayBuffer = async (file: File) =>
+  new Promise<Uint8Array>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => {
+      resolve(new Uint8Array(reader.result as ArrayBuffer))
+    })
+    reader.addEventListener('error', () => {
+      reject(reader.error)
+    })
+    reader.readAsArrayBuffer(file)
+  })

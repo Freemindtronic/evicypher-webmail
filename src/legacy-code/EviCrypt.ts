@@ -171,8 +171,7 @@ export class EviCrypt {
     return new File(blobParts, name)
   }
 
-  async decryptFile(file: File, reporter: Reporter): Promise<File> {
-    const buffer = await readAsArrayBuffer(file)
+  async decryptFile(buffer: Uint8Array, reporter: Reporter): Promise<File> {
     if (
       buffer.length < 122 || // 4 + 20 + 16 + 32 + 16 + 32 + 2
       !buffer.slice(0, 4).every((n, i) => n === ID_FILE[i])
@@ -254,7 +253,6 @@ const readAsArrayBuffer = async (file: File) =>
     reader.addEventListener('error', () => {
       reject(reader.error)
     })
-
     reader.readAsArrayBuffer(file)
   })
 
