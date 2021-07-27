@@ -1,8 +1,10 @@
-# A new browser extension
+# EviCypher Webmail
 
-## Try it!
+Encrypt and decrypt emails directly from your web browser.
 
-1. Download the file `extension.zip` from the [latest successful build](https://github.com/Freemindtronic/browser-extension/actions?query=is%3Asuccess).
+## Try it
+
+1. Download the file `extension.zip` from the [latest successful build](https://github.com/Freemindtronic/evicypher-webmail/actions?query=is%3Asuccess).
 2. Load the extension using your browser developer tools.
 
 ## Architecture
