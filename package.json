@@ -1,10 +1,10 @@
 {
-  "name": "browser-extension",
-  "description": "The new Freemindtronic browser extension",
-  "version": "0.1.0",
+  "name": "evicypher-webmail",
+  "description": "EviCypher Webmail: encrypt and decrypt emails directly from your web browser",
+  "version": "1.0.1",
   "browser": {},
   "bugs": {
-    "url": "https://github.com/Freemindtronic/browser-extension/issues"
+    "url": "https://github.com/Freemindtronic/evicypher-webmail/issues"
   },
   "contributors": [
     {
@@ -81,7 +81,7 @@
     "node": ">=14",
     "yarn": ">=2"
   },
-  "homepage": "https://github.com/Freemindtronic/browser-extension",
+  "homepage": "https://github.com/Freemindtronic/evicypher-webmail",
   "license": "UNLICENSED",
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint --fix",
@@ -89,7 +89,7 @@
     "*.{js,cjs,ts,css,scss,html,svelte,json,md,yml}": "prettier --write"
   },
   "private": true,
-  "repository": "github:Freemindtronic/browser-extension",
+  "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
     "build": "rollup -c",
     "check": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
