@@ -3,6 +3,7 @@
   import Phones from './Phones.svelte'
 
   import Logo from '../assets/logo.svg'
+  import { browser } from 'webextension-polyfill-ts'
 </script>
 
 <h1>
@@ -15,6 +16,12 @@
 </h1>
 <main>
   <Phones />
+  <hr />
+  <p style="text-align: center">
+    <a href={browser.runtime.getURL('/evifile.html')} target="_evifile">
+      EviFile
+    </a>
+  </p>
 </main>
 
 <style lang="scss">
