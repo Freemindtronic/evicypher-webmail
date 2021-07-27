@@ -1,4 +1,5 @@
 extension/build/
+extension/manifest.json
 node_modules/
 .DS_Store
 docs/

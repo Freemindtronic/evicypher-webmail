@@ -91,12 +91,12 @@
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
-    "build": "rollup -c",
+    "build": "node manifest.js && rollup -c",
     "check": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
     "clean": "rm -rf extension/build",
     "doc": "typedoc src",
     "postinstall": "husky install",
-    "start": "rollup -c -w",
+    "start": "node manifest.js && rollup -c -w",
     "test": "cypress run -b firefox"
   },
   "type": "module",
