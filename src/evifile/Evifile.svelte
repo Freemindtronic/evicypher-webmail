@@ -81,18 +81,46 @@
   })
 </script>
 
-<h1>Hello World!</h1>
+<h1>EviFile</h1>
 
-<form class="dropzone" bind:this={encryptForm}>
-  <h2 class="dz-message">Drop files here to encrypt</h2>
-</form>
+<main>
+  <form class="dropzone" bind:this={encryptForm}>
+    <h2 class="dz-message">Drop files here to encrypt</h2>
+  </form>
 
-<form class="dropzone" bind:this={decryptForm}>
-  <h2 class="dz-message">Drop files here to decrypt</h2>
-</form>
+  <form class="dropzone" bind:this={decryptForm}>
+    <h2 class="dz-message">Drop files here to decrypt</h2>
+  </form>
+</main>
 
 <style lang="scss">
   :global {
     @import './assets/dropzone';
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+  }
+
+  h1 {
+    margin: 0;
+    padding: 1rem;
+    color: $background-color;
+    text-align: center;
+    background-color: $dark;
+  }
+
+  main {
+    display: grid;
+    flex: 1;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    padding: 1em;
+    @media (orientation: portrait) {
+      grid-template-rows: 1fr 1fr;
+      grid-template-columns: auto;
+    }
   }
 </style>

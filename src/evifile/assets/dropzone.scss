@@ -1,1 +1,19 @@
+@use "../assets/variables" as *;
 @forward 'dropzone/dist/dropzone.css';
+@import '../assets/sanitize';
+
+.dropzone {
+  border: 2px dashed $dark;
+  border-radius: 0.5em;
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dz-message {
+      transition: transform 0.2s;
+    }
+  }
+
+  &.dz-drag-hover .dz-message {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}

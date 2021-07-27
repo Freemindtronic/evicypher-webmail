@@ -1,9 +1,5 @@
-@forward 'sanitize.css/sanitize.css';
-@forward 'sanitize.css/forms.css';
-@forward 'sanitize.css/assets.css';
-@forward 'sanitize.css/typography.css';
-
-@use '../styles/variables' as *;
+@use '../assets/variables' as *;
+@import '../assets/sanitize';
 
 // Add scrollbar properties on the root element
 html {

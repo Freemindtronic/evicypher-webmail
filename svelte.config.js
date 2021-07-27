@@ -10,7 +10,7 @@ const config = (production) => ({
   preprocess: preprocess({
     sourceMap: !production,
     scss: {
-      prependData: `@use 'src/styles/variables.scss' as *;`,
+      prependData: `@use 'src/assets/variables.scss' as *;`,
     },
   }),
   compilerOptions: {
