@@ -9,7 +9,7 @@ import { svelteSVG } from 'rollup-plugin-svelte-svg'
 import { terser } from 'rollup-plugin-terser'
 import { config } from './svelte.config'
 
-const production = !process.env.ROLLUP_WATCH
+const production = false
 
 /** Plugins used for all files. */
 const plugins = [
