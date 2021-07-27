@@ -12,8 +12,8 @@ body {
   display: flex;
   flex-direction: column;
   // A square looks nice
-  width: 350px;
-  height: 350px;
+  width: 400px;
+  height: 400px;
   overflow-x: hidden;
   // Make it dark so Firefox renders round corners correctly
   color: $background-color;
