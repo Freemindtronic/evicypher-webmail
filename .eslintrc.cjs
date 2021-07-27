@@ -36,6 +36,7 @@ module.exports = {
   ],
   settings: {
     'svelte3/typescript': true,
+    // ESLint cannot process SCSS and Stylelint is setup, no need for these checks
     'svelte3/ignore-styles': () => true,
   },
   // Ignore config files

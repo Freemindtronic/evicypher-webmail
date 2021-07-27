@@ -1,9 +1,9 @@
 import preprocess from 'svelte-preprocess'
 
 /**
- * This will add autocompletion if you're working with SvelteKit
+ * Produces the configuration to compile Svelte files.
  *
- * @param {boolean} production
+ * @param {boolean} production - Whether files should contain run-time checks
  * @returns {module:@sveltejs/kit.Config}
  */
 const config = (production) => ({
