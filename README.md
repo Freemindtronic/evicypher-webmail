@@ -39,7 +39,7 @@ To ensure a certain degree of consistency, **the following design principles wer
 <details>
   <summary>Intern's note</summary>
 
-There is a folder named _legacy code_. The code there is of terrible quality and should be refactored. It contains a lot of code that was written for the previous extension, and it consists of poorly written cryptography and network code. Please dump the whole protocol and rewrite it from scratch, using **modern standards**.
+There is a folder named _legacy code_. [The code there is of terrible quality and should be refactored.](https://en.wikipedia.org/wiki/Technical_debt) It contains a lot of code that was written for the previous extension, and it consists of poorly written cryptography and network code. Please dump the whole protocol and rewrite it from scratch, using **modern standards**.
 
 </details>
 
