@@ -1,5 +1,5 @@
 import { BrowserStore } from 'browser-store'
-import { fetchKeys } from 'legacy-code/Client'
+import { fetchAndSaveKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
 import { favoritePhone } from 'phones'
 import { get } from 'svelte/store'
@@ -27,15 +27,12 @@ export const encrypt: BackgroundTask<undefined, string, string> =
     const phone = get(favoritePhone)
 
     if (phone === undefined) throw new Error('No favorite device set.')
-    const $phone = get(phone)
 
     // Send a request to the FMT app
-    const { keys, newCertificate } = await fetchKeys(context, $phone, {
+    const keys = await fetchAndSaveKeys(context, phone, {
       reporter,
       signal,
     })
-    $phone.certificate = newCertificate
-    phone.update(($phone) => $phone)
 
     // Encrypt the text
     const evi = new EviCrypt(keys)
@@ -59,15 +56,12 @@ export const encryptFile: BackgroundTask<
   const phone = get(favoritePhone)
 
   if (phone === undefined) throw new Error('No favorite device set.')
-  const $phone = get(phone)
 
   // Send a request to the FMT app
-  const { keys, newCertificate } = await fetchKeys(context, $phone, {
+  const keys = await fetchAndSaveKeys(context, phone, {
     reporter,
     signal,
   })
-  $phone.certificate = newCertificate
-  phone.update(($phone) => $phone)
 
   // Encrypt the text
   const evi = new EviCrypt(keys)
