@@ -18,7 +18,6 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.3",
-    "@tsconfig/svelte": "^2.0.1",
     "axlsign": "git+ssh://git@github.com:Freemindtronic/lib_axlsign",
     "crypto-js": "^4.1.1",
     "debug": "^4.3.2",

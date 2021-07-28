@@ -778,13 +778,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@tsconfig/svelte@npm:2.0.1"
-  checksum: b866a3e2a40eed8e4ab9f062a70086d3ab564e7b359545802bdd092f077a268ef715c58408c1b5ef0846efaf3884cc3a26fcb43df6e37195ec0d93392302c431
-  languageName: node
-  linkType: hard
-
 "@types/crypto-js@npm:^4.0.2":
   version: 4.0.2
   resolution: "@types/crypto-js@npm:4.0.2"
@@ -3362,7 +3355,6 @@ __metadata:
     "@rollup/plugin-node-resolve": ^13.0.4
     "@rollup/plugin-replace": ^3.0.0
     "@rollup/plugin-typescript": ^8.2.3
-    "@tsconfig/svelte": ^2.0.1
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4.1.7
     "@types/dropzone": ^5.7.4
