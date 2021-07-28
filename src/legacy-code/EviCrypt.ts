@@ -1,15 +1,13 @@
 /* eslint-disable unicorn/filename-case */
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { Reporter, State } from 'report'
+import { AesUtil, shiftLeft, shiftRight } from './AesUtil'
 import {
   addJammingSimple,
   addJammingSimpleText,
-  AesUtil,
-  removeJammingSimpleText,
   removeJammingSimple,
-  shiftLeft,
-  shiftRight,
-} from './AesUtil'
+  removeJammingSimpleText,
+} from './jamming'
 import {
   concatUint8Array,
   random,

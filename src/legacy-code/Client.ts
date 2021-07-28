@@ -12,7 +12,8 @@ import {
   EndResponse,
   Request,
 } from '../background/protocol'
-import { AesUtil, removeJamming } from './AesUtil'
+import { AesUtil } from './AesUtil'
+import { removeJamming } from './jamming'
 import { sendRequest } from './lanUtils'
 import { concatUint8Array, random, sha512, xor } from './utils'
 
