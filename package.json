@@ -89,6 +89,7 @@
     "*.{css,scss,svelte}": "stylelint --fix",
     "*.{js,cjs,ts,css,scss,html,svelte,json,md,yml}": "prettier --write"
   },
+  "packageManager": "yarn@3.0.0",
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
@@ -97,6 +98,7 @@
     "clean": "rm -rf extension/build",
     "doc": "typedoc src",
     "postinstall": "husky install",
+    "release": "standard-version",
     "start": "node manifest.js && rollup -c -w",
     "test": "cypress run -b firefox"
   },
@@ -104,6 +106,5 @@
   "volta": {
     "node": "16.5.0",
     "yarn": "1.22.11"
-  },
-  "packageManager": "yarn@3.0.0"
+  }
 }

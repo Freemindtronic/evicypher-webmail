@@ -75,4 +75,8 @@ Run `yarn build`
 - Run tests `yarn test` (not implemented yet)
 - Read the API documentation `yarn doc && cat docs/index.html`
 
-**Note:** commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write conforming commit messages.
+### Committing changes
+
+Commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write [conforming commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
+
+To release a new version, run `yarn release`, it will update the [changelog](./CHANGELOG.md) and create a new tag with the version. The version number is updated according to [semver](https://semver.org/), based on the commits since the last release.
