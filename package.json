@@ -102,6 +102,7 @@
   "type": "module",
   "volta": {
     "node": "16.5.0",
-    "yarn": "1.22.10"
-  }
+    "yarn": "1.22.11"
+  },
+  "packageManager": "yarn@3.0.0"
 }
