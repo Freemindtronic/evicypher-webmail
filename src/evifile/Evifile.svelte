@@ -22,70 +22,47 @@
     link.click()
   }
 
-  onMount(() => {
-    let encryptDropzone = new Dropzone(encryptForm, {
+  const setupDropzone = (
+    parent: HTMLElement,
+    task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE
+  ) => {
+    let dropzone = new Dropzone(parent, {
       url: 'none',
       autoProcessQueue: false,
       addRemoveLinks: true,
       maxFilesize: 1024 * 1024 * 1024 * 1,
-      accept: async function (file, done) {
-        let { name, url } = await startBackgroundTask(
-          Task.ENCRYPT_FILE,
-          async function* () {
-            yield
-            yield { name: file.name, url: URL.createObjectURL(file) }
-          },
-          {
-            reporter: (report: Report) => {
-              if (report.state === State.TASK_IN_PROGRESS)
-                encryptDropzone.emit(
-                  'uploadprogress',
-                  file,
-                  report.progress * 100
-                )
-              reporter((str) => (tip = str))(report)
+      async accept(file, done) {
+        try {
+          let { name, url } = await startBackgroundTask(
+            task,
+            async function* () {
+              yield
+              yield { name: file.name, url: URL.createObjectURL(file) }
             },
-          }
-        )
-        triggerDownload(name, url)
-        done()
-        encryptDropzone.emit('success', file)
-        encryptDropzone.emit('complete', file)
-        tip = 'Drop a file in one of the two zones below.'
+            {
+              reporter: (report: Report) => {
+                if (report.state === State.TASK_IN_PROGRESS)
+                  dropzone.emit('uploadprogress', file, report.progress * 100)
+                reporter((str) => (tip = str))(report)
+              },
+            }
+          )
+          triggerDownload(name, url)
+          done()
+          dropzone.emit('success', file)
+          dropzone.emit('complete', file)
+          tip = 'Drop a file in one of the two zones below.'
+        } catch (error: unknown) {
+          console.error(error)
+          if (error instanceof Error) tip = error.message
+        }
       },
     })
+  }
 
-    let decryptDropzone = new Dropzone(decryptForm, {
-      url: 'none',
-      autoProcessQueue: false,
-      addRemoveLinks: true,
-      maxFilesize: 1024 * 1024 * 1024 * 1,
-      accept: async function (file, done) {
-        let { name, url } = await startBackgroundTask(
-          Task.DECRYPT_FILE,
-          async function* () {
-            yield
-            yield { name: file.name, url: URL.createObjectURL(file) }
-          },
-          {
-            reporter: (report: Report) => {
-              if (report.state === State.TASK_IN_PROGRESS)
-                decryptDropzone.emit(
-                  'uploadprogress',
-                  file,
-                  report.progress * 100
-                )
-              reporter((str) => (tip = str))(report)
-            },
-          }
-        )
-        triggerDownload(name, url)
-        done()
-        decryptDropzone.emit('success', file)
-        decryptDropzone.emit('complete', file)
-        tip = 'Drop a file in one of the two zones below.'
-      },
-    })
+  onMount(() => {
+    setupDropzone(encryptForm, Task.ENCRYPT_FILE)
+    setupDropzone(decryptForm, Task.DECRYPT_FILE)
   })
 </script>
 
