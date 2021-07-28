@@ -9,12 +9,9 @@ import {
   removeJammingSimpleText,
 } from './jamming'
 import {
-  concatUint8Array,
   random,
   sha256,
-  uint8ArrayToUTF8,
   uint8ArrayToWordArray,
-  utf8ToUint8Array,
   wordArrayToUint8Array,
 } from './utils'
 
@@ -45,18 +42,18 @@ export class EviCrypt {
       iv,
       salt,
       this.keys.high,
-      utf8ToUint8Array(plainText)
+      new TextEncoder().encode(plainText)
     )
 
     const jam = addJammingSimpleText(
-      concatUint8Array(iv, salt),
+      new Uint8Array([...iv, ...salt]),
       this.keys.low.slice(20),
       plainText.length
     )
 
     const keyID = (
       await sha256(
-        concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
+        new Uint8Array([...this.keys.low.slice(0, 20), ...jam.slice(0, 32)])
       )
     ).slice(0, 20)
 
@@ -83,7 +80,7 @@ export class EviCrypt {
     const AES = new AesUtil(256, 1000)
     const dec = AES.decryptCTR(iv, salt, this.keys.high, dataText.slice(offset))
 
-    return uint8ArrayToUTF8(dec)
+    return new TextDecoder().decode(dec)
   }
 
   async encryptFile(file: File, reporter: Reporter): Promise<BlobPart[]> {
@@ -96,11 +93,11 @@ export class EviCrypt {
     const iv = random(16)
     const salt = random(32)
     const shift = random(1)
-    const jam = shiftLeft(concatUint8Array(iv, salt), shift[0])
+    const jam = shiftLeft(new Uint8Array([...iv, ...salt]), shift[0])
 
     const idKey = (
       await sha256(
-        concatUint8Array(this.keys.low.slice(0, 20), jam.slice(0, 32))
+        new Uint8Array([...this.keys.low.slice(0, 20), ...jam.slice(0, 32)])
       )
     ).slice(0, 20)
 

@@ -15,7 +15,7 @@ import {
 import { AesUtil } from './AesUtil'
 import { removeJamming } from './jamming'
 import { sendRequest } from './lanUtils'
-import { concatUint8Array, random, sha512, xor } from './utils'
+import { random, sha512, xor } from './utils'
 
 export interface KeyPair {
   high: Uint8Array
@@ -221,10 +221,10 @@ const unjamKeys = async (
   const AES = new AesUtil(256, 1000)
 
   const highHashPromise = sha512(
-    concatUint8Array(certificate.jamming, keysExchange[1].sharedKey)
+    new Uint8Array([...certificate.jamming, ...keysExchange[1].sharedKey])
   )
   const lowHashPromise = sha512(
-    concatUint8Array(certificate.jamming, keysExchange[0].sharedKey)
+    new Uint8Array([...certificate.jamming, ...keysExchange[0].sharedKey])
   )
 
   const highKey = xor(keysExchange[2].sharedKey, certificate.fKey)

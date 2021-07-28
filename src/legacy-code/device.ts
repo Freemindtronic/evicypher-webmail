@@ -6,16 +6,7 @@ import { Request } from '../background/protocol'
 import type { Reporter } from '../report'
 import { AesUtil } from './AesUtil'
 import { search, sendRequest } from './lanUtils'
-import {
-  concatUint8Array,
-  longToByteArray,
-  random,
-  sha256,
-  uint8ArrayToUTF8,
-  uint8ToHex,
-  utf8ToUint8Array,
-  xor,
-} from './utils'
+import { longToByteArray, random, sha256, uint8ToHex, xor } from './utils'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -63,7 +54,7 @@ export class PairingKey {
     const key = random(16)
     const iv = random(16)
     const salt = random(16)
-    const TkeyPromise = sha256(concatUint8Array(iv, salt))
+    const TkeyPromise = sha256(new Uint8Array([...iv, ...salt]))
 
     const enc = new AesUtil(256, 1000).encryptCTR(iv, salt, key, k1.public)
 
@@ -168,7 +159,7 @@ export class Device {
     )
     const UUID = uint8ToHex(UUID_U8)
 
-    return { name: uint8ArrayToUTF8(name), UUID, ECC: sharedKey }
+    return { name: new TextDecoder().decode(name), UUID, ECC: sharedKey }
   }
 
   async sendNameInfo(
@@ -181,7 +172,7 @@ export class Device {
       ivS,
       saltb,
       this.pairingKey.Tkey,
-      utf8ToUint8Array(name)
+      new TextEncoder().encode(name)
     )
     await sendRequest({
       ip: this.IP,
@@ -192,10 +183,12 @@ export class Device {
 
     // Paralellize hashes calculations
     const hashes = {
-      id: sha256(concatUint8Array(this.pairingKey.Tkey, this.certificate.id)),
+      id: sha256(
+        new Uint8Array([...this.pairingKey.Tkey, ...this.certificate.id])
+      ),
       sKey: sha256(this.certificate.sKey),
       tKey: sha256(this.pairingKey.key),
-      jamming: sha256(concatUint8Array(this.pairingKey.iv, saltb)),
+      jamming: sha256(new Uint8Array([...this.pairingKey.iv, ...saltb])),
     }
 
     const certData = {

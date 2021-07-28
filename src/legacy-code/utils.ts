@@ -38,7 +38,7 @@ export const sha256 = async (data: Uint8Array): Promise<Uint8Array> => {
  *
  * @remarks
  *   This hash is not interoperable with other implementations of SHA-512 because
- *   of a bug. {@see asyncSha256}
+ *   of a bug. See {@link asyncSha256}.
  */
 export const sha512 = async (data: Uint8Array): Promise<Uint8Array> =>
   new Uint8Array(
@@ -101,22 +101,10 @@ export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
     : a.map((v, i) => v ^ b[i])
 }
 
-export function uint8ArrayToUTF8(data: Uint8Array): string {
-  return new TextDecoder('utf-8').decode(data)
-}
-
 export function uint8ToHex(uint8: Uint8Array): string {
   // eslint-disable-next-line unicorn/no-array-reduce
   return uint8.reduce(
     (str, byte) => str + byte.toString(16).padStart(2, '0'),
     ''
   )
-}
-
-export function utf8ToUint8Array(str: string): Uint8Array {
-  return new TextEncoder().encode(str)
-}
-
-export function concatUint8Array(a: Uint8Array, b: Uint8Array): Uint8Array {
-  return new Uint8Array([...a, ...b])
 }
