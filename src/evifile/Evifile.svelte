@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { reporter } from 'content-scripts/encryption'
+
   import Dropzone from 'dropzone'
   import type { Report } from 'report'
   import { State } from 'report'
@@ -9,6 +11,8 @@
 
   let encryptForm: HTMLFormElement
   let decryptForm: HTMLFormElement
+
+  let tip = 'Drop a file in one of the two zones below.'
 
   /** Prompts the user to save the file located at `url`. */
   const triggerDownload = (name: string, url: string) => {
@@ -39,6 +43,7 @@
                   file,
                   report.progress * 100
                 )
+              reporter((str) => (tip = str))(report)
             },
           }
         )
@@ -46,6 +51,7 @@
         done()
         encryptDropzone.emit('success', file)
         encryptDropzone.emit('complete', file)
+        tip = 'Drop a file in one of the two zones below.'
       },
     })
 
@@ -69,6 +75,7 @@
                   file,
                   report.progress * 100
                 )
+              reporter((str) => (tip = str))(report)
             },
           }
         )
@@ -76,12 +83,15 @@
         done()
         decryptDropzone.emit('success', file)
         decryptDropzone.emit('complete', file)
+        tip = 'Drop a file in one of the two zones below.'
       },
     })
   })
 </script>
 
 <h1>EviFile</h1>
+
+<p>{tip}</p>
 
 <main>
   <form class="dropzone" bind:this={encryptForm}>
@@ -122,5 +132,11 @@
       grid-template-rows: 1fr 1fr;
       grid-template-columns: auto;
     }
+  }
+
+  p {
+    margin-bottom: 0;
+    padding: 1em;
+    text-align: center;
   }
 </style>
