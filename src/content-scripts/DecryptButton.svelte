@@ -1,9 +1,10 @@
 <script lang="ts">
+  import type { Report } from 'report'
   import DecryptIdle from './assets/decrypt.svg'
   import Button from './Button.svelte'
 
   /** Tooltip content. */
-  export let tooltip: string | undefined
+  export let report: Report | undefined
 
   /** A promise for the state of the process. */
   export let promise: Promise<void> | undefined
@@ -11,7 +12,7 @@
 
 <!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
 <Button
-  bind:tooltip
+  bind:report
   bind:promise
   tooltipPlacement="bottom-start"
   IdleIcon={DecryptIdle}

@@ -1,5 +1,6 @@
 import { BrowserStore } from 'browser-store'
 import { ErrorMessage } from 'error'
+import { Report, State } from 'report'
 import {
   addMessages,
   getLocaleFromNavigator,
@@ -58,6 +59,27 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
 })
 
 export { translateError as _e }
+
+export const translateReport = derived(_, ($_) => (report: Report) => {
+  switch (report.state) {
+    case State.NOTIFICATION_SENT:
+      return $_('notification-sent')
+
+    case State.WAITING_FOR_PHONE:
+      return $_('waiting-for-phone')
+
+    case State.WAITING_FOR_FIRST_RESPONSE:
+      return $_('waiting-for-first-response')
+
+    case State.TASK_IN_PROGRESS:
+      return $_('task-in-progress')
+
+    default:
+      throw new Error(`Unknown error message: ${report.state as string}.`)
+  }
+})
+
+export { translateReport as _r }
 
 // Register languages
 addMessages('en', en)

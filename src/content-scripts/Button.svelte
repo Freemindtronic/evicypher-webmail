@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { _e } from 'i18n'
+  import { _e, _r } from 'i18n'
+  import type { Report } from 'report'
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import type { SvelteComponent } from 'svelte/internal'
@@ -10,7 +11,7 @@
   import FailedIcon from './assets/failed.svg'
 
   /** Tooltip content. */
-  export let tooltip: string | undefined
+  export let report: Report | undefined
 
   /** A promise for the state of the process. */
   export let promise: Promise<void> | undefined
@@ -97,7 +98,13 @@
     {idleTooltip}
   {:else}
     {#await promise}
-      <span>{tooltip}</span>
+      <span>
+        {#if report === undefined}
+          Loading...
+        {:else}
+          {$_r(report)}
+        {/if}
+      </span>
       <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
     {:then}
       {doneTooltip}

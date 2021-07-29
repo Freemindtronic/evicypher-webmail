@@ -1,5 +1,6 @@
 import { debug } from 'debug'
 import { ErrorMessage, ExtensionError } from 'error'
+import type { Report } from 'report'
 import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -9,7 +10,6 @@ import {
   encryptString,
   extractEncryptedString,
   isEncryptedText,
-  reporter,
 } from './encryption'
 
 /** Selectors for interesting HTML Elements of Gmail. */
@@ -70,14 +70,14 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
 
     if (promise && !rejected) return promise
 
-    button.$set({ tooltip: 'Loading...' })
+    button.$set({ report: undefined })
 
     // Decrypt and display
     return decryptString(
       encryptedString,
-      reporter((tooltip: string) => {
-        button.$set({ tooltip })
-      }),
+      (report: Report) => {
+        button.$set({ report })
+      },
       signal
     ).then((decryptedString) => {
       frame = displayDecryptedMail(
@@ -104,15 +104,15 @@ const handleToolbar = (toolbar: HTMLElement) => {
     if (!mail || !mail.textContent)
       throw new ExtensionError(ErrorMessage.MAIL_CONTENT_UNDEFINED)
 
-    button.$set({ tooltip: 'Loading...' })
+    button.$set({ report: undefined })
 
     // Encrypt and replace
     return encryptString(
       // Use innerHTML instead of textContent to support rich text
       mail.innerHTML,
-      reporter((tooltip: string) => {
-        button.$set({ tooltip })
-      }),
+      (report: Report) => {
+        button.$set({ report })
+      },
       signal
     ).then((encryptedString) => {
       mail.textContent = encryptedString

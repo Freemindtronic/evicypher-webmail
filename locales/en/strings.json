@@ -28,5 +28,9 @@
   "too-many-attempts": "Too many attempts, please retry the operation.",
   "wrong-key": "The key provided cannot decrypt this file.",
   "zeroconf-unavailable": "The EviDNS service is not properly installed.",
-  "phone-name-undefined": "Please provide a name for the new phone."
+  "phone-name-undefined": "Please provide a name for the new phone.",
+  "notification-sent": "Click on the notification you received.",
+  "waiting-for-phone": "Make sure your phone and your computer are on the same network.",
+  "waiting-for-first-response": "Make sure the app is opened.",
+  "task-in-progress": "Task in progress."
 }
