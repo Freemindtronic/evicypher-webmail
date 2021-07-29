@@ -19,16 +19,41 @@ const storedLocale = new BrowserStore<string>('locale', locale, {
 
 export { storedLocale as locale }
 
+// eslint-disable-next-line complexity
 export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
   switch (error) {
     case ErrorMessage.CANCELLED_BY_USER:
       return $_('cancelled-by-user')
 
+    case ErrorMessage.FAVORITE_PHONE_UNDEFINED:
+      return $_('favorite-phone-undefined')
+
+    case ErrorMessage.FILE_NAME_TOO_LONG:
+      return $_('file-name-too-long')
+
+    case ErrorMessage.FILE_NOT_RECOGNIZED:
+      return $_('file-not-recognized')
+
+    case ErrorMessage.MAIL_CONTENT_UNDEFINED:
+      return $_('mail-content-undefined')
+
+    case ErrorMessage.PHONE_NAME_UNDEFINED:
+      return $_('phone-name-undefined')
+
+    case ErrorMessage.TOO_MANY_ATTEMPTS:
+      return $_('too-many-attempts')
+
     case ErrorMessage.UNKNOWN_ERROR:
       return $_('unknown-error')
 
+    case ErrorMessage.WRONG_KEY:
+      return $_('wrong-key')
+
+    case ErrorMessage.ZEROCONF_UNAVAILABLE:
+      return $_('zeroconf-unavailable')
+
     default:
-      throw new Error('Non exhaustive switch.')
+      throw new Error(`Unknown error message: ${error as string}.`)
   }
 })
 

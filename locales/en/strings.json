@@ -20,5 +20,13 @@
   "register-a-phone-with-the-form-below": "Register a phone with the form below.",
   "cancelled-by-user": "Cancelled by the user.",
   "unknown-error": "The extension encountered an error and the operation failed.",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "favorite-phone-undefined": "Please pair a device and set one as favorite.",
+  "file-name-too-long": "File name is too long.",
+  "file-not-recognized": "This file format is not recognized.",
+  "mail-content-undefined": "The mail is empty, please write a mail first.",
+  "too-many-attempts": "Too many attempts, please retry the operation.",
+  "wrong-key": "The key provided cannot decrypt this file.",
+  "zeroconf-unavailable": "The EviDNS service is not properly installed.",
+  "phone-name-undefined": "Please provide a name for the new phone."
 }
