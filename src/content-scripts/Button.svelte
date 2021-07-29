@@ -1,5 +1,5 @@
 <script lang="ts">
-  import 'i18n'
+  import { _e } from 'i18n'
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import type { SvelteComponent } from 'svelte/internal'
@@ -102,7 +102,7 @@
     {:then}
       {doneTooltip}
     {:catch { message }}
-      {message}
+      {$_e(message)}
     {/await}
   {/if}
 </div>
