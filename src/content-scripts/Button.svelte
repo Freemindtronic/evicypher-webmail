@@ -1,12 +1,14 @@
 <script lang="ts">
+  import 'i18n'
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
+  import { _ } from 'svelte-i18n'
   import type { SvelteComponent } from 'svelte/internal'
   import type { Instance, Placement } from 'tippy.js'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
-  import { ButtonState } from './encryption'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
+  import { ButtonState } from './encryption'
 
   /** Tooltip content. */
   export let tooltip: string | undefined = undefined
@@ -88,7 +90,7 @@
     {idleTooltip}
   {:else if state === ButtonState.IN_PROGRESS}
     <span>{tooltip}</span>
-    <button on:click={() => dispatch('abort')}>Cancel</button>
+    <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
   {:else if state === ButtonState.DONE}
     {doneTooltip}
   {:else if state === ButtonState.FAILED}
