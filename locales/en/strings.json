@@ -18,7 +18,7 @@
   "favorite-phone": "Favorite phone:",
   "none-define-one-here": "none, define one here",
   "register-a-phone-with-the-form-below": "Register a phone with the form below.",
-  "cancelled-by-user": "Cancelled by the user.",
+  "canceled-by-user": "Canceled by the user.",
   "unknown-error": "The extension encountered an error and the operation failed.",
   "cancel": "Cancel",
   "favorite-phone-undefined": "Please pair a device and set one as favorite.",

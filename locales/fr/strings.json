@@ -19,7 +19,7 @@
   "none-define-one-here": "aucun, définissez-en un ici",
   "register-a-phone-with-the-form-below": "Enregistrez un téléphone avec le formulaire ci-dessous.",
   "unknown-error": "L'extension a rencontré une erreur et l'opération a échoué.",
-  "cancelled-by-user": "Opération annulée par l'utilisateur.",
+  "canceled-by-user": "Opération annulée par l'utilisateur.",
   "cancel": "Annuler",
   "favorite-phone-undefined": "Appairez un téléphone et mettez-le en favori.",
   "file-name-too-long": "Le nom du fichier est trop long.",

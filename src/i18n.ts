@@ -22,8 +22,8 @@ export { storedLocale as locale }
 // eslint-disable-next-line complexity
 export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
   switch (error) {
-    case ErrorMessage.CANCELLED_BY_USER:
-      return $_('cancelled-by-user')
+    case ErrorMessage.CANCELED_BY_USER:
+      return $_('canceled-by-user')
 
     case ErrorMessage.FAVORITE_PHONE_UNDEFINED:
       return $_('favorite-phone-undefined')

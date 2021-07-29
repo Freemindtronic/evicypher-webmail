@@ -54,7 +54,7 @@ export const search = async <T extends keyof RequestMap>(
     while (maxNumberOfSearches > 0) {
       // Shall we continue?
       if (signal.aborted)
-        throw new ExtensionError(ErrorMessage.CANCELLED_BY_USER)
+        throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
 
       // Run the search loop
       const res = await searchLoop(context, type, data, {
@@ -201,7 +201,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
     setTimeout(() => {
       controller.abort()
     }, timeout)
-  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELLED_BY_USER)
+  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
   signal?.addEventListener('abort', () => {
     controller.abort()
   })

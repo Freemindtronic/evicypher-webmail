@@ -1,6 +1,6 @@
 /** List of all possible error messages. */
 export enum ErrorMessage {
-  CANCELLED_BY_USER = 'Cancelled by user.',
+  CANCELED_BY_USER = 'Canceled by user.',
   FAVORITE_PHONE_UNDEFINED = 'No favorite phone set.',
   FILE_NAME_TOO_LONG = 'Filename too long.',
   FILE_NOT_RECOGNIZED = 'File not recognized.',
