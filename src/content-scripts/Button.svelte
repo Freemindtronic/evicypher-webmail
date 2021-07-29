@@ -8,13 +8,12 @@
   import { browser } from 'webextension-polyfill-ts'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
-  import { ButtonState } from './encryption'
 
   /** Tooltip content. */
-  export let tooltip: string | undefined = undefined
+  export let tooltip: string | undefined
 
-  /** Button state. */
-  export let state: ButtonState = ButtonState.IDLE
+  /** A promise for the state of the process. */
+  export let promise: Promise<void> | undefined
 
   /** Tootlip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
@@ -35,14 +34,20 @@
   const dispatch =
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 
-  // Make the tooltip persistent when the task is running
-  $: {
+  const resetTippy = () => {
     tippyInstance?.setProps({
-      trigger:
-        state === ButtonState.IN_PROGRESS
-          ? 'manual'
-          : tippy.defaultProps.trigger,
+      trigger: tippy.defaultProps.trigger,
     })
+  }
+
+  // Make the tooltip persistent when the task is running
+  $: if (promise === undefined) {
+    resetTippy()
+  } else {
+    tippyInstance?.setProps({
+      trigger: 'manual',
+    })
+    promise.then(resetTippy).catch(resetTippy)
   }
 
   onMount(() => {
@@ -59,7 +64,7 @@
   afterUpdate(() => {
     // Recompute the location of the tooltip after each update
     tippyInstance?.setContent(tippyElement)
-    if (state !== ButtonState.IDLE) tippyInstance?.show()
+    if (promise !== undefined) tippyInstance?.show()
   })
 </script>
 
@@ -69,33 +74,36 @@
   class:button={true}
   {...$$restProps}
 >
-  {#if state === ButtonState.IDLE}
+  {#if promise === undefined}
     <svelte:component this={IdleIcon} width="16" height="16" />
-  {:else if state === ButtonState.IN_PROGRESS}
-    <img
-      src={browser.runtime.getURL('/loading.gif')}
-      alt="..."
-      width="16"
-      height="16"
-    />
-  {:else if state === ButtonState.DONE}
-    <DoneIcon width="16" height="16" />
-  {:else if state === ButtonState.FAILED}
-    <FailedIcon width="16" height="16" />
+  {:else}
+    {#await promise}
+      <img
+        src={browser.runtime.getURL('/loading.gif')}
+        alt="..."
+        width="16"
+        height="16"
+      />
+    {:then}
+      <DoneIcon width="16" height="16" />
+    {:catch}
+      <FailedIcon width="16" height="16" />
+    {/await}
   {/if}
 </button>
 
 <div bind:this={tippyElement} class="tooltip">
-  {#if state === ButtonState.IDLE}
+  {#if promise === undefined}
     {idleTooltip}
-  {:else if state === ButtonState.IN_PROGRESS}
-    <span>{tooltip}</span>
-    <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
-  {:else if state === ButtonState.DONE}
-    {doneTooltip}
-  {:else if state === ButtonState.FAILED}
-    {tooltip}
-    Click to retry.
+  {:else}
+    {#await promise}
+      <span>{tooltip}</span>
+      <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
+    {:then}
+      {doneTooltip}
+    {:catch { message }}
+      {message}
+    {/await}
   {/if}
 </div>
 

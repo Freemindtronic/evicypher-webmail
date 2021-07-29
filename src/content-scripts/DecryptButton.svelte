@@ -1,19 +1,18 @@
 <script lang="ts">
   import DecryptIdle from './assets/decrypt.svg'
   import Button from './Button.svelte'
-  import { ButtonState } from './encryption'
 
   /** Tooltip content. */
-  export let tooltip: string | undefined = undefined
+  export let tooltip: string | undefined
 
-  /** Button state. */
-  export let state: ButtonState = ButtonState.IDLE
+  /** A promise for the state of the process. */
+  export let promise: Promise<void> | undefined
 </script>
 
 <!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
 <Button
   bind:tooltip
-  bind:state
+  bind:promise
   tooltipPlacement="bottom-start"
   IdleIcon={DecryptIdle}
   idleTooltip="Click to decrypt this message."

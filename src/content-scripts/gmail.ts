@@ -1,11 +1,9 @@
 import { debug } from 'debug'
 import { ErrorMessage, ExtensionError } from 'error'
-import { Observable } from 'observable'
 import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
-  ButtonState,
   containsEncryptedText,
   decryptString,
   encryptString,
@@ -64,28 +62,29 @@ const addDecryptButton = (node: Text, encryptedString: string) => {
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
 
-  addClickListener(button, async (state, signal) => {
-    if (state.get() === ButtonState.DONE) {
+  addClickListener(button, (promise, resolved, rejected, signal) => {
+    if (resolved) {
       frame.parentNode?.removeChild(frame)
-      return ButtonState.IDLE
+      return
     }
 
-    state.set(ButtonState.IN_PROGRESS)
+    if (promise && !rejected) return promise
+
     button.$set({ tooltip: 'Loading...' })
 
     // Decrypt and display
-    const decryptedString = await decryptString(
+    return decryptString(
       encryptedString,
       reporter((tooltip: string) => {
         button.$set({ tooltip })
       }),
       signal
-    )
-
-    if (decryptedString && node.parentNode)
-      frame = displayDecryptedMail(decryptedString, node.parentNode)
-
-    return ButtonState.DONE
+    ).then((decryptedString) => {
+      frame = displayDecryptedMail(
+        decryptedString,
+        node.parentNode as ParentNode
+      )
+    })
   })
 }
 
@@ -98,8 +97,9 @@ const handleToolbar = (toolbar: HTMLElement) => {
     target: toolbar,
   })
 
-  addClickListener(button, async (state, signal) => {
-    state.set(ButtonState.IN_PROGRESS)
+  addClickListener(button, async (promise, resolved, rejected, signal) => {
+    console.log('clicked2')
+    if (promise && !resolved && !rejected) return promise
 
     const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
     if (!mail || !mail.textContent)
@@ -108,16 +108,16 @@ const handleToolbar = (toolbar: HTMLElement) => {
     button.$set({ tooltip: 'Loading...' })
 
     // Encrypt and replace
-    mail.textContent = await encryptString(
+    return encryptString(
       // Use innerHTML instead of textContent to support rich text
       mail.innerHTML,
       reporter((tooltip: string) => {
         button.$set({ tooltip })
       }),
       signal
-    )
-
-    return ButtonState.DONE
+    ).then((encryptedString) => {
+      mail.textContent = encryptedString
+    })
   })
 }
 
@@ -130,44 +130,38 @@ const handleToolbar = (toolbar: HTMLElement) => {
 const addClickListener = (
   button: EncryptButton | DecryptButton,
   listener: (
-    state: Observable<ButtonState>,
+    promise: Promise<void> | undefined,
+    resolved: boolean,
+    rejected: boolean,
     signal: AbortSignal
-  ) => PromiseLike<ButtonState>
+  ) => Promise<void> | undefined
 ) => {
-  /** Current state of the process. */
-  const state = new Observable(ButtonState.IDLE)
-  state.subscribe((state) => {
-    // Reflect all changes to the button
-    button.$set({ state })
-  })
-
   /** Abort controller, bound to a button in the tooltip. */
   let controller: AbortController
   button.$on('abort', () => {
     controller.abort()
-    state.set(ButtonState.IDLE)
+    promise = undefined
+    button.$set({ promise })
   })
 
+  let promise: Promise<void> | undefined
+  let resolved = false
+  let rejected = false
+
   // When the button is clicked, trigger the event listener
-  button.$on('click', async () => {
-    // Prevent the process from running twice
-    if (state.get() === ButtonState.IN_PROGRESS) return
-    controller = new AbortController()
-
-    try {
-      // Run the listener
-      const newState = await listener(state, controller.signal)
-
-      // Mark the job as done, or any other state returned by the listener
-      state.set(newState)
-      button.$set({ tooltip: undefined })
-    } catch (error: unknown) {
-      if (controller.signal.aborted) return
-
-      // Mark the job as failed, and propagate the error message
-      state.set(ButtonState.FAILED)
-      if (error instanceof Error) button.$set({ tooltip: error.message })
-    }
+  button.$on('click', () => {
+    if (promise === undefined) controller = new AbortController()
+    promise = listener(promise, resolved, rejected, controller.signal)
+    button.$set({ promise })
+    resolved = false
+    rejected = false
+    promise
+      ?.then(() => {
+        resolved = true
+      })
+      .catch(() => {
+        rejected = true
+      })
   })
 }
 

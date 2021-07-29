@@ -1,14 +1,6 @@
 import { Report, Reporter, State } from 'report'
 import { startBackgroundTask, Task } from 'task'
 
-/** The four possible states of a button. */
-export enum ButtonState {
-  IDLE,
-  IN_PROGRESS,
-  DONE,
-  FAILED,
-}
-
 /** Sends a request to the background script to encrypt the given string. */
 export const encryptString = async (
   string: string,
