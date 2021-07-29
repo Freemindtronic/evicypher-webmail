@@ -50,11 +50,11 @@ export interface ResponseMap {
   [Request.PING]: PingResponse
   [Request.CIPHER_KEY]: CipherKeyResponse
   [Request.END]: EndResponse
-  [Request.END_OK]: EndOkResponse
-  [Request.PAIRING_START]: PairingStartResponse
+  [Request.END_OK]: Record<string, never>
+  [Request.PAIRING_START]: Record<string, never>
   [Request.PAIRING_SALT]: PairingSaltResponse
   [Request.PAIRING_NAME]: PairingNameResponse
-  [Request.IS_ALIVE]: IsAliveResponse
+  [Request.IS_ALIVE]: Record<string, never>
 }
 
 /**
@@ -132,15 +132,9 @@ export interface EndOkRequest {
   d: Uint8Array
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EndOkResponse {}
-
 export interface PairingStartRequest {
   t: Uint8Array
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PairingStartResponse {}
 
 export interface PairingSaltRequest {
   /** Initialization vector. */
@@ -192,6 +186,3 @@ export interface IsAliveRequest {
    */
   oskour: 1
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IsAliveResponse {}
