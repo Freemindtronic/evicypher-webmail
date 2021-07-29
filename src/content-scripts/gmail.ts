@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { ErrorMessage, ExtensionError } from 'error'
 import { Observable } from 'observable'
 import { browser } from 'webextension-polyfill-ts'
 import DecryptButton from './DecryptButton.svelte'
@@ -101,7 +102,8 @@ const handleToolbar = (toolbar: HTMLElement) => {
     state.set(ButtonState.IN_PROGRESS)
 
     const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
-    if (!mail || !mail.textContent) throw new Error('Please write a mail.')
+    if (!mail || !mail.textContent)
+      throw new ExtensionError(ErrorMessage.MAIL_CONTENT_UNDEFINED)
 
     button.$set({ tooltip: 'Loading...' })
 
@@ -185,7 +187,7 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
 
   parent.append(frame)
   frame.addEventListener('load', () => {
-    if (!frame.contentDocument) throw new Error('Cannot change frame content')
+    if (!frame.contentDocument) throw new Error('Cannot change frame content.')
     frame.contentDocument.body.innerHTML = decryptedString
     // Make the frame as tall as its content
     frame.height = `${frame.contentDocument.body.scrollHeight + 20}`

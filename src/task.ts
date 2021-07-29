@@ -3,6 +3,7 @@ import type { decrypt, decryptFile } from 'background/tasks/decrypt'
 import type { encrypt, encryptFile } from 'background/tasks/encrypt'
 import type { pair } from 'background/tasks/pair'
 import debug, { Debugger } from 'debug'
+import { ErrorMessage, ExtensionError } from 'error'
 import type { Observable } from 'observable'
 import type { Phone } from 'phones'
 import type { Report, Reporter } from 'report'
@@ -92,7 +93,7 @@ export type MessageFromBackToFront<T> = T extends BackgroundTask<
         }
       | {
           type: 'error'
-          error: string
+          error: ErrorMessage
         }
   : never
 
@@ -237,10 +238,10 @@ const messageListener =
 
     // If we received an error, rethrow it
     if (message.type === 'error') {
-      reject(new Error(message.error))
+      reject(new ExtensionError(message.error))
       port.disconnect()
       return
     }
 
-    throw new Error('Unexpected message')
+    throw new Error(`Unexpected message: ${message as string}.`)
   }

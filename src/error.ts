@@ -1,3 +1,17 @@
+/** List of all possible error messages. */
+export enum ErrorMessage {
+  CANCELLED_BY_USER = 'Cancelled by user.',
+  FAVORITE_PHONE_UNDEFINED = 'No favorite phone set.',
+  FILE_NAME_TOO_LONG = 'Filename too long.',
+  FILE_NOT_RECOGNIZED = 'File not recognized.',
+  MAIL_CONTENT_UNDEFINED = 'Mail content undefined.',
+  PHONE_NAME_UNDEFINED = 'Phone name undefined.',
+  TOO_MANY_ATTEMPTS = 'Too many attempts.',
+  UNKNOWN_ERROR = 'Unknown error.',
+  WRONG_KEY = 'Wrong key.',
+  ZEROCONF_UNAVAILABLE = 'ZeroConf unavailable.',
+}
+
 /**
  * An extension error is an error thrown when a user action fails. For instance,
  * if no favorite phone is defined, or if EviDNS is not installed.
@@ -9,20 +23,10 @@
  * implementation is buggy- these should be usual Error.
  */
 export class ExtensionError extends Error {
-  constructor(message: string) {
+  readonly message: ErrorMessage
+  constructor(message: ErrorMessage) {
     super(message)
+    this.message = message
     this.name = 'ExtensionError'
   }
-}
-
-export enum ErrorMessage {
-  CANCELLED_BY_USER,
-  FAVORITE_DEVICE_UNDEFINED,
-  FILE_NAME_TOO_LONG,
-  FILE_NOT_RECOGNIZED,
-  MAIL_CONTENT_UNDEFINED,
-  PHONE_NAME_UNDEFINED,
-  TOO_MANY_ATTEMPTS,
-  WRONG_KEY,
-  ZEROCONF_UNAVAILABLE,
 }

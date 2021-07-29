@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/filename-case */
+import { ErrorMessage, ExtensionError } from 'error'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { Reporter, State } from 'report'
 import { AesUtil, shiftLeft, shiftRight } from './AesUtil'
@@ -19,8 +20,6 @@ const ID_MESSAGE = new Uint8Array([0, 0, 0, 21])
 
 const ID_FILE = new Uint8Array([0, 0, 0, 22])
 const blockSize = 262_144
-const extension = 'Evi'
-const extensionName = '.' + extension
 
 interface Keys {
   high: Uint8Array
@@ -84,9 +83,8 @@ export class EviCrypt {
   }
 
   async encryptFile(file: File, reporter: Reporter): Promise<BlobPart[]> {
-    if (file.name.endsWith(extensionName)) throw new Error('Already encrypted')
-
-    if (file.name.length > 256) throw new Error('Filename too long')
+    if (file.name.length > 256)
+      throw new ExtensionError(ErrorMessage.FILE_NAME_TOO_LONG)
 
     const uintFileName = new TextEncoder().encode(file.name)
 
@@ -167,7 +165,7 @@ export class EviCrypt {
       buffer.length < 122 || // 4 + 20 + 16 + 32 + 16 + 32 + 2
       !buffer.slice(0, 4).every((n, i) => n === ID_FILE[i])
     )
-      throw new Error('Unexpected format.')
+      throw new ExtensionError(ErrorMessage.FILE_NOT_RECOGNIZED)
 
     const saltId = buffer.slice(25, 57)
     const idKey = (
@@ -175,7 +173,7 @@ export class EviCrypt {
     ).slice(0, 20)
 
     if (!buffer.slice(5, 25).every((n, i) => n === idKey[i]))
-      throw new Error('Wrong key.')
+      throw new ExtensionError(ErrorMessage.WRONG_KEY)
 
     const jam = shiftRight(buffer.slice(25, 73), buffer[4] ^ this.keys.low[24])
 

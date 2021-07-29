@@ -58,7 +58,7 @@ export const isEncryptedText = (string: string): boolean =>
 /** @returns A trimmed encrypted message */
 export const extractEncryptedString = (string: string): string => {
   const extracted = /AAAAF\S*/s.exec(string)?.[0]
-  if (!extracted) throw new Error('Nothing to extract')
+  if (!extracted) throw new Error('No encrypted string found to extract.')
   return extracted
 }
 

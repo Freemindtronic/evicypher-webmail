@@ -1,4 +1,5 @@
 import { BrowserStore } from 'browser-store'
+import { ErrorMessage, ExtensionError } from 'error'
 import { fetchAndSaveKeys } from 'legacy-code/Client'
 import { EviCrypt } from 'legacy-code/EviCrypt'
 import { favoritePhone } from 'phones'
@@ -26,7 +27,8 @@ export const encrypt: BackgroundTask<undefined, string, string> =
     // Fetch the cerificate of the favorite phone in browser storage
     const phone = get(favoritePhone)
 
-    if (phone === undefined) throw new Error('No favorite device set.')
+    if (phone === undefined)
+      throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
 
     // Send a request to the FMT app
     const keys = await fetchAndSaveKeys(context, phone, {
@@ -55,7 +57,8 @@ export const encryptFile: BackgroundTask<
   // Fetch the cerificate of the favorite phone in browser storage
   const phone = get(favoritePhone)
 
-  if (phone === undefined) throw new Error('No favorite device set.')
+  if (phone === undefined)
+    throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
 
   // Send a request to the FMT app
   const keys = await fetchAndSaveKeys(context, phone, {

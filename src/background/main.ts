@@ -1,4 +1,5 @@
 import debug, { Debugger } from 'debug'
+import { ErrorMessage, ExtensionError } from 'error'
 import { Observable } from 'observable'
 import type { Report } from 'report'
 import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
@@ -91,7 +92,7 @@ const nextStep = async <TSent, TReceived, TReturn>(
   // Abort requests are handled in the main function, no need to handle them twice
   if (message.type === 'abort') return result
 
-  throw new Error(`Message received: ${message as string}`)
+  throw new Error(`Unexpected message: ${message as string}`)
 }
 
 // Enable logging
@@ -109,7 +110,8 @@ browser.runtime.onConnect.addListener(async (port) => {
     [Task.DECRYPT]: decrypt,
     [Task.DECRYPT_FILE]: decryptFile,
   }[port.name]
-  if (task === undefined) throw new Error('Unexpected connection.')
+  if (task === undefined)
+    throw new Error(`Unexpected connection: ${port.name}.`)
 
   // Start the task with its own logger
   const log = debug(`task:${port.name}:background`)
@@ -124,7 +126,9 @@ browser.runtime.onConnect.addListener(async (port) => {
   } catch (error: unknown) {
     // If an error is thrown, send it to the foreground
     log('%o', error)
-    if (error instanceof Error)
+    if (error instanceof ExtensionError)
       port.postMessage({ type: 'error', error: error.message })
+    else if (error instanceof Error)
+      port.postMessage({ type: 'error', error: ErrorMessage.UNKNOWN_ERROR })
   }
 })

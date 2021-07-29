@@ -364,8 +364,7 @@ export const prepareNextExchange = async (
     (entry) => entry[1].phone && get(entry[1].phone) === phone
   )
 
-  if (!entry)
-    throw new Error('The phone has not yet been found by the Zeroconf service.')
+  if (!entry) throw new Error('Phone not found in background context.')
 
   const [ip, { port }] = entry
   entry[1].keys = await sendRequest({

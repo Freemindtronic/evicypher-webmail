@@ -1,4 +1,5 @@
 import debug from 'debug'
+import { ErrorMessage, ExtensionError } from 'error'
 import { sendRequest } from 'legacy-code/lanUtils'
 import { phones } from 'phones'
 import { get } from 'svelte/store'
@@ -50,7 +51,7 @@ export const startZeroconfService = async (
   const log = debug('zeroconf')
 
   if (!(await isZeroconfServiceInstalled()))
-    throw new Error('Please install EviDNS.')
+    throw new ExtensionError(ErrorMessage.ZEROCONF_UNAVAILABLE)
 
   while (true) {
     const start = performance.now()

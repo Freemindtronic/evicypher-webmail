@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/filename-case */
+import { ErrorMessage, ExtensionError } from 'error'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import type { TaskContext } from 'task'
 import { Request, RequestMap, ResponseMap } from '../background/protocol'
@@ -52,7 +53,8 @@ export const search = async <T extends keyof RequestMap>(
     // Try `maxNumberOfSearches` times to reach a phone
     while (maxNumberOfSearches > 0) {
       // Shall we continue?
-      if (signal.aborted) throw new Error('Cancelled by user.')
+      if (signal.aborted)
+        throw new ExtensionError(ErrorMessage.CANCELLED_BY_USER)
 
       // Run the search loop
       const res = await searchLoop(context, type, data, {
@@ -69,7 +71,7 @@ export const search = async <T extends keyof RequestMap>(
       maxNumberOfSearches--
     }
 
-    throw new Error('Too many tries.')
+    throw new ExtensionError(ErrorMessage.TOO_MANY_ATTEMPTS)
   } finally {
     context.scanFaster.set(false)
   }
@@ -199,7 +201,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
     setTimeout(() => {
       controller.abort()
     }, timeout)
-  if (signal?.aborted) throw new Error('Aborted before the request.')
+  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELLED_BY_USER)
   signal?.addEventListener('abort', () => {
     controller.abort()
   })
@@ -212,7 +214,10 @@ export const sendRequest = async <T extends keyof RequestMap>({
     mode: 'cors',
   })
 
-  if (response.status >= 300) throw new Error(response.statusText)
+  if (response.status >= 300)
+    throw new Error(
+      `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
+    )
 
   const responseData = (await response.json()) as Serialize<ResponseMap[T]>
 

@@ -1,4 +1,5 @@
 import { Request } from 'background/protocol'
+import { ErrorMessage, ExtensionError } from 'error'
 import { clientHello, PairingKey } from 'legacy-code/device'
 import { sendRequest } from 'legacy-code/lanUtils'
 import {
@@ -39,7 +40,7 @@ export const pair: BackgroundTask<string, string, true> = async function* (
 
   // Send the UID, and receive the name of the phone
   const phoneName = yield key.UUID
-  if (!phoneName) throw new Error('Empty phone name.')
+  if (!phoneName) throw new ExtensionError(ErrorMessage.PHONE_NAME_UNDEFINED)
 
   // Finish the pairing process
   const certificate = await device.sendNameInfo(phoneName, key.ECC)
