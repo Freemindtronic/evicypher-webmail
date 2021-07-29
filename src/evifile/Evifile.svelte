@@ -2,9 +2,12 @@
   import { reporter } from 'content-scripts/encryption'
 
   import Dropzone from 'dropzone'
+  import { ExtensionError } from 'error'
+  import { translateError } from 'i18n'
   import type { Report } from 'report'
   import { State } from 'report'
   import { onMount } from 'svelte'
+  import type { _ } from 'svelte-i18n'
   import { startBackgroundTask, Task } from 'task'
 
   Dropzone.autoDiscover = false
@@ -54,7 +57,8 @@
           tip = 'Drop a file in one of the two zones below.'
         } catch (error: unknown) {
           console.error(error)
-          if (error instanceof Error) tip = error.message
+          if (error instanceof ExtensionError)
+            tip = $translateError(error.message)
         }
       },
     })

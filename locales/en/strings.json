@@ -17,5 +17,7 @@
   "create-a-key-segment": "Create a key segment",
   "favorite-phone": "Favorite phone:",
   "none-define-one-here": "none, define one here",
-  "register-a-phone-with-the-form-below": "Register a phone with the form below."
+  "register-a-phone-with-the-form-below": "Register a phone with the form below.",
+  "cancelled-by-user": "Cancelled by the user.",
+  "unknown-error": "The extension encountered an error and the operation failed."
 }

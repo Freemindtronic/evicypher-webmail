@@ -17,5 +17,7 @@
   "create-a-key-segment": "Créer un segment de clé",
   "favorite-phone": "Téléphone favori :",
   "none-define-one-here": "aucun, définissez-en un ici",
-  "register-a-phone-with-the-form-below": "Enregistrez un téléphone avec le formulaire ci-dessous."
+  "register-a-phone-with-the-form-below": "Enregistrez un téléphone avec le formulaire ci-dessous.",
+  "unknown-error": "L'extension a rencontré une erreur et l'opération a échoué.",
+  "cancelled-by-user": "Opération annulée par l'utilisateur."
 }
