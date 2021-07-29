@@ -15,7 +15,9 @@
   let encryptForm: HTMLFormElement
   let decryptForm: HTMLFormElement
 
-  let tip = 'Drop a file in one of the two zones below.'
+  let tip: string
+
+  let backgroundTask: Promise<{ name: string; url: string }> | undefined
 
   /** Prompts the user to save the file located at `url`. */
   const triggerDownload = (name: string, url: string) => {
@@ -35,8 +37,13 @@
       addRemoveLinks: true,
       maxFilesize: 1024 * 1024 * 1024 * 1,
       async accept(file, done) {
+        if (backgroundTask !== undefined) {
+          done('One file at a time!')
+          return
+        }
         try {
-          let { name, url } = await startBackgroundTask(
+          tip = 'Loading...'
+          backgroundTask = startBackgroundTask(
             task,
             async function* () {
               yield
@@ -50,15 +57,17 @@
               },
             }
           )
+          let { name, url } = await backgroundTask
           triggerDownload(name, url)
           done()
           dropzone.emit('success', file)
           dropzone.emit('complete', file)
-          tip = 'Drop a file in one of the two zones below.'
         } catch (error: unknown) {
           console.error(error)
           if (error instanceof ExtensionError)
-            tip = $translateError(error.message)
+            done($translateError(error.message))
+        } finally {
+          backgroundTask = undefined
         }
       },
     })
@@ -72,7 +81,13 @@
 
 <h1>EviFile</h1>
 
-<p>{tip}</p>
+{#if backgroundTask === undefined}
+  <p>Drop a file in one of the two zones below.</p>
+{:else}
+  {#await backgroundTask}
+    <p>{tip}</p>
+  {/await}
+{/if}
 
 <main>
   <form class="dropzone" bind:this={encryptForm}>
