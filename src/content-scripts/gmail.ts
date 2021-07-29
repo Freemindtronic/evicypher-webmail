@@ -98,7 +98,6 @@ const handleToolbar = (toolbar: HTMLElement) => {
   })
 
   addClickListener(button, async (promise, resolved, rejected, signal) => {
-    console.log('clicked2')
     if (promise && !resolved && !rejected) return promise
 
     const mail = toolbar.closest('.iN')?.querySelector('[contenteditable]')
