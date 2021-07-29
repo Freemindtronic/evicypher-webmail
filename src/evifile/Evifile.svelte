@@ -91,11 +91,15 @@
 
 <main>
   <form class="dropzone" bind:this={encryptForm}>
-    <h2 class="dz-message">Drop files here to encrypt</h2>
+    <h2 class="dz-message">
+      <button type="button">Drop files here to encrypt</button>
+    </h2>
   </form>
 
   <form class="dropzone" bind:this={decryptForm}>
-    <h2 class="dz-message">Drop files here to decrypt</h2>
+    <h2 class="dz-message">
+      <button type="button">Drop files here to decrypt</button>
+    </h2>
   </form>
 </main>
 
@@ -134,5 +138,10 @@
     margin-bottom: 0;
     padding: 1em;
     text-align: center;
+  }
+
+  button {
+    border: 0;
+    outline: 0;
   }
 </style>

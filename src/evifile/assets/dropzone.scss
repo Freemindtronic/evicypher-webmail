@@ -12,8 +12,12 @@
     }
   }
 
-  &.dz-drag-hover .dz-message {
-    transform: scale(1.1);
-    opacity: 1;
+  &.dz-drag-hover,
+  &:focus-within {
+    border-style: solid;
+    .dz-message {
+      transform: scale(1.1);
+      opacity: 1;
+    }
   }
 }
