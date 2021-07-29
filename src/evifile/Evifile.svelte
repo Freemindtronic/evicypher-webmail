@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { reporter } from 'content-scripts/encryption'
-
   import Dropzone from 'dropzone'
   import { ExtensionError } from 'error'
-  import { translateError } from 'i18n'
+  import { translateError, _r } from 'i18n'
   import type { Report } from 'report'
   import { State } from 'report'
   import { onMount } from 'svelte'
@@ -15,7 +13,7 @@
   let encryptForm: HTMLFormElement
   let decryptForm: HTMLFormElement
 
-  let tip: string
+  let tip: Report | undefined
 
   let backgroundTask: Promise<{ name: string; url: string }> | undefined
 
@@ -42,7 +40,6 @@
           return
         }
         try {
-          tip = 'Loading...'
           backgroundTask = startBackgroundTask(
             task,
             async function* () {
@@ -53,7 +50,7 @@
               reporter: (report: Report) => {
                 if (report.state === State.TASK_IN_PROGRESS)
                   dropzone.emit('uploadprogress', file, report.progress * 100)
-                reporter((str) => (tip = str))(report)
+                tip = report
               },
             }
           )
@@ -85,7 +82,13 @@
   <p>Drop a file in one of the two zones below.</p>
 {:else}
   {#await backgroundTask}
-    <p>{tip}</p>
+    <p>
+      {#if tip === undefined}
+        Loading...
+      {:else}
+        {$_r(tip)}
+      {/if}
+    </p>
   {/await}
 {/if}
 

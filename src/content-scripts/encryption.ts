@@ -1,4 +1,4 @@
-import { Report, Reporter, State } from 'report'
+import type { Reporter } from 'report'
 import { startBackgroundTask, Task } from 'task'
 
 /** Sends a request to the background script to encrypt the given string. */
@@ -53,32 +53,3 @@ export const extractEncryptedString = (string: string): string => {
   if (!extracted) throw new Error('No encrypted string found to extract.')
   return extracted
 }
-
-/** Processes a report to produce a helpful message, than passed as first argument to `f`. */
-export const reporter =
-  (f: (tooltip: string) => void) =>
-  (report: Report): void => {
-    switch (report.state) {
-      case State.SCANNING: {
-        f('Click on the notification you received.')
-        break
-      }
-
-      case State.WAITING_FOR_PHONE: {
-        f('Make sure your phone and your computer are on the same network.')
-        break
-      }
-
-      case State.WAITING_FOR_FIRST_RESPONSE: {
-        f('Make sure the app is opened.')
-        break
-      }
-
-      case State.NOTIFICATION_SENT: {
-        f('Click on the notification you received.')
-        break
-      }
-
-      default:
-    }
-  }
