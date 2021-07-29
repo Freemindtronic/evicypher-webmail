@@ -51,7 +51,10 @@ export const fetchAndSaveKeys = async (
     phone.update(($phone) => $phone)
     return keys
   } finally {
-    await prepareNextExchange(context, $phone)
+    const entry = [...context.network.entries()].find(
+      (entry) => entry[1].phone && entry[1].phone === phone
+    )
+    if (entry) await prepareNextExchange(entry[0], entry[1])
   }
 }
 
@@ -357,21 +360,22 @@ const getPhoneIp = async (
  * There are two types of side effects in this function, but this refactor is not urgent.
  */
 export const prepareNextExchange = async (
-  context: TaskContext,
-  phone: Phone
+  ip: string,
+  entry: {
+    port: number
+    lastSeen: number
+    phone?: Writable<Phone> | undefined
+    keys?: PingResponse | undefined
+  }
 ): Promise<void> => {
-  const entry = [...context.network.entries()].find(
-    (entry) => entry[1].phone && get(entry[1].phone) === phone
-  )
+  if (!entry.phone) throw new Error('Phone not found in background context.')
 
-  if (!entry) throw new Error('Phone not found in background context.')
-
-  const [ip, { port }] = entry
-  entry[1].keys = await sendRequest({
+  const { port, phone } = entry
+  entry.keys = await sendRequest({
     ip,
     port,
     type: Request.PING,
-    data: { t: phone.certificate.id },
+    data: { t: get(phone).certificate.id },
     timeout: 2000,
   })
 }

@@ -1,7 +1,6 @@
-import { Request } from 'background/protocol'
 import { ErrorMessage, ExtensionError } from 'error'
+import { prepareNextExchange } from 'legacy-code/Client'
 import { clientHello, PairingKey } from 'legacy-code/device'
-import { sendRequest } from 'legacy-code/lanUtils'
 import {
   favoritePhone,
   favoritePhoneId,
@@ -53,12 +52,7 @@ export const pair: BackgroundTask<string, string, true> = async function* (
   const backgroundPhone = context.network.get(device.IP)
   if (backgroundPhone) {
     backgroundPhone.phone = phone
-    backgroundPhone.keys = await sendRequest({
-      ip: device.IP,
-      port: backgroundPhone.port,
-      type: Request.PING,
-      data: { t: $phone.certificate.id },
-    })
+    await prepareNextExchange(device.IP, backgroundPhone)
   }
 
   phones.update(($phones) => [...$phones, phone])
