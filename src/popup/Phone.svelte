@@ -5,6 +5,7 @@
   import { _ } from 'svelte-i18n'
   import { readable } from 'svelte/store'
   import tippy from 'tippy.js'
+  import { timeago } from 'i18n'
 
   /** The phone to display. */
   export let phone: Writable<Phone>
@@ -55,7 +56,9 @@
 </button>
 
 <span bind:this={lastSeen}>
-  Last seen {new Date($phone.lastSeen).toString()}
+  {$_('last-seen-timeago', {
+    values: { date: $timeago(new Date($phone.lastSeen)) },
+  })}
 </span>
 
 <style lang="scss">

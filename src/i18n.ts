@@ -13,6 +13,18 @@ import { browser } from 'webextension-polyfill-ts'
 import en from '~/locales/en/strings.json'
 import fr from '~/locales/fr/strings.json'
 
+import TimeAgo from 'javascript-time-ago'
+import agoEn from 'javascript-time-ago/locale/en'
+import agoFr from 'javascript-time-ago/locale/fr'
+
+TimeAgo.addDefaultLocale(agoEn)
+TimeAgo.addLocale(agoFr)
+
+export const timeago = derived(locale, ($locale) => {
+  const timeAgo = new TimeAgo($locale)
+  return (date: number | Date) => timeAgo.format(date)
+})
+
 /** Application locale. */
 const storedLocale = new BrowserStore<string>('locale', locale, {
   storage: browser.storage.sync,

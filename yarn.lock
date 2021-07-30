@@ -827,6 +827,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/javascript-time-ago@npm:^2":
+  version: 2.0.3
+  resolution: "@types/javascript-time-ago@npm:2.0.3"
+  checksum: c2b484686bbe7d3379b476aa05785978c0d307485ac6d2e57c46dd05b91866a8f03aeac3c7da10170a6225c81e8bc419510de896e0e8e520be72ddce0b94fff8
+  languageName: node
+  linkType: hard
+
 "@types/jquery@npm:*":
   version: 3.5.6
   resolution: "@types/jquery@npm:3.5.6"
@@ -3358,6 +3365,7 @@ __metadata:
     "@types/crypto-js": ^4.0.2
     "@types/debug": ^4.1.7
     "@types/dropzone": ^5.7.4
+    "@types/javascript-time-ago": ^2
     "@types/qrcode": ^1.4.1
     "@typescript-eslint/eslint-plugin": ^4.28.5
     "@typescript-eslint/parser": ^4.28.5
@@ -3378,6 +3386,7 @@ __metadata:
     eslint-plugin-svelte3: ^3.2.0
     eslint-plugin-unicorn: ^34.0.1
     husky: ^7.0.1
+    javascript-time-ago: ^2.3.8
     js-base64: ^3.6.1
     lint-staged: ^11.1.1
     postcss: ^8.3.6
@@ -5158,6 +5167,15 @@ fsevents@~2.3.2:
   version: 0.1.2
   resolution: "isstream@npm:0.1.2"
   checksum: 1eb2fe63a729f7bdd8a559ab552c69055f4f48eb5c2f03724430587c6f450783c8f1cd936c1c952d0a927925180fcc892ebd5b174236cf1065d4bd5bdb37e963
+  languageName: node
+  linkType: hard
+
+"javascript-time-ago@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "javascript-time-ago@npm:2.3.8"
+  dependencies:
+    relative-time-format: ^1.0.5
+  checksum: 0f54a0b185025d83c543039753d76a5d1364f9dbbb275bd2104abc7f02b760081eae84944b90059da18fc6de9b04eb9cc50dd7bdceb743ba05328da2e0764392
   languageName: node
   linkType: hard
 
@@ -7189,6 +7207,13 @@ fsevents@~2.3.2:
   version: 3.2.0
   resolution: "regexpp@npm:3.2.0"
   checksum: a78dc5c7158ad9ddcfe01aa9144f46e192ddbfa7b263895a70a5c6c73edd9ce85faf7c0430e59ac38839e1734e275b9c3de5c57ee3ab6edc0e0b1bdebefccef8
+  languageName: node
+  linkType: hard
+
+"relative-time-format@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "relative-time-format@npm:1.0.5"
+  checksum: 74ad17c608fc29353affb3b053e92c4189198032f463ccec9db4539a15136822affcd17653a302dcdb1f87c8ef9b3ecb820f4ab81e73a0856c7a45f3fd3a154e
   languageName: node
   linkType: hard
 
