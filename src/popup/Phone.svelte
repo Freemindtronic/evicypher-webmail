@@ -1,6 +1,6 @@
 <script lang="ts">
   import { favoritePhoneId, Phone } from 'phones'
-  import type { Writable } from 'svelte/store'
+  import type { Readable } from 'svelte/store'
   import { createEventDispatcher, onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { readable } from 'svelte/store'
@@ -8,7 +8,7 @@
   import { timeago } from 'i18n'
 
   /** The phone to display. */
-  export let phone: Writable<Phone>
+  export let phone: Readable<Phone>
 
   let status: HTMLElement
   let lastSeen: HTMLElement
