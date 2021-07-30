@@ -1,11 +1,11 @@
 <script lang="ts">
   import Dropzone from 'dropzone'
   import { ExtensionError } from 'error'
-  import { translateError, _r } from 'i18n'
+  import { translateError, translateReport } from 'i18n'
   import type { Report } from 'report'
   import { State } from 'report'
   import { onMount } from 'svelte'
-  import { _ } from 'svelte-i18n'
+  import { _ } from 'i18n'
   import { startBackgroundTask, Task } from 'task'
 
   Dropzone.autoDiscover = false
@@ -86,7 +86,7 @@
       {#if tip === undefined}
         {$_('loading')}
       {:else}
-        {$_r(tip)}
+        {$translateReport(tip)}
       {/if}
     </p>
   {/await}

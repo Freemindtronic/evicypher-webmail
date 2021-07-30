@@ -1,11 +1,14 @@
 import { BrowserStore } from 'browser-store'
 import { ErrorMessage } from 'error'
+import TimeAgo from 'javascript-time-ago'
+import timeAgoEn from 'javascript-time-ago/locale/en'
+import timeAgoFr from 'javascript-time-ago/locale/fr'
 import { Report, State } from 'report'
 import {
   addMessages,
   getLocaleFromNavigator,
   init,
-  locale,
+  locale as localeStore,
   _,
 } from 'svelte-i18n'
 import { derived } from 'svelte/store'
@@ -13,12 +16,13 @@ import { browser } from 'webextension-polyfill-ts'
 import en from '~/locales/en/strings.json'
 import fr from '~/locales/fr/strings.json'
 
-import TimeAgo from 'javascript-time-ago'
-import agoEn from 'javascript-time-ago/locale/en'
-import agoFr from 'javascript-time-ago/locale/fr'
+// Re-export some functions from svelte-i18n
+export { locales, _ } from 'svelte-i18n'
 
-TimeAgo.addDefaultLocale(agoEn)
-TimeAgo.addLocale(agoFr)
+/** Application locale. */
+export const locale = new BrowserStore<string>('locale', localeStore, {
+  storage: browser.storage.sync,
+})
 
 export const timeago = derived(locale, ($locale) => {
   const timeAgo = new TimeAgo($locale)
@@ -26,13 +30,6 @@ export const timeago = derived(locale, ($locale) => {
     // @ts-expect-error @types/javascript-time-ago is not up to date
     timeAgo.format(date, 'round-minute', { now })
 })
-
-/** Application locale. */
-const storedLocale = new BrowserStore<string>('locale', locale, {
-  storage: browser.storage.sync,
-})
-
-export { storedLocale as locale }
 
 // eslint-disable-next-line complexity
 export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
@@ -72,8 +69,6 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
   }
 })
 
-export { translateError as _e }
-
 export const translateReport = derived(_, ($_) => (report: Report) => {
   switch (report.state) {
     case State.NOTIFICATION_SENT:
@@ -95,8 +90,6 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
   }
 })
 
-export { translateReport as _r }
-
 // Register languages
 addMessages('en', en)
 addMessages('fr', fr)
@@ -106,3 +99,6 @@ init({
   fallbackLocale: 'en',
   initialLocale: getLocaleFromNavigator(),
 })
+
+TimeAgo.addDefaultLocale(timeAgoEn)
+TimeAgo.addLocale(timeAgoFr)

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { _e, _r } from 'i18n'
+  import { translateError, translateReport, _ } from 'i18n'
   import type { Report } from 'report'
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
-  import { _ } from 'svelte-i18n'
   import type { SvelteComponent } from 'svelte/internal'
   import type { Instance, Placement } from 'tippy.js'
   import tippy from 'tippy.js'
@@ -102,14 +101,14 @@
         {#if report === undefined}
           {$_('loading')}
         {:else}
-          {$_r(report)}
+          {$translateReport(report)}
         {/if}
       </span>
       <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
     {:then}
       {doneTooltip}
     {:catch { message }}
-      {$_e(message)}
+      {$translateError(message)}
     {/await}
   {/if}
 </div>

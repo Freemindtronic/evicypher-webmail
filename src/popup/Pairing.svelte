@@ -4,7 +4,7 @@
   import type { Report } from 'report'
   import { State } from 'report'
   import { createEventDispatcher, onMount } from 'svelte'
-  import { _ } from 'svelte-i18n'
+  import { _ } from 'i18n'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
   import { startBackgroundTask, Task } from 'task'

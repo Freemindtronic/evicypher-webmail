@@ -1,7 +1,6 @@
 <script lang="ts">
-  import 'i18n'
   import type { Report } from 'report'
-  import { _ } from 'svelte-i18n'
+  import { _ } from 'i18n'
   import EncryptIdle from './assets/encrypt.svg'
   import Button from './Button.svelte'
 

@@ -2,10 +2,9 @@
   import { favoritePhoneId, Phone } from 'phones'
   import type { Readable } from 'svelte/store'
   import { createEventDispatcher, onMount } from 'svelte'
-  import { _ } from 'svelte-i18n'
   import { readable } from 'svelte/store'
   import tippy from 'tippy.js'
-  import { timeago } from 'i18n'
+  import { timeago, _ } from 'i18n'
 
   /** The phone to display. */
   export let phone: Readable<Phone>

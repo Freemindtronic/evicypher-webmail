@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Phone, phones } from 'phones'
-  import { _ } from 'svelte-i18n'
+  import { _ } from 'i18n'
   import { get } from 'svelte/store'
   import { browser } from 'webextension-polyfill-ts'
   import Pairing from './Pairing.svelte'

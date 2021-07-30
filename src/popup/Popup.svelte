@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { locale, locales, _ } from 'svelte-i18n'
+  import { locale, locales, _ } from 'i18n'
   import Phones from './Phones.svelte'
   import Logo from '../assets/logo.svg'
 </script>
