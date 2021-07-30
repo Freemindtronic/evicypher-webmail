@@ -6,7 +6,8 @@ import { Request } from '../../background/protocol'
 import type { Reporter } from '../../report'
 import { AesUtil } from '../cryptography/AesUtil'
 import { longToByteArray, random, sha256, uint8ToHex, xor } from '../utils'
-import { search, sendRequest } from './lanUtils'
+import { sendRequest } from './exchange'
+import { search } from './search'
 
 export class PairingKey {
   readonly certificate: Certificate
@@ -88,7 +89,7 @@ export async function clientHello(
   signal?: AbortSignal,
   reporter?: Reporter
 ): Promise<Device> {
-  const answer = await search(
+  const ip = await search(
     context,
     Request.PAIRING_START,
     { t: await sha256(pairingKey.certificate.id) },
@@ -98,7 +99,7 @@ export async function clientHello(
       reporter,
     }
   )
-  return new Device(answer.ip, pairingKey)
+  return new Device(ip, pairingKey)
 }
 
 export class Device {

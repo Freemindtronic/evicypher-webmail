@@ -1,13 +1,8 @@
-/* eslint-disable unicorn/filename-case */
 import { ErrorMessage, ExtensionError } from 'error'
-import { fromUint8Array, toUint8Array } from 'js-base64'
 import type { TaskContext } from 'task'
-import { Request, RequestMap, ResponseMap } from '../../background/protocol'
+import type { RequestMap } from '../../background/protocol'
 import { defaultReporter, Reporter, State } from '../../report'
-
-/** @returns An HTTP address created from `ip`, `port` and `type` */
-const formatURL = (ip: string, port: number, type = ''): string =>
-  `http://${ip}:${port}${type}`
+import { sendRequest } from './exchange'
 
 export interface WebAnswer<T> {
   url: string
@@ -45,7 +40,7 @@ export const search = async <T extends keyof RequestMap>(
     /** A function to call every time the process advances. */
     reporter?: Reporter
   } = {}
-): Promise<WebAnswer<ResponseMap[T]>> => {
+): Promise<string> => {
   // Make the Zeroconf service run without cooldown
   context.scanFaster.set(true)
 
@@ -104,7 +99,7 @@ const searchLoop = async <T extends keyof RequestMap>(
     /** A function to call every time the process advances. */
     reporter?: Reporter
   } = {}
-): Promise<WebAnswer<ResponseMap[T]> | void> => {
+): Promise<string | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.network
 
@@ -123,27 +118,19 @@ const searchLoop = async <T extends keyof RequestMap>(
   })
 
   // Try to reach all the devices found
-  const requestsSent: Array<Promise<WebAnswer<ResponseMap[T]>>> = []
+  const requestsSent: Array<Promise<string>> = []
   for (const [ip, { port }] of devicesFound) {
     // If `portOverride` is set, ignore, the port found by Zeroconf
     const requestPort = portOverride ?? port
 
-    // URL to send the request to
-    const url = formatURL(ip, requestPort, type)
-
     const send = async () => {
-      const responseData = await sendRequest({
+      await sendRequest({
         ip,
         port: requestPort,
         type,
         data,
       })
-      return {
-        url,
-        data: responseData,
-        ip,
-        port: requestPort,
-      }
+      return ip
     }
 
     // Send the request to the device
@@ -154,78 +141,4 @@ const searchLoop = async <T extends keyof RequestMap>(
     // Wait for either a device to pair, or an AggregateError
     return await Promise.any(requestsSent)
   } catch {}
-}
-
-export type Serialize<T> = {
-  readonly [K in keyof T]: string
-}
-
-function serialize<T>(obj: T): Serialize<T> {
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [
-      key,
-      value instanceof Uint8Array
-        ? fromUint8Array(value)
-        : `${value as string}`,
-    ])
-  ) as Serialize<T>
-}
-
-function unserialize<T>(obj: Serialize<T>): T {
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [
-      key,
-      typeof value === 'string' ? toUint8Array(value) : value,
-    ])
-  ) as unknown as T
-}
-
-export const sendRequest = async <T extends keyof RequestMap>({
-  ip,
-  port,
-  type,
-  data,
-  timeout,
-  signal,
-}: {
-  ip: string
-  port: number
-  type: T
-  data: RequestMap[T]
-  timeout?: number // TODO re-introduce a default timeout
-  signal?: AbortSignal
-}): Promise<ResponseMap[T]> => {
-  // Create an AbortController to trigger a timeout
-  const controller = new AbortController()
-  if (timeout)
-    setTimeout(() => {
-      controller.abort()
-    }, timeout)
-  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
-  signal?.addEventListener('abort', () => {
-    controller.abort()
-  })
-
-  // Send a POST request
-  const response = await fetch(formatURL(ip, port, type), {
-    method: 'POST',
-    body: new URLSearchParams(serialize(data)),
-    signal: controller.signal,
-    mode: 'cors',
-  })
-
-  if (response.status >= 300)
-    throw new Error(
-      `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
-    )
-
-  const responseData = (await response.json()) as Serialize<ResponseMap[T]>
-
-  // @ts-expect-error For some mysterious reason, there is sometimes an
-  // `n` field in the response, that contains a boolean (meaning "new"
-  // or something), but stored as a string. Since it breaks unserialization
-  // and it is not properly documented (ahah), we remove it.
-  if (type !== Request.PAIRING_SALT) delete responseData.n
-
-  return unserialize(responseData)
 }

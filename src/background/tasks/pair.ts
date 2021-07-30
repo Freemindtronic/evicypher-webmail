@@ -1,6 +1,6 @@
 import { ErrorMessage, ExtensionError } from 'error'
-import { prepareNextExchange } from 'legacy-code/network/Client'
-import { clientHello, PairingKey } from 'legacy-code/network/device'
+import { prepareNextExchange } from 'legacy-code/network/exchange'
+import { clientHello, PairingKey } from 'legacy-code/network/pair'
 import {
   favoritePhone,
   favoritePhoneId,

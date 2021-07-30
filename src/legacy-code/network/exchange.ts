@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/filename-case */
 import axlsign from 'axlsign'
 import {
   CipherKeyRequest,
@@ -7,20 +6,96 @@ import {
   EndResponse,
   PingResponse,
   Request,
+  RequestMap,
+  ResponseMap,
 } from 'background/protocol'
 import { Certificate } from 'certificate'
+import { ErrorMessage, ExtensionError } from 'error'
+import { fromUint8Array, toUint8Array } from 'js-base64'
 import { AesUtil } from 'legacy-code/cryptography/AesUtil'
 import { removeJamming } from 'legacy-code/cryptography/jamming'
-import { sendRequest } from 'legacy-code/network/lanUtils'
 import { random, sha512, xor } from 'legacy-code/utils'
 import type { Phone } from 'phones'
 import { defaultReporter, Reporter, State } from 'report'
 import { get, Writable } from 'svelte/store'
 import type { TaskContext } from 'task'
 
-interface KeyPair {
-  high: Uint8Array
-  low: Uint8Array
+type Serialize<T> = {
+  readonly [K in keyof T]: string
+}
+
+/** @returns An HTTP address created from `ip`, `port` and `type` */
+const formatURL = (ip: string, port: number, type = ''): string =>
+  `http://${ip}:${port}${type}`
+
+function serialize<T>(obj: T): Serialize<T> {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key,
+      value instanceof Uint8Array
+        ? fromUint8Array(value)
+        : `${value as string}`,
+    ])
+  ) as Serialize<T>
+}
+
+function unserialize<T>(obj: Serialize<T>): T {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? toUint8Array(value) : value,
+    ])
+  ) as unknown as T
+}
+
+export const sendRequest = async <T extends keyof RequestMap>({
+  ip,
+  port,
+  type,
+  data,
+  timeout,
+  signal,
+}: {
+  ip: string
+  port: number
+  type: T
+  data: RequestMap[T]
+  timeout?: number // TODO re-introduce a default timeout
+  signal?: AbortSignal
+}): Promise<ResponseMap[T]> => {
+  // Create an AbortController to trigger a timeout
+  const controller = new AbortController()
+  if (timeout)
+    setTimeout(() => {
+      controller.abort()
+    }, timeout)
+  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
+  signal?.addEventListener('abort', () => {
+    controller.abort()
+  })
+
+  // Send a POST request
+  const response = await fetch(formatURL(ip, port, type), {
+    method: 'POST',
+    body: new URLSearchParams(serialize(data)),
+    signal: controller.signal,
+    mode: 'cors',
+  })
+
+  if (response.status >= 300)
+    throw new Error(
+      `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
+    )
+
+  const responseData = (await response.json()) as Serialize<ResponseMap[T]>
+
+  // @ts-expect-error For some mysterious reason, there is sometimes an
+  // `n` field in the response, that contains a boolean (meaning "new"
+  // or something), but stored as a string. Since it breaks unserialization
+  // and it is not properly documented (ahah), we remove it.
+  if (type !== Request.PAIRING_SALT) delete responseData.n
+
+  return unserialize(responseData)
 }
 
 /**
@@ -56,6 +131,11 @@ export const fetchAndSaveKeys = async (
     )
     if (entry) await prepareNextExchange(entry[0], entry[1])
   }
+}
+
+interface KeyPair {
+  high: Uint8Array
+  low: Uint8Array
 }
 
 /**

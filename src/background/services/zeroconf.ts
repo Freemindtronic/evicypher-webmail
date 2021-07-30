@@ -1,6 +1,6 @@
 import debug from 'debug'
 import { ErrorMessage, ExtensionError } from 'error'
-import { sendRequest } from 'legacy-code/network/lanUtils'
+import { sendRequest } from 'legacy-code/network/exchange'
 import { phones } from 'phones'
 import { get } from 'svelte/store'
 import type { TaskContext } from 'task'
