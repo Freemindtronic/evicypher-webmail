@@ -1,12 +1,16 @@
 <script lang="ts">
   import { favoritePhoneId, Phone } from 'phones'
   import type { Writable } from 'svelte/store'
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { _ } from 'svelte-i18n'
   import { readable } from 'svelte/store'
+  import tippy from 'tippy.js'
 
   /** The phone to display. */
   export let phone: Writable<Phone>
+
+  let status: HTMLElement
+  let lastSeen: HTMLElement
 
   /** A store containing the current time, updated every 30 seconds. */
   const time = readable(Date.now(), (set) => {
@@ -20,6 +24,13 @@
   })
 
   const dispatch = createEventDispatcher<{ delete: Phone }>()
+
+  onMount(() => {
+    tippy(status, {
+      content: lastSeen,
+      theme: 'light-border',
+    })
+  })
 </script>
 
 {#if $favoritePhoneId === $phone.id}
@@ -32,17 +43,26 @@
   </button>
 {/if}
 <span>
-  {$phone.name} (<span title="Last seen {new Date($phone.lastSeen).toString()}"
-    >{#if $time < $phone.lastSeen + 120_000}{$_('online')}{:else}{$_(
+  {$phone.name}
+  <span bind:this={status}
+    >({#if $time < $phone.lastSeen + 120_000}{$_('online')}{:else}{$_(
         'offline'
-      )}{/if}</span
-  >)
+      )}{/if})</span
+  >
 </span>
 <button class="button" on:click={() => dispatch('delete', $phone)}>
   {$_('delete')}
 </button>
 
+<span bind:this={lastSeen}>
+  Last seen {new Date($phone.lastSeen).toString()}
+</span>
+
 <style lang="scss">
+  :global {
+    @import '../assets/tippy';
+  }
+
   .transparent {
     padding: 0 3px 4px;
     color: $primary;

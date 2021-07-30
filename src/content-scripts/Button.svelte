@@ -116,7 +116,7 @@
 
 <style lang="scss">
   :global {
-    @import './assets/tippy';
+    @import '../assets/tippy';
   }
 
   .button {
