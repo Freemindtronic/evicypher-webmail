@@ -1,10 +1,5 @@
 /* eslint-disable unicorn/filename-case */
 import axlsign from 'axlsign'
-import { Certificate } from 'certificate'
-import type { Phone } from 'phones'
-import { defaultReporter, Reporter, State } from 'report'
-import { get, Writable } from 'svelte/store'
-import type { TaskContext } from 'task'
 import {
   CipherKeyRequest,
   CipherKeyResponse,
@@ -12,13 +7,18 @@ import {
   EndResponse,
   PingResponse,
   Request,
-} from '../background/protocol'
-import { AesUtil } from './AesUtil'
-import { removeJamming } from './jamming'
-import { sendRequest } from './lanUtils'
-import { random, sha512, xor } from './utils'
+} from 'background/protocol'
+import { Certificate } from 'certificate'
+import { AesUtil } from 'legacy-code/cryptography/AesUtil'
+import { removeJamming } from 'legacy-code/cryptography/jamming'
+import { sendRequest } from 'legacy-code/network/lanUtils'
+import { random, sha512, xor } from 'legacy-code/utils'
+import type { Phone } from 'phones'
+import { defaultReporter, Reporter, State } from 'report'
+import { get, Writable } from 'svelte/store'
+import type { TaskContext } from 'task'
 
-export interface KeyPair {
+interface KeyPair {
   high: Uint8Array
   low: Uint8Array
 }

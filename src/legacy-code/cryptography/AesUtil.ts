@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 import CryptoJS from 'crypto-js'
-import { uint8ArrayToWordArray, wordArrayToUint8Array } from './utils'
+import { uint8ArrayToWordArray, wordArrayToUint8Array } from '../utils'
 
 type BlockCipherMode = typeof CryptoJS.mode.CBC
 type Padding = typeof CryptoJS.pad.NoPadding

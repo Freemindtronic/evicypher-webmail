@@ -10,8 +10,8 @@
  * @module
  */
 
+import { xor } from '../utils'
 import { shiftLeft, shiftRight } from './AesUtil'
-import { xor } from './utils'
 
 export function addJammingSimpleText(
   data: Uint8Array,

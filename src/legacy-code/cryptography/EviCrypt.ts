@@ -2,6 +2,12 @@
 import { ErrorMessage, ExtensionError } from 'error'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { Reporter, State } from 'report'
+import {
+  random,
+  sha256,
+  uint8ArrayToWordArray,
+  wordArrayToUint8Array,
+} from '../utils'
 import { AesUtil, shiftLeft, shiftRight } from './AesUtil'
 import {
   addJammingSimple,
@@ -9,12 +15,6 @@ import {
   removeJammingSimple,
   removeJammingSimpleText,
 } from './jamming'
-import {
-  random,
-  sha256,
-  uint8ArrayToWordArray,
-  wordArrayToUint8Array,
-} from './utils'
 
 const ID_MESSAGE = new Uint8Array([0, 0, 0, 21])
 

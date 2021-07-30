@@ -2,11 +2,11 @@ import axlsign, { KeyPair } from 'axlsign'
 import { Certificate } from 'certificate'
 import { fromUint8Array } from 'js-base64'
 import type { TaskContext } from 'task'
-import { Request } from '../background/protocol'
-import type { Reporter } from '../report'
-import { AesUtil } from './AesUtil'
+import { Request } from '../../background/protocol'
+import type { Reporter } from '../../report'
+import { AesUtil } from '../cryptography/AesUtil'
+import { longToByteArray, random, sha256, uint8ToHex, xor } from '../utils'
 import { search, sendRequest } from './lanUtils'
-import { longToByteArray, random, sha256, uint8ToHex, xor } from './utils'
 
 export class PairingKey {
   readonly certificate: Certificate

@@ -2,8 +2,8 @@
 import { ErrorMessage, ExtensionError } from 'error'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import type { TaskContext } from 'task'
-import { Request, RequestMap, ResponseMap } from '../background/protocol'
-import { defaultReporter, Reporter, State } from '../report'
+import { Request, RequestMap, ResponseMap } from '../../background/protocol'
+import { defaultReporter, Reporter, State } from '../../report'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
