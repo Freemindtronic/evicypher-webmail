@@ -32,7 +32,7 @@
   "notification-sent": "Click on the notification you received.",
   "waiting-for-phone": "Make sure your phone and your computer are on the same network.",
   "waiting-for-first-response": "Make sure the app is opened.",
-  "task-in-progress": "Task in progress.",
+  "task-in-progress": "Work in progress: {progress, number, ::percent}.",
   "drop-a-file-in-one-of-the-two-zones-below": "Drop a file in one of the two zones below.",
   "loading": "Loading...",
   "drop-files-here-to-encrypt": "Drop files here to encrypt",

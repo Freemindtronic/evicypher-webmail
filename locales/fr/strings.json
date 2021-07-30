@@ -32,7 +32,7 @@
   "notification-sent": "Cliquez sur la notification que vous allez recevoir.",
   "waiting-for-phone": "Assurez-vous que votre téléphone et votre ordinateur sont sur le même réseau.",
   "waiting-for-first-response": "Assurez-vous que l'application est ouverte.",
-  "task-in-progress": "Tâche en cours.",
+  "task-in-progress": "Travail en cours: {progress, number, ::percent}.",
   "one-file-at-a-time": "Un fichier à la fois !",
   "drop-a-file-in-one-of-the-two-zones-below": "Déposez un fichier dans une des zones en dessous.",
   "loading": "Chargement...",

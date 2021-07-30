@@ -72,7 +72,9 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
       return $_('waiting-for-first-response')
 
     case State.TASK_IN_PROGRESS:
-      return $_('task-in-progress')
+      return $_('task-in-progress', {
+        values: { progress: report.progress },
+      })
 
     default:
       throw new Error(`Unknown error message: ${report.state as string}.`)
