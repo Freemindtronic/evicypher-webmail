@@ -1,0 +1,16 @@
+Couleur de fond entête / cadre / contour  : #2e3192
+Coulor logo Freemindtronic / favoris etc.. : #26aae1
+Couleur des textes base noir : #0F1030
+Autres couleurs sur couleur de base #2e3192
+rouge : #92312E
+vert : #
+bleu : #2E3192 et/ou #26aae1
+
+Élément graphique de l’extension Gmail EviPostr by Freemindtronic
+Couleur de fond entête / cadre / contour  : #2e3192
+Coulor logo Freemindtronic / favoris etc.. : #26aae1
+Couleur des textes base noir : #0F1030
+Autres couleurs sur couleur de base #2e3192
+rouge : #92312E
+vert : #31922E
+bleu : #2E3192 et/ou #26aae1
