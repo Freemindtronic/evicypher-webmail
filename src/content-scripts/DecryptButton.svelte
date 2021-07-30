@@ -1,5 +1,7 @@
 <script lang="ts">
+  import 'i18n'
   import type { Report } from 'report'
+  import { _ } from 'svelte-i18n'
   import DecryptIdle from './assets/decrypt.svg'
   import Button from './Button.svelte'
 
@@ -16,8 +18,8 @@
   bind:promise
   tooltipPlacement="bottom-start"
   IdleIcon={DecryptIdle}
-  idleTooltip="Click to decrypt this message."
-  doneTooltip="Click to close the decrypted mail."
+  idleTooltip={$_('click-to-decrypt-this-message')}
+  doneTooltip={$_('click-to-close-the-decrypted-mail')}
   on:click
   on:abort
 />

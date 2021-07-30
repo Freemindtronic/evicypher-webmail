@@ -33,7 +33,9 @@
 {/if}
 <span>
   {$phone.name} (<span title="Last seen {new Date($phone.lastSeen).toString()}"
-    >{#if $time < $phone.lastSeen + 120_000}online{:else}offline{/if}</span
+    >{#if $time < $phone.lastSeen + 120_000}{$_('online')}{:else}{$_(
+        'offline'
+      )}{/if}</span
   >)
 </span>
 <button class="button" on:click={() => dispatch('delete', $phone)}>

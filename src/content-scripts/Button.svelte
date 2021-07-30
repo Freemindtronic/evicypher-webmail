@@ -100,7 +100,7 @@
     {#await promise}
       <span>
         {#if report === undefined}
-          Loading...
+          {$_('loading')}
         {:else}
           {$_r(report)}
         {/if}

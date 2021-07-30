@@ -5,7 +5,7 @@
   import type { Report } from 'report'
   import { State } from 'report'
   import { onMount } from 'svelte'
-  import type { _ } from 'svelte-i18n'
+  import { _ } from 'svelte-i18n'
   import { startBackgroundTask, Task } from 'task'
 
   Dropzone.autoDiscover = false
@@ -36,7 +36,7 @@
       maxFilesize: 1024 * 1024 * 1024 * 1,
       async accept(file, done) {
         if (backgroundTask !== undefined) {
-          done('One file at a time!')
+          done($_('one-file-at-a-time'))
           return
         }
         try {
@@ -76,15 +76,15 @@
   })
 </script>
 
-<h1>EviFile</h1>
+<h1>{$_('evifile')}</h1>
 
 {#if backgroundTask === undefined}
-  <p>Drop a file in one of the two zones below.</p>
+  <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
 {:else}
   {#await backgroundTask}
     <p>
       {#if tip === undefined}
-        Loading...
+        {$_('loading')}
       {:else}
         {$_r(tip)}
       {/if}
@@ -95,13 +95,13 @@
 <main>
   <form class="dropzone" bind:this={encryptForm}>
     <h2 class="dz-message">
-      <button type="button">Drop files here to encrypt</button>
+      <button type="button">{$_('drop-files-here-to-encrypt')}</button>
     </h2>
   </form>
 
   <form class="dropzone" bind:this={decryptForm}>
     <h2 class="dz-message">
-      <button type="button">Drop files here to decrypt</button>
+      <button type="button">{$_('drop-files-here-to-decrypt')}</button>
     </h2>
   </form>
 </main>

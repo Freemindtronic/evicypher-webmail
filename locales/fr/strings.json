@@ -32,5 +32,22 @@
   "notification-sent": "Cliquez sur la notification que vous allez recevoir.",
   "waiting-for-phone": "Assurez-vous que votre téléphone et votre ordinateur sont sur le même réseau.",
   "waiting-for-first-response": "Assurez-vous que l'application est ouverte.",
-  "task-in-progress": "Tâche en cours."
+  "task-in-progress": "Tâche en cours.",
+  "one-file-at-a-time": "Un fichier à la fois !",
+  "drop-a-file-in-one-of-the-two-zones-below": "Déposez un fichier dans une des zones en dessous.",
+  "loading": "Chargement...",
+  "drop-files-here-to-encrypt": "Déposez des fichiers à chiffrer ici",
+  "drop-files-here-to-decrypt": "Déposez des fichiers à déchiffrer ici",
+  "click-to-decrypt-this-message": "Cliquez pour déchiffrer ce message.",
+  "click-to-close-the-decrypted-mail": "Cliquez pour fermer le mail déchiffré.",
+  "click-to-encrypt-this-message": "Cliquez pour chiffrer le message.",
+  "mail-encrypted-successfully-click-to-encrypt-once-again": "Mail chiffré avec succès !",
+  "is-the-code-uid-correct": "Est-ce que le code {uid} est correct ?",
+  "pairing-with-phonename": "Appairage avec {phoneName}",
+  "yes": "Oui",
+  "no": "Non",
+  "online": "en ligne",
+  "offline": "hors ligne",
+  "scan-the-qr-code-with-the-application": "Scannez le QR code avec l'application.",
+  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assurez-vous que votre téléphone et votre ordinateur sont sur le même réseau."
 }

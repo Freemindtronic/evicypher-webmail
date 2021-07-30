@@ -1,5 +1,7 @@
 <script lang="ts">
+  import 'i18n'
   import type { Report } from 'report'
+  import { _ } from 'svelte-i18n'
   import EncryptIdle from './assets/encrypt.svg'
   import Button from './Button.svelte'
 
@@ -16,9 +18,8 @@
   bind:promise
   tooltipPlacement="top-end"
   IdleIcon={EncryptIdle}
-  idleTooltip="Click to encrypt this message."
-  doneTooltip="Mail encrypted successfully!
-  Click to encrypt once again."
+  idleTooltip={$_('click-to-encrypt-this-message')}
+  doneTooltip={$_('mail-encrypted-successfully-click-to-encrypt-once-again')}
   class="encrypt-button"
   on:click
   on:abort

@@ -2,6 +2,7 @@
   import { Phone, phones } from 'phones'
   import { _ } from 'svelte-i18n'
   import { get } from 'svelte/store'
+  import { browser } from 'webextension-polyfill-ts'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 
@@ -57,6 +58,12 @@
       <button type="submit" class="button">{$_('add')}</button>
     </p>
   </form>
+  <hr />
+  <p style="text-align: center">
+    <a href={browser.runtime.getURL('/evifile.html')} target="_evifile">
+      {$_('evifile')}
+    </a>
+  </p>
 {/if}
 
 <style lang="scss">

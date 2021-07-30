@@ -4,6 +4,7 @@
   import type { Report } from 'report'
   import { State } from 'report'
   import { createEventDispatcher, onMount } from 'svelte'
+  import { _ } from 'svelte-i18n'
   import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
   import { startBackgroundTask, Task } from 'task'
@@ -18,7 +19,7 @@
   let uid: string | undefined
 
   /** Current state of the pairing process. */
-  let tip = 'Loading...'
+  let tip = $_('loading')
 
   /** A writable store updated when the user confirms the UID. */
   const confirmed = writable(false)
@@ -63,8 +64,8 @@
     if (report.state === State.SCANNING) {
       tip =
         report.found === 0
-          ? 'Make sure your phone and your computer are on the same network.'
-          : 'Scan the QR code with the application.'
+          ? $_('make-sure-your-phone-and-your-computer-are-on-the-same-network')
+          : $_('scan-the-qr-code-with-the-application')
     }
   }
 
@@ -86,8 +87,9 @@
 </script>
 
 <h2>
-  Pairing with {phoneName}
-  <button class="button" on:click={() => cancelPairing()}>Cancel</button>
+  {$_('pairing-with-phonename', { values: { phoneName } })}
+  <button class="button" on:click={() => cancelPairing()}>{$_('cancel')}</button
+  >
 </h2>
 <p class="center">
   <canvas bind:this={qr} width="147" height="147" />
@@ -96,11 +98,11 @@
   {#if uid === undefined}
     {tip}
   {:else}
-    Is the code {uid.toUpperCase()} correct?
-    <button class="button" type="button" on:click={() => ($confirmed = true)}
-      >Yes</button
-    >
-    <button class="button" on:click={() => cancelPairing()}>No</button>
+    {$_('is-the-code-uid-correct', { values: { uid: uid.toUpperCase() } })}
+    <button class="button" type="button" on:click={() => ($confirmed = true)}>
+      {$_('yes')}
+    </button>
+    <button class="button" on:click={() => cancelPairing()}>{$_('no')}</button>
   {/if}
   <br />
 </p>
