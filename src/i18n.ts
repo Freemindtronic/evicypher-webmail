@@ -1,9 +1,6 @@
-import { BrowserStore } from 'browser-store'
-import { ErrorMessage } from 'error'
 import TimeAgo from 'javascript-time-ago'
 import timeAgoEn from 'javascript-time-ago/locale/en'
 import timeAgoFr from 'javascript-time-ago/locale/fr'
-import { Report, State } from 'report'
 import {
   addMessages,
   getLocaleFromNavigator,
@@ -13,6 +10,9 @@ import {
 } from 'svelte-i18n'
 import { derived } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
+import { BrowserStore } from 'browser-store'
+import { ErrorMessage } from 'error'
+import { Report, State } from 'report'
 import en from '~/locales/en/strings.json'
 import fr from '~/locales/fr/strings.json'
 

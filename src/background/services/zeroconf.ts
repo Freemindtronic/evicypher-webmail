@@ -1,10 +1,10 @@
+import type { TaskContext } from 'task'
 import debug from 'debug'
+import { get } from 'svelte/store'
+import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from 'error'
 import { sendRequest } from 'legacy-code/network/exchange'
 import { phones } from 'phones'
-import { get } from 'svelte/store'
-import type { TaskContext } from 'task'
-import { browser } from 'webextension-polyfill-ts'
 import { Request } from '../protocol'
 
 const APPLICATION_ID = 'com.freemindtronic.evidns'

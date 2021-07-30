@@ -1,10 +1,10 @@
+import type { BackgroundTask } from 'task'
+import { get } from 'svelte/store'
 import { BrowserStore } from 'browser-store'
 import { ErrorMessage, ExtensionError } from 'error'
 import { EviCrypt } from 'legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from 'legacy-code/network/exchange'
 import { favoritePhone } from 'phones'
-import { get } from 'svelte/store'
-import type { BackgroundTask } from 'task'
 
 /**
  * Sends an encryption request to the phone.

@@ -1,3 +1,5 @@
+import type { BackgroundTask } from 'task'
+import { get, writable } from 'svelte/store'
 import { ErrorMessage, ExtensionError } from 'error'
 import { prepareNextExchange } from 'legacy-code/network/exchange'
 import { clientHello, PairingKey } from 'legacy-code/network/pair'
@@ -8,8 +10,6 @@ import {
   Phone,
   phones,
 } from 'phones'
-import { get, writable } from 'svelte/store'
-import type { BackgroundTask } from 'task'
 
 /**
  * Pairs the extension with a new phone.

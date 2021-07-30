@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/filename-case */
-import { ErrorMessage, ExtensionError } from 'error'
 import { fromUint8Array, toUint8Array } from 'js-base64'
+import { ErrorMessage, ExtensionError } from 'error'
 import { Reporter, State } from 'report'
 import {
   random,

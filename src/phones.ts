@@ -1,7 +1,7 @@
-import { BrowserStore } from 'browser-store'
-import { Certificate } from 'certificate'
 import { derived, writable, Writable, get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
+import { BrowserStore } from 'browser-store'
+import { Certificate } from 'certificate'
 
 /** Represent a phone, with a unique identifier and a name. */
 export class Phone {

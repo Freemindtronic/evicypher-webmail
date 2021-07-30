@@ -9,6 +9,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:unicorn/recommended',
     'plugin:sonarjs/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'xo',
     'xo-typescript',
     'prettier',
@@ -17,6 +19,10 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
+    // To enable all rules in svelte files:
+    // tsconfigRootDir: __dirname,
+    // project: ['./tsconfig.json'],
+    // extraFileExtensions: ['.svelte'],
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
@@ -27,6 +33,21 @@ module.exports = {
     'unicorn/prefer-node-protocol': 'off',
     'unicorn/require-post-message-target-origin': 'off',
     'sonarjs/cognitive-complexity': ['error', 8],
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'type',
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+        ],
+        'newlines-between': 'never',
+        alphabetize: { order: 'asc' },
+      },
+    ],
   },
   overrides: [
     {
@@ -38,6 +59,14 @@ module.exports = {
     'svelte3/typescript': true,
     // ESLint cannot process SCSS and Stylelint is setup, no need for these checks
     'svelte3/ignore-styles': () => true,
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts'],
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
   },
   // Ignore config files
   ignorePatterns: ['*.config.js', '*.cjs'],

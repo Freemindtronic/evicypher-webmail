@@ -1,7 +1,7 @@
-import { debug } from 'debug'
-import { ErrorMessage, ExtensionError } from 'error'
 import type { Report } from 'report'
+import { debug } from 'debug'
 import { browser } from 'webextension-polyfill-ts'
+import { ErrorMessage, ExtensionError } from 'error'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {

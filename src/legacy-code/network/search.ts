@@ -1,6 +1,6 @@
-import { ErrorMessage, ExtensionError } from 'error'
-import type { TaskContext } from 'task'
 import type { RequestMap } from '../../background/protocol'
+import type { TaskContext } from 'task'
+import { ErrorMessage, ExtensionError } from 'error'
 import { defaultReporter, Reporter, State } from '../../report'
 import { sendRequest } from './exchange'
 
