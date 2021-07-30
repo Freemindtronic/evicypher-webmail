@@ -13,11 +13,11 @@
   let status: HTMLElement
   let lastSeen: HTMLElement
 
-  /** A store containing the current time, updated every 30 seconds. */
+  /** A store containing the current time, updated every second. */
   const time = readable(Date.now(), (set) => {
     const interval = setInterval(() => {
       set(Date.now())
-    }, 30_000)
+    }, 1000)
 
     return () => {
       clearInterval(interval)
@@ -45,8 +45,9 @@
 {/if}
 <span>
   {$phone.name}
+  <!-- The `$time &&` below is there to trigger a refresh every 30 seconds -->
   <span bind:this={status}
-    >({#if $time < $phone.lastSeen + 120_000}{$_('online')}{:else}{$_(
+    >({#if $time && $phone.isOnline}{$_('online')}{:else}{$_(
         'offline'
       )}{/if})</span
   >
@@ -57,7 +58,7 @@
 
 <span bind:this={lastSeen}>
   {$_('last-seen-timeago', {
-    values: { date: $timeago(new Date($phone.lastSeen)) },
+    values: { date: $timeago($phone.lastSeen, $time) },
   })}
 </span>
 

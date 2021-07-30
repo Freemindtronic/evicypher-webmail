@@ -55,9 +55,9 @@ export class Phone {
     }
   }
 
-  /** User-friendly representation of the object. */
-  toString(): string {
-    return `#${this.id}: ${this.name}`
+  /** Returns true if the phone was last seen less than 2 minutes ago. */
+  get isOnline(): boolean {
+    return this.lastSeen + 120_000 > Date.now()
   }
 }
 

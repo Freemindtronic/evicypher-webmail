@@ -22,7 +22,9 @@ TimeAgo.addLocale(agoFr)
 
 export const timeago = derived(locale, ($locale) => {
   const timeAgo = new TimeAgo($locale)
-  return (date: number | Date) => timeAgo.format(date)
+  return (date: number, now?: number) =>
+    // @ts-expect-error @types/javascript-time-ago is not up to date
+    timeAgo.format(date, 'round-minute', { now })
 })
 
 /** Application locale. */
