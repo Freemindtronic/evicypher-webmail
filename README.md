@@ -25,11 +25,73 @@ Both tasks and services are running in the background, but they are two differen
 - A _Task_ is a single unit of work started by the user. It may require some interaction with the user.
 - A _Service_ is always running in the background, started when the extension starts. It must not require interaction with the user.
 
+### Technologies
+
+- Language: [TypeScript](https://www.typescriptlang.org/)
+- Frontend framework: [Svelte](https://svelte.dev/)
+- Frontend bundler: [rollup.js](https://rollupjs.org/)
+- Linters: [ESLint](https://eslint.org/) and [svelte-check](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check)
+- Formatter: [Prettier](https://prettier.io/)
+- Package manager: [Yarn](https://yarnpkg.com/)
+- End-to-end testing: [Cypress](https://www.cypress.io/)
+- Design: [Sass](https://sass-lang.com/), linted with [Stylelint](https://stylelint.io/)
+
+### Repository structure
+
+Here is a high-level overview of the repository structure:
+
+- **.github/**: [GitHub](https://github.com/) specific files.
+  - **workflows/**: Workflow files for [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions).
+- **.husky/**: [Git hooks](https://githooks.com/) managed by [Husky](https://typicode.github.io/husky/).
+- **.vscode/**: [VS Code](https://code.visualstudio.com/) specific files, contains settings and recommended extensions.
+- **.yarn/**: [Yarn](https://yarnpkg.com/) specific files, contains a lot of zip files because [Zero-Installs](https://yarnpkg.com/features/zero-installs) are enabled.
+- **cypress/**: [Cypress](https://www.cypress.io/) end-to-end testing specification files.
+- **extension/**: The extension itself, loadable after running `yarn build`.
+- **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
+- **src/**: Source directory.
+  - **assets/**: Common stylesheets and images.
+  - **background/**: Main background script, tasks and services.
+  - **content-scripts/**: Scripts injected in pages.
+  - **evifile/**: EviFile components.
+  - **legacy-code/**: Terrible code to be refactored.
+  - **popup/**: Popup components.
+  - **\*.ts**: Common libraries.
+- **.czrc**: [Commitizen](https://commitizen-tools.github.io/commitizen/) configuration file, used to generate commit messages in compliancy with [Conventional Commits](https://conventionalcommits.org/).
+- **.editorconfig**: [EditorConfig](http://editorconfig.org/) (code formatter) configuration file.
+- **.eslintrc**: [ESLint](http://eslint.org/) (code linter) configuration file.
+- **.gitattributes**: List of binary files (to prevent *diff*ing them).
+- **.gitignore**: List of files to ignore.
+- **.prettierrc**: [Prettier](https://prettier.io/) (code formatter) configuration file.
+- **.stylelintrc**: [Stylelint](https://stylelint.io/) (stylesheet formatter) configuration file.
+- **.yarnrc.yml**: [Yarn](https://yarnpkg.com/) (package manager) configuration file.
+- **CHANGELOG.md**: Changelog file, **do not edit manually**, use `yarn release`.
+- **commitlint.config.cjs**: [Commitlint](https://commitlint.js.org/) configuration file, ensures [Conventional Commits](https://conventionalcommits.org/) compliancy.
+- **cypress.json**: [Cypress](https://www.cypress.io/) (end-to-end testing) configuration file.
+- **manifest.js**: Web extension manifest generator.
+- **package.json**: Node.js package configuration file.
+- **README.md**: This file.
+- **rollup.config.js**: [Rollup](https://rollupjs.org/) (bundler) configuration file.
+- **svelte.config.js**: [Svelte](https://svelte.dev/) (front-end framework) configuration file.
+- **tsconfig.json**: [TypeScript](https://www.typescriptlang.org/) configuration file.
+- **types.d.ts**: Custom type definitions.
+- **yarn.lock**: [Yarn](https://yarnpkg.com/) lock file.
+
+### Yarn scripts
+
+- `yarn build`: Builds the extension.
+- `yarn check`: Runs ESLint, styllint and svelte-check.
+- `yarn clean`: Removes the built extension.
+- `yarn doc`: Builds the documentation.
+- `yarn postinstall`: Installs git hooks. _(runs automatically.)_
+- `yarn release`: Updates the version number and the changelog.
+- `yarn start`: Runs the build in watch mode.
+- `yarn test`: Runs the tests.
+
 ### Design principles
 
-To ensure a certain degree of consistency, **the following design principles were followed**:
+To ensure a certain degree of code quality, **the following design principles were followed**:
 
-- **Functions must be easy to read and understand**: complex problems must be broken into simple sub-problems. There are two linting rules to enforce this: [complexity](https://eslint.org/docs/rules/complexity) and [cognitive-complexity](https://github.com/SonarSource/eslint-plugin-sonarjs/blob/master/docs/rules/cognitive-complexity.md).
+- **Functions must be easy to read and understand**: complex problems must be broken into simpler sub-problems. There are two linting rules to enforce this: [complexity](https://eslint.org/docs/rules/complexity) and [cognitive-complexity](https://github.com/SonarSource/eslint-plugin-sonarjs/blob/master/docs/rules/cognitive-complexity.md).
 - The code must be **commented and well-commented**. Exported functions, classes and types must have [complete documentation](https://tsdoc.org/), local functions can be limited to a synthetic explanation. As a rule of thumb, good code is 60% code, 20% comments, 20% white lines (run `npx cloc src` to get the current numbers).
 - A file should never be too long (200 lines is a sensible limit). The code should be split into multiple files, if needed, to make it easier to read and understand. Avoid circular dependencies. Type imports are not circular dependencies.
 - The background script is the only script allowed to communicate with the network.
@@ -42,17 +104,6 @@ To ensure a certain degree of consistency, **the following design principles wer
 There is a folder named _legacy code_. [The code there is of terrible quality and should be refactored.](https://en.wikipedia.org/wiki/Technical_debt) It contains a lot of code that was written for the previous extension, and it consists of poorly written cryptography and network code. Please dump the whole protocol and rewrite it from scratch, using **modern standards**.
 
 </details>
-
-### Technologies
-
-- Language: [TypeScript](https://www.typescriptlang.org/)
-- Frontend framework: [Svelte](https://svelte.dev/)
-- Frontend bundler: [rollup.js](https://rollupjs.org/)
-- Linters: [ESLint](https://eslint.org/) and [svelte-check](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check)
-- Formatter: [Prettier](https://prettier.io/)
-- Package manager: [Yarn](https://yarnpkg.com/)
-- End-to-end testing: [Cypress](https://www.cypress.io/) (to do)
-- Design: [Sass](https://sass-lang.com/), linted with [Stylelint](https://stylelint.io/)
 
 ### I18n (Internationalization)
 
@@ -79,4 +130,4 @@ Run `yarn build`
 
 Commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write [conforming commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 
-To release a new version, run `yarn release`, it will update the [changelog](./CHANGELOG.md) and create a new tag with the version. The version number is updated according to [semver](https://semver.org/), based on the commits since the last release.
+To release a new version, run `yarn release`, it will update the version number and the [changelog](./CHANGELOG.md) and create a new tag. The version number is updated according to [semver](https://semver.org/), based on the commits since the last release.
