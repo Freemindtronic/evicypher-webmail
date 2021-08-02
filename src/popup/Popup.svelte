@@ -1,20 +1,25 @@
 <script lang="ts">
-  import { locale, locales } from 'i18n'
+  import { fade } from 'svelte/transition'
+  import { locale, locales, isLoading } from 'i18n'
   import Logo from '../assets/logo.svg'
   import Phones from './Phones.svelte'
 </script>
 
 <h1>
   <Logo />
-  <select class="input" bind:value={$locale}>
-    {#each $locales as locale}
-      <option value={locale}>{locale}</option>
-    {/each}
-  </select>
+  {#if !$isLoading}
+    <select class="input" bind:value={$locale} in:fade={{ duration: 75 }}>
+      {#each $locales as locale}
+        <option value={locale}>{locale}</option>
+      {/each}
+    </select>
+  {/if}
 </h1>
-<main>
-  <Phones />
-</main>
+{#if !$isLoading}
+  <main in:fade={{ duration: 75 }}>
+    <Phones />
+  </main>
+{/if}
 
 <style lang="scss">
   :global {

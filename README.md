@@ -47,7 +47,7 @@ Here is a high-level overview of the repository structure:
 - **.yarn/**: [Yarn](https://yarnpkg.com/) specific files, contains a lot of zip files because [Zero-Installs](https://yarnpkg.com/features/zero-installs) are enabled.
 - **cypress/**: [Cypress](https://www.cypress.io/) end-to-end testing specification files.
 - **extension/**: The extension itself, loadable after running `yarn build`.
-- **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
+  - **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
 - **src/**: Source directory.
   - **assets/**: Common stylesheets and images.
   - **background/**: Main background script, tasks and services.

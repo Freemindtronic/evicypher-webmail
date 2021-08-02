@@ -1,8 +1,8 @@
 import {
-  addMessages,
   getLocaleFromNavigator,
   init,
   locale as localeStore,
+  register,
   _,
 } from 'svelte-i18n'
 import { derived } from 'svelte/store'
@@ -10,11 +10,9 @@ import { browser } from 'webextension-polyfill-ts'
 import { BrowserStore } from 'browser-store'
 import { ErrorMessage } from 'error'
 import { Report, State } from 'report'
-import en from '~/locales/en/strings.json'
-import fr from '~/locales/fr/strings.json'
 
 // Re-export some functions from svelte-i18n
-export { locales, _ } from 'svelte-i18n'
+export { isLoading, locales, _ } from 'svelte-i18n'
 
 /** Application locale. */
 export const locale = new BrowserStore<string>('locale', localeStore, {
@@ -98,9 +96,13 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
   }
 })
 
+/** Loads a locale. */
+const loader = (locale: string) => async () =>
+  (await fetch(browser.runtime.getURL(`locales/${locale}/strings.json`))).json()
+
 // Register languages
-addMessages('en', en)
-addMessages('fr', fr)
+register('en', loader('en'))
+register('fr', loader('fr'))
 
 // Initialize FormatJS
 init({

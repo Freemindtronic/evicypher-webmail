@@ -2,7 +2,7 @@
   import type { Report } from 'report'
   import Dropzone from 'dropzone'
   import { ExtensionError } from 'error'
-  import { translateError, translateReport, _ } from 'i18n'
+  import { isLoading, translateError, translateReport, _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
 
@@ -138,35 +138,37 @@
   }
 </script>
 
-<h1>{$_('evifile')}</h1>
+{#if !$isLoading}
+  <h1>{$_('evifile')}</h1>
 
-{#if backgroundTask === undefined}
-  <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
-{:else}
-  {#await backgroundTask}
-    <p>
-      {#if tip === undefined}
-        {$_('loading')}
-      {:else}
-        {$translateReport(tip)}
-      {/if}
-    </p>
-  {/await}
+  {#if backgroundTask === undefined}
+    <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
+  {:else}
+    {#await backgroundTask}
+      <p>
+        {#if tip === undefined}
+          {$_('loading')}
+        {:else}
+          {$translateReport(tip)}
+        {/if}
+      </p>
+    {/await}
+  {/if}
+
+  <main>
+    <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
+      <h2 class="dz-message">
+        <button type="button">{$_('drop-files-here-to-encrypt')}</button>
+      </h2>
+    </form>
+
+    <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
+      <h2 class="dz-message">
+        <button type="button">{$_('drop-files-here-to-decrypt')}</button>
+      </h2>
+    </form>
+  </main>
 {/if}
-
-<main>
-  <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
-    <h2 class="dz-message">
-      <button type="button">{$_('drop-files-here-to-encrypt')}</button>
-    </h2>
-  </form>
-
-  <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
-    <h2 class="dz-message">
-      <button type="button">{$_('drop-files-here-to-decrypt')}</button>
-    </h2>
-  </form>
-</main>
 
 <style lang="scss">
   :global {

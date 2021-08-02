@@ -8,6 +8,7 @@ import { locale } from '.'
 TimeAgo.addDefaultLocale(en)
 TimeAgo.addLocale(fr)
 
+/** Formats a date into an "x minutes ago" string. */
 export const timeago = derived(locale, ($locale) => {
   const instance = new TimeAgo($locale)
   return (date: number, now?: number) =>
