@@ -48,7 +48,7 @@ export interface ZeroconfResponse {
 export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
-  const log = debug('zeroconf')
+  const log = debug('service:zeroconf')
 
   if (!(await isZeroconfServiceInstalled()))
     throw new ExtensionError(ErrorMessage.ZEROCONF_UNAVAILABLE)

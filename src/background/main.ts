@@ -99,7 +99,16 @@ const nextStep = async <TSent, TReceived, TReturn>(
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // Start the Zeroconf scanning service
-void startZeroconfService(context)
+startZeroconfService(context).catch((error) => {
+  console.error(error)
+  if (
+    error instanceof ExtensionError &&
+    error.message === ErrorMessage.ZEROCONF_UNAVAILABLE
+  )
+    void browser.tabs.create({
+      url: browser.runtime.getURL('zeroconf-unavailable.html'),
+    })
+})
 
 // Every connection maps to a background task
 browser.runtime.onConnect.addListener(async (port) => {
