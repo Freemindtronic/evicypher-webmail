@@ -1,13 +1,17 @@
 /** List of all possible error messages. */
 export enum ErrorMessage {
   CANCELED_BY_USER = 'Canceled by user.',
+  CONFLICT = 'Conflict.',
   FAVORITE_PHONE_UNDEFINED = 'No favorite phone set.',
   FILE_NAME_TOO_LONG = 'Filename too long.',
   FILE_NOT_RECOGNIZED = 'File not recognized.',
   MAIL_CONTENT_UNDEFINED = 'Mail content undefined.',
   PHONE_NAME_UNDEFINED = 'Phone name undefined.',
+  REFUSED_ON_PHONE = 'Phone refused.',
+  REQUEST_TIMEOUT = 'Request timeout.',
   TOO_MANY_ATTEMPTS = 'Too many attempts.',
   UNKNOWN_ERROR = 'Unknown error.',
+  UNKNOWN_PHONE_ERROR = 'Unknown phone error.',
   WRONG_KEY = 'Wrong key.',
   ZEROCONF_UNAVAILABLE = 'ZeroConf unavailable.',
 }

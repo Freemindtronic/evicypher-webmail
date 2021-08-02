@@ -28,6 +28,10 @@ type Serialize<T> = {
 const formatURL = (ip: string, port: number, type = ''): string =>
   `http://${ip}:${port}${type}`
 
+// `serialize` and `unserialize` are almost symmetic, but serialize converts
+// to URLSearchParams whereas unserialize converts from a JSON object.
+// There is probably a better way to do this, especially with two distincts
+// generic types.
 function serialize<T>(obj: T): Serialize<T> {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
@@ -48,6 +52,17 @@ function unserialize<T>(obj: Serialize<T>): T {
   ) as unknown as T
 }
 
+/**
+ * Sends a request to a phone.
+ *
+ * @param ip - The IP of the phone
+ * @param port - The port of the phone
+ * @param type - The request type, see {@linkcode Request}
+ * @param data - The request body, see {@linkcode RequestMap}
+ * @param timeout - A time out, in milliseconds
+ * @param signal - An abort signal
+ * @returns A promise that resolves to the response, see {@linkcode ResponseMap}
+ */
 export const sendRequest = async <T extends keyof RequestMap>({
   ip,
   port,
@@ -82,10 +97,8 @@ export const sendRequest = async <T extends keyof RequestMap>({
     mode: 'cors',
   })
 
-  if (response.status >= 300)
-    throw new Error(
-      `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
-    )
+  // If the phone responded with an HTTP error, throw
+  throwOnHttpErrors(response)
 
   const responseData = (await response.json()) as Serialize<ResponseMap[T]>
 
@@ -96,6 +109,42 @@ export const sendRequest = async <T extends keyof RequestMap>({
   if (type !== Request.PAIRING_SALT) delete responseData.n
 
   return unserialize(responseData)
+}
+
+/** Filters out responses containing an HTTP error code. */
+// eslint-disable-next-line complexity
+export const throwOnHttpErrors = (response: Response): void => {
+  // `204 No Content` is not properly used (who could have guessed?) and
+  // is sent when the user refuses the request on their phone.
+  if (response.status === 204)
+    throw new ExtensionError(ErrorMessage.REFUSED_ON_PHONE)
+
+  // `400 Bad Request` and `500 Internal Server Error` are generic errors,
+  // sent whenever something is wrong, but it is not clear what exactly is wrong.
+  if (response.status === 400 || response.status === 500)
+    throw new ExtensionError(ErrorMessage.UNKNOWN_PHONE_ERROR)
+
+  // When the user takes too long respond on their phone, the phone
+  // automatically declines the request.
+  if (response.status === 408)
+    throw new ExtensionError(ErrorMessage.REQUEST_TIMEOUT)
+
+  // When two or more requests are sent to the same phone, all but the last
+  // one will be ignored.
+  if (response.status === 409) throw new ExtensionError(ErrorMessage.CONFLICT)
+
+  // When two or more requests are sent to the same phone, all but the last
+  // one will be ignored.
+  if (response.status === 500) throw new ExtensionError(ErrorMessage.CONFLICT)
+
+  // Other error codes are not properly handled and translated yet, they will
+  // be replaced with a generic error message: `UNKNOWN_ERROR`.
+  // That is the main difference between `Error` and `ExtensionError`:
+  // `ErrorMessage` has a discrete set of possible errors.
+  if (response.status >= 300)
+    throw new Error(
+      `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
+    )
 }
 
 /**
@@ -450,12 +499,17 @@ export const prepareNextExchange = async (
 ): Promise<void> => {
   if (!entry.phone) throw new Error('Phone not found in background context.')
 
-  const { port, phone } = entry
-  entry.keys = await sendRequest({
-    ip,
-    port,
-    type: Request.PING,
-    data: { t: get(phone).certificate.id },
-    timeout: 2000,
-  })
+  try {
+    const { port, phone } = entry
+    entry.keys = await sendRequest({
+      ip,
+      port,
+      type: Request.PING,
+      data: { t: get(phone).certificate.id },
+      timeout: 2000,
+    })
+  } catch (error: unknown) {
+    // `prepareNextExchange` is used for convenience, so all known errors are ignored
+    if (!(error instanceof ExtensionError)) throw error
+  }
 }

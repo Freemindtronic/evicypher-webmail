@@ -31,11 +31,15 @@ export const timeago = derived(locale, ($locale) => {
     timeAgo.format(date, 'round-minute', { now })
 })
 
+/** Translates an error message. */
 // eslint-disable-next-line complexity
 export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
   switch (error) {
     case ErrorMessage.CANCELED_BY_USER:
       return $_('canceled-by-user')
+
+    case ErrorMessage.CONFLICT:
+      return $_('conflict')
 
     case ErrorMessage.FAVORITE_PHONE_UNDEFINED:
       return $_('favorite-phone-undefined')
@@ -52,11 +56,20 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.PHONE_NAME_UNDEFINED:
       return $_('phone-name-undefined')
 
+    case ErrorMessage.REFUSED_ON_PHONE:
+      return $_('refused-on-phone')
+
+    case ErrorMessage.REQUEST_TIMEOUT:
+      return $_('request-timeout')
+
     case ErrorMessage.TOO_MANY_ATTEMPTS:
       return $_('too-many-attempts')
 
     case ErrorMessage.UNKNOWN_ERROR:
       return $_('unknown-error')
+
+    case ErrorMessage.UNKNOWN_PHONE_ERROR:
+      return $_('unknown-phone-error')
 
     case ErrorMessage.WRONG_KEY:
       return $_('wrong-key')
@@ -64,11 +77,12 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.ZEROCONF_UNAVAILABLE:
       return $_('zeroconf-unavailable')
 
-    default:
-      throw new Error(`Unknown error message: ${error as string}.`)
+    // This switch statement is exhaustive
+    // No default
   }
 })
 
+/** Translates a report. */
 export const translateReport = derived(_, ($_) => (report: Report) => {
   switch (report.state) {
     case State.NOTIFICATION_SENT:
@@ -80,13 +94,16 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
     case State.WAITING_FOR_FIRST_RESPONSE:
       return $_('waiting-for-first-response')
 
+    case State.SCANNING:
+      throw new Error('Not implemented yet: State.SCANNING case')
+
     case State.TASK_IN_PROGRESS:
       return $_('task-in-progress', {
         values: { progress: report.progress },
       })
 
-    default:
-      throw new Error(`Unknown error message: ${report.state as string}.`)
+    // This switch statement is exhaustive
+    // No default
   }
 })
 
@@ -100,5 +117,6 @@ init({
   initialLocale: getLocaleFromNavigator(),
 })
 
+// Intiialize TimeAgo
 TimeAgo.addDefaultLocale(timeAgoEn)
 TimeAgo.addLocale(timeAgoFr)

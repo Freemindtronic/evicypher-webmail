@@ -50,5 +50,9 @@
   "offline": "hors ligne",
   "scan-the-qr-code-with-the-application": "Scannez le QR code avec l'application.",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assurez-vous que votre téléphone et votre ordinateur sont sur le même réseau.",
-  "last-seen-timeago": "Connecté {date}."
+  "last-seen-timeago": "Connecté {date}.",
+  "conflict": "Le téléphone a reçu plusieurs requêtes simultanées et a décliné cette opération. Veuillez terminer les autres opérations et recommencer.",
+  "refused-on-phone": "Opération refusée depuis le téléphone.",
+  "request-timeout": "Temps écoulé pour valider l'opération, le téléphone l'a refusée.",
+  "unknown-phone-error": "L'échange avec le téléphone a échoué, veuillez réessayer."
 }
