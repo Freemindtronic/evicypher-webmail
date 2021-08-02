@@ -1,6 +1,3 @@
-import TimeAgo from 'javascript-time-ago'
-import timeAgoEn from 'javascript-time-ago/locale/en'
-import timeAgoFr from 'javascript-time-ago/locale/fr'
 import {
   addMessages,
   getLocaleFromNavigator,
@@ -22,13 +19,6 @@ export { locales, _ } from 'svelte-i18n'
 /** Application locale. */
 export const locale = new BrowserStore<string>('locale', localeStore, {
   storage: browser.storage.sync,
-})
-
-export const timeago = derived(locale, ($locale) => {
-  const timeAgo = new TimeAgo($locale)
-  return (date: number, now?: number) =>
-    // @ts-expect-error @types/javascript-time-ago is not up to date
-    timeAgo.format(date, 'round-minute', { now })
 })
 
 /** Translates an error message. */
@@ -117,7 +107,3 @@ init({
   fallbackLocale: 'en',
   initialLocale: getLocaleFromNavigator(),
 })
-
-// Intiialize TimeAgo
-TimeAgo.addDefaultLocale(timeAgoEn)
-TimeAgo.addLocale(timeAgoFr)
