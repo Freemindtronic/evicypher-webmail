@@ -1,7 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { ErrorMessage, ExtensionError } from 'error'
-import { Reporter, State } from 'report'
 import {
   random,
   sha256,
@@ -82,9 +81,14 @@ export class EviCrypt {
     return new TextDecoder().decode(dec)
   }
 
-  async encryptFile(file: File, reporter: Reporter): Promise<BlobPart[]> {
+  async encryptFile(
+    file: File,
+    progressReporter: (progress: number) => void
+  ): Promise<BlobPart[]> {
     if (file.name.length > 256)
       throw new ExtensionError(ErrorMessage.FILE_NAME_TOO_LONG)
+
+    progressReporter(0)
 
     const uintFileName = new TextEncoder().encode(file.name)
 
@@ -118,8 +122,6 @@ export class EviCrypt {
 
     const buffer = await readAsArrayBuffer(file)
 
-    reporter({ state: State.TASK_IN_PROGRESS, progress: 0 })
-
     // Encrypt each block separetely
     let j = 0
     while (j * blockSize < buffer.length) {
@@ -131,10 +133,7 @@ export class EviCrypt {
       )
       blobParts.push(block)
 
-      reporter({
-        state: State.TASK_IN_PROGRESS,
-        progress: (j * blockSize) / buffer.length,
-      })
+      progressReporter((j * blockSize) / buffer.length)
 
       // We need to wait for the current task to finish and the event loop to
       // start a new iteration for the report to be sent. We use `setTimeout`
@@ -152,20 +151,22 @@ export class EviCrypt {
       iv2 = incrementWordArray(iv2, blockSize / 16)
     }
 
-    reporter({ state: State.TASK_IN_PROGRESS, progress: 1 })
+    progressReporter(1)
 
     return blobParts
   }
 
   async decryptFileBuffer(
     buffer: Uint8Array,
-    reporter: Reporter
+    progressReporter: (progress: number) => void
   ): Promise<File> {
     if (
       buffer.length < 122 || // 4 + 20 + 16 + 32 + 16 + 32 + 2
       !buffer.slice(0, 4).every((n, i) => n === ID_FILE[i])
     )
       throw new ExtensionError(ErrorMessage.FILE_NOT_RECOGNIZED)
+
+    progressReporter(0)
 
     const saltId = buffer.slice(25, 57)
     const idKey = (
@@ -209,10 +210,7 @@ export class EviCrypt {
       )
       blobParts.push(block)
 
-      reporter({
-        state: State.TASK_IN_PROGRESS,
-        progress: (offset + j * blockSize) / buffer.length,
-      })
+      progressReporter((j * blockSize) / buffer.length)
 
       // This trick is explained above
       await new Promise<void>((resolve) => {
@@ -223,7 +221,7 @@ export class EviCrypt {
       iv2 = incrementWordArray(iv2, blockSize / 16)
     }
 
-    reporter({ state: State.TASK_IN_PROGRESS, progress: 1 })
+    progressReporter(1)
 
     return new File(blobParts, fileName)
   }

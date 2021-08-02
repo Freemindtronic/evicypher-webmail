@@ -1,10 +1,10 @@
 <script lang="ts">
   import Dropzone from 'dropzone'
-  import { ExtensionError } from 'error'
   import { translateError, translateReport } from 'i18n'
   import type { Report } from 'report'
   import { State } from 'report'
   import { onMount } from 'svelte'
+  import { ExtensionError } from 'error'
   import { _ } from 'i18n'
   import { startBackgroundTask, Task } from 'task'
 
@@ -15,7 +15,7 @@
 
   let tip: Report | undefined
 
-  let backgroundTask: Promise<{ name: string; url: string }> | undefined
+  let backgroundTask: Promise<void> | undefined
 
   /** Prompts the user to save the file located at `url`. */
   const triggerDownload = (name: string, url: string) => {
@@ -30,43 +30,78 @@
     task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE
   ) => {
     let dropzone = new Dropzone(parent, {
-      url: 'none',
+      url: '#',
+      // Do not upload files
       autoProcessQueue: false,
       addRemoveLinks: true,
       maxFilesize: 1024 * 1024 * 1024 * 1,
-      async accept(file, done) {
-        if (backgroundTask !== undefined) {
-          done($_('one-file-at-a-time'))
-          return
-        }
-        try {
-          backgroundTask = startBackgroundTask(
-            task,
-            async function* () {
-              yield
-              yield { name: file.name, url: URL.createObjectURL(file) }
-            },
-            {
-              reporter: (report: Report) => {
-                if (report.state === State.TASK_IN_PROGRESS)
-                  dropzone.emit('uploadprogress', file, report.progress * 100)
-                tip = report
-              },
-            }
-          )
-          let { name, url } = await backgroundTask
-          triggerDownload(name, url)
-          done()
-          dropzone.emit('success', file)
+    })
+
+    // When files are added, process them all at once
+    dropzone.on('addedfiles', async (files: Dropzone.DropzoneFile[]) => {
+      // If a task is running, refuse to add files
+      if (backgroundTask !== undefined) {
+        for (const file of files) {
           dropzone.emit('complete', file)
-        } catch (error: unknown) {
-          console.error(error)
-          if (error instanceof ExtensionError)
-            done($translateError(error.message))
-        } finally {
-          backgroundTask = undefined
+          dropzone.emit('error', file, $_('one-file-at-a-time'))
         }
-      },
+        return
+      }
+
+      const fileURLs: Array<{ name: string; url: string }> = []
+      const map = new Map<string, Dropzone.DropzoneFile>()
+
+      for (const file of files) {
+        const url = URL.createObjectURL(file)
+        fileURLs.push({ name: file.name, url })
+        map.set(url, file)
+      }
+
+      try {
+        backgroundTask = startBackgroundTask(
+          task,
+          async function* () {
+            yield
+            yield fileURLs
+          },
+          {
+            reporter: (report: Report) => {
+              // Handle subtask reports for each file
+              if (report.state === State.SUBTASK_IN_PROGRESS) {
+                dropzone.emit(
+                  'uploadprogress',
+                  map.get(report.taskId),
+                  report.progress * 100
+                )
+              } else if (report.state === State.SUBTASK_COMPLETE) {
+                triggerDownload(report.name, report.url)
+                dropzone.emit('success', map.get(report.taskId))
+                dropzone.emit('complete', map.get(report.taskId))
+              } else if (report.state === State.SUBTASK_FAILED) {
+                dropzone.emit(
+                  'error',
+                  map.get(report.taskId),
+                  $translateError(report.message)
+                )
+                dropzone.emit('complete', map.get(report.taskId))
+              } else {
+                // Display other reports above the two zones
+                tip = report
+              }
+            },
+          }
+        )
+        await backgroundTask
+      } catch (error: unknown) {
+        if (!(error instanceof ExtensionError)) throw error
+        for (const file of files) {
+          dropzone.emit('error', file, $translateError(error.message))
+          dropzone.emit('complete', file)
+        }
+      } finally {
+        // Allow a new task to begin
+        backgroundTask = undefined
+      }
     })
   }
 

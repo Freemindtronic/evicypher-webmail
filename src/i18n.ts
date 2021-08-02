@@ -83,6 +83,7 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
 })
 
 /** Translates a report. */
+// eslint-disable-next-line complexity
 export const translateReport = derived(_, ($_) => (report: Report) => {
   switch (report.state) {
     case State.NOTIFICATION_SENT:
@@ -97,10 +98,10 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
     case State.SCANNING:
       throw new Error('Not implemented yet: State.SCANNING case')
 
-    case State.TASK_IN_PROGRESS:
-      return $_('task-in-progress', {
-        values: { progress: report.progress },
-      })
+    case State.SUBTASK_IN_PROGRESS:
+    case State.SUBTASK_COMPLETE:
+    case State.SUBTASK_FAILED:
+      throw new Error('Not implemented yet: State.SUBTASK_* case')
 
     // This switch statement is exhaustive
     // No default

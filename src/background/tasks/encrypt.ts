@@ -5,6 +5,7 @@ import { ErrorMessage, ExtensionError } from 'error'
 import { EviCrypt } from 'legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from 'legacy-code/network/exchange'
 import { favoritePhone } from 'phones'
+import { State } from 'report'
 
 /**
  * Sends an encryption request to the phone.
@@ -47,10 +48,10 @@ export const encrypt: BackgroundTask<undefined, string, string> =
  */
 export const encryptFile: BackgroundTask<
   undefined,
-  { name: string; url: string },
-  { name: string; url: string }
+  Array<{ name: string; url: string }>,
+  void
 > = async function* (context, reporter, signal) {
-  const { name, url } = yield
+  const files = yield
 
   await BrowserStore.allLoaded
 
@@ -69,18 +70,42 @@ export const encryptFile: BackgroundTask<
   // Encrypt the text
   const evi = new EviCrypt(keys)
 
-  const blob = await (await fetch(url)).blob()
-  const file = new File([blob], name)
-  URL.revokeObjectURL(url)
+  await Promise.allSettled(
+    files.map(async ({ name, url }) => {
+      const blob = await (await fetch(url)).blob()
+      const file = new File([blob], name)
+      URL.revokeObjectURL(url)
 
-  const encryptedName =
-    [...crypto.getRandomValues(new Uint8Array(8))]
-      .map((n) => String.fromCharCode(97 + (n % 26)))
-      .join('') + '.Evi'
-  const encryptedFile = new File(
-    await evi.encryptFile(file, reporter),
-    encryptedName
+      try {
+        const encryptedName =
+          [...crypto.getRandomValues(new Uint8Array(8))]
+            .map((n) => String.fromCharCode(97 + (n % 26)))
+            .join('') + '.Evi'
+        const encryptedFile = new File(
+          await evi.encryptFile(file, (progress: number) => {
+            reporter({
+              state: State.SUBTASK_IN_PROGRESS,
+              taskId: url,
+              progress,
+            })
+          }),
+          encryptedName
+        )
+        reporter({
+          state: State.SUBTASK_COMPLETE,
+          taskId: url,
+          name: encryptedName,
+          url: URL.createObjectURL(encryptedFile),
+        })
+      } catch (error: unknown) {
+        if (error instanceof ExtensionError)
+          reporter({
+            state: State.SUBTASK_FAILED,
+            taskId: url,
+            message: error.message,
+          })
+        throw error
+      }
+    })
   )
-
-  return { name: encryptedName, url: URL.createObjectURL(encryptedFile) }
 }

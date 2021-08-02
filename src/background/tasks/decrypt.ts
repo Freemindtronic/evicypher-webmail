@@ -5,6 +5,7 @@ import { ErrorMessage, ExtensionError } from 'error'
 import { EviCrypt, keyUsed } from 'legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from 'legacy-code/network/exchange'
 import { favoritePhone } from 'phones'
+import { State } from 'report'
 
 /**
  * Sends a decryption request to the phone.
@@ -47,10 +48,10 @@ export const decrypt: BackgroundTask<undefined, string, string> =
  */
 export const decryptFile: BackgroundTask<
   undefined,
-  { name: string; url: string },
-  { name: string; url: string }
+  Array<{ name: string; url: string }>,
+  void
 > = async function* (context, reporter, signal) {
-  const { name, url } = yield
+  const files = yield
 
   await BrowserStore.allLoaded
 
@@ -60,9 +61,12 @@ export const decryptFile: BackgroundTask<
   if (phone === undefined)
     throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
 
-  const blob = await (await fetch(url)).blob()
-  const file = new File([blob], name)
-  URL.revokeObjectURL(url)
+  const firstFile = files.pop()
+  if (!firstFile) throw new Error('Array of files cannot be empty.')
+
+  const blob = await (await fetch(firstFile.url)).blob()
+  const file = new Blob([blob])
+  URL.revokeObjectURL(firstFile.url)
 
   const buffer = await readAsArrayBuffer(file)
 
@@ -76,12 +80,48 @@ export const decryptFile: BackgroundTask<
   // Encrypt the text
   const evi = new EviCrypt(keys)
 
-  const decryptedFile = await evi.decryptFileBuffer(buffer, reporter)
-
-  return { name: decryptedFile.name, url: URL.createObjectURL(decryptedFile) }
+  await Promise.allSettled(
+    [
+      Promise.resolve({ url: firstFile.url, buffer }),
+      ...files.map(async ({ name, url }) => {
+        const blob = await (await fetch(url)).blob()
+        const file = new File([blob], name)
+        URL.revokeObjectURL(firstFile.url)
+        return { url, buffer: await readAsArrayBuffer(file) }
+      }),
+    ].map(async (file) => {
+      const { url, buffer } = await file
+      try {
+        const decryptedFile = await evi.decryptFileBuffer(
+          buffer,
+          (progress: number) => {
+            reporter({
+              state: State.SUBTASK_IN_PROGRESS,
+              taskId: url,
+              progress,
+            })
+          }
+        )
+        reporter({
+          state: State.SUBTASK_COMPLETE,
+          taskId: url,
+          name: decryptedFile.name,
+          url: URL.createObjectURL(decryptedFile),
+        })
+      } catch (error: unknown) {
+        if (error instanceof ExtensionError)
+          reporter({
+            state: State.SUBTASK_FAILED,
+            taskId: url,
+            message: error.message,
+          })
+        throw error
+      }
+    })
+  )
 }
 
-const readAsArrayBuffer = async (file: File) =>
+const readAsArrayBuffer = async (file: Blob) =>
   new Promise<Uint8Array>((resolve, reject) => {
     const reader = new FileReader()
     reader.addEventListener('load', () => {
