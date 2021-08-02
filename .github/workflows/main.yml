@@ -45,11 +45,11 @@ jobs:
       - name: Produce a zip archive
         run: cd extension && zip -r ../extension.zip .
 
-      - name: Upload Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: extension
-          path: extension.zip
+          path: extension
 
       - name: Release
         uses: softprops/action-gh-release@v1
