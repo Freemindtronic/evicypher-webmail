@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Phone, phones } from 'phones'
-  import { _ } from 'i18n'
   import { get } from 'svelte/store'
   import { browser } from 'webextension-polyfill-ts'
+  import { _ } from 'i18n'
+  import { Phone, phones } from 'phones'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 
@@ -26,8 +26,13 @@
 
 {#if pairingInProgress}
   <Pairing
-    on:success={() => ((phoneName = ''), (pairingInProgress = false))}
-    on:cancel={() => (pairingInProgress = false)}
+    on:success={() => {
+      phoneName = ''
+      pairingInProgress = false
+    }}
+    on:cancel={() => {
+      pairingInProgress = false
+    }}
     {phoneName}
   />
 {:else}

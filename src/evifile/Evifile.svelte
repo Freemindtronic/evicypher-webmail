@@ -1,11 +1,10 @@
 <script lang="ts">
-  import Dropzone from 'dropzone'
-  import { translateError, translateReport } from 'i18n'
   import type { Report } from 'report'
-  import { State } from 'report'
+  import Dropzone from 'dropzone'
   import { onMount } from 'svelte'
   import { ExtensionError } from 'error'
-  import { _ } from 'i18n'
+  import { translateError, translateReport, _ } from 'i18n'
+  import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
 
   Dropzone.autoDiscover = false
@@ -25,11 +24,89 @@
     link.click()
   }
 
+  /**
+   * Handles reports sent by the background task, dispatches events to the right
+   * file preview.
+   */
+  const createReporter =
+    (dropzone: Dropzone, map: Map<string, Dropzone.DropzoneFile>) =>
+    (report: Report) => {
+      // Handle subtask reports for each file
+      switch (report.state) {
+        case State.SUBTASK_IN_PROGRESS:
+          dropzone.emit(
+            'uploadprogress',
+            map.get(report.taskId),
+            report.progress * 100
+          )
+          break
+
+        case State.SUBTASK_COMPLETE:
+          triggerDownload(report.name, report.url)
+          dropzone.emit('success', map.get(report.taskId))
+          dropzone.emit('complete', map.get(report.taskId))
+          break
+
+        case State.SUBTASK_FAILED:
+          dropzone.emit(
+            'error',
+            map.get(report.taskId),
+            $translateError(report.message)
+          )
+          dropzone.emit('complete', map.get(report.taskId))
+          break
+
+        default:
+          // Display other reports above the two zones
+          tip = report
+      }
+    }
+
+  /** Starts the task given on the files given. */
+  const startTask = async (
+    task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE,
+    dropzone: Dropzone,
+    files: Dropzone.DropzoneFile[]
+  ) => {
+    const fileURLs: Array<{ name: string; url: string }> = []
+    const map = new Map<string, Dropzone.DropzoneFile>()
+
+    for (const file of files) {
+      const url = URL.createObjectURL(file)
+      fileURLs.push({ name: file.name, url })
+      map.set(url, file)
+    }
+
+    try {
+      backgroundTask = startBackgroundTask(
+        task,
+        async function* () {
+          yield
+          yield fileURLs
+        },
+        {
+          reporter: createReporter(dropzone, map),
+        }
+      )
+      await backgroundTask
+    } catch (error: unknown) {
+      if (!(error instanceof ExtensionError)) throw error
+      for (const file of files) {
+        dropzone.emit('error', file, $translateError(error.message))
+        dropzone.emit('complete', file)
+      }
+    }
+  }
+
+  /**
+   * Creates a new Dropzone in the element given, adds event listener to handle
+   * files dropped.
+   */
   const setupDropzone = (
     parent: HTMLElement,
     task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE
   ) => {
-    let dropzone = new Dropzone(parent, {
+    const dropzone = new Dropzone(parent, {
       url: '#',
       // Do not upload files
       autoProcessQueue: false,
@@ -45,59 +122,12 @@
           dropzone.emit('complete', file)
           dropzone.emit('error', file, $_('one-file-at-a-time'))
         }
+
         return
       }
 
-      const fileURLs: Array<{ name: string; url: string }> = []
-      const map = new Map<string, Dropzone.DropzoneFile>()
-
-      for (const file of files) {
-        const url = URL.createObjectURL(file)
-        fileURLs.push({ name: file.name, url })
-        map.set(url, file)
-      }
-
       try {
-        backgroundTask = startBackgroundTask(
-          task,
-          async function* () {
-            yield
-            yield fileURLs
-          },
-          {
-            reporter: (report: Report) => {
-              // Handle subtask reports for each file
-              if (report.state === State.SUBTASK_IN_PROGRESS) {
-                dropzone.emit(
-                  'uploadprogress',
-                  map.get(report.taskId),
-                  report.progress * 100
-                )
-              } else if (report.state === State.SUBTASK_COMPLETE) {
-                triggerDownload(report.name, report.url)
-                dropzone.emit('success', map.get(report.taskId))
-                dropzone.emit('complete', map.get(report.taskId))
-              } else if (report.state === State.SUBTASK_FAILED) {
-                dropzone.emit(
-                  'error',
-                  map.get(report.taskId),
-                  $translateError(report.message)
-                )
-                dropzone.emit('complete', map.get(report.taskId))
-              } else {
-                // Display other reports above the two zones
-                tip = report
-              }
-            },
-          }
-        )
-        await backgroundTask
-      } catch (error: unknown) {
-        if (!(error instanceof ExtensionError)) throw error
-        for (const file of files) {
-          dropzone.emit('error', file, $translateError(error.message))
-          dropzone.emit('complete', file)
-        }
+        await startTask(task, dropzone, files)
       } finally {
         // Allow a new task to begin
         backgroundTask = undefined

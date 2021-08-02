@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { translateError, translateReport, _ } from 'i18n'
   import type { Report } from 'report'
-  import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import type { SvelteComponent } from 'svelte/internal'
   import type { Instance, Placement } from 'tippy.js'
+  import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
+  import { translateError, translateReport, _ } from 'i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
 
@@ -69,7 +69,9 @@
 </script>
 
 <button
-  on:click={() => dispatch('click')}
+  on:click={() => {
+    dispatch('click')
+  }}
   bind:this={button}
   class:button={true}
   {...$$restProps}
@@ -104,7 +106,11 @@
           {$translateReport(report)}
         {/if}
       </span>
-      <button on:click={() => dispatch('abort')}>{$_('cancel')}</button>
+      <button
+        on:click={() => {
+          dispatch('abort')
+        }}>{$_('cancel')}</button
+      >
     {:then}
       {doneTooltip}
     {:catch { message }}

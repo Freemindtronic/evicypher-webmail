@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Report } from 'report'
   import { _ } from 'i18n'
-  import EncryptIdle from './assets/encrypt.svg'
   import Button from './Button.svelte'
+  import EncryptIdle from './assets/encrypt.svg'
 
   /** Tooltip content. */
   export let report: Report | undefined

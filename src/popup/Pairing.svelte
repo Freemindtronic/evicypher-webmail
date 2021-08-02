@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { pair as pairTask } from 'background/tasks/pair'
-  import { toCanvas } from 'qrcode'
   import type { Report } from 'report'
-  import { State } from 'report'
-  import { createEventDispatcher, onMount } from 'svelte'
-  import { _ } from 'i18n'
-  import { writable } from 'svelte/store'
   import type { ForegroundTask } from 'task'
+  import { toCanvas } from 'qrcode'
+  import { createEventDispatcher, onMount } from 'svelte'
+  import { writable } from 'svelte/store'
+  import { _ } from 'i18n'
+  import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
 
   /** Name of the phone to be added. */
@@ -36,7 +36,7 @@
    */
   const pair: ForegroundTask<typeof pairTask> = async function* () {
     // Display the QR code generated
-    toCanvas(qr, yield, {
+    await toCanvas(qr, yield, {
       margin: 0,
       scale: 3,
     })
@@ -80,7 +80,7 @@
 
       // The pairing process completed successfully
       dispatch('success')
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error)
     }
   })
@@ -88,7 +88,11 @@
 
 <h2>
   {$_('pairing-with-phonename', { values: { phoneName } })}
-  <button class="button" on:click={() => cancelPairing()}>{$_('cancel')}</button
+  <button
+    class="button"
+    on:click={() => {
+      cancelPairing()
+    }}>{$_('cancel')}</button
   >
 </h2>
 <p class="center">
@@ -99,10 +103,21 @@
     {tip}
   {:else}
     {$_('is-the-code-uid-correct', { values: { uid: uid.toUpperCase() } })}
-    <button class="button" type="button" on:click={() => ($confirmed = true)}>
+    <button
+      class="button"
+      type="button"
+      on:click={() => {
+        $confirmed = true
+      }}
+    >
       {$_('yes')}
     </button>
-    <button class="button" on:click={() => cancelPairing()}>{$_('no')}</button>
+    <button
+      class="button"
+      on:click={() => {
+        cancelPairing()
+      }}>{$_('no')}</button
+    >
   {/if}
   <br />
 </p>

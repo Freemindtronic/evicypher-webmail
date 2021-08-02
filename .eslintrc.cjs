@@ -20,9 +20,10 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
     // To enable all rules in svelte files:
-    // tsconfigRootDir: __dirname,
     // project: ['./tsconfig.json'],
     // extraFileExtensions: ['.svelte'],
+    // This is not yet possible to enable some rules, see
+    // https://github.com/sveltejs/eslint-plugin-svelte3/issues/89
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {

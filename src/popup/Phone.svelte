@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { favoritePhoneId, Phone } from 'phones'
   import type { Readable } from 'svelte/store'
   import { createEventDispatcher, onMount } from 'svelte'
   import { readable } from 'svelte/store'
   import tippy from 'tippy.js'
   import { timeago, _ } from 'i18n'
+  import { favoritePhoneId, Phone } from 'phones'
 
   /** The phone to display. */
   export let phone: Readable<Phone>
@@ -34,11 +34,21 @@
 </script>
 
 {#if $favoritePhoneId === $phone.id}
-  <button class="transparent" on:click={() => ($favoritePhoneId = -1)}>
+  <button
+    class="transparent"
+    on:click={() => {
+      $favoritePhoneId = -1
+    }}
+  >
     ★
   </button>
 {:else}
-  <button class="transparent" on:click={() => ($favoritePhoneId = $phone.id)}>
+  <button
+    class="transparent"
+    on:click={() => {
+      $favoritePhoneId = $phone.id
+    }}
+  >
     ☆
   </button>
 {/if}
@@ -51,7 +61,12 @@
       )}{/if})</span
   >
 </span>
-<button class="button" on:click={() => dispatch('delete', $phone)}>
+<button
+  class="button"
+  on:click={() => {
+    dispatch('delete', $phone)
+  }}
+>
   {$_('delete')}
 </button>
 
