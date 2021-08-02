@@ -5,7 +5,7 @@ import { startBackgroundTask, Task } from 'task'
 export const encryptString = async (
   string: string,
   reporter: Reporter,
-  signal = new AbortController().signal
+  signal: AbortSignal
 ): Promise<string> =>
   startBackgroundTask(
     Task.ENCRYPT,
