@@ -1,16 +1,12 @@
 <script lang="ts">
   import type { Report } from 'report'
   import Dropzone from 'dropzone'
-  import { onMount } from 'svelte'
   import { ExtensionError } from 'error'
   import { translateError, translateReport, _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
 
   Dropzone.autoDiscover = false
-
-  let encryptForm: HTMLFormElement
-  let decryptForm: HTMLFormElement
 
   let tip: Report | undefined
 
@@ -102,7 +98,7 @@
    * Creates a new Dropzone in the element given, adds event listener to handle
    * files dropped.
    */
-  const setupDropzone = (
+  const dropTask = (
     parent: HTMLElement,
     task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE
   ) => {
@@ -133,12 +129,13 @@
         backgroundTask = undefined
       }
     })
-  }
 
-  onMount(() => {
-    setupDropzone(encryptForm, Task.ENCRYPT_FILE)
-    setupDropzone(decryptForm, Task.DECRYPT_FILE)
-  })
+    return {
+      destroy() {
+        dropzone.destroy()
+      },
+    }
+  }
 </script>
 
 <h1>{$_('evifile')}</h1>
@@ -158,13 +155,13 @@
 {/if}
 
 <main>
-  <form class="dropzone" bind:this={encryptForm}>
+  <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
     <h2 class="dz-message">
       <button type="button">{$_('drop-files-here-to-encrypt')}</button>
     </h2>
   </form>
 
-  <form class="dropzone" bind:this={decryptForm}>
+  <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
     <h2 class="dz-message">
       <button type="button">{$_('drop-files-here-to-decrypt')}</button>
     </h2>
