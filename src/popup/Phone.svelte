@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Readable } from 'svelte/store'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import type { Content } from 'tippy.js'
+  import { createEventDispatcher } from 'svelte'
   import { readable } from 'svelte/store'
   import tippy from 'tippy.js'
   import { timeago, _ } from 'i18n'
@@ -9,7 +10,6 @@
   /** The phone to display. */
   export let phone: Readable<Phone>
 
-  let status: HTMLElement
   let lastSeen: HTMLElement
 
   /** A store containing the current time, updated every second. */
@@ -23,14 +23,24 @@
     }
   })
 
-  const dispatch = createEventDispatcher<{ delete: Phone }>()
-
-  onMount(() => {
-    tippy(status, {
-      content: lastSeen,
+  /** A `use:` action that adds a tooltip to an element. */
+  const tooltip = (element: HTMLElement, content: Content) => {
+    const instance = tippy(element, {
+      content,
       theme: 'light-border',
     })
-  })
+
+    return {
+      update(content: HTMLElement) {
+        instance.setContent(content)
+      },
+      destroy() {
+        instance.destroy()
+      },
+    }
+  }
+
+  const dispatch = createEventDispatcher<{ delete: Phone }>()
 </script>
 
 {#if $favoritePhoneId === $phone.id}
@@ -55,7 +65,10 @@
 <span>
   {$phone.name}
   <!-- The `$time &&` below is there to trigger a refresh every 30 seconds -->
-  <span bind:this={status}
+  <span
+    use:tooltip={$_('last-seen-timeago', {
+      values: { date: $timeago($phone.lastSeen, $time) },
+    })}
     >({#if $time && $phone.isOnline}{$_('online')}{:else}{$_(
         'offline'
       )}{/if})</span
@@ -69,12 +82,6 @@
 >
   {$_('delete')}
 </button>
-
-<span bind:this={lastSeen}>
-  {$_('last-seen-timeago', {
-    values: { date: $timeago($phone.lastSeen, $time) },
-  })}
-</span>
 
 <style lang="scss">
   :global {
