@@ -6,7 +6,11 @@
 </script>
 
 <h1>
-  <Logo />
+  <span class="brand">
+    <Logo />
+    <strong>EviCypher</strong>
+    Webmail
+  </span>
   {#if !$isLoading}
     <select class="input" bind:value={$locale} in:fade={{ duration: 75 }}>
       {#each $locales as locale}
@@ -31,13 +35,28 @@
     align-items: center;
     justify-content: space-between;
     margin: 0;
-    padding: 0.5rem 1rem;
-    font-size: 2rem;
+    padding: 1rem;
     line-height: 1;
 
-    > :global(svg) {
-      max-height: 1em;
-      vertical-align: bottom;
+    > .brand {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-weight: 400;
+      font-size: 1.5rem;
+      font-family: $title-font;
+
+      > :global(svg) {
+        max-height: 1em;
+        margin-inline-end: 0.25rem;
+        font-size: 2rem;
+        vertical-align: middle;
+        fill: $logo-color;
+      }
+
+      > strong {
+        font-weight: 700;
+      }
     }
 
     select {
