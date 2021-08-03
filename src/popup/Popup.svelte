@@ -70,6 +70,6 @@
     padding: 0 1rem;
     color: $text-color;
     background-color: $background-color;
-    border-bottom: 8px solid $dark;
+    border-block-end: 8px solid $dark;
   }
 </style>

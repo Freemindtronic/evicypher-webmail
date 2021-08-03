@@ -74,11 +74,11 @@
 <style lang="scss">
   h2,
   h3 {
-    margin-bottom: 0.5rem;
+    margin-block-end: 0.5rem;
   }
 
   section > p {
-    margin-top: 0;
+    margin-block-start: 0;
   }
 
   form {
@@ -86,7 +86,7 @@
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      margin-top: 0;
+      margin-block-start: 0;
 
       > input {
         flex: 1;

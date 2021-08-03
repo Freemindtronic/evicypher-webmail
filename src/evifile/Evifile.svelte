@@ -202,7 +202,7 @@
   }
 
   p {
-    margin-bottom: 0;
+    margin-block-end: 0;
     padding: 1em;
     text-align: center;
   }
