@@ -1,5 +1,6 @@
 @use '../assets/variables' as *;
-@import '../assets/sanitize';
+@forward '../assets/fonts';
+@forward '../assets/sanitize';
 
 // Add scrollbar properties on the root element
 html {

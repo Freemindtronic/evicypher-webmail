@@ -1,6 +1,6 @@
 @use "../assets/variables" as *;
 @forward 'dropzone/dist/dropzone.css';
-@import '../assets/sanitize';
+@forward '../assets/sanitize';
 
 .dropzone {
   border: 2px dashed $dark;
