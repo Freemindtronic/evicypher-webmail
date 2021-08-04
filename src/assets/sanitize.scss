@@ -2,3 +2,8 @@
 @forward 'sanitize.css/forms.css';
 @forward 'sanitize.css/assets.css';
 @forward 'sanitize.css/typography.css';
+
+body {
+  // Fix 75% sizing on chrome
+  font-size: 1rem;
+}
