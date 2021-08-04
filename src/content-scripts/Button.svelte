@@ -8,7 +8,7 @@
   import { translateError, translateReport, _ } from 'i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
-  import Button from '../components/Button.svelte'
+  import Button from 'components/Button.svelte'
 
   /** Tooltip content. */
   export let report: Report | undefined

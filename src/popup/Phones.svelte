@@ -5,7 +5,7 @@
   import { Phone, phones } from 'phones'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
-  import Button from '../components/Button.svelte'
+  import Button from 'components/Button.svelte'
 
   /** Name of the phone to be added. */
   let phoneName = ''

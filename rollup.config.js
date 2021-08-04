@@ -1,4 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs'
+import alias from '@rollup/plugin-alias'
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
@@ -13,6 +14,12 @@ const production = !process.env.ROLLUP_WATCH
 
 /** Plugins used for all files. */
 const plugins = [
+  alias({
+    entries: {
+      // Resolve `import Thing from 'component/Thing.svelte'`
+      components: 'src/components',
+    },
+  }),
   resolve({
     browser: true,
     preferBuiltins: false,

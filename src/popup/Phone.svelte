@@ -7,7 +7,7 @@
   import { _ } from 'i18n'
   import { timeago } from 'i18n/timeago'
   import { favoritePhoneId, Phone } from 'phones'
-  import Button from '../components/Button.svelte'
+  import Button from 'components/Button.svelte'
 
   /** The phone to display. */
   export let phone: Readable<Phone>

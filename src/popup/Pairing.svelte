@@ -8,7 +8,7 @@
   import { _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
-  import Button from '../components/Button.svelte'
+  import Button from 'components/Button.svelte'
 
   /** Name of the phone to be added. */
   export let phoneName = ''
