@@ -2,8 +2,16 @@
   @component
   A button component.
 -->
+<script lang="ts">
+  /**
+   * Defines the behavior of the button.
+   *
+   * @default 'submit'
+   */
+  export let type: 'submit' | 'reset' | 'button' = 'submit'
+</script>
 
-<button on:click><slot /></button>
+<button {type} on:click><slot /></button>
 
 <style lang="scss">
   button {

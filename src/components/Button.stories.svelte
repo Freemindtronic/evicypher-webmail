@@ -1,16 +1,26 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf'
+  import Sanitize from './Sanitize.svelte'
   import Button from './Button.svelte'
 </script>
 
 <Meta
   title="Button"
   component={Button}
-  argTypes={{ onClick: { action: 'clicked' } }}
+  argTypes={{
+    label: { control: { type: 'text' } },
+    type: {
+      options: ['submit', 'reset', 'button'],
+      control: { type: 'inline-radio' },
+    },
+    onClick: { action: 'clicked' },
+  }}
 />
 
 <Template let:args>
-  <Button on:click={args.onClick}>{args.label}</Button>
+  <Sanitize>
+    <Button on:click={args.onClick} {...args}>{args.label}</Button>
+  </Sanitize>
 </Template>
 
 <Story
