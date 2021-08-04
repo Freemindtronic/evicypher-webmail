@@ -15,7 +15,10 @@
 
 <style lang="scss">
   button {
+    padding: 0.25em 0.375em;
     color: $background-color;
+    font: inherit;
+    letter-spacing: inherit;
     background-color: $input-color;
     border: 1px solid $input-color;
     border-radius: 4px;

@@ -7,6 +7,7 @@
   import { _ } from 'i18n'
   import { timeago } from 'i18n/timeago'
   import { favoritePhoneId, Phone } from 'phones'
+  import Button from '../components/Button.svelte'
 
   /** The phone to display. */
   export let phone: Readable<Phone>
@@ -73,14 +74,14 @@
       )}{/if})</span
   >
 </span>
-<button
-  class="button"
+<Button
+  type="button"
   on:click={() => {
     dispatch('delete', $phone)
   }}
 >
   {$_('delete')}
-</button>
+</Button>
 
 <style lang="scss">
   :global {

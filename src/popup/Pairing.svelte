@@ -8,6 +8,7 @@
   import { _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
+  import Button from '../components/Button.svelte'
 
   /** Name of the phone to be added. */
   export let phoneName = ''
@@ -88,11 +89,11 @@
 
 <h2>
   {$_('pairing-with-phonename', { values: { phoneName } })}
-  <button
-    class="button"
+  <Button
+    type="button"
     on:click={() => {
       cancelPairing()
-    }}>{$_('cancel')}</button
+    }}>{$_('cancel')}</Button
   >
 </h2>
 <p class="center">
@@ -103,20 +104,19 @@
     {tip}
   {:else}
     {$_('is-the-code-uid-correct', { values: { uid: uid.toUpperCase() } })}
-    <button
-      class="button"
+    <Button
       type="button"
       on:click={() => {
         $confirmed = true
       }}
     >
       {$_('yes')}
-    </button>
-    <button
-      class="button"
+    </Button>
+    <Button
+      type="button"
       on:click={() => {
         cancelPairing()
-      }}>{$_('no')}</button
+      }}>{$_('no')}</Button
     >
   {/if}
   <br />
@@ -128,7 +128,7 @@
     align-items: center;
     justify-content: space-between;
 
-    > button {
+    > :global(button) {
       flex-shrink: 0;
       font-weight: normal;
       font-size: 1rem;

@@ -5,6 +5,7 @@
   import { Phone, phones } from 'phones'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
+  import Button from '../components/Button.svelte'
 
   /** Name of the phone to be added. */
   let phoneName = ''
@@ -60,7 +61,7 @@
         bind:value={phoneName}
         required
       />
-      <button type="submit" class="button">{$_('add')}</button>
+      <Button>{$_('add')}</Button>
     </p>
   </form>
   <hr />

@@ -8,6 +8,7 @@
   import { translateError, translateReport, _ } from 'i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
+  import Button from '../components/Button.svelte'
 
   /** Tooltip content. */
   export let report: Report | undefined
@@ -106,10 +107,11 @@
           {$translateReport(report)}
         {/if}
       </span>
-      <button
+      <Button
+        type="button"
         on:click={() => {
           dispatch('abort')
-        }}>{$_('cancel')}</button
+        }}>{$_('cancel')}</Button
       >
     {:then}
       {doneTooltip}
