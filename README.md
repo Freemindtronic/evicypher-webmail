@@ -43,18 +43,22 @@ Here is a high-level overview of the repository structure:
 - **.github/**: [GitHub](https://github.com/) specific files.
   - **workflows/**: Workflow files for [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions).
 - **.husky/**: [Git hooks](https://githooks.com/) managed by [Husky](https://typicode.github.io/husky/).
+- **.storybook/**: [Storybook](https://storybook.js.org/) configuration files.
 - **.vscode/**: [VS Code](https://code.visualstudio.com/) specific files, contains settings and recommended extensions.
 - **.yarn/**: [Yarn](https://yarnpkg.com/) specific files, contains a lot of zip files because [Zero-Installs](https://yarnpkg.com/features/zero-installs) are enabled.
 - **cypress/**: [Cypress](https://www.cypress.io/) end-to-end testing specification files.
 - **extension/**: The extension itself, loadable after running `yarn build`.
+  - **assets/**: Static assets, such as fonts.
   - **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
 - **src/**: Source directory.
   - **assets/**: Common stylesheets and images.
   - **background/**: Main background script, tasks and services.
+  - **components/**: Common Svelte components, such as buttons.
   - **content-scripts/**: Scripts injected in pages.
   - **evifile/**: EviFile components.
   - **legacy-code/**: Terrible code to be refactored.
   - **popup/**: Popup components.
+  - **stories/**: Style-guide written with [Storybook](https://storybook.js.org/).
   - **\*.ts**: Common libraries.
 - **.czrc**: [Commitizen](https://commitizen-tools.github.io/commitizen/) configuration file, used to generate commit messages in compliancy with [Conventional Commits](https://conventionalcommits.org/).
 - **.editorconfig**: [EditorConfig](http://editorconfig.org/) (code formatter) configuration file.
@@ -79,12 +83,14 @@ Here is a high-level overview of the repository structure:
 ### Yarn scripts
 
 - `yarn build`: Builds the extension.
+- `yarn build-storybook`: Produces a self-contained Storybook, open it with `npx serve storybook-static`.
 - `yarn check`: Runs ESLint, styllint and svelte-check.
 - `yarn clean`: Removes the built extension.
 - `yarn doc`: Builds the documentation.
 - `yarn postinstall`: Installs git hooks. _(runs automatically.)_
 - `yarn release`: Updates the version number and the changelog.
 - `yarn start`: Runs the build in watch mode.
+- `yarn storybook`: Runs the storybook in watch mode.
 - `yarn test`: Runs the tests.
 
 ### Design principles
@@ -124,7 +130,11 @@ Run `yarn build`
 - Run in watch mode `yarn start`
 - Run checks `yarn check`
 - Run tests `yarn test` (not implemented yet)
-- Read the API documentation `yarn doc && cat docs/index.html`
+
+Additional documentation:
+
+- Read the API documentation with `yarn doc && npx serve docs`
+- Read the storybook with `yarn storybook`
 
 ### Committing changes
 
