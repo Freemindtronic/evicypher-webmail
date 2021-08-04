@@ -7,7 +7,7 @@ const manifest = {
   name: 'EviCypher Webmail',
   version: process.env.npm_package_version,
   icons: {
-    48: 'icon.png',
+    48: 'favicon.png',
     96: 'icon.svg',
   },
   permissions: ['storage', 'nativeMessaging'],
