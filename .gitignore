@@ -1,10 +1,12 @@
+.DS_Store
+
+docs/
 extension/build/
 extension/manifest.json
-node_modules/
-.DS_Store
-docs/
 cypress/videos/
 cypress/screenshots/
+node_modules/
+storybook-static/
 
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*
