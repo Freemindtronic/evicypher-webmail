@@ -190,15 +190,17 @@
   }
 
   main {
-    display: grid;
+    display: flex;
     flex: 1;
-    grid-template-rows: 100%;
-    grid-template-columns: 1fr 1fr;
     gap: 1em;
     padding: 1em;
+
     @media (orientation: portrait) {
-      grid-template-rows: 1fr 1fr;
-      grid-template-columns: auto;
+      flex-direction: column;
+    }
+
+    > form {
+      flex: 1;
     }
   }
 
