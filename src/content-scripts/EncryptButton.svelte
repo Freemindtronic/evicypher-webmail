@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Report } from 'report'
   import { _ } from 'i18n'
-  import Button from './Button.svelte'
+  import Button from './TaskButton.svelte'
   import EncryptIdle from './assets/encrypt.svg'
 
   /** Tooltip content. */
