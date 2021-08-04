@@ -3,6 +3,7 @@
   import { browser } from 'webextension-polyfill-ts'
   import Button from 'components/Button.svelte'
   import HR from 'components/HR.svelte'
+  import TextInput from 'components/TextInput.svelte'
   import { _ } from 'i18n'
   import { Phone, phones } from 'phones'
   import Pairing from './Pairing.svelte'
@@ -54,14 +55,7 @@
   <form on:submit|preventDefault={addPhone}>
     <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
     <p>
-      <label for="phone-name">{$_('name')}</label>
-      <input
-        type="text"
-        id="phone-name"
-        class="input"
-        bind:value={phoneName}
-        required
-      />
+      <TextInput required={true} bind:value={phoneName}>{$_('name')}</TextInput>
       <Button>{$_('add')}</Button>
     </p>
   </form>
@@ -90,7 +84,7 @@
       align-items: center;
       margin-block-start: 0;
 
-      > input {
+      > :global(input) {
         flex: 1;
         min-width: 0;
       }

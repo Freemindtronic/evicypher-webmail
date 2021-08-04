@@ -27,5 +27,6 @@
   name="Primary"
   args={{
     label: 'Button',
+    type: 'submit',
   }}
 />
