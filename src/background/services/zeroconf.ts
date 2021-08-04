@@ -1,5 +1,5 @@
 import type { TaskContext } from 'task'
-import debug from 'debug'
+import debug, { Debugger } from 'debug'
 import { get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from 'error'
@@ -50,7 +50,7 @@ export const startZeroconfService = async (
 ): Promise<never> => {
   const log = debug('service:zeroconf')
 
-  if (!(await isZeroconfServiceInstalled()))
+  if (!(await isZeroconfServiceInstalled(log)))
     throw new ExtensionError(ErrorMessage.ZEROCONF_UNAVAILABLE)
 
   while (true) {
@@ -88,10 +88,27 @@ export const startZeroconfService = async (
 }
 
 /** @returns Whether the Zeroconf service is properly installed */
-const isZeroconfServiceInstalled = async (): Promise<boolean> => {
+const isZeroconfServiceInstalled = async (log: Debugger): Promise<boolean> => {
   try {
-    await browser.runtime.sendNativeMessage(APPLICATION_ID, { cmd: 'Version' })
-    return browser.runtime.lastError === null
+    const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
+      cmd: 'Version',
+    })) as { version: number } | undefined
+
+    if (!response || !('version' in response)) return false
+
+    // Print the version and check compatibility
+    log(`Zeroconf version: ${response.version}.`)
+    if (![1].includes(response.version)) {
+      // The only compatible version is 1, update the array above
+      // if more versions are suported
+      // Note: it would be better to use semver here
+      console.error(
+        `Zeroconf version ${response.version} is not compatible with this extension.`
+      )
+      return false
+    }
+
+    return true
   } catch {
     return false
   }
