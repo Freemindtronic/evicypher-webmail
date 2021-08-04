@@ -129,6 +129,7 @@
     justify-content: space-between;
 
     > button {
+      flex-shrink: 0;
       font-weight: normal;
       font-size: 1rem;
     }
