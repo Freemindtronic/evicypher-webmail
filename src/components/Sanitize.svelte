@@ -1,6 +1,6 @@
 <!--
   @component
-  Apply `sanitize.css` on its children.
+  Imports `sanitize.css`.
 -->
 
 <slot />

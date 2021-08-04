@@ -2,6 +2,7 @@
   import { get } from 'svelte/store'
   import { browser } from 'webextension-polyfill-ts'
   import Button from 'components/Button.svelte'
+  import HR from 'components/HR.svelte'
   import { _ } from 'i18n'
   import { Phone, phones } from 'phones'
   import Pairing from './Pairing.svelte'
@@ -49,7 +50,7 @@
       </div>
     {/if}
   </section>
-  <hr />
+  <HR />
   <form on:submit|preventDefault={addPhone}>
     <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
     <p>
@@ -64,7 +65,7 @@
       <Button>{$_('add')}</Button>
     </p>
   </form>
-  <hr />
+  <HR />
   <p style="text-align: center">
     <a href={browser.runtime.getURL('/evifile.html')} target="_evifile">
       {$_('evifile')}
