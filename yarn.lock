@@ -3257,6 +3257,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-no-unsanitized@npm:^3.1.5":
+  version: 3.1.5
+  resolution: "eslint-plugin-no-unsanitized@npm:3.1.5"
+  peerDependencies:
+    eslint: ^5 || ^6 || ^7
+  checksum: 69eec332065612aa23602a22fd25fff158c9d02792ea191cafaba36edb8be08ba8a1ec12489c3abbe1cce82bb8e2022c671a4f142f83682a9d6df3f79bd36bb7
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-prettier@npm:^3.4.0":
   version: 3.4.0
   resolution: "eslint-plugin-prettier@npm:3.4.0"
@@ -3542,6 +3551,7 @@ __metadata:
     eslint-import-resolver-typescript: ^2.4.0
     eslint-plugin-html: ^6.1.2
     eslint-plugin-import: ^2.23.4
+    eslint-plugin-no-unsanitized: ^3.1.5
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-sonarjs: ^0.9.1
     eslint-plugin-svelte3: ^3.2.0

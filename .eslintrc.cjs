@@ -11,6 +11,7 @@ module.exports = {
     'plugin:sonarjs/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
+    'plugin:no-unsanitized/DOM',
     'xo',
     'xo-typescript',
     'prettier',
