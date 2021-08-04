@@ -5,10 +5,10 @@
   import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
+  import Button from 'components/Button.svelte'
   import { _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
-  import Button from 'components/Button.svelte'
 
   /** Name of the phone to be added. */
   export let phoneName = ''

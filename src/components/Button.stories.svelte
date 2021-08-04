@@ -1,7 +1,7 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf'
-  import Sanitize from './Sanitize.svelte'
   import Button from './Button.svelte'
+  import Sanitize from './Sanitize.svelte'
 </script>
 
 <Meta

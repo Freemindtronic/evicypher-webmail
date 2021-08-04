@@ -5,10 +5,10 @@
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
+  import Button from 'components/Button.svelte'
   import { translateError, translateReport, _ } from 'i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
-  import Button from 'components/Button.svelte'
 
   /** Tooltip content. */
   export let report: Report | undefined
@@ -30,24 +30,26 @@
 
   let button: HTMLButtonElement
   let tippyElement: HTMLElement
-  let tippyInstance: Instance
+  let tippyInstance: Instance | undefined
 
   const dispatch =
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 
   const resetTippy = () => {
-    tippyInstance?.setProps({
-      trigger: tippy.defaultProps.trigger,
-    })
+    if (tippyInstance)
+      tippyInstance.setProps({
+        trigger: tippy.defaultProps.trigger,
+      })
   }
 
   // Make the tooltip persistent when the task is running
   $: if (promise === undefined) {
     resetTippy()
   } else {
-    tippyInstance?.setProps({
-      trigger: 'manual',
-    })
+    if (tippyInstance)
+      tippyInstance.setProps({
+        trigger: 'manual',
+      })
     promise.then(resetTippy).catch(resetTippy)
   }
 
@@ -64,8 +66,9 @@
 
   afterUpdate(() => {
     // Recompute the location of the tooltip after each update
-    tippyInstance?.setContent(tippyElement)
-    if (promise !== undefined) tippyInstance?.show()
+    if (!tippyInstance) return
+    tippyInstance.setContent(tippyElement)
+    if (promise !== undefined) tippyInstance.show()
   })
 </script>
 

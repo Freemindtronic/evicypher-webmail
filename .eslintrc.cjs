@@ -21,10 +21,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
     // To enable all rules in svelte files:
-    // project: ['./tsconfig.json'],
-    // extraFileExtensions: ['.svelte'],
-    // This is not yet possible to enable some rules, see
-    // https://github.com/sveltejs/eslint-plugin-svelte3/issues/89
+    extraFileExtensions: ['.svelte'],
   },
   plugins: ['svelte3', '@typescript-eslint', 'html'],
   rules: {
@@ -55,6 +52,13 @@ module.exports = {
     {
       files: ['*.svelte'],
       processor: 'svelte3/svelte3',
+      // This is not yet possible to enable some rules, see
+      // https://github.com/sveltejs/eslint-plugin-svelte3/issues/89
+      rules: {
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+      },
     },
   ],
   settings: {
