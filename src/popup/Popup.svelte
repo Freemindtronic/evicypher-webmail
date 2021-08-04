@@ -40,6 +40,7 @@
 
     > .brand {
       display: flex;
+      flex: 1;
       gap: 0.5rem;
       align-items: center;
       font-weight: 400;
@@ -48,10 +49,10 @@
 
       > :global(svg) {
         max-height: 1em;
-        margin-inline-end: 0.25rem;
         font-size: 2rem;
         vertical-align: middle;
         fill: $logo-color;
+        margin-inline-end: 0.25rem;
       }
 
       > strong {
