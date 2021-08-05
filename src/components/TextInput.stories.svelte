@@ -1,6 +1,7 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf'
   import TextInput from './TextInput.svelte'
+  let value
 </script>
 
 <Meta
@@ -58,7 +59,7 @@
 />
 
 <Story
-  name="Other props value"
+  name="Other attributes"
   args={{
     label: 'Credit card password:',
     type: 'text',
@@ -67,3 +68,8 @@
     placeholder: '4-number pin',
   }}
 />
+
+<Story name="Reactivity">
+  <TextInput bind:value />
+  <p>{value}</p>
+</Story>
