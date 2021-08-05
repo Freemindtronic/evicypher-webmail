@@ -4,7 +4,7 @@
 </script>
 
 <Meta
-  title="Select"
+  title="Components/Select"
   component={Select}
   argTypes={{
     label: { control: { type: 'text' } },

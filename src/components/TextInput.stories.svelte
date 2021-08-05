@@ -4,7 +4,7 @@
 </script>
 
 <Meta
-  title="TextInput"
+  title="Components/TextInput"
   component={TextInput}
   argTypes={{
     label: { control: { type: 'text' } },
