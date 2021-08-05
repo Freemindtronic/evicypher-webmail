@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import Select from 'components/Select.svelte'
   import { locale, locales, isLoading } from 'i18n'
   import Logo from '../assets/logo.svg'
   import Phones from './Phones.svelte'
@@ -12,11 +13,7 @@
     Webmail
   </span>
   {#if !$isLoading}
-    <select class="input" bind:value={$locale} in:fade={{ duration: 75 }}>
-      {#each $locales as locale}
-        <option value={locale}>{locale}</option>
-      {/each}
-    </select>
+    <Select bind:value={$locale} options={$locales} />
   {/if}
 </h1>
 {#if !$isLoading}
@@ -38,6 +35,12 @@
     padding: 1rem;
     line-height: 1;
 
+    > :global(select) {
+      font-weight: normal;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
     > .brand {
       display: flex;
       flex: 1;
@@ -58,11 +61,6 @@
       > strong {
         font-weight: 700;
       }
-    }
-
-    select {
-      font-weight: normal;
-      font-size: 1rem;
     }
   }
 
