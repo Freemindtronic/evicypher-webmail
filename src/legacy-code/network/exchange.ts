@@ -18,7 +18,7 @@ import { ErrorMessage, ExtensionError } from 'error'
 import { AesUtil } from 'legacy-code/cryptography/AesUtil'
 import { removeJamming } from 'legacy-code/cryptography/jamming'
 import { random, sha512, xor } from 'legacy-code/utils'
-import { defaultReporter, Reporter, State } from 'report'
+import { Reporter, State } from 'report'
 
 type Serialize<T> = {
   readonly [K in keyof T]: string
@@ -156,13 +156,13 @@ export const fetchAndSaveKeys = async (
   phone: Writable<Phone>,
   {
     keyToGet,
-    reporter = defaultReporter,
-    signal = new AbortController().signal,
+    reporter,
+    signal,
   }: {
     keyToGet?: Uint8Array
-    reporter?: Reporter
-    signal?: AbortSignal
-  } = {}
+    reporter: Reporter
+    signal: AbortSignal
+  }
 ): Promise<KeyPair> => {
   const $phone = get(phone)
   try {
@@ -198,13 +198,13 @@ const fetchKeys = async (
   phone: Phone,
   {
     keyToGet,
-    reporter = defaultReporter,
-    signal = new AbortController().signal,
+    reporter,
+    signal,
   }: {
     keyToGet?: Uint8Array
-    reporter?: Reporter
-    signal?: AbortSignal
-  } = {}
+    reporter: Reporter
+    signal: AbortSignal
+  }
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
   reporter({ state: State.WAITING_FOR_PHONE })
   let { certificate } = phone

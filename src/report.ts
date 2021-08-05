@@ -32,7 +32,3 @@ export type Report =
  * display them to the user.
  */
 export type Reporter = (state: Report) => void
-
-/** A reporter that does nothing. */
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export const defaultReporter: Reporter = () => {}

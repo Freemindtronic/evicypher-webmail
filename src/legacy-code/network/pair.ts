@@ -86,8 +86,8 @@ export class PairingKey {
 export async function clientHello(
   context: TaskContext,
   pairingKey: PairingKey,
-  signal?: AbortSignal,
-  reporter?: Reporter
+  signal: AbortSignal,
+  reporter: Reporter
 ): Promise<Device> {
   const ip = await search(
     context,

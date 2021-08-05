@@ -1,7 +1,7 @@
 import type { RequestMap } from '../../background/protocol'
 import type { TaskContext } from 'task'
 import { ErrorMessage, ExtensionError } from 'error'
-import { defaultReporter, Reporter, State } from '../../report'
+import { Reporter, State } from '../../report'
 import { sendRequest } from './exchange'
 
 export interface WebAnswer<T> {
@@ -26,20 +26,20 @@ export const search = async <T extends keyof RequestMap>(
   type: T,
   data: RequestMap[T],
   {
-    signal = new AbortController().signal,
+    signal,
     portOverride,
     maxNumberOfSearches = 100,
-    reporter = defaultReporter,
+    reporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
-    signal?: AbortSignal
+    signal: AbortSignal
     /** If set, ignore the connection port advertised by the devices. */
     portOverride?: number
     /** Max number of tries before aborting. */
     maxNumberOfSearches?: number
     /** A function to call every time the process advances. */
-    reporter?: Reporter
-  } = {}
+    reporter: Reporter
+  }
 ): Promise<string> => {
   // Make the Zeroconf service run without cooldown
   context.scanFaster.set(true)
@@ -88,17 +88,17 @@ const searchLoop = async <T extends keyof RequestMap>(
   type: T,
   data: RequestMap[T],
   {
-    signal = new AbortController().signal,
+    signal,
     portOverride,
-    reporter = defaultReporter,
+    reporter,
   }: {
     /** An AbortSignal to cancel any pending request. */
-    signal?: AbortSignal
+    signal: AbortSignal
     /** If set, ignore the connection port advertised by the devices. */
     portOverride?: number
     /** A function to call every time the process advances. */
-    reporter?: Reporter
-  } = {}
+    reporter: Reporter
+  }
 ): Promise<string | void> => {
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.network

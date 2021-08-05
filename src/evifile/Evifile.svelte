@@ -82,6 +82,7 @@
         },
         {
           reporter: createReporter(dropzone, map),
+          signal: new AbortController().signal,
         }
       )
       await backgroundTask

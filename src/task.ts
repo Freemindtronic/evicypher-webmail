@@ -9,7 +9,6 @@ import type { Writable } from 'svelte/store'
 import debug, { Debugger } from 'debug'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from 'error'
-import { defaultReporter } from 'report'
 
 /**
  * A background task is an asynchronous generator transparently connected to a
@@ -164,14 +163,14 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
   taskName: T,
   task: ForegroundTask<TaskMap[T]>,
   {
-    reporter = defaultReporter,
-    signal = new AbortController().signal,
+    reporter,
+    signal,
   }: {
     /** A {@link Reporter | reporter} function that will receive asynchrounous updates. */
-    reporter?: Reporter
+    reporter: Reporter
     /** An abort signal. */
-    signal?: AbortSignal
-  } = {}
+    signal: AbortSignal
+  }
 ): Promise<ReturnType<TaskMap[T]>> => {
   const log = debug(`task:${taskName}:foreground`)
   log('Starting foreground task')
