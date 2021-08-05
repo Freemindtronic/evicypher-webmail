@@ -1,6 +1,6 @@
 <script lang="ts">
   /** Unique identifier used to link the field and the label. */
-  export const id = `input-${Math.random().toString(36).slice(2)}`
+  export let id = `input-${Math.random().toString(36).slice(2)}`
 
   /**
    * Input type, see
@@ -36,14 +36,16 @@
 <input use:setType {required} {id} bind:value on:input {...$$restProps} />
 
 <style lang="scss">
+  // Some rules come from https://csstools.github.io/sanitize.css/
   input {
-    padding: 0.25em 0.375em;
+    // $px is 1/16th of 1em, which is 1px when 1em=16px
+    padding: 3 * $px 5 * $px;
     color: $text-color;
     font: inherit;
     letter-spacing: inherit;
     background-color: $background-color;
-    border: 1px solid $input-color;
-    border-radius: 4px;
+    border: $px solid $input-color;
+    border-radius: 4 * $px;
 
     &:hover,
     &:focus {
@@ -52,7 +54,7 @@
 
     &:focus {
       outline: 0;
-      box-shadow: 0 1px 3px $input-color, 0 0 1px 1px $background-color;
+      box-shadow: 0 $px 3 * $px $input-color, 0 0 $px $px $background-color;
     }
   }
 </style>

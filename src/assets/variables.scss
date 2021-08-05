@@ -13,3 +13,6 @@ $input-color: $blue;
 $logo-color: $light-gold;
 
 $title-font: Sen, sans-serif;
+
+@use "sass:math";
+$px: math.div(1em, 16);
