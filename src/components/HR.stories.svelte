@@ -9,4 +9,4 @@
   <HR />
 </Template>
 
-<Story name="Horizontal Rul" />
+<Story name="Horizontal Rule" />
