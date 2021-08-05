@@ -102,7 +102,6 @@ export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
 }
 
 export function uint8ToHex(uint8: Uint8Array): string {
-  // eslint-disable-next-line unicorn/no-array-reduce
   return uint8.reduce(
     (str, byte) => str + byte.toString(16).padStart(2, '0'),
     ''
