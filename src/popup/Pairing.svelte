@@ -2,10 +2,10 @@
   import type { pair as pairTask } from 'background/tasks/pair'
   import type { Report } from 'report'
   import type { ForegroundTask } from 'task'
-  import { toCanvas } from 'qrcode'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import Button from 'components/Button.svelte'
+  import QRCode from 'components/QRCode.svelte'
   import { _ } from 'i18n'
   import { State } from 'report'
   import { startBackgroundTask, Task } from 'task'
@@ -14,7 +14,7 @@
   export let phoneName = ''
 
   /** A canvas to draw the QR code. */
-  let qr: HTMLCanvasElement
+  let qr: string | undefined
 
   /** Unique identifier, that the user has to approve. */
   let uid: string | undefined
@@ -37,10 +37,7 @@
    */
   const pair: ForegroundTask<typeof pairTask> = async function* () {
     // Display the QR code generated
-    await toCanvas(qr, yield, {
-      margin: 0,
-      scale: 3,
-    })
+    qr = yield
 
     // Display the UID of the device that scanned the QR code
     uid = yield
@@ -97,7 +94,7 @@
   >
 </h2>
 <p class="center">
-  <canvas bind:this={qr} width="147" height="147" />
+  <QRCode data={qr} size={147} />
 </p>
 <p>
   {#if uid === undefined}
@@ -123,6 +120,10 @@
 </p>
 
 <style lang="scss">
+  :global(canvas) {
+    cursor: text;
+  }
+
   h2 {
     display: flex;
     align-items: center;
@@ -137,9 +138,5 @@
 
   .center {
     text-align: center;
-  }
-
-  canvas {
-    cursor: text;
   }
 </style>
