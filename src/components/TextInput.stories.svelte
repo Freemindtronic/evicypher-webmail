@@ -1,6 +1,5 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf'
-  import Sanitize from './Sanitize.svelte'
   import TextInput from './TextInput.svelte'
 </script>
 
@@ -23,11 +22,9 @@
 />
 
 <Template let:args>
-  <Sanitize>
-    <form action="#" on:submit|preventDefault>
-      <TextInput on:input={args.onInput} {...args}>{args.label}</TextInput>
-    </form>
-  </Sanitize>
+  <form action="#" on:submit|preventDefault>
+    <TextInput on:input={args.onInput} {...args}>{args.label}</TextInput>
+  </form>
 </Template>
 
 <Story
@@ -47,11 +44,9 @@
 />
 
 <Story name="Without label" let:args>
-  <Sanitize>
-    <form action="#" on:submit|preventDefault>
-      <TextInput on:input={args.onInput} />
-    </form>
-  </Sanitize>
+  <form action="#" on:submit|preventDefault>
+    <TextInput on:input={args.onInput} />
+  </form>
 </Story>
 
 <Story

@@ -1,7 +1,6 @@
 <script>
   import { Meta, Template, Story } from '@storybook/addon-svelte-csf'
   import Button from './Button.svelte'
-  import Sanitize from './Sanitize.svelte'
 </script>
 
 <Meta
@@ -18,9 +17,7 @@
 />
 
 <Template let:args>
-  <Sanitize>
-    <Button on:click={args.onClick} {...args}>{args.label}</Button>
-  </Sanitize>
+  <Button on:click={args.onClick} {...args}>{args.label}</Button>
 </Template>
 
 <Story
