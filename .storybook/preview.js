@@ -15,4 +15,16 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  // Doc pages don't support Svelte yet, see
+  // https://github.com/storybookjs/storybook/tree/next/addons/docs#framework-support
+  // Remove these lines once `Props table` and `Description` are supported:
+  previewTabs: {
+    'storybook/docs/panel': {
+      hidden: true,
+    },
+    canvas: {
+      // Hide the only remaining tab too
+      hidden: true,
+    },
+  },
 }
