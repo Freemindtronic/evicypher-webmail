@@ -6,6 +6,7 @@ import { sendRequest } from 'legacy-code/network/exchange'
 import { phones } from 'phones'
 import { Request } from '../protocol'
 
+/** Registry name of the service. */
 const APPLICATION_ID = 'com.freemindtronic.evidns'
 
 /** Time (in ms) between two scans. */
