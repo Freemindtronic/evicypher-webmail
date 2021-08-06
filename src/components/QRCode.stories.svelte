@@ -40,7 +40,7 @@
   }}
 />
 
-<Story name="Reactivity" args={{}} let:args>
+<Story name="Reactivity">
   <p>Text above</p>
   <p><QRCode {data} {scale} {size} /></p>
   <p><TextInput bind:value={data}>Data:</TextInput></p>
