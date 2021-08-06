@@ -7,16 +7,7 @@
   <Button type="button">Add to cart</Button>
   ```
 -->
-<script lang="ts">
-  /**
-   * Defines the behavior of the button.
-   *
-   * @default 'submit'
-   */
-  export let type: 'submit' | 'reset' | 'button' = 'submit'
-</script>
-
-<button {type} on:click><slot /></button>
+<button on:click {...$$restProps}><slot /></button>
 
 <style lang="scss">
   // Some rules come from https://csstools.github.io/sanitize.css/
