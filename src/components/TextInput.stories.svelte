@@ -70,6 +70,11 @@
 />
 
 <Story name="Reactivity">
-  <TextInput bind:value />
+  <p><TextInput bind:value /></p>
   <p>{value}</p>
+</Story>
+
+<Story name="Number">
+  <p><TextInput bind:value type="number" /></p>
+  <p>(type) {typeof value}: (value) {value}</p>
 </Story>

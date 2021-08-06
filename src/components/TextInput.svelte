@@ -1,39 +1,28 @@
+<!--
+  @component
+  A styled and reactive text input.
+
+  **Usage:**
+  ```tsx
+  <TextInput type="password" bind:value={password} required>Password:</TextInput>
+  ```
+-->
 <script lang="ts">
   /** Unique identifier used to link the field and the label. */
   export let id = `input-${Math.random().toString(36).slice(2)}`
 
   /**
-   * Input type, see
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types
-   *
-   * @default 'text'
-   */
-  export let type = 'text'
-
-  /**
-   * Required?
-   *
-   * @default false
-   */
-  export let required = false
-
-  /**
-   * Field value.
+   * Field value. This property is bindable.
    *
    * @default ''
    */
-  export let value: string | number = ''
-
-  /** Sets the type when the component is mounted. */
-  const setType = (element: HTMLInputElement) => {
-    element.type = type
-  }
+  export let value = ''
 </script>
 
 {#if $$slots.default}
   <label for={id}><slot /></label>
 {/if}
-<input use:setType {required} {id} bind:value on:input {...$$restProps} />
+<input {id} bind:value on:input {...$$restProps} />
 
 <style lang="scss">
   // Some rules come from https://csstools.github.io/sanitize.css/
