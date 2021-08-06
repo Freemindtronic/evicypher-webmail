@@ -129,10 +129,8 @@ export function shiftLeft(
     // If(byteArray.length-offsetBytes+i===byteArray.length-1)break;
     const src = byteArray[i]
     let dst = src << shiftMod
-    if (i + 1 < offsetBytes) {
+    if (i + 1 < offsetBytes)
       dst |= (byteArray[i + 1] >>> (8 - shiftMod)) & carryMask
-    }
-
     ouptut[byteArray.length - offsetBytes + i] = dst
   }
 

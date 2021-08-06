@@ -80,10 +80,12 @@ export const sendRequest = async <T extends keyof RequestMap>({
 }): Promise<ResponseMap[T]> => {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
-  if (timeout)
+  if (timeout) {
     setTimeout(() => {
       controller.abort()
     }, timeout)
+  }
+
   if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
   signal?.addEventListener('abort', () => {
     controller.abort()
@@ -141,10 +143,11 @@ export const throwOnHttpErrors = (response: Response): void => {
   // be replaced with a generic error message: `UNKNOWN_ERROR`.
   // That is the main difference between `Error` and `ExtensionError`:
   // `ErrorMessage` has a discrete set of possible errors.
-  if (response.status >= 300)
+  if (response.status >= 300) {
     throw new Error(
       `Unexpected HTTP response code: ${response.status} ${response.statusText}.`
     )
+  }
 }
 
 /**

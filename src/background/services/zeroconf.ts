@@ -104,10 +104,11 @@ export const startZeroconfService = async (
 
     // Avoid scan spamming
     const duration = performance.now() - start
-    if (duration < MINIMUM_COOLDOWN)
+    if (duration < MINIMUM_COOLDOWN) {
       await new Promise((resolve) => {
         setTimeout(resolve, MINIMUM_COOLDOWN - duration)
       })
+    }
 
     if (context.scanFaster.get()) continue
 

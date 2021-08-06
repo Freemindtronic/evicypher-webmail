@@ -98,12 +98,14 @@ export const encryptFile: BackgroundTask<
           url: URL.createObjectURL(encryptedFile),
         })
       } catch (error: unknown) {
-        if (error instanceof ExtensionError)
+        if (error instanceof ExtensionError) {
           reporter({
             state: State.SUBTASK_FAILED,
             taskId: url,
             message: error.message,
           })
+        }
+
         throw error
       }
     })

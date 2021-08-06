@@ -201,16 +201,13 @@ const handleMutation = (mutation: MutationRecord) => {
   // A mail element is added
   if (target.matches(Selector.MAIL_CONTENT)) handleMailElement(target)
 
-  for (const mailElement of target.querySelectorAll<HTMLElement>(
+  const mailElements = target.querySelectorAll<HTMLElement>(
     Selector.MAIL_CONTENT
-  )) {
-    handleMailElement(mailElement)
-  }
+  )
+  for (const mailElement of mailElements) handleMailElement(mailElement)
 
   // The user starts writing a mail
-  if (target.matches(Selector.TOOLBAR)) {
-    handleToolbar(target)
-  }
+  if (target.matches(Selector.TOOLBAR)) handleToolbar(target)
 }
 
 // Enable logging in the page console (not the extension console)

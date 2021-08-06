@@ -36,20 +36,23 @@
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 
   const resetTippy = () => {
-    if (tippyInstance)
+    if (tippyInstance) {
       tippyInstance.setProps({
         trigger: tippy.defaultProps.trigger,
       })
+    }
   }
 
   // Make the tooltip persistent when the task is running
   $: if (promise === undefined) {
     resetTippy()
   } else {
-    if (tippyInstance)
+    if (tippyInstance) {
       tippyInstance.setProps({
         trigger: 'manual',
       })
+    }
+
     promise.then(resetTippy).catch(resetTippy)
   }
 

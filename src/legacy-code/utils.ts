@@ -50,10 +50,8 @@ export const sha512 = async (data: Uint8Array): Promise<Uint8Array> =>
 
 export function uint8ArrayToWordArray(ba: Uint8Array): CryptoJS.lib.WordArray {
   const wa: number[] = []
-  for (const [i, element] of ba.entries()) {
+  for (const [i, element] of ba.entries())
     wa[Math.trunc(i / 4)] |= element << (24 - 8 * i)
-  }
-
   return CryptoJS.lib.WordArray.create(wa, ba.length)
 }
 

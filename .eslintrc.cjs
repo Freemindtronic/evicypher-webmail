@@ -27,6 +27,8 @@ module.exports = {
   rules: {
     camelcase: ['error', { properties: 'always' }],
     complexity: ['error', 6],
+    curly: ['error', 'multi-or-nest', 'consistent'],
+    'multiline-comment-style': ['error', 'separate-lines'],
     'no-await-in-loop': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
