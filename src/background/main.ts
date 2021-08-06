@@ -4,7 +4,10 @@ import { browser, Runtime } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from 'error'
 import { Observable } from 'observable'
 import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
-import { startZeroconfService } from './services/zeroconf'
+import {
+  isZeroconfServiceInstalled,
+  startZeroconfService,
+} from './services/zeroconf'
 import { decrypt, decryptFile } from './tasks/decrypt'
 import { encrypt, encryptFile } from './tasks/encrypt'
 import { pair } from './tasks/pair'
@@ -99,16 +102,19 @@ const nextStep = async <TSent, TReceived, TReturn>(
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // Start the Zeroconf scanning service
-startZeroconfService(context).catch((error) => {
-  console.error(error)
-  if (
-    error instanceof ExtensionError &&
-    error.message === ErrorMessage.ZEROCONF_UNAVAILABLE
+isZeroconfServiceInstalled()
+  .then(async (installed) =>
+    installed
+      ? // If the service is properly installed, start it
+        startZeroconfService(context)
+      : // Otherwise, open a tutorial
+        browser.tabs.create({
+          url: browser.runtime.getURL('zeroconf-unavailable.html'),
+        })
   )
-    void browser.tabs.create({
-      url: browser.runtime.getURL('zeroconf-unavailable.html'),
-    })
-})
+  .catch((error) => {
+    console.error(error)
+  })
 
 // Every connection maps to a background task
 browser.runtime.onConnect.addListener(async (port) => {

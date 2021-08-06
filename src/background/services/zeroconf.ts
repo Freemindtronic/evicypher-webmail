@@ -1,8 +1,7 @@
 import type { TaskContext } from 'task'
-import debug, { Debugger } from 'debug'
+import debug from 'debug'
 import { get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
-import { ErrorMessage, ExtensionError } from 'error'
 import { sendRequest } from 'legacy-code/network/exchange'
 import { phones } from 'phones'
 import { Request } from '../protocol'
@@ -50,9 +49,6 @@ export const startZeroconfService = async (
 ): Promise<never> => {
   const log = debug('service:zeroconf')
 
-  if (!(await isZeroconfServiceInstalled(log)))
-    throw new ExtensionError(ErrorMessage.ZEROCONF_UNAVAILABLE)
-
   while (true) {
     const start = performance.now()
 
@@ -88,7 +84,9 @@ export const startZeroconfService = async (
 }
 
 /** @returns Whether the Zeroconf service is properly installed */
-const isZeroconfServiceInstalled = async (log: Debugger): Promise<boolean> => {
+export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
+  const log = debug('service:zeroconf')
+
   try {
     const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
       cmd: 'Version',

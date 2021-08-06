@@ -62,9 +62,6 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.WRONG_KEY:
       return $_('wrong-key')
 
-    case ErrorMessage.ZEROCONF_UNAVAILABLE:
-      return $_('zeroconf-unavailable')
-
     // This switch statement is exhaustive
     // No default
   }

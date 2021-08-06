@@ -13,7 +13,6 @@ export enum ErrorMessage {
   UNKNOWN_ERROR = 'Unknown error.',
   UNKNOWN_PHONE_ERROR = 'Unknown phone error.',
   WRONG_KEY = 'Wrong key.',
-  ZEROCONF_UNAVAILABLE = 'ZeroConf unavailable.',
 }
 
 /**
