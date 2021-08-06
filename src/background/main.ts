@@ -116,7 +116,7 @@ isZeroconfServiceInstalled()
         })
   )
   .catch((error) => {
-    console.error(error)
+    debug('service:zeroconf')('%o', error)
     context.zeroconfRunning = false
   })
 

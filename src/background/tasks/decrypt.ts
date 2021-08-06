@@ -1,4 +1,5 @@
 import type { BackgroundTask } from 'task'
+import { debug } from 'debug'
 import { get } from 'svelte/store'
 import { BrowserStore } from 'browser-store'
 import { ErrorMessage, ExtensionError } from 'error'
@@ -123,7 +124,7 @@ export const decryptFiles: BackgroundTask<
           url: URL.createObjectURL(decryptedFile),
         })
       } catch (error: unknown) {
-        console.error(error)
+        debug('task:encrypt-files:background')('%o', error)
 
         // Report the error and mark the subtask as failed
         reporter({
