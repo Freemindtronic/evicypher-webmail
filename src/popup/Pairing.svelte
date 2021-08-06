@@ -80,6 +80,7 @@
       dispatch('success')
     } catch (error: unknown) {
       console.error(error)
+      // TODO: handle errors
     }
   })
 </script>
