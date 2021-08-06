@@ -61,7 +61,7 @@
 
   /** Starts the task given on the files given. */
   const startTask = async (
-    task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE,
+    task: Task.ENCRYPT_FILES | Task.DECRYPT_FILES,
     dropzone: Dropzone,
     files: Dropzone.DropzoneFile[]
   ) => {
@@ -102,7 +102,7 @@
    */
   const dropTask = (
     parent: HTMLElement,
-    task: Task.ENCRYPT_FILE | Task.DECRYPT_FILE
+    task: Task.ENCRYPT_FILES | Task.DECRYPT_FILES
   ) => {
     const dropzone = new Dropzone(parent, {
       url: '#',
@@ -161,13 +161,13 @@
     {/if}
 
     <div class="grid">
-      <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
+      <form class="dropzone" use:dropTask={Task.ENCRYPT_FILES}>
         <h2 class="dz-message">
           <button type="button">{$_('drop-files-here-to-encrypt')}</button>
         </h2>
       </form>
 
-      <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
+      <form class="dropzone" use:dropTask={Task.DECRYPT_FILES}>
         <h2 class="dz-message">
           <button type="button">{$_('drop-files-here-to-decrypt')}</button>
         </h2>

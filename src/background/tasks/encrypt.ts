@@ -8,7 +8,7 @@ import { favoritePhone } from 'phones'
 import { State } from 'report'
 
 /**
- * Sends an encryption request to the phone.
+ * Sends an encryption request to the favorite phone. The encryption is performed locally.
  *
  * @remarks
  *   `BackgroundTask<undefined, string, string>` means that the task sends nothing
@@ -43,10 +43,17 @@ export const encrypt: BackgroundTask<undefined, string, string> =
   }
 
 /**
- * Same, but with files. Instead of sendings blobs directly, we use
- * `URL.createObjectURL()`.
+ * Encrypts files locally with keys fetched from the favorite phone.
+ *
+ * @remarks
+ *   The files are not sent directly to the task, but through `blob:` URL. (see
+ *   https://stackoverflow.com/a/30881444)
+ *
+ *   The task returns `undefined` because encrypted files are reported when ready.
+ *   Subtasks of encryption can be tracked through `SUBTASK_IN_PROGRESS`,
+ *   `SUBTASK_COMPLETE` and `SUBTASK_FAILED` reports.
  */
-export const encryptFile: BackgroundTask<
+export const encryptFiles: BackgroundTask<
   undefined,
   Array<{ name: string; url: string }>,
   void
@@ -72,15 +79,21 @@ export const encryptFile: BackgroundTask<
 
   await Promise.allSettled(
     files.map(async ({ name, url }) => {
+      // Download the file
       const blob = await (await fetch(url)).blob()
       const file = new File([blob], name)
+
+      // Free the file
       URL.revokeObjectURL(url)
 
       try {
+        // Random 8-letter string
         const encryptedName =
           [...crypto.getRandomValues(new Uint8Array(8))]
             .map((n) => String.fromCharCode(97 + (n % 26)))
             .join('') + '.Evi'
+
+        // Encrypt the file
         const encryptedFile = new File(
           await evi.encryptFile(file, (progress: number) => {
             reporter({
@@ -91,6 +104,8 @@ export const encryptFile: BackgroundTask<
           }),
           encryptedName
         )
+
+        // Report the encrypted file
         reporter({
           state: State.SUBTASK_COMPLETE,
           taskId: url,
@@ -98,15 +113,17 @@ export const encryptFile: BackgroundTask<
           url: URL.createObjectURL(encryptedFile),
         })
       } catch (error: unknown) {
-        if (error instanceof ExtensionError) {
-          reporter({
-            state: State.SUBTASK_FAILED,
-            taskId: url,
-            message: error.message,
-          })
-        }
+        console.error(error)
 
-        throw error
+        // Report the error and mark the subtask as failed
+        reporter({
+          state: State.SUBTASK_FAILED,
+          taskId: url,
+          message:
+            error instanceof ExtensionError
+              ? error.message
+              : ErrorMessage.UNKNOWN_ERROR,
+        })
       }
     })
   )

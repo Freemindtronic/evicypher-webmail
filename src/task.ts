@@ -1,6 +1,6 @@
 import type { PingResponse } from 'background/protocol'
-import type { decrypt, decryptFile } from 'background/tasks/decrypt'
-import type { encrypt, encryptFile } from 'background/tasks/encrypt'
+import type { decrypt, decryptFiles } from 'background/tasks/decrypt'
+import type { encrypt, encryptFiles } from 'background/tasks/encrypt'
 import type { pair } from 'background/tasks/pair'
 import type { isZeroconfRunning } from 'background/tasks/zeroconf'
 import type { Observable } from 'observable'
@@ -119,9 +119,9 @@ export type MessageFromFrontToBack<T> = T extends BackgroundTask<
 /** All the tasks available. */
 export enum Task {
   ENCRYPT = 'encrypt',
-  ENCRYPT_FILE = 'encrypt-file',
+  ENCRYPT_FILES = 'encrypt-files',
   DECRYPT = 'decrypt',
-  DECRYPT_FILE = 'decrypt-file',
+  DECRYPT_FILES = 'decrypt-files',
   PAIR = 'pair',
   IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
 }
@@ -130,9 +130,9 @@ export enum Task {
 export type TaskMap = {
   [Task.PAIR]: typeof pair
   [Task.ENCRYPT]: typeof encrypt
-  [Task.ENCRYPT_FILE]: typeof encryptFile
+  [Task.ENCRYPT_FILES]: typeof encryptFiles
   [Task.DECRYPT]: typeof decrypt
-  [Task.DECRYPT_FILE]: typeof decryptFile
+  [Task.DECRYPT_FILES]: typeof decryptFiles
   [Task.IS_ZEROCONF_RUNNING]: typeof isZeroconfRunning
 }
 

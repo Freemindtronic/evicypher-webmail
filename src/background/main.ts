@@ -8,8 +8,8 @@ import {
   isZeroconfServiceInstalled,
   startZeroconfService,
 } from './services/zeroconf'
-import { decrypt, decryptFile } from './tasks/decrypt'
-import { encrypt, encryptFile } from './tasks/encrypt'
+import { decrypt, decryptFiles } from './tasks/decrypt'
+import { encrypt, encryptFiles } from './tasks/encrypt'
 import { pair } from './tasks/pair'
 import { isZeroconfRunning } from './tasks/zeroconf'
 
@@ -124,9 +124,9 @@ browser.runtime.onConnect.addListener(async (port) => {
   const task = {
     [Task.PAIR]: pair,
     [Task.ENCRYPT]: encrypt,
-    [Task.ENCRYPT_FILE]: encryptFile,
+    [Task.ENCRYPT_FILES]: encryptFiles,
     [Task.DECRYPT]: decrypt,
-    [Task.DECRYPT_FILE]: decryptFile,
+    [Task.DECRYPT_FILES]: decryptFiles,
     [Task.IS_ZEROCONF_RUNNING]: isZeroconfRunning,
   }[port.name]
   if (task === undefined)

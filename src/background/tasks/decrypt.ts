@@ -8,7 +8,7 @@ import { favoritePhone } from 'phones'
 import { State } from 'report'
 
 /**
- * Sends a decryption request to the phone.
+ * Sends a decryption request to the favorite phone. The decryption is performed locally.
  *
  * @remarks
  *   `BackgroundTask<undefined, string, string>` means that the task sends nothing
@@ -43,10 +43,17 @@ export const decrypt: BackgroundTask<undefined, string, string> =
   }
 
 /**
- * Same, but with files. Instead of sendings blobs directly, we use
- * `URL.createObjectURL()`.
+ * Decrypts files locally with keys fetched from the favorite phone.
+ *
+ * @remarks
+ *   The files are not sent directly to the task, but through `blob:` URL. (see
+ *   https://stackoverflow.com/a/30881444)
+ *
+ *   The task returns `undefined` because decrypted files are reported when ready.
+ *   Subtasks of decryption can be tracked through `SUBTASK_IN_PROGRESS`,
+ *   `SUBTASK_COMPLETE` and `SUBTASK_FAILED` reports.
  */
-export const decryptFile: BackgroundTask<
+export const decryptFiles: BackgroundTask<
   undefined,
   Array<{ name: string; url: string }>,
   void
@@ -80,8 +87,12 @@ export const decryptFile: BackgroundTask<
   // Encrypt the text
   const evi = new EviCrypt(keys)
 
+  // Parallelize decryption
+  // Note: since the decryption is done by CryptoJS, it is not possible
+  // to effectively parallize tasks, they are run in the same thread
   await Promise.allSettled(
     [
+      // Download all the files from `blob:` URLs
       Promise.resolve({ url: firstFile.url, buffer }),
       ...files.map(async ({ name, url }) => {
         const blob = await (await fetch(url)).blob()
@@ -92,6 +103,7 @@ export const decryptFile: BackgroundTask<
     ].map(async (file) => {
       const { url, buffer } = await file
       try {
+        // Decrypt the file
         const decryptedFile = await evi.decryptFileBuffer(
           buffer,
           (progress: number) => {
@@ -102,6 +114,8 @@ export const decryptFile: BackgroundTask<
             })
           }
         )
+
+        // Report the decrypted file
         reporter({
           state: State.SUBTASK_COMPLETE,
           taskId: url,
@@ -109,20 +123,23 @@ export const decryptFile: BackgroundTask<
           url: URL.createObjectURL(decryptedFile),
         })
       } catch (error: unknown) {
-        if (error instanceof ExtensionError) {
-          reporter({
-            state: State.SUBTASK_FAILED,
-            taskId: url,
-            message: error.message,
-          })
-        }
+        console.error(error)
 
-        throw error
+        // Report the error and mark the subtask as failed
+        reporter({
+          state: State.SUBTASK_FAILED,
+          taskId: url,
+          message:
+            error instanceof ExtensionError
+              ? error.message
+              : ErrorMessage.UNKNOWN_ERROR,
+        })
       }
     })
   )
 }
 
+/** @returns A promise wrapping an `Uint8Array` */
 const readAsArrayBuffer = async (file: Blob) =>
   new Promise<Uint8Array>((resolve, reject) => {
     const reader = new FileReader()
