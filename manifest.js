@@ -1,10 +1,12 @@
 /* eslint-disable camelcase */
 import { writeFileSync } from 'fs'
+import { fileURLToPath } from 'url'
 
 /** A dynamically generated manifest, to keep the version number consistent. */
-const manifest = {
+export const manifest = {
   manifest_version: 2,
   name: 'EviCypher Webmail',
+  // The extension version is the same as the package.json version
   version: process.env.npm_package_version,
   icons: {
     48: 'favicon.png',
@@ -32,8 +34,14 @@ const manifest = {
   web_accessible_resources: ['loading.gif', 'blank.html'],
 }
 
-// Save the manifest
-writeFileSync(
-  './extension/manifest.json',
-  JSON.stringify(manifest, undefined, 2)
-)
+/** Writes `manifest` to `extension/manifest.json`. */
+export const writeManifest = () => {
+  writeFileSync(
+    './extension/manifest.json',
+    JSON.stringify(manifest, undefined, 2)
+  )
+  console.log('\u001B[32mcreated extension/manifest.json\u001B[0m')
+}
+
+// Save the manifest if the file is run directly
+if (process.argv[1] === fileURLToPath(import.meta.url)) writeManifest()

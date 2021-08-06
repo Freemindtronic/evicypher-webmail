@@ -60,6 +60,10 @@ module.exports = {
         '@typescript-eslint/no-unsafe-member-access': 'off',
       },
     },
+    {
+      files: ['*.js'],
+      rules: { '@typescript-eslint/explicit-module-boundary-types': 'off' },
+    },
   ],
   settings: {
     'svelte3/typescript': true,
