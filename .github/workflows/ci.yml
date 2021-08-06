@@ -48,7 +48,7 @@ jobs:
         run: yarn build
 
       - name: Produce a zip archive
-        run: cd extension && zip -r ../extension.zip .
+        run: cd extension && zip -r ../evicypher-webmail.zip .
 
       # Upload the build directory rather than the archive because GitHub
       # will wrap the zip file in another zip file
@@ -66,4 +66,4 @@ jobs:
         with:
           draft: true
           files: |
-            extension.zip
+            evicypher-webmail.zip
