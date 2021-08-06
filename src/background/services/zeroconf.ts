@@ -38,6 +38,35 @@ export interface ZeroconfResponse {
   }> | null
 }
 
+/** @returns Whether the Zeroconf service is properly installed */
+export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
+  const log = debug('service:zeroconf')
+
+  try {
+    const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
+      cmd: 'Version',
+    })) as { version: number } | undefined
+
+    if (!response || !('version' in response)) return false
+
+    // Print the version and check compatibility
+    log(`Zeroconf version: ${response.version}.`)
+    if (![1].includes(response.version)) {
+      // The only compatible version is 1, update the array above
+      // if more versions are suported
+      // Note: `response.version` is the MAJOR version number
+      console.error(
+        `Zeroconf version ${response.version} is not compatible with this extension.`
+      )
+      return false
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 /**
  * Starts a persistent scanning service.
  *
@@ -48,6 +77,8 @@ export const startZeroconfService = async (
   context: TaskContext
 ): Promise<never> => {
   const log = debug('service:zeroconf')
+
+  context.zeroconfRunning = true
 
   while (true) {
     const start = performance.now()
@@ -80,35 +111,6 @@ export const startZeroconfService = async (
         setTimeout(resolve, DEFAULT_COOLDOWN)
       }),
     ])
-  }
-}
-
-/** @returns Whether the Zeroconf service is properly installed */
-export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
-  const log = debug('service:zeroconf')
-
-  try {
-    const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
-      cmd: 'Version',
-    })) as { version: number } | undefined
-
-    if (!response || !('version' in response)) return false
-
-    // Print the version and check compatibility
-    log(`Zeroconf version: ${response.version}.`)
-    if (![1].includes(response.version)) {
-      // The only compatible version is 1, update the array above
-      // if more versions are suported
-      // Note: `response.version` is the MAJOR version number
-      console.error(
-        `Zeroconf version ${response.version} is not compatible with this extension.`
-      )
-      return false
-    }
-
-    return true
-  } catch {
-    return false
   }
 }
 

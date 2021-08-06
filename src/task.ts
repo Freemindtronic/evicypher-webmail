@@ -2,6 +2,7 @@ import type { PingResponse } from 'background/protocol'
 import type { decrypt, decryptFile } from 'background/tasks/decrypt'
 import type { encrypt, encryptFile } from 'background/tasks/encrypt'
 import type { pair } from 'background/tasks/pair'
+import type { isZeroconfRunning } from 'background/tasks/zeroconf'
 import type { Observable } from 'observable'
 import type { Phone } from 'phones'
 import type { Report, Reporter } from 'report'
@@ -122,6 +123,7 @@ export enum Task {
   DECRYPT = 'decrypt',
   DECRYPT_FILE = 'decrypt-file',
   PAIR = 'pair',
+  IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
 }
 
 /** A convenient way to retreive an actual task from its name. */
@@ -131,10 +133,13 @@ export type TaskMap = {
   [Task.ENCRYPT_FILE]: typeof encryptFile
   [Task.DECRYPT]: typeof decrypt
   [Task.DECRYPT_FILE]: typeof decryptFile
+  [Task.IS_ZEROCONF_RUNNING]: typeof isZeroconfRunning
 }
 
 /** Background context shared between background tasks. */
 export interface TaskContext {
+  /** The current state of the Zeroconf service. */
+  zeroconfRunning: boolean
   /** List of devices found by the Zeroconf service. */
   network: Map<
     string,

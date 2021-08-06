@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Report } from 'report'
   import Dropzone from 'dropzone'
+  import IsZeroconfRunning from 'components/IsZeroconfRunning.svelte'
   import { ExtensionError } from 'error'
   import { isLoading, translateError, translateReport, _ } from 'i18n'
   import { State } from 'report'
@@ -142,32 +143,36 @@
 {#if !$isLoading}
   <h1>{$_('evifile')}</h1>
 
-  {#if backgroundTask === undefined}
-    <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
-  {:else}
-    {#await backgroundTask}
-      <p>
-        {#if tip === undefined}
-          {$_('loading')}
-        {:else}
-          {$translateReport(tip)}
-        {/if}
-      </p>
-    {/await}
-  {/if}
-
   <main>
-    <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
-      <h2 class="dz-message">
-        <button type="button">{$_('drop-files-here-to-encrypt')}</button>
-      </h2>
-    </form>
+    <IsZeroconfRunning />
 
-    <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
-      <h2 class="dz-message">
-        <button type="button">{$_('drop-files-here-to-decrypt')}</button>
-      </h2>
-    </form>
+    {#if backgroundTask === undefined}
+      <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
+    {:else}
+      {#await backgroundTask}
+        <p>
+          {#if tip === undefined}
+            {$_('loading')}
+          {:else}
+            {$translateReport(tip)}
+          {/if}
+        </p>
+      {/await}
+    {/if}
+
+    <div class="grid">
+      <form class="dropzone" use:dropTask={Task.ENCRYPT_FILE}>
+        <h2 class="dz-message">
+          <button type="button">{$_('drop-files-here-to-encrypt')}</button>
+        </h2>
+      </form>
+
+      <form class="dropzone" use:dropTask={Task.DECRYPT_FILE}>
+        <h2 class="dz-message">
+          <button type="button">{$_('drop-files-here-to-decrypt')}</button>
+        </h2>
+      </form>
+    </div>
   </main>
 {/if}
 
@@ -180,6 +185,10 @@
       flex-direction: column;
       min-height: 100vh;
     }
+
+    p {
+      margin: 0;
+    }
   }
 
   h1 {
@@ -190,11 +199,28 @@
     background-color: $dark;
   }
 
+  p {
+    padding: 1em;
+    text-align: center;
+  }
+
   main {
     display: flex;
     flex: 1;
+    flex-direction: column;
     gap: 1em;
     padding: 1em;
+  }
+
+  button {
+    border: 0;
+    outline: 0;
+  }
+
+  .grid {
+    display: flex;
+    flex: 1;
+    gap: 1em;
 
     @media (orientation: portrait) {
       flex-direction: column;
@@ -203,16 +229,5 @@
     > form {
       flex: 1;
     }
-  }
-
-  p {
-    margin-block-end: 0;
-    padding: 1em;
-    text-align: center;
-  }
-
-  button {
-    border: 0;
-    outline: 0;
   }
 </style>

@@ -11,9 +11,11 @@ import {
 import { decrypt, decryptFile } from './tasks/decrypt'
 import { encrypt, encryptFile } from './tasks/encrypt'
 import { pair } from './tasks/pair'
+import { isZeroconfRunning } from './tasks/zeroconf'
 
 /** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
+  zeroconfRunning: false,
   network: new Map(),
   scanFaster: new Observable<boolean>(false),
   newDeviceFound: new Observable<void>(undefined),
@@ -109,11 +111,12 @@ isZeroconfServiceInstalled()
         startZeroconfService(context)
       : // Otherwise, open a tutorial
         browser.tabs.create({
-          url: browser.runtime.getURL('zeroconf-unavailable.html'),
+          url: browser.runtime.getURL('/zeroconf-unavailable.html'),
         })
   )
   .catch((error) => {
     console.error(error)
+    context.zeroconfRunning = false
   })
 
 // Every connection maps to a background task
@@ -124,6 +127,7 @@ browser.runtime.onConnect.addListener(async (port) => {
     [Task.ENCRYPT_FILE]: encryptFile,
     [Task.DECRYPT]: decrypt,
     [Task.DECRYPT_FILE]: decryptFile,
+    [Task.IS_ZEROCONF_RUNNING]: isZeroconfRunning,
   }[port.name]
   if (task === undefined)
     throw new Error(`Unexpected connection: ${port.name}.`)

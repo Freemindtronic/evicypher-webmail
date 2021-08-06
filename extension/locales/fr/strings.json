@@ -54,5 +54,6 @@
   "conflict": "Le téléphone a reçu plusieurs requêtes simultanées et a décliné cette opération. Veuillez terminer les autres opérations et recommencer.",
   "refused-on-phone": "Opération refusée depuis le téléphone.",
   "request-timeout": "Temps écoulé pour valider l'opération, le téléphone l'a refusée.",
-  "unknown-phone-error": "L'échange avec le téléphone a échoué, veuillez réessayer."
+  "unknown-phone-error": "L'échange avec le téléphone a échoué, veuillez réessayer.",
+  "click-here-for-help": "Cliquez ici pour obtenir de l'aide."
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import IsZeroconfRunning from 'components/IsZeroconfRunning.svelte'
   import Select from 'components/Select.svelte'
   import { locale, locales, isLoading } from 'i18n'
   import Logo from '../assets/logo.svg'
@@ -18,6 +19,7 @@
 </h1>
 {#if !$isLoading}
   <main in:fade={{ duration: 75 }}>
+    <IsZeroconfRunning />
     <Phones />
   </main>
 {/if}

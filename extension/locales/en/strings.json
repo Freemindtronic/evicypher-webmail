@@ -55,5 +55,6 @@
   "conflict": "The phone received multiple requests at one and declined this operation. Please complete all previous operations and retry.",
   "refused-on-phone": "Operation declined on the phone.",
   "request-timeout": "Timeout to validate the operation, the phone refused it.",
-  "unknown-phone-error": "The exchange with the phone failed, please try again."
+  "unknown-phone-error": "The exchange with the phone failed, please try again.",
+  "click-here-for-help": "Click here for help."
 }
