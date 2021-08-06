@@ -40,7 +40,7 @@ export const writeManifest = () => {
     './extension/manifest.json',
     JSON.stringify(manifest, undefined, 2)
   )
-  console.log('\u001B[32mcreated extension/manifest.json\u001B[0m')
+  console.log('\u001B[32m%s\u001B[0m', 'created extension/manifest.json')
 }
 
 // Save the manifest if the file is run directly
