@@ -1,6 +1,11 @@
 <!--
   @component
-  A styled Horizontal Rule.
+  A styled horizontal rule.
+
+  **Usage:**
+  ```tsx
+  <HR />
+  ```
 -->
 
 <hr />

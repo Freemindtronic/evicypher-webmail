@@ -4,7 +4,7 @@
 
   **Usage:**
   ```tsx
-    <QRCode data="Hello World!" scale={5}>
+  <QRCode data="Hello World!" scale={5}>
   ```
 -->
 <script lang="ts">

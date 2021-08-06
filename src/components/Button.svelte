@@ -1,6 +1,11 @@
 <!--
   @component
   A button component.
+
+  **Usage:**
+  ```tsx
+  <Button type="button">Add to cart</Button>
+  ```
 -->
 <script lang="ts">
   /**
