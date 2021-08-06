@@ -1,3 +1,12 @@
+<!--
+  @component
+  A component that displays an error message if the Zeroconf service is not available.
+
+  **Usage:**
+  ```tsx
+  <IsZeroconfRunning />
+  ```
+-->
 <script lang="ts">
   import { browser } from 'webextension-polyfill-ts'
   import Error from 'components/Error.svelte'
