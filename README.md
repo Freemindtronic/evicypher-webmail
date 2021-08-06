@@ -33,7 +33,7 @@ Both tasks and services are running in the background, but they are two differen
 - Linters: [ESLint](https://eslint.org/) and [svelte-check](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check)
 - Formatter: [Prettier](https://prettier.io/)
 - Package manager: [Yarn](https://yarnpkg.com/)
-- End-to-end testing: [Cypress](https://www.cypress.io/)
+- End-to-end testing: [Cypress](https://www.cypress.io/) (Not yet implemented, consider [Playwright](https://playwright.dev/) before working on it.)
 - Design: [Sass](https://sass-lang.com/), linted with [Stylelint](https://stylelint.io/)
 
 ### Repository structure
