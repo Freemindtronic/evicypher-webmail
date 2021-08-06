@@ -72,22 +72,23 @@ const nextStep = async <TSent, TReceived, TReturn>(
   port: Runtime.Port,
   log: Debugger
 ): Promise<IteratorResult<TSent, TReturn>> => {
+  // Shorthand for the generator's type
+  type BgTask = BackgroundTask<TSent, TReceived, TReturn>
+
   // Send a request
   port.postMessage({ type: 'request', request: result.value })
 
   // Wait for the response to arrive
-  const message = await new Promise<
-    MessageFromFrontToBack<BackgroundTask<TSent, TReceived, TReturn>>
-  >((resolve) => {
-    const onMessage = (
-      message: MessageFromFrontToBack<BackgroundTask<TSent, TReceived, TReturn>>
-    ) => {
-      port.onMessage.removeListener(onMessage)
-      resolve(message)
-    }
+  const message = await new Promise<MessageFromFrontToBack<BgTask>>(
+    (resolve) => {
+      const onMessage = (message: MessageFromFrontToBack<BgTask>) => {
+        port.onMessage.removeListener(onMessage)
+        resolve(message)
+      }
 
-    port.onMessage.addListener(onMessage)
-  })
+      port.onMessage.addListener(onMessage)
+    }
+  )
 
   log('Message received: %o', message)
 
@@ -143,11 +144,15 @@ browser.runtime.onConnect.addListener(async (port) => {
       log
     )
   } catch (error: unknown) {
-    // If an error is thrown, send it to the foreground
     log('%o', error)
-    if (error instanceof ExtensionError)
-      port.postMessage({ type: 'error', error: error.message })
-    else if (error instanceof Error)
-      port.postMessage({ type: 'error', error: ErrorMessage.UNKNOWN_ERROR })
+
+    // If an error is thrown, send it to the foreground
+    port.postMessage({
+      type: 'error',
+      error:
+        error instanceof ExtensionError
+          ? error.message
+          : ErrorMessage.UNKNOWN_ERROR,
+    })
   }
 })
