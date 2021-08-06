@@ -19,11 +19,9 @@
 <style lang="scss">
   @use 'sass:math';
 
-  $red: #d00;
-
   p {
     padding: math.div(15em, 16);
-    background-color: transparentize($red, 0.9);
-    border: math.div(1em, 16) solid $red;
+    background-color: $error-background;
+    border: math.div(1em, 16) solid $error;
   }
 </style>

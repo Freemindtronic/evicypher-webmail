@@ -2,12 +2,15 @@
   import { Meta, Story } from '@storybook/addon-svelte-csf'
   import Color from './Color.svelte'
 
+  // Please keep this list in sync with `assets/variables.scss`
   const white = '#ffffff'
   const black = '#0c0b0b'
   const lightGold = '#ffc26e'
   const gold = '#d9a55d'
   const blue = '#1a7b9c'
   const darkBlue = '#092a35'
+  const red = '#db1000'
+  const transparentRed = '#db10001a'
 </script>
 
 <Meta title="Style Guide" />
@@ -21,6 +24,8 @@
     <Color color={gold}>Gold</Color>
     <Color color={blue} dark>Blue</Color>
     <Color color={darkBlue} dark>Dark Blue</Color>
+    <Color color={red} dark>Red</Color>
+    <Color color={transparentRed}>Transparent Red</Color>
   </div>
   <h2>Usage</h2>
   <ul>
