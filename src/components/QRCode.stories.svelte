@@ -2,7 +2,10 @@
   import { Meta, Story, Template } from '@storybook/addon-svelte-csf'
   import QRCode from './QRCode.svelte'
   import TextInput from './TextInput.svelte'
+
   let data
+  let scale = 4
+  let size = scale * 21
 </script>
 
 <Meta
@@ -17,7 +20,7 @@
 
 <Template let:args>
   <p>Text above</p>
-  <QRCode {...args} />
+  <p><QRCode {...args} /></p>
   <p>Text below</p>
 </Template>
 
@@ -37,8 +40,18 @@
   }}
 />
 
-<Story name="Reactivity" args={{ size: 84, scale: 4 }} let:args>
+<Story name="Reactivity" args={{}} let:args>
   <p>Text above</p>
-  <QRCode {...args} {data} />
+  <p><QRCode {data} {scale} {size} /></p>
   <p><TextInput bind:value={data}>Data:</TextInput></p>
+  <p>
+    <label for="scale">Scale:</label>
+    <input type="range" id="scale" bind:value={scale} min="1" max="10" />
+    {scale}
+  </p>
+  <p>
+    <label for="size">Size:</label>
+    <input type="range" id="size" bind:value={size} min="0" max="150" />
+    {size}
+  </p>
 </Story>
