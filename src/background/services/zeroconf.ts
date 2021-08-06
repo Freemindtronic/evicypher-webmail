@@ -38,7 +38,11 @@ export interface ZeroconfResponse {
   }> | null
 }
 
-/** @returns Whether the Zeroconf service is properly installed */
+/**
+ * Checks that the Zeroconf service is installed, and with a compatible version.
+ *
+ * @returns Whether the Zeroconf service is properly installed
+ */
 export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
   const log = debug('service:zeroconf')
 
@@ -62,7 +66,8 @@ export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
     }
 
     return true
-  } catch {
+  } catch (error: unknown) {
+    console.error(error)
     return false
   }
 }
@@ -78,6 +83,7 @@ export const startZeroconfService = async (
 ): Promise<never> => {
   const log = debug('service:zeroconf')
 
+  // Mark the service as started
   context.zeroconfRunning = true
 
   while (true) {
@@ -114,7 +120,10 @@ export const startZeroconfService = async (
   }
 }
 
-/** Updates the `context` with the `response`. */
+/**
+ * Updates the `context` with the `response`. If a new phone is found in the
+ * response, it will be reached to get its name.
+ */
 const handleResponse = async (
   context: TaskContext,
   response: ZeroconfResponse
@@ -172,14 +181,20 @@ const handleNewPhone = async (
   context.newDeviceFound.set()
 }
 
-/** Tries to ping a phone to know if it's already saved. */
+/**
+ * Tries to ping a phone to know if it's already saved.
+ *
+ * @returns Details about the phone, or `undefined` if it's not a paired phone.
+ */
 const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
   // Filter out phones that have already been found
   const $phones = new Set(get(phones))
   for (const { phone } of context.network.values())
     if (phone) $phones.delete(phone)
 
-  // Try all other phones
+  // If 10 phones are paired with the extension, 10 requests will be sent to
+  // the phone. This is far from optimal, but it's the best we can do with
+  // the current protocol.
   for (const phone of $phones) {
     const $phone = get(phone)
     try {
