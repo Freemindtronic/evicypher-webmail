@@ -1,16 +1,33 @@
+<!--
+  @component
+  A styled and reactive select component.
+
+  **Usage:**
+  ```tsx
+  <Select bind:value={language} options={['English', 'French']}>Language:</Select>
+  ```
+-->
 <script lang="ts">
   /** Unique identifier used to link the field and the label. */
   export let id = `select-${Math.random().toString(36).slice(2)}`
 
-  export let value: unknown
+  type T = $$Generic
 
-  export let options: unknown[] = []
+  /** The value of the option selected. This property is bindable. */
+  export let value: T
+
+  /**
+   * All the options available.
+   *
+   * @default An empty array
+   */
+  export let options: T[] = []
 </script>
 
 {#if $$slots.default}
   <label for={id}><slot /></label>
 {/if}
-<select {id} bind:value on:input>
+<select {id} bind:value on:input {...$$restProps}>
   {#each options as option (option)}
     <option value={option}>{option}</option>
   {/each}
