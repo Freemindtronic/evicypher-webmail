@@ -1,15 +1,8 @@
 import type { RequestMap } from '../../background/protocol'
 import type { TaskContext } from 'task'
 import { ErrorMessage, ExtensionError } from 'error'
-import { Reporter, State } from '../../report'
+import { Reporter, State } from 'report'
 import { sendRequest } from './exchange'
-
-export interface WebAnswer<T> {
-  url: string
-  data: T
-  ip: string
-  port: number
-}
 
 /**
  * Find devices on the local network, send them a pairing request and return the
