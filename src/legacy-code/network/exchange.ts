@@ -168,21 +168,14 @@ export const fetchAndSaveKeys = async (
   }
 ): Promise<KeyPair> => {
   const $phone = get(phone)
-  try {
-    const { keys, newCertificate } = await fetchKeys(context, $phone, {
-      keyToGet,
-      reporter,
-      signal,
-    })
-    $phone.certificate = newCertificate
-    phone.update(($phone) => $phone)
-    return keys
-  } finally {
-    const entry = [...context.network.entries()].find(
-      (entry) => entry[1].phone && entry[1].phone === phone
-    )
-    if (entry) await prepareNextExchange(entry[0], entry[1])
-  }
+  const { keys, newCertificate } = await fetchKeys(context, $phone, {
+    keyToGet,
+    reporter,
+    signal,
+  })
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+  return keys
 }
 
 interface KeyPair {
@@ -212,17 +205,33 @@ const fetchKeys = async (
   reporter({ state: State.WAITING_FOR_PHONE })
   let { certificate } = phone
 
-  const { ip, port, keys: pingResponse } = await getPhoneIp(context, phone)
-
-  // Try to reach the phone
-  reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
-  await sendRequest({
+  let {
     ip,
     port,
-    signal,
-    type: Request.IS_ALIVE,
-    data: { oskour: 1 },
-  })
+    keys: pingResponse,
+    keysDate,
+  } = await getPhoneIp(context, phone)
+
+  reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
+
+  // If the keys expired, fetch a new certificate
+  if (keysDate + 3000 < Date.now()) {
+    pingResponse = await sendRequest({
+      ip,
+      port,
+      type: Request.PING,
+      data: { t: certificate.id },
+    })
+  } else {
+    // Just check that the phone is online
+    await sendRequest({
+      ip,
+      port,
+      signal,
+      type: Request.IS_ALIVE,
+      data: { oskour: 1 },
+    })
+  }
 
   // Prepare the three shared secrets for the rest of the exchange
   const keysExchange = ([1, 2, 3] as const).map((i) =>
@@ -451,7 +460,12 @@ const createNewCertificate = (
 const getPhoneIp = async (
   context: TaskContext,
   phone: Phone
-): Promise<{ ip: string; port: number; keys: PingResponse }> => {
+): Promise<{
+  ip: string
+  port: number
+  keys: PingResponse
+  keysDate: number
+}> => {
   // Get the phone already found by the background service
   let entry:
     | [
@@ -459,8 +473,11 @@ const getPhoneIp = async (
         {
           port: number
           lastSeen: number
-          phone?: Writable<Phone> | undefined
-          keys?: PingResponse | undefined
+          phone?: {
+            store: Writable<Phone>
+            keys: PingResponse
+            keysDate: number
+          }
         }
       ]
     | undefined
@@ -470,9 +487,9 @@ const getPhoneIp = async (
 
   while (
     !(entry = [...context.network.entries()].find(
-      (entry) => entry[1].phone && get(entry[1].phone) === phone
+      (entry) => entry[1].phone && get(entry[1].phone.store) === phone
     )) ||
-    entry[1].keys === undefined
+    entry[1].phone?.keys === undefined
   ) {
     // If there is no such phone, wait for one to be found
     await context.newDeviceFound.observe()
@@ -481,38 +498,13 @@ const getPhoneIp = async (
   context.scanFaster.set(false)
 
   // Extract the IP address, port, and keys
-  const [ip, { port, keys }] = entry
-
-  return { ip, port, keys }
-}
-
-/**
- * Saves the keys in the context for the next exchange.
- *
- * There are two types of side effects in this function, but this refactor is not urgent.
- */
-export const prepareNextExchange = async (
-  ip: string,
-  entry: {
-    port: number
-    lastSeen: number
-    phone?: Writable<Phone> | undefined
-    keys?: PingResponse | undefined
-  }
-): Promise<void> => {
-  if (!entry.phone) throw new Error('Phone not found in background context.')
-
-  try {
-    const { port, phone } = entry
-    entry.keys = await sendRequest({
-      ip,
+  const [
+    ip,
+    {
       port,
-      type: Request.PING,
-      data: { t: get(phone).certificate.id },
-      timeout: 2000,
-    })
-  } catch (error: unknown) {
-    // `prepareNextExchange` is used for convenience, so all known errors are ignored
-    if (!(error instanceof ExtensionError)) throw error
-  }
+      phone: { keys, keysDate },
+    },
+  ] = entry
+
+  return { ip, port, keys, keysDate }
 }

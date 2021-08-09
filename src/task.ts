@@ -146,8 +146,11 @@ export interface TaskContext {
     {
       port: number
       lastSeen: number
-      phone?: Writable<Phone>
-      keys?: PingResponse
+      phone?: {
+        store: Writable<Phone>
+        keys: PingResponse
+        keysDate: number
+      }
     }
   >
   /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */

@@ -1,7 +1,6 @@
 import type { BackgroundTask } from 'task'
 import { get, writable } from 'svelte/store'
 import { ErrorMessage, ExtensionError } from 'error'
-import { prepareNextExchange } from 'legacy-code/network/exchange'
 import { clientHello, PairingKey } from 'legacy-code/network/pair'
 import {
   favoritePhone,
@@ -49,11 +48,8 @@ export const pair: BackgroundTask<string, string, true> = async function* (
   const phone = writable($phone)
 
   // Register the new phone in the background context
-  const backgroundPhone = context.network.get(device.IP)
-  if (backgroundPhone) {
-    backgroundPhone.phone = phone
-    await prepareNextExchange(device.IP, backgroundPhone)
-  }
+  const networkEntry = context.network.get(device.IP)
+  if (networkEntry?.phone) networkEntry.phone.store = phone
 
   phones.update(($phones) => [...$phones, phone])
 

@@ -146,7 +146,7 @@ const handleResponse = async (
       entry.lastSeen = Date.now()
 
       if (entry.phone !== undefined) {
-        entry.phone.update(($phone) => {
+        entry.phone.store.update(($phone) => {
           $phone.lastSeen = Date.now()
           return $phone
         })
@@ -174,11 +174,13 @@ const handleNewPhone = async (
   context.network.set(ip, {
     port,
     lastSeen: Date.now(),
-    phone: newPhone.phone,
-    keys: newPhone.keys,
+    phone: {
+      ...newPhone,
+      keysDate: Date.now(),
+    },
   })
 
-  log('New device found at %o (known as %o)', ip, get(newPhone.phone).name)
+  log('New device found at %o (known as %o)', ip, get(newPhone.store).name)
 
   context.newDeviceFound.set()
 }
@@ -192,13 +194,13 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
   // Filter out phones that have already been found
   const $phones = new Set(get(phones))
   for (const { phone } of context.network.values())
-    if (phone) $phones.delete(phone)
+    if (phone) $phones.delete(phone.store)
 
   // If 10 phones are paired with the extension, 10 requests will be sent to
   // the phone. This is far from optimal, but it's the best we can do with
   // the current protocol.
-  for (const phone of $phones) {
-    const $phone = get(phone)
+  for (const store of $phones) {
+    const $phone = get(store)
     try {
       const keys = await sendRequest({
         ip,
@@ -209,7 +211,7 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
       })
 
       // The phone answered with a 2xx code, that's the right phone
-      return { phone, keys }
+      return { store, keys }
     } catch {
       // The phone refused the connection, let's try the next certificate
     }
