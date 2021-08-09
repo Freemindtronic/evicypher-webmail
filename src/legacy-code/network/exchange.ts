@@ -215,6 +215,13 @@ const fetchKeys = async (
   reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
 
   // If the keys expired, fetch a new certificate
+  // The keys come from the Zeroconf service: when a phone is found by the
+  // service, the service tries to idenfies it. Since the protocol was not
+  // designed for this feature, the service tries all known certificates by
+  // starting a key exchange with the phone. Because of another weird design
+  // choice, the phone does not allow to start two exchanges in less than
+  // 3 seconds. Therefore, the keys are stored in the context, and only
+  // regenerated if expired. (i.e. more than 3 seconds elapsed)
   if (keysDate + 3000 < Date.now()) {
     pingResponse = await sendRequest({
       ip,
