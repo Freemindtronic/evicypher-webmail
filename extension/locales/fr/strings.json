@@ -55,5 +55,7 @@
   "refused-on-phone": "Opération refusée depuis le téléphone.",
   "request-timeout": "Temps écoulé pour valider l'opération, le téléphone l'a refusée.",
   "unknown-phone-error": "L'échange avec le téléphone a échoué, veuillez réessayer.",
-  "click-here-for-help": "Cliquez ici pour obtenir de l'aide."
+  "click-here-for-help": "Cliquez ici pour obtenir de l'aide.",
+  "evifile": "EviFile",
+  "are-you-sure": "Confirmer ?"
 }

@@ -56,5 +56,6 @@
   "refused-on-phone": "Operation declined on the phone.",
   "request-timeout": "Timeout to validate the operation, the phone refused it.",
   "unknown-phone-error": "The exchange with the phone failed, please try again.",
-  "click-here-for-help": "Click here for help."
+  "click-here-for-help": "Click here for help.",
+  "are-you-sure": "Are you sure?"
 }

@@ -24,21 +24,33 @@
   })
 
   /** A `use:` action that adds a tooltip to an element. */
-  const tooltip = (element: HTMLElement, content: Content) => {
+  const tooltip = (
+    element: HTMLElement,
+    {
+      content,
+      interactive = false,
+      trigger = tippy.defaultProps.trigger,
+    }: { content?: Content; interactive?: boolean; trigger?: string }
+  ) => {
     const instance = tippy(element, {
       content,
+      interactive,
       theme: 'light-border',
+      trigger,
     })
 
     return {
-      update(content: HTMLElement) {
-        instance.setContent(content)
+      update({ content }: { content: Content | undefined }) {
+        if (content) instance.setContent(content)
       },
       destroy() {
         instance.destroy()
       },
     }
   }
+
+  /** Confirmation dialog/tooltip displayed when trying to delete a phone. */
+  let confirm: HTMLElement | undefined
 
   const dispatch = createEventDispatcher<{ delete: Phone }>()
 </script>
@@ -66,22 +78,34 @@
   {$phone.name}
   <!-- The `$time &&` below is there to trigger a refresh every 30 seconds -->
   <span
-    use:tooltip={$_('last-seen-timeago', {
-      values: { date: $timeago($phone.lastSeen, $time) },
-    })}
+    use:tooltip={{
+      content: $_('last-seen-timeago', {
+        values: { date: $timeago($phone.lastSeen, $time) },
+      }),
+    }}
     >({#if $time && $phone.isOnline}{$_('online')}{:else}{$_(
         'offline'
       )}{/if})</span
   >
 </span>
-<Button
-  type="button"
-  on:click={() => {
-    dispatch('delete', $phone)
-  }}
->
-  {$_('delete')}
-</Button>
+
+<span use:tooltip={{ content: confirm, interactive: true, trigger: 'click' }}>
+  <Button type="button">
+    {$_('delete')}
+  </Button>
+</span>
+
+<span bind:this={confirm}>
+  {$_('are-you-sure')}
+  <Button
+    type="button"
+    on:click={() => {
+      dispatch('delete', $phone)
+    }}
+  >
+    {$_('delete')}
+  </Button>
+</span>
 
 <style lang="scss">
   :global {
