@@ -1,9 +1,3 @@
-// https://www.npmjs.com/package/rollup-plugin-svelte-svg allows importing SVGs as Svelte components
-declare module '*.svg' {
-  import { SvelteComponent } from 'svelte'
-  export default SvelteComponent
-}
-
 /**
  * This variable does not exist in the browser, but it is a convention to
  * replace `process.env.NODE_ENV` with a string during compilation. This allows

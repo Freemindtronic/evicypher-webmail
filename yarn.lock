@@ -3972,6 +3972,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/rollup-plugin-svelte-svg@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/rollup-plugin-svelte-svg@npm:1.0.0"
+  dependencies:
+    "@types/svgo": "*"
+    rollup: ^2
+    svelte: ^3
+  checksum: 2fb2bc71355bb159c267d10f4a86e6e89f37d240acb218776c1e41d1077cf5bf81b35c871705f0bfd48177bf6efc4d123e7e6201dc9828ac25fd1e36f9a76b33
+  languageName: node
+  linkType: hard
+
 "@types/sass@npm:^1.16.0":
   version: 1.16.0
   resolution: "@types/sass@npm:1.16.0"
@@ -4006,6 +4017,13 @@ __metadata:
   version: 0.1.2
   resolution: "@types/source-list-map@npm:0.1.2"
   checksum: fda8f37537aca9d3ed860d559289ab1dddb6897e642e6f53e909bbd18a7ac3129a8faa2a7d093847c91346cf09c86ef36e350c715406fba1f2271759b449adf6
+  languageName: node
+  linkType: hard
+
+"@types/svgo@npm:*":
+  version: 2.3.1
+  resolution: "@types/svgo@npm:2.3.1"
+  checksum: c545b5dcf07970b9db99b3073760c1b3030418d36753d3158387b8ab05ba50e4da88dfbce443e30bda1f4a43d340ee98b481fda55e6219c563b785b4828427d3
   languageName: node
   linkType: hard
 
@@ -8380,6 +8398,7 @@ __metadata:
     "@types/javascript-time-ago": ^2.0.3
     "@types/mdx-js__react": ^1.5.4
     "@types/qrcode": ^1.4.1
+    "@types/rollup-plugin-svelte-svg": ^1.0.0
     "@typescript-eslint/eslint-plugin": ^4.29.0
     "@typescript-eslint/parser": ^4.29.0
     axlsign: "git+ssh://git@github.com:Freemindtronic/lib_axlsign"
@@ -15377,6 +15396,20 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"rollup@npm:^2":
+  version: 2.56.2
+  resolution: "rollup@npm:2.56.2"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: 4e8e13c5c43147de142ae2f294f775b1cc567d2f5c196b28a37482d886fb0cabef769c18e427ab0180f5929b8422b27a7664a5e4586be38651871c62e333b8ee
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^2.56.1":
   version: 2.56.1
   resolution: "rollup@npm:2.56.1"
@@ -16843,7 +16876,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"svelte@npm:^3.42.1":
+"svelte@npm:^3, svelte@npm:^3.42.1":
   version: 3.42.1
   resolution: "svelte@npm:3.42.1"
   checksum: 7be8632cff97e29fd8c15d5eed99c036b169ab06be87fd8d00de9b8cd457146d38efda42377e82d867e0f72ca536009c02be47ddadb1616e8920071a97de9363

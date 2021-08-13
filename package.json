@@ -61,6 +61,7 @@
     "@types/javascript-time-ago": "^2.0.3",
     "@types/mdx-js__react": "^1.5.4",
     "@types/qrcode": "^1.4.1",
+    "@types/rollup-plugin-svelte-svg": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "babel-loader": "^8.2.2",
