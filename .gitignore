@@ -1,8 +1,9 @@
 .DS_Store
 
+.parcel-cache/
+build/
 docs/
-extension/build/
-extension/manifest.json
+extension/
 cypress/videos/
 cypress/screenshots/
 node_modules/

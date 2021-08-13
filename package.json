@@ -14,6 +14,8 @@
     }
   ],
   "dependencies": {
+    "@11ty/eleventy": "^0.12.1",
+    "@parcel/transformer-image": "^2.0.0-nightly.1981",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
@@ -24,6 +26,7 @@
     "dropzone": "^5.9.2",
     "javascript-time-ago": "^2.3.8",
     "js-base64": "^3.6.1",
+    "parcel": "^2.0.0-rc.0",
     "postcss": "^8.3.6",
     "qrcode": "^1.4.4",
     "rollup": "^2.56.1",
@@ -112,14 +115,17 @@
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
-    "build": "node manifest.js && rollup -c",
+    "build": "yarn build:eleventy-rollup && yarn build:parcel && yarn build:static",
+    "build:eleventy-rollup": "eleventy --input=pages --output=build & rollup -c &",
+    "build:parcel": "parcel build 'build/{*.html,content-script-*.js,background.js}' --dist-dir extension --no-source-maps",
+    "build:static": "mkdir -p extension && cp -r static/* extension & node manifest.js &",
     "build-storybook": "build-storybook -s extension",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
-    "clean": "rm -rf extension/build extension/manifest.json",
+    "clean": "rm -rf build extension",
     "doc": "typedoc src",
     "postinstall": "husky install",
     "release": "standard-version",
-    "start": "node manifest.js && rollup -c -w",
+    "start": "yarn build:eleventy-rollup && yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/{*.html,content-script-*.js,background.js}' --dist-dir extension &",
     "storybook": "start-storybook -p 6006 -s extension",
     "test": "cypress run -b firefox"
   },

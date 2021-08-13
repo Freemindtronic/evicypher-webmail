@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <title>{{title}} – EviCypher Webmail</title>
+
+    <link rel="icon" type="image/png" href="~/static/favicon.png"/>
+
+    {% for stylesheet in stylesheets %}
+      <link rel="stylesheet" href="{{ stylesheet }}"/>
+    {% endfor %}
+  </head>
+
+  <body>
+    {{ content | safe }}
+    {% for script in scripts %}
+      <script src="{{ scripts }}"></script>
+    {% endfor %}
+  </body>
+</html>

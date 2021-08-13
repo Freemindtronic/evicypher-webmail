@@ -7,7 +7,6 @@ import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
 import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
-import { terser } from 'rollup-plugin-terser'
 import { config } from './svelte.config'
 
 const production = !process.env.ROLLUP_WATCH
@@ -40,7 +39,6 @@ const plugins = [
     preventAssignment: true,
   }),
   svelteSVG({ dev: !production }),
-  production && terser(),
 ]
 
 export default [
@@ -49,7 +47,7 @@ export default [
     // `crypto` is required by the popup because of phones->certificate->utils
     external: ['crypto'],
     output: {
-      file: 'extension/build/popup.js',
+      file: 'build/popup.js',
       globals: { crypto: 'crypto' },
     },
     plugins: [svelte(config(production)), css({ output: 'popup.css' })],
@@ -57,7 +55,7 @@ export default [
   {
     input: 'src/evifile/main.ts',
     output: {
-      file: 'extension/build/evifile.js',
+      file: 'build/evifile.js',
     },
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
@@ -65,14 +63,14 @@ export default [
     input: 'src/background/main.ts',
     external: ['crypto'],
     output: {
-      file: 'extension/build/background.js',
+      file: 'build/background.js',
       globals: { crypto: 'crypto' },
     },
   },
   {
     input: 'src/content-scripts/gmail.ts',
     output: {
-      file: 'extension/build/content-script-gmail.js',
+      file: 'build/content-script-gmail.js',
     },
     plugins: [
       svelte({
