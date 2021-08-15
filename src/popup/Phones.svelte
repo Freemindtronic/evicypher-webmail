@@ -1,11 +1,11 @@
 <script lang="ts">
   import { get } from 'svelte/store'
   import { browser } from 'webextension-polyfill-ts'
-  import Button from 'components/Button.svelte'
-  import HR from 'components/HR.svelte'
-  import TextInput from 'components/TextInput.svelte'
-  import { _ } from 'i18n'
-  import { Phone, phones } from 'phones'
+  import Button from '$/components/Button.svelte'
+  import HR from '$/components/HR.svelte'
+  import TextInput from '$/components/TextInput.svelte'
+  import { _ } from '$/i18n'
+  import { Phone, phones } from '$/phones'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 

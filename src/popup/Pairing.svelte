@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { pair as pairTask } from 'background/tasks/pair'
-  import type { Report } from 'report'
-  import type { ForegroundTask } from 'task'
+  import type { pair as pairTask } from '$/background/tasks/pair'
+  import type { Report } from '$/report'
+  import type { ForegroundTask } from '$/task'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
-  import Button from 'components/Button.svelte'
-  import QRCode from 'components/QRCode.svelte'
-  import { _ } from 'i18n'
-  import { State } from 'report'
-  import { startBackgroundTask, Task } from 'task'
+  import Button from '$/components/Button.svelte'
+  import QRCode from '$/components/QRCode.svelte'
+  import { _ } from '$/i18n'
+  import { State } from '$/report'
+  import { startBackgroundTask, Task } from '$/task'
 
   /** Name of the phone to be added. */
   export let phoneName = ''

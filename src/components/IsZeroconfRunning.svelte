@@ -9,9 +9,9 @@
 -->
 <script lang="ts">
   import { browser } from 'webextension-polyfill-ts'
-  import Error from 'components/Error.svelte'
-  import { _ } from 'i18n'
-  import { startBackgroundTask, Task } from 'task'
+  import Error from '$/components/Error.svelte'
+  import { _ } from '$/i18n'
+  import { startBackgroundTask, Task } from '$/task'
 
   /** A promise wrapping the current state of the zeroconf service. */
   const zeroconfRunning = startBackgroundTask(

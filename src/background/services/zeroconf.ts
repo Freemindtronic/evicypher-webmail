@@ -1,9 +1,9 @@
-import type { TaskContext } from 'task'
+import type { TaskContext } from '$/task'
 import debug from 'debug'
 import { get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
-import { sendRequest } from 'legacy-code/network/exchange'
-import { phones } from 'phones'
+import { sendRequest } from '$/legacy-code/network/exchange'
+import { phones } from '$/phones'
 import { Request } from '../protocol'
 
 /** Registry name of the service. */

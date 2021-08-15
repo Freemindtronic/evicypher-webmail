@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Report } from 'report'
+  import type { Report } from '$/report'
   import Dropzone from 'dropzone'
-  import IsZeroconfRunning from 'components/IsZeroconfRunning.svelte'
-  import { ExtensionError } from 'error'
-  import { isLoading, translateError, translateReport, _ } from 'i18n'
-  import { State } from 'report'
-  import { startBackgroundTask, Task } from 'task'
+  import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
+  import { ExtensionError } from '$/error'
+  import { isLoading, translateError, translateReport, _ } from '$/i18n'
+  import { State } from '$/report'
+  import { startBackgroundTask, Task } from '$/task'
 
   Dropzone.autoDiscover = false
 

@@ -7,9 +7,9 @@ import {
 } from 'svelte-i18n'
 import { derived } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
-import { BrowserStore } from 'browser-store'
-import { ErrorMessage } from 'error'
-import { Report, State } from 'report'
+import { BrowserStore } from '$/browser-store'
+import { ErrorMessage } from '$/error'
+import { Report, State } from '$/report'
 
 // Re-export some functions from svelte-i18n
 export { isLoading, locales, _ } from 'svelte-i18n'

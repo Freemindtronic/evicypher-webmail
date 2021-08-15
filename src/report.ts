@@ -1,4 +1,4 @@
-import type { ErrorMessage } from 'error'
+import type { ErrorMessage } from '$/error'
 
 /** All possible updates from all the background tasks. */
 export enum State {

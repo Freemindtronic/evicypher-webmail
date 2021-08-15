@@ -10,9 +10,9 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "~*": ["../*"]
+      "$/*": ["src/*"]
     },
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": ["svelte", "cypress"]

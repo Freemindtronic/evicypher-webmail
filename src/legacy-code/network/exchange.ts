@@ -1,5 +1,5 @@
-import type { Phone } from 'phones'
-import type { TaskContext } from 'task'
+import type { Phone } from '$/phones'
+import type { TaskContext } from '$/task'
 import axlsign from 'axlsign'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { get, Writable } from 'svelte/store'
@@ -12,13 +12,13 @@ import {
   Request,
   RequestMap,
   ResponseMap,
-} from 'background/protocol'
-import { Certificate } from 'certificate'
-import { ErrorMessage, ExtensionError } from 'error'
-import { AesUtil } from 'legacy-code/cryptography/AesUtil'
-import { removeJamming } from 'legacy-code/cryptography/jamming'
-import { random, sha512, xor } from 'legacy-code/utils'
-import { Reporter, State } from 'report'
+} from '$/background/protocol'
+import { Certificate } from '$/certificate'
+import { ErrorMessage, ExtensionError } from '$/error'
+import { AesUtil } from '$/legacy-code/cryptography/AesUtil'
+import { removeJamming } from '$/legacy-code/cryptography/jamming'
+import { random, sha512, xor } from '$/legacy-code/utils'
+import { Reporter, State } from '$/report'
 
 type Serialize<T> = {
   readonly [K in keyof T]: string

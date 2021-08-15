@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 import { fromUint8Array, toUint8Array } from 'js-base64'
-import { ErrorMessage, ExtensionError } from 'error'
+import { ErrorMessage, ExtensionError } from '$/error'
 import {
   random,
   sha256,

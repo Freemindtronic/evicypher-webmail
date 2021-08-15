@@ -1,12 +1,12 @@
-import type { BackgroundTask } from 'task'
+import type { BackgroundTask } from '$/task'
 import debug from 'debug'
 import { get } from 'svelte/store'
-import { BrowserStore } from 'browser-store'
-import { ErrorMessage, ExtensionError } from 'error'
-import { EviCrypt } from 'legacy-code/cryptography/EviCrypt'
-import { fetchAndSaveKeys } from 'legacy-code/network/exchange'
-import { favoritePhone } from 'phones'
-import { State } from 'report'
+import { BrowserStore } from '$/browser-store'
+import { ErrorMessage, ExtensionError } from '$/error'
+import { EviCrypt } from '$/legacy-code/cryptography/EviCrypt'
+import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
+import { favoritePhone } from '$/phones'
+import { State } from '$/report'
 
 /**
  * Sends an encryption request to the favorite phone. The encryption is performed locally.

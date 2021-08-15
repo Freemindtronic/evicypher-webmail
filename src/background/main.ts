@@ -1,9 +1,14 @@
-import type { Report } from 'report'
+import type { Report } from '$/report'
 import debug, { Debugger } from 'debug'
 import { browser, Runtime } from 'webextension-polyfill-ts'
-import { ErrorMessage, ExtensionError } from 'error'
-import { Observable } from 'observable'
-import { BackgroundTask, MessageFromFrontToBack, Task, TaskContext } from 'task'
+import { ErrorMessage, ExtensionError } from '$/error'
+import { Observable } from '$/observable'
+import {
+  BackgroundTask,
+  MessageFromFrontToBack,
+  Task,
+  TaskContext,
+} from '$/task'
 import {
   isZeroconfServiceInstalled,
   startZeroconfService,

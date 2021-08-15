@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Report } from 'report'
-  import { _ } from 'i18n'
+  import type { Report } from '$/report'
+  import { _ } from '$/i18n'
   import Button from './TaskButton.svelte'
   import DecryptIdle from './assets/decrypt.svg'
 

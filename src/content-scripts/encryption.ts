@@ -1,5 +1,5 @@
-import type { Reporter } from 'report'
-import { startBackgroundTask, Task } from 'task'
+import type { Reporter } from '$/report'
+import { startBackgroundTask, Task } from '$/task'
 
 /** Sends a request to the background script to encrypt the given string. */
 export const encryptString = async (

@@ -4,10 +4,10 @@
   import { createEventDispatcher } from 'svelte'
   import { readable } from 'svelte/store'
   import tippy from 'tippy.js'
-  import Button from 'components/Button.svelte'
-  import { _ } from 'i18n'
-  import { timeago } from 'i18n/timeago'
-  import { favoritePhoneId, Phone } from 'phones'
+  import Button from '$/components/Button.svelte'
+  import { _ } from '$/i18n'
+  import { timeago } from '$/i18n/timeago'
+  import { favoritePhoneId, Phone } from '$/phones'
 
   /** The phone to display. */
   export let phone: Readable<Phone>

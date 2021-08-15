@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { Report } from 'report'
+  import type { Report } from '$/report'
   import type { SvelteComponent } from 'svelte/internal'
   import type { Instance, Placement } from 'tippy.js'
   import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
-  import Button from 'components/Button.svelte'
-  import { translateError, translateReport, _ } from 'i18n'
+  import Button from '$/components/Button.svelte'
+  import { translateError, translateReport, _ } from '$/i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
 

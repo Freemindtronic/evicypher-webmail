@@ -1,4 +1,4 @@
-import type { BackgroundTask } from 'task'
+import type { BackgroundTask } from '$/task'
 
 /**
  * A basic task that returns the current state of the Zeroconf service. The

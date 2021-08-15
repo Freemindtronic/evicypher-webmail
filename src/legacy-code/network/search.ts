@@ -1,7 +1,7 @@
-import type { RequestMap } from '../../background/protocol'
-import type { TaskContext } from 'task'
-import { ErrorMessage, ExtensionError } from 'error'
-import { Reporter, State } from 'report'
+import type { RequestMap } from '$/background/protocol'
+import type { TaskContext } from '$/task'
+import { ErrorMessage, ExtensionError } from '$/error'
+import { Reporter, State } from '$/report'
 import { sendRequest } from './exchange'
 
 /**

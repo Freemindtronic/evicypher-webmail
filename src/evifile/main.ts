@@ -1,4 +1,4 @@
-import 'i18n'
+import '$/i18n'
 import Evifile from './Evifile.svelte'
 
 // Instanciate the main component
