@@ -1,5 +1,5 @@
-import commonjs from '@rollup/plugin-commonjs'
 import alias from '@rollup/plugin-alias'
+import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
@@ -7,6 +7,7 @@ import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
 import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
+import { terser } from 'rollup-plugin-terser'
 import { config } from './svelte.config'
 
 const production = !process.env.ROLLUP_WATCH
@@ -14,10 +15,7 @@ const production = !process.env.ROLLUP_WATCH
 /** Plugins used for all files. */
 const plugins = [
   alias({
-    entries: {
-      // Resolve `import Thing from 'component/Thing.svelte'`
-      components: 'src/components',
-    },
+    entries: { $: 'src' },
   }),
   resolve({
     browser: true,
@@ -39,6 +37,7 @@ const plugins = [
     preventAssignment: true,
   }),
   svelteSVG({ dev: !production }),
+  production && terser(),
 ]
 
 export default [
@@ -63,14 +62,26 @@ export default [
     input: 'src/background/main.ts',
     external: ['crypto'],
     output: {
-      file: 'build/background.js',
+      file: 'extension/background.js',
       globals: { crypto: 'crypto' },
     },
   },
   {
     input: 'src/content-scripts/gmail.ts',
     output: {
-      file: 'build/content-script-gmail.js',
+      file: 'extension/content-script-gmail.js',
+    },
+    plugins: [
+      svelte({
+        ...config(production),
+        emitCss: false,
+      }),
+    ],
+  },
+  {
+    input: 'src/content-scripts/outlook.ts',
+    output: {
+      file: 'extension/content-script-outlook.js',
     },
     plugins: [
       svelte({

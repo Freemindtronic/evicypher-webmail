@@ -23,7 +23,11 @@ export const manifest = {
   content_scripts: [
     {
       matches: ['https://mail.google.com/mail/*'],
-      js: ['build/content-script-gmail.js'],
+      js: ['content-script-gmail.js'],
+    },
+    {
+      matches: ['https://outlook.live.com/mail/*'],
+      js: ['content-script-outlook.js'],
     },
   ],
   browser_specific_settings: {
