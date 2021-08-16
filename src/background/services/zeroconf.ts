@@ -161,7 +161,7 @@ const handleNewPhone = async (
   ip: string,
   port: number
 ) => {
-  const log = debug('zeroconf:handleNewPhone')
+  const log = debug('service:zeroconf:handleNewPhone')
   // Send a "ping" to get the name of the phone
   const phone = await pingNewPhone(context, ip, port)
 
