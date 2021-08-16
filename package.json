@@ -118,7 +118,7 @@
   "scripts": {
     "build": "yarn build:eleventy-rollup && yarn build:static && yarn build:parcel",
     "build-storybook": "build-storybook -s extension",
-    "build:eleventy-rollup": "eleventy --input=pages --output=build & rollup -c &",
+    "build:eleventy-rollup": "eleventy --input=src/pages --output=build & rollup -c &",
     "build:parcel": "parcel build 'build/{*.html,manifest.json}' --dist-dir extension --no-source-maps --target extension",
     "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js &",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
@@ -126,7 +126,7 @@
     "doc": "typedoc src",
     "postinstall": "husky install",
     "release": "standard-version",
-    "start": "yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/{*.html,manifest.json}' --dist-dir extension --host localhost --target extension-dev &",
+    "start": "yarn build:static && eleventy --watch --input=src/pages --output=build & rollup -c -w & parcel watch 'build/{*.html,manifest.json}' --dist-dir extension --host localhost --target extension-dev &",
     "storybook": "start-storybook -p 6006 -s extension",
     "test": "cypress run -b firefox"
   },
