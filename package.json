@@ -125,7 +125,7 @@
     "doc": "typedoc src",
     "postinstall": "husky install",
     "release": "standard-version",
-    "start": "yarn build:eleventy-rollup && yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/*.html' --dist-dir extension &",
+    "start": "yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/*.html' --dist-dir extension --no-hmr &",
     "storybook": "start-storybook -p 6006 -s extension",
     "test": "cypress run -b firefox"
   },
