@@ -12,11 +12,11 @@ import {
   isEncryptedText,
 } from './encryption'
 
-/** Selectors for interesting HTML Elements of Gmail. */
+/** Selectors for interesting HTML Elements of Outlook. */
 const Selector = {
-  MAIL_CONTENT: '.a3s.aiL',
-  TOOLBAR: '.btx',
-  MAIL_EDITOR: '.iN',
+  MAIL_CONTENT: '.QMubUjbS-BOly_BTHEZj7',
+  TOOLBAR: '._2ELnTBajF7jzj_m_hoj3Xt',
+  MAIL_EDITOR: '._17WvdmDfhREFqBNvlLv75X',
   EDITOR_CONTENT: '[contenteditable]',
 }
 
@@ -178,8 +178,6 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
     boxSizing: 'border-box',
   })
 
-  // To address issues with Gmail's Content-Security-Policy,
-  // we need a local frame, that we modify once loaded
   frame.src = browser.runtime.getURL('/blank.html')
 
   parent.append(frame)
@@ -211,7 +209,8 @@ const handleMutation = (mutation: MutationRecord) => {
   for (const mailElement of mailElements) handleMailElement(mailElement)
 
   // The user starts writing a mail
-  if (target.matches(Selector.TOOLBAR)) handleToolbar(target)
+  const toolbarElements = target.querySelectorAll<HTMLElement>(Selector.TOOLBAR)
+  for (const toolbarElement of toolbarElements) handleToolbar(toolbarElement)
 }
 
 // Enable logging in the page console (not the extension console)
