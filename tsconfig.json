@@ -17,5 +17,11 @@
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": ["svelte", "cypress"]
   },
-  "exclude": ["docs/*", "extension/*", "node_modules/*", "storybook-static/*"]
+  "exclude": [
+    "build/*",
+    "docs/*",
+    "extension/*",
+    "node_modules/*",
+    "storybook-static/*"
+  ]
 }
