@@ -2569,6 +2569,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/config-webextension@npm:^2.0.0-nightly.2151":
+  version: 2.0.0-rc.0
+  resolution: "@parcel/config-webextension@npm:2.0.0-rc.0"
+  dependencies:
+    "@parcel/config-default": 2.0.0-rc.0
+    "@parcel/packager-raw-url": 2.0.0-rc.0
+    "@parcel/transformer-webextension": 2.0.0-rc.0
+  checksum: 71343b7d0521e9cd0980aa34943b4c366279fe3d6828fe14136a30d54899ddbe51d9636710329a5c14e4004b1535d8f527a7f576b8eb08179f2f74b1205f8337
+  languageName: node
+  linkType: hard
+
 "@parcel/core@npm:2.0.0-rc.0":
   version: 2.0.0-rc.0
   resolution: "@parcel/core@npm:2.0.0-rc.0"
@@ -2858,6 +2869,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/packager-raw-url@npm:2.0.0-rc.0":
+  version: 2.0.0-rc.0
+  resolution: "@parcel/packager-raw-url@npm:2.0.0-rc.0"
+  dependencies:
+    "@parcel/plugin": 2.0.0-rc.0
+    "@parcel/utils": 2.0.0-rc.0
+  checksum: 56667914ae3c04e07f00c783f522d887d26e01b4952751019cb50cab36d7bc2b83974251c8b97ec31d9bb34b25fc65399f9c740fdc99946f6748e220122cd4af
+  languageName: node
+  linkType: hard
+
 "@parcel/packager-raw@npm:2.0.0-rc.0":
   version: 2.0.0-rc.0
   resolution: "@parcel/packager-raw@npm:2.0.0-rc.0"
@@ -3102,6 +3123,19 @@ __metadata:
     "@parcel/utils": 2.0.0-rc.0
     react-refresh: ^0.9.0
   checksum: e545b8b3dce4f51e88353bdf6f337e8cef12af1858700fd35e8945a8e30c3cea0dd7ba1a0a8bab628697394ad580666176d919236eefb3f5303cbb5812130764
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-webextension@npm:2.0.0-rc.0":
+  version: 2.0.0-rc.0
+  resolution: "@parcel/transformer-webextension@npm:2.0.0-rc.0"
+  dependencies:
+    "@parcel/diagnostic": 2.0.0-rc.0
+    "@parcel/plugin": 2.0.0-rc.0
+    "@parcel/utils": 2.0.0-rc.0
+    content-security-policy-parser: ^0.3.0
+    json-source-map: ^0.6.1
+  checksum: c9f2b739e336b97cfb4fd8833637179684ada929be14be42fb414bd6bf34f7767034ce43351f97433afed08ab977b77593321222478aef6a1317c62a9aac29b3
   languageName: node
   linkType: hard
 
@@ -7786,6 +7820,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"content-security-policy-parser@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "content-security-policy-parser@npm:0.3.0"
+  checksum: d7031eb53105680abcb8bccc96fd9cce484eb882e6d3fa6d6aa99449c35177d3eeb07a525a0ff10661966ad3897498ef6e2aa84e7c2f1ff4a77a57356c884dcb
+  languageName: node
+  linkType: hard
+
 "content-type@npm:~1.0.4":
   version: 1.0.4
   resolution: "content-type@npm:1.0.4"
@@ -10192,6 +10233,7 @@ __metadata:
     "@commitlint/cli": ^13.1.0
     "@commitlint/config-conventional": ^13.1.0
     "@mdx-js/react": ^1.6.22
+    "@parcel/config-webextension": ^2.0.0-nightly.2151
     "@parcel/transformer-image": ^2.0.0-nightly.1981
     "@rollup/plugin-alias": ^3.1.5
     "@rollup/plugin-commonjs": ^20.0.0

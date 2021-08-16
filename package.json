@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "@11ty/eleventy": "^0.12.1",
+    "@parcel/config-webextension": "^2.0.0-nightly.2151",
     "@parcel/transformer-image": "^2.0.0-nightly.1981",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -115,19 +116,31 @@
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
-    "build": "yarn build:eleventy-rollup && yarn build:parcel && yarn build:static",
-    "build:eleventy-rollup": "eleventy --input=pages --output=build & rollup -c &",
-    "build:parcel": "parcel build 'build/*.html' --dist-dir extension --no-source-maps",
-    "build:static": "mkdir -p extension && cp -r static/* extension & node manifest.js &",
+    "build": "yarn build:eleventy-rollup && yarn build:static && yarn build:parcel",
     "build-storybook": "build-storybook -s extension",
+    "build:eleventy-rollup": "eleventy --input=pages --output=build & rollup -c &",
+    "build:parcel": "parcel build 'build/{*.html,manifest.json}' --dist-dir extension --no-source-maps --target extension",
+    "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js &",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
     "clean": "rm -rf build extension",
     "doc": "typedoc src",
     "postinstall": "husky install",
     "release": "standard-version",
-    "start": "yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/*.html' --dist-dir extension --no-hmr &",
+    "start": "yarn build:static && eleventy --watch --input=pages --output=build & rollup -c -w & parcel watch 'build/{*.html,manifest.json}' --dist-dir extension --host localhost --target extension-dev &",
     "storybook": "start-storybook -p 6006 -s extension",
     "test": "cypress run -b firefox"
+  },
+  "targets": {
+    "extension-dev": {
+      "sourceMap": {
+        "inline": true,
+        "inlineSources": true
+      },
+      "distDir": "./extension"
+    },
+    "extension": {
+      "distDir": "./extension"
+    }
   },
   "type": "module",
   "volta": {

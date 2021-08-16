@@ -8,7 +8,7 @@ import preprocess from 'svelte-preprocess'
  */
 const config = (production) => ({
   preprocess: preprocess({
-    sourceMap: !production,
+    sourceMap: true,
     scss: {
       prependData: `@use 'src/assets/variables.scss' as *;`,
     },

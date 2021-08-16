@@ -7,7 +7,6 @@ import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
 import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
-import { terser } from 'rollup-plugin-terser'
 import { config } from './svelte.config'
 
 const production = !process.env.ROLLUP_WATCH
@@ -25,8 +24,8 @@ const plugins = [
   json(),
   commonjs(),
   typescript({
-    sourceMap: !production,
-    inlineSources: !production,
+    sourceMap: true,
+    inlineSources: true,
   }),
   replace({
     values: {
@@ -36,8 +35,7 @@ const plugins = [
     },
     preventAssignment: true,
   }),
-  svelteSVG({ dev: !production }),
-  production && terser(),
+  svelteSVG(),
 ]
 
 export default [
@@ -62,14 +60,14 @@ export default [
     input: 'src/background/main.ts',
     external: ['crypto'],
     output: {
-      file: 'extension/background.js',
+      file: 'build/background.js',
       globals: { crypto: 'crypto' },
     },
   },
   {
     input: 'src/content-scripts/gmail.ts',
     output: {
-      file: 'extension/content-script-gmail.js',
+      file: 'build/content-script-gmail.js',
     },
     plugins: [
       svelte({
@@ -81,7 +79,7 @@ export default [
   {
     input: 'src/content-scripts/outlook.ts',
     output: {
-      file: 'extension/content-script-outlook.js',
+      file: 'build/content-script-outlook.js',
     },
     plugins: [
       svelte({
@@ -95,7 +93,7 @@ export default [
   output: {
     ...entry.output,
     // Add common output configuration
-    sourcemap: !production,
+    sourcemap: true,
     format: 'iife',
     name: 'main',
   },

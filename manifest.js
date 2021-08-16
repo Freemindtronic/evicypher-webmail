@@ -9,8 +9,8 @@ export const manifest = {
   // The extension version is the same as the package.json version
   version: process.env.npm_package_version,
   icons: {
-    48: 'favicon.png',
-    96: 'icon.svg',
+    48: '~/assets/favicon.png',
+    96: '~/assets/icon.svg',
   },
   permissions: ['storage', 'nativeMessaging'],
   background: {
@@ -40,11 +40,8 @@ export const manifest = {
 
 /** Writes `manifest` to `extension/manifest.json`. */
 export const writeManifest = () => {
-  writeFileSync(
-    './extension/manifest.json',
-    JSON.stringify(manifest, undefined, 2)
-  )
-  console.log('\u001B[32m%s\u001B[0m', 'created extension/manifest.json')
+  writeFileSync('./build/manifest.json', JSON.stringify(manifest, undefined, 2))
+  console.log('\u001B[32m%s\u001B[0m', 'created build/manifest.json')
 }
 
 // Save the manifest if the file is run directly
