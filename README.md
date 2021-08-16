@@ -46,10 +46,9 @@ Here is a high-level overview of the repository structure:
 - **.storybook/**: [Storybook](https://storybook.js.org/) configuration files.
 - **.vscode/**: [VS Code](https://code.visualstudio.com/) specific files, contains settings and recommended extensions.
 - **.yarn/**: [Yarn](https://yarnpkg.com/) specific files, contains a lot of zip files because [Zero-Installs](https://yarnpkg.com/features/zero-installs) are enabled.
+- **assets/**: Assets to be processed, such as fonts.
 - **cypress/**: [Cypress](https://www.cypress.io/) end-to-end testing specification files.
 - **extension/**: The extension itself, loadable after running `yarn build`.
-  - **assets/**: Static assets, such as fonts.
-  - **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
 - **src/**: Source directory.
   - **assets/**: Common stylesheets and images.
   - **background/**: Main background script, tasks and services.
@@ -57,14 +56,18 @@ Here is a high-level overview of the repository structure:
   - **content-scripts/**: Scripts injected in pages.
   - **evifile/**: EviFile components.
   - **legacy-code/**: Terrible code to be refactored.
+  - **pages/**: [Nunjucks](https://www.11ty.dev/docs/languages/nunjucks/) templates used to produce plain HTML.
   - **popup/**: Popup components.
   - **stories/**: Style-guide written with [Storybook](https://storybook.js.org/).
   - **\*.ts**: Common libraries.
+- **static/**: Static resources, to be copied as is.
+  - **locales/**: Translation files, bound to a [POEditor](https://poeditor.com/) project.
 - **.czrc**: [Commitizen](https://commitizen-tools.github.io/commitizen/) configuration file, used to generate commit messages in compliancy with [Conventional Commits](https://conventionalcommits.org/).
 - **.editorconfig**: [EditorConfig](http://editorconfig.org/) (code formatter) configuration file.
 - **.eslintrc**: [ESLint](http://eslint.org/) (code linter) configuration file.
 - **.gitattributes**: List of binary files (to prevent *diff*ing them).
 - **.gitignore**: List of files to ignore.
+- **.parcelrc**: [Parcel](https://v2.parceljs.org/recipes/web-extension/) configuration file for web extensions.
 - **.prettierrc**: [Prettier](https://prettier.io/) (code formatter) configuration file.
 - **.stylelintrc**: [Stylelint](https://stylelint.io/) (stylesheet formatter) configuration file.
 - **.yarnrc.yml**: [Yarn](https://yarnpkg.com/) (package manager) configuration file.
@@ -82,7 +85,7 @@ Here is a high-level overview of the repository structure:
 
 ### Yarn scripts
 
-- `yarn build`: Builds the extension.
+- `yarn build`: Builds the extension. (There are other `build:...` commands, see below.)
 - `yarn build-storybook`: Produces a self-contained Storybook, open it with `npx serve storybook-static`.
 - `yarn check`: Runs ESLint, styllint and svelte-check.
 - `yarn clean`: Removes the built extension.
@@ -141,3 +144,27 @@ Additional documentation:
 Commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write [conforming commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 
 To release a new version, run `yarn release`, it will update the version number and the [changelog](./CHANGELOG.md) and create a new tag. The version number is updated according to [semver](https://semver.org/), based on the commits since the last release.
+
+### Detailed build process
+
+There are three different bundlers installed:
+
+- [Rollup.js](https://rollupjs.org/guide/en/) is used to transform Svelte files to JavaScript. It cannot process HTML files and `manifest.json`, that's why there is also...
+- [Parcel](https://v2.parceljs.org/) is used to produce a complete [web extension](https://v2.parceljs.org/recipes/web-extension/). It processes the manifest to find entrypoints. Svelte files are not yet supported by Parcel.
+- [Webpack](https://webpack.js.org/) is used by [Storybook](https://storybook.js.org/).
+
+Here is what happens when one runs `yarn build`:
+
+[![`yarn build` diagram](https://mermaid.ink/img/eyJjb2RlIjoiZmxvd2NoYXJ0IExSXG5zdWJncmFwaCBFbGV2ZW50eVxuICAgIGRpcmVjdGlvbiBMUlxuICAgIC5uamsgLS0-IC5odG1sXG5lbmRcbnN1YmdyYXBoIFJvbGx1cFxuICAgIGRpcmVjdGlvbiBMUlxuICAgIC5zdmVsdGUgLS0-IC5qc1xuICAgIC5zdmVsdGUgLS0-IC5jc3NcbmVuZFxuc3ViZ3JhcGggUGFyY2VsXG4gICAgZGlyZWN0aW9uIExSXG4gICAgbWFuaWZlc3QuanNvbiA8LS0-IGFbXCIuaHRtbFwiXVxuICAgIGEgPC0tPiBiW1wiLmpzXCJdXG4gICAgYSA8LS0-IGNbXCIuY3NzXCJdXG5lbmRcbkVsZXZlbnR5IC0tPiBQYXJjZWxcblJvbGx1cCAtLT4gUGFyY2VsXG5QYXJjZWwgLS0-IGV4dGVuc2lvblxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/edit##eyJjb2RlIjoiZmxvd2NoYXJ0IExSXG5zdWJncmFwaCBFbGV2ZW50eVxuICAgIGRpcmVjdGlvbiBMUlxuICAgIC5uamsgLS0-IC5odG1sXG5lbmRcbnN1YmdyYXBoIFJvbGx1cFxuICAgIGRpcmVjdGlvbiBMUlxuICAgIC5zdmVsdGUgLS0-IC5qc1xuICAgIC5zdmVsdGUgLS0-IC5jc3NcbmVuZFxuc3ViZ3JhcGggUGFyY2VsXG4gICAgZGlyZWN0aW9uIExSXG4gICAgbWFuaWZlc3QuanNvbiA8LS0-IGFcbiAgICBhIDwtLT4gYltcIi5qc1wiXVxuICAgIGEgPC0tPiBjW1wiLmNzc1wiXVxuZW5kXG5FbGV2ZW50eSAtLT4gUGFyY2VsXG5Sb2xsdXAgLS0-IFBhcmNlbFxuUGFyY2VsIC0tPiBleHRlbnNpb25cbiIsIm1lcm1haWQiOiJ7XG4gIFwidGhlbWVcIjogXCJkZWZhdWx0XCJcbn0iLCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)
+
+- `yarn build:eleventy-rollup` runs [Eleventy](https://11ty.dev/) and Rollup in parallel.
+- `yarn build:static` produces the manifest and copies static files to the extension directory.
+- `yarn build:parcel` makes Parcel process the manifest to produce the extension.
+
+### Oddities
+
+There are a few magic things going on in this repository:
+
+- `$` resolves to `./src`, it is defined in `package.json` (for Parcel), `rollup.config.js` and `tsconfig.json`.
+- `~` resolves to `.`, it is a default for Parcel defined in `tsconfig.json`.
+- Code is automatically tested and formatted before committing.
