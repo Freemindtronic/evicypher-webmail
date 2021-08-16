@@ -57,14 +57,6 @@ export default [
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
   {
-    input: 'src/background/main.ts',
-    external: ['crypto'],
-    output: {
-      file: 'build/background.js',
-      globals: { crypto: 'crypto' },
-    },
-  },
-  {
     input: 'src/content-scripts/gmail.ts',
     output: {
       file: 'build/content-script-gmail.js',

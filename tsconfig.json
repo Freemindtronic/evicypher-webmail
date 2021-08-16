@@ -12,7 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "$/*": ["src/*"]
+      "~*": ["./*"],
+      "$*": ["src/*"]
     },
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": ["svelte", "cypress"]

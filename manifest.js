@@ -14,7 +14,7 @@ export const manifest = {
   },
   permissions: ['storage', 'nativeMessaging'],
   background: {
-    scripts: ['background.js'],
+    scripts: ['~/src/background/main.ts'],
     persistent: true,
   },
   browser_action: {
