@@ -146,11 +146,18 @@ export interface TaskContext {
     {
       port: number
       lastSeen: number
-      phone?: {
-        store: Writable<Phone>
-        keys: PingResponse
-        keysDate: number
-      }
+      // The `phone` and `keys` keys are voluntarily not optional, it helps destructuring
+      phone:
+        | {
+            store: Writable<Phone>
+            keys:
+              | {
+                  pingResponse: PingResponse
+                  date: number
+                }
+              | undefined
+          }
+        | undefined
     }
   >
   /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */

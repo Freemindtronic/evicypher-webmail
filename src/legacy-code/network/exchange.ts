@@ -205,12 +205,7 @@ const fetchKeys = async (
   reporter({ state: State.WAITING_FOR_PHONE })
   let { certificate } = phone
 
-  let {
-    ip,
-    port,
-    keys: pingResponse,
-    keysDate,
-  } = await getPhoneIp(context, phone)
+  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
 
   reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
 
@@ -222,7 +217,8 @@ const fetchKeys = async (
   // choice, the phone does not allow to start two exchanges in less than
   // 3 seconds. Therefore, the keys are stored in the context, and only
   // regenerated if expired. (i.e. more than 3 seconds elapsed)
-  if (keysDate + 3000 < Date.now()) {
+  let pingResponse: PingResponse
+  if (!phoneKeys || phoneKeys.date + 3000 < Date.now()) {
     pingResponse = await sendRequest({
       ip,
       port,
@@ -230,6 +226,7 @@ const fetchKeys = async (
       data: { t: certificate.id },
     })
   } else {
+    pingResponse = phoneKeys.pingResponse
     // Just check that the phone is online
     await sendRequest({
       ip,
@@ -470,8 +467,12 @@ const getPhoneIp = async (
 ): Promise<{
   ip: string
   port: number
-  keys: PingResponse
-  keysDate: number
+  keys:
+    | {
+        pingResponse: PingResponse
+        date: number
+      }
+    | undefined
 }> => {
   // Get the phone already found by the background service
   let entry:
@@ -482,8 +483,10 @@ const getPhoneIp = async (
           lastSeen: number
           phone?: {
             store: Writable<Phone>
-            keys: PingResponse
-            keysDate: number
+            keys?: {
+              pingResponse: PingResponse
+              date: number
+            }
           }
         }
       ]
@@ -496,7 +499,7 @@ const getPhoneIp = async (
     !(entry = [...context.network.entries()].find(
       (entry) => entry[1].phone && get(entry[1].phone.store) === phone
     )) ||
-    entry[1].phone?.keys === undefined
+    entry[1].phone === undefined
   ) {
     // If there is no such phone, wait for one to be found
     await context.newDeviceFound.observe()
@@ -509,9 +512,9 @@ const getPhoneIp = async (
     ip,
     {
       port,
-      phone: { keys, keysDate },
+      phone: { keys },
     },
   ] = entry
 
-  return { ip, port, keys, keysDate }
+  return { ip, port, keys }
 }

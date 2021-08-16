@@ -163,24 +163,22 @@ const handleNewPhone = async (
 ) => {
   const log = debug('zeroconf:handleNewPhone')
   // Send a "ping" to get the name of the phone
-  const newPhone = await pingNewPhone(context, ip, port)
+  const phone = await pingNewPhone(context, ip, port)
 
   // If it's not a paired phone, only register its port
-  if (newPhone === undefined) {
-    context.network.set(ip, { port, lastSeen: Date.now() })
+  if (phone === undefined) {
+    context.network.set(ip, { port, lastSeen: Date.now(), phone: undefined })
+    log('New unpaired phone found at %o', ip)
     return
   }
 
   context.network.set(ip, {
     port,
     lastSeen: Date.now(),
-    phone: {
-      ...newPhone,
-      keysDate: Date.now(),
-    },
+    phone,
   })
 
-  log('New device found at %o (known as %o)', ip, get(newPhone.store).name)
+  log('New phone found at %o (known as %o)', ip, get(phone.store).name)
 
   context.newDeviceFound.set()
 }
@@ -202,7 +200,7 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
   for (const store of $phones) {
     const $phone = get(store)
     try {
-      const keys = await sendRequest({
+      const pingResponse = await sendRequest({
         ip,
         port,
         type: Request.PING,
@@ -211,7 +209,7 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
       })
 
       // The phone answered with a 2xx code, that's the right phone
-      return { store, keys }
+      return { store, keys: { pingResponse, date: Date.now() } }
     } catch {
       // The phone refused the connection, let's try the next certificate
     }

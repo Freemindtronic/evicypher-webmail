@@ -49,7 +49,7 @@ export const pair: BackgroundTask<string, string, true> = async function* (
 
   // Register the new phone in the background context
   const networkEntry = context.network.get(device.IP)
-  if (networkEntry?.phone) networkEntry.phone.store = phone
+  if (networkEntry) networkEntry.phone = { store: phone, keys: undefined }
 
   phones.update(($phones) => [...$phones, phone])
 
