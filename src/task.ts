@@ -1,3 +1,125 @@
+/**
+ * Tasks are one of the core concepts of the extension.
+ *
+ * ## What is a task?
+ *
+ * A task is made of two functions: one in the background and one in the
+ * foreground. Tasks are implemented using async
+ * [generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)
+ * to emulate a communication channel between the front and the back.
+ *
+ * [<img alt="Diagram"
+ * src="https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgRnJvbnQtPj4rQmFjazogT3BlbnMgYSBwb3J0XG4gICAgYWN0aXZhdGUgRnJvbnRcbiAgICBOb3RlIG92ZXIgRnJvbnQsIEJhY2s6IEJvdGggZ2VuZXJhdG9ycyBhcmUgc3RhcnRlZDxicj5hdCB0aGUgc2FtZSB0aW1lLiBUaGV5IHJ1bjxicj51bnRpbCByZWFjaGluZyB0aGUgZmlyc3QgeWllbGQuXG5cbiAgICBkZWFjdGl2YXRlIEZyb250XG4gICAgbG9vcFxuICAgIEJhY2stPj4rRnJvbnQ6IFJlcXVlc3RcbiAgICBkZWFjdGl2YXRlIEJhY2tcbiAgICBGcm9udC0-PitCYWNrOiBSZXNwb25zZVxuICAgIGRlYWN0aXZhdGUgRnJvbnRcbiAgICBlbmRcbiAgICBCYWNrLT4-RnJvbnQ6IFJldHVybiB2YWx1ZVxuICAgIGRlYWN0aXZhdGUgQmFja1xuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ">](https://mermaid-js.github.io/mermaid-live-editor/edit##eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgRnJvbnQtPj4rQmFjazogT3BlbnMgYSBwb3J0XG4gICAgYWN0aXZhdGUgRnJvbnRcbiAgICBOb3RlIG92ZXIgRnJvbnQsIEJhY2s6IEJvdGggZ2VuZXJhdG9ycyBhcmUgc3RhcnRlZDxicj5hdCB0aGUgc2FtZSB0aW1lLiBUaGV5IHJ1bjxicj51bnRpbCByZWFjaGluZyB0aGUgZmlyc3QgeWllbGQuXG4gICAgTm90ZSBvdmVyIEZyb250LCBCYWNrOiBoZXlcbiAgICBkZWFjdGl2YXRlIEZyb250XG4gICAgbG9vcFxuICAgIEJhY2stPj4rRnJvbnQ6IFJlcXVlc3RcbiAgICBkZWFjdGl2YXRlIEJhY2tcbiAgICBGcm9udC0-PitCYWNrOiBSZXNwb25zZVxuICAgIGRlYWN0aXZhdGUgRnJvbnRcbiAgICBlbmRcbiAgICBCYWNrLT4-RnJvbnQ6IFJldHVybiB2YWx1ZVxuICAgIGRlYWN0aXZhdGUgQmFja1xuIiwibWVybWFpZCI6IntcbiAgXCJ0aGVtZVwiOiBcImRlZmF1bHRcIlxufSIsInVwZGF0ZUVkaXRvciI6ZmFsc2UsImF1dG9TeW5jIjp0cnVlLCJ1cGRhdGVEaWFncmFtIjpmYWxzZX0)
+ *
+ * For instance, let's say one wants to implement a task that will:
+ *
+ * - Send a number from the front to the back;
+ * - Send another number from the front to the back;
+ * - Return the sum of the two numbers.
+ *
+ * Because of the way tasks are implemented, it is always the back that sends
+ * the first request, but in this case, we want the front to send the first
+ * data. This is done by sending an empty Request first.
+ *
+ * Here is an incomplete implementation (because tasks require much more wiring):
+ *
+ * ```ts
+ * //          Values yielded by the back / ...by the front
+ * //                                   |          | Value returned by `startBackgroundTask`
+ * //                                   ↓          ↓       ↓
+ * const backgroundTask: BackgroundTask<undefined, number, number> =
+ *   async function* (
+ *     context: TaskContext,
+ *     reporter: Reporter,
+ *     signal: AbortSignal
+ *   ) {
+ *     // Receive two number
+ *     const x = yield
+ *     const y = yield
+ *
+ *     // Complete the task and return the sum
+ *     return x + y
+ *   }
+ *
+ * // The type of this function is based on the type of the background generator
+ * const foregroundTask: ForegroundTask<typeof backgroundTask> =
+ *   async function* () {
+ *     // Suspend the task until the front sends the first request
+ *     yield
+ *
+ *     const values = crypto.getRandomValues(new Uint8Array(2))
+ *     yield values[0]
+ *     yield values[1]
+ *   }
+ *
+ * // Start the task, wait for the result
+ * const sum = await startBackgroundTask(
+ *   'backgroundTask',
+ *   foregroundTask,
+ *   {}
+ * )
+ * ```
+ *
+ * Note: `yield` can be used to send AND receive data at the same time:
+ *
+ * ```ts
+ * // In the background generator:
+ * yield 'Hello {name}!'
+ * const str = yield 'World' // Send a request, wait for the response
+ * console.log(str)
+ *
+ * // In the foreground generator:
+ * const template = yield
+ * const name = yield
+ * yield template.replace('{name}', name)
+ * ```
+ *
+ * You can think of `yield` as a function that works the same way as `await
+ * fetch`: it blocks until a response is received.
+ *
+ * ## How to create a new task?
+ *
+ * - Add a new constant to the `{@link Task}` enum.
+ * - Implement the background generator in `src/background/tasks/*name*.ts`.
+ * - Register the type in the `{@link TaskMap}`.
+ * - Implement the foreground generator in the front-end.
+ *
+ * To run this newly created task, you need call `{@link startBackgroundTask}` properly:
+ *
+ * ```ts
+ * // A controller to cancel a running task
+ * const controller = new AbortController()
+ * cancelButton.onclick = () => {
+ *   controller.abort()
+ * }
+ *
+ * // A reporter to get the status of the task
+ * const reporter = (report: Report) => {
+ *   console.log(report)
+ * }
+ *
+ * const value = await startBackgroundTask(Task.NEW_TASK, foregroundTask, {
+ *   signal: controller.signal,
+ *   reporter,
+ * })
+ * ```
+ *
+ * ## What are `signal` and `reporter`?
+ *
+ * In addition to the `Request`, `Response` and `Return` messages, there are
+ * three additional types of messages:
+ *
+ * - `Report` messages are asynchronous updates to the task status, sent from the
+ *   back to the front.
+ * - `Abort` messages are used to abort the task, sent from the front to the back.
+ * - `Error`s are exception raised in the pack, propagated to the front.
+ *
+ * See `{@link MessageFromBackToFront}` and `{@link MessageFromFrontToBack}` for
+ * additional information.
+ *
+ * @module
+ */
+
 import type { PingResponse } from '$/background/protocol'
 import type { decrypt, decryptFiles } from '$/background/tasks/decrypt'
 import type { encrypt, encryptFiles } from '$/background/tasks/encrypt'
@@ -11,9 +133,44 @@ import debug, { Debugger } from 'debug'
 import { browser, Runtime } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
 
+/** All the tasks available. */
+export enum Task {
+  /** See {@link encrypt}. */
+  ENCRYPT = 'encrypt',
+  /** See `{@link encryptFiles}`. */
+  ENCRYPT_FILES = 'encrypt-files',
+  /** See `{@link decrypt}`. */
+  DECRYPT = 'decrypt',
+  /** See `{@link decryptFiles}`. */
+  DECRYPT_FILES = 'decrypt-files',
+  /** See `{@link pair}`. */
+  PAIR = 'pair',
+  /** See `{@link isZeroconfRunning}`. */
+  IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
+}
+
+/** Maps a task to the type of its background generator. */
+export type TaskMap = {
+  [Task.PAIR]: typeof pair
+  [Task.ENCRYPT]: typeof encrypt
+  [Task.ENCRYPT_FILES]: typeof encryptFiles
+  [Task.DECRYPT]: typeof decrypt
+  [Task.DECRYPT_FILES]: typeof decryptFiles
+  [Task.IS_ZEROCONF_RUNNING]: typeof isZeroconfRunning
+}
+
 /**
  * A background task is an asynchronous generator transparently connected to a
  * foreground task. The `yield` keyword is used to exchange data between them.
+ *
+ * ```ts
+ *  const backgroundTask: BackgroundTask<TSent, TReceived, TReturn> = async function()* {
+ *  const sent: TSent
+ *  const received: TReceived = yield
+ *  const returned: TReturn
+ *  return returned
+ * }
+ * ```
  *
  * @typeParam TSent - Type of the data sent to the foreground task
  * @typeParam TReceived - Type of the data received from the foreground task
@@ -38,7 +195,7 @@ export type ForegroundTask<T> = T extends BackgroundTask<
   ? () => AsyncGenerator<TReceived | undefined, void, TSent>
   : never
 
-/** Retrieve the sent type from a background task. */
+/** Retrieves the sent type from a background task. */
 export type SentType<T> = T extends BackgroundTask<
   infer TSent,
   unknown,
@@ -47,7 +204,7 @@ export type SentType<T> = T extends BackgroundTask<
   ? TSent
   : never
 
-/** Retrieve the received type from a background task. */
+/** Retrieves the received type from a background task. */
 export type ReceivedType<T> = T extends BackgroundTask<
   unknown,
   infer TReceived,
@@ -56,7 +213,7 @@ export type ReceivedType<T> = T extends BackgroundTask<
   ? TReceived
   : never
 
-/** Retrieve the return type from a background task. */
+/** Retrieves the return type from a background task. */
 export type ReturnType<T> = T extends BackgroundTask<
   unknown,
   unknown,
@@ -70,8 +227,9 @@ export type ReturnType<T> = T extends BackgroundTask<
  *
  * - A `request`: the request content is returned by the `yield` keyword in the
  *   front end generator;
- * - A `result`: the final result as returned by {@link startBackgroundTask};
- * - A `report`: {@link ReportMessage}.
+ * - A `result`: the final result as returned by `{@link startBackgroundTask}`;
+ * - A `report`: an asynchronous update to the task status, see `{@link Report}`;
+ * - An `error`: an exception to propagte, see `{@link ErrorMessage}`.
  */
 export type MessageFromBackToFront<T> = T extends BackgroundTask<
   infer TSent,
@@ -116,40 +274,34 @@ export type MessageFromFrontToBack<T> = T extends BackgroundTask<
       | { type: 'abort' }
   : never
 
-/** All the tasks available. */
-export enum Task {
-  ENCRYPT = 'encrypt',
-  ENCRYPT_FILES = 'encrypt-files',
-  DECRYPT = 'decrypt',
-  DECRYPT_FILES = 'decrypt-files',
-  PAIR = 'pair',
-  IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
-}
-
-/** A convenient way to retreive an actual task from its name. */
-export type TaskMap = {
-  [Task.PAIR]: typeof pair
-  [Task.ENCRYPT]: typeof encrypt
-  [Task.ENCRYPT_FILES]: typeof encryptFiles
-  [Task.DECRYPT]: typeof decrypt
-  [Task.DECRYPT_FILES]: typeof decryptFiles
-  [Task.IS_ZEROCONF_RUNNING]: typeof isZeroconfRunning
-}
-
-/** Background context shared between background tasks. */
+/** Background context shared between background tasks and services. */
 export interface TaskContext {
   /** The current state of the Zeroconf service. */
   zeroconfRunning: boolean
-  /** List of devices found by the Zeroconf service. */
+  /**
+   * List of devices found by the Zeroconf service. The keys are IP addresses,
+   * and the values are various details got by the Zeroconf service.
+   */
   network: Map<
     string,
     {
+      /** Port advertised for communication with the device. */
       port: number
+      /**
+       * When the device was last seen. Value returned by `Date.now()`, amount
+       * of milliseconds since 1970/01/01.
+       */
       lastSeen: number
+      /**
+       * If the device is a paired phone with the Freemindtonic app installed,
+       * this propery is defined.
+       */
       // The `phone` and `keys` keys are voluntarily not optional, it helps destructuring
       phone:
         | {
+            /** A store wrapping a `{@link Phone}` object. */
             store: Writable<Phone>
+            /** If keys are fetched to identify the phone, they are cached here. */
             keys:
               | {
                   pingResponse: PingResponse
@@ -171,17 +323,18 @@ export interface TaskContext {
  * a foreground counterpart that may do nothing.
  *
  * @param taskName - Name of the port used
- * @param task - Foreground task that will respond to the requests of the background
+ * @param foregroundTask - Foreground task that will respond to the requests of
+ *   the background
  * @returns The return value of the background task, sent to the front end
  */
 export const startBackgroundTask = async <T extends keyof TaskMap>(
   taskName: T,
-  task: ForegroundTask<TaskMap[T]>,
+  foregroundTask: ForegroundTask<TaskMap[T]>,
   {
     reporter,
     signal,
   }: {
-    /** A {@link Reporter | reporter} function that will receive asynchrounous updates. */
+    /** A {@link Reporter | reporter} function that will receive asynchronous updates. */
     reporter: Reporter
     /** An abort signal. */
     signal: AbortSignal
@@ -191,7 +344,7 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
   log('Starting foreground task')
 
   // Start the foreground task
-  const generator = task()
+  const generator = foregroundTask()
   await generator.next()
 
   return new Promise((resolve, reject) => {
@@ -211,7 +364,10 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
   })
 }
 
-/** Produces a function that handles messages received. */
+/**
+ * Produces a function that handles messages received. When a message is
+ * received, the foreground generator is resumed until it responds.
+ */
 const messageListener =
   <T extends keyof TaskMap>({
     generator,

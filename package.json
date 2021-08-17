@@ -123,7 +123,7 @@
     "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js &",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
     "clean": "rm -rf build extension",
-    "doc": "typedoc src",
+    "doc": "typedoc src --sort source-order",
     "postinstall": "husky install",
     "release": "standard-version",
     "start": "yarn build:static && eleventy --watch --input=src/pages --output=build & rollup -c -w & parcel watch 'build/{*.html,manifest.json}' --dist-dir extension --host localhost --target extension-dev &",

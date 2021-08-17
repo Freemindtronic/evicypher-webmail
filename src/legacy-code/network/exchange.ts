@@ -57,11 +57,11 @@ function unserialize<T>(obj: Serialize<T>): T {
  *
  * @param ip - The IP of the phone
  * @param port - The port of the phone
- * @param type - The request type, see {@linkcode Request}
- * @param data - The request body, see {@linkcode RequestMap}
+ * @param type - The request type, see `{@link Request}`
+ * @param data - The request body, see `{@link RequestMap}`
  * @param timeout - A time out, in milliseconds
  * @param signal - An abort signal
- * @returns A promise that resolves to the response, see {@linkcode ResponseMap}
+ * @returns A promise that resolves to the response, see `{@link ResponseMap}`
  */
 export const sendRequest = async <T extends keyof RequestMap>({
   ip,
