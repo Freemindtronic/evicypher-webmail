@@ -136,6 +136,7 @@ Run `yarn build`
 Additional documentation:
 
 - Read the API documentation with `yarn doc && npx serve docs`
+  - Notable pages: `background/protocol` and `task`
 - Read the storybook with `yarn storybook`
 
 ### Committing changes
