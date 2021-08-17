@@ -198,28 +198,25 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
  * Handles mutations observed by the `MutationObserver` below, i.e.
  * notifications of elements added or removed from the page.
  */
-const handleMutation = (mutation: MutationRecord) => {
-  const target = mutation.target as HTMLElement
-  // A mail element is added
-  if (target.matches(Selector.MAIL_CONTENT)) handleMailElement(target)
-
-  const mailElements = target.querySelectorAll<HTMLElement>(
+const handleMutations = () => {
+  // The user opens a mail
+  const mails = document.body.querySelectorAll<HTMLElement>(
     Selector.MAIL_CONTENT
   )
-  for (const mailElement of mailElements) handleMailElement(mailElement)
+  for (const mail of mails) handleMailElement(mail)
 
   // The user starts writing a mail
-  const toolbarElements = target.querySelectorAll<HTMLElement>(Selector.TOOLBAR)
-  for (const toolbarElement of toolbarElements) handleToolbar(toolbarElement)
+  const toolbars = document.body.querySelectorAll<HTMLElement>(Selector.TOOLBAR)
+  for (const toolbar of toolbars) handleToolbar(toolbar)
 }
 
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // Start observing the DOM for changes
-new MutationObserver((mutations) => {
-  for (const mutation of mutations) handleMutation(mutation)
-}).observe(document.body, {
+new MutationObserver(handleMutations).observe(document.body, {
   subtree: true,
   childList: true,
 })
+
+console.log('help')
