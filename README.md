@@ -29,7 +29,7 @@ Both tasks and services are running in the background, but they are two differen
 
 - Language: [TypeScript](https://www.typescriptlang.org/)
 - Frontend framework: [Svelte](https://svelte.dev/)
-- Frontend bundler: [rollup.js](https://rollupjs.org/)
+- Frontend bundlers: [rollup.js](https://rollupjs.org/) and [Parcel](https://v2.parceljs.org/)]
 - Linters: [ESLint](https://eslint.org/) and [svelte-check](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check)
 - Formatter: [Prettier](https://prettier.io/)
 - Package manager: [Yarn](https://yarnpkg.com/)
@@ -55,7 +55,7 @@ Here is a high-level overview of the repository structure:
   - **components/**: Common Svelte components, such as buttons.
   - **content-scripts/**: Scripts injected in pages.
   - **evifile/**: EviFile components.
-  - **legacy-code/**: Terrible code to be refactored.
+  - **legacy-code/**: [Terrible code to be refactored.](https://en.wikipedia.org/wiki/Technical_debt) Poorly written cryptography and network code.
   - **pages/**: [Nunjucks](https://www.11ty.dev/docs/languages/nunjucks/) templates used to produce plain HTML.
   - **popup/**: Popup components.
   - **stories/**: Style-guide written with [Storybook](https://storybook.js.org/).
@@ -83,6 +83,12 @@ Here is a high-level overview of the repository structure:
 - **types.d.ts**: Custom type definitions.
 - **yarn.lock**: [Yarn](https://yarnpkg.com/) lock file.
 
+What is the difference between **assets/**, **src/assets/** and **static/**?
+
+- **assets/**: Contains non-source assets, such as fonts, and images referenced by `manifest.json`.
+- **src/assets/**: Contains source assets, such as stylesheets, and images referenced in the code.
+- **static/**: Resources to be copied as is into the extension folder.
+
 ### Yarn scripts
 
 - `yarn build`: Builds the extension. (There are other `build:...` commands, see below.)
@@ -106,13 +112,6 @@ To ensure a certain degree of code quality, **the following design principles we
 - The background script is the only script allowed to communicate with the network.
 - **A function must have 0 or 1 type of side effect**, but as many side effects of the same type as needed. Side effects are: network interactions, DOM interactions, storage interactions, background interactions and background context modifications. Logging is not counted. Side effects of functions called are not counted. For instance, a function can send multiple network requests, but not save the results in local storage: it has to return the results to save.
 - All commits on the _main_ branch must be passing tests.
-
-<details>
-  <summary>Intern's note</summary>
-
-There is a folder named _legacy code_. [The code there is of terrible quality and should be refactored.](https://en.wikipedia.org/wiki/Technical_debt) It contains a lot of code that was written for the previous extension, and it consists of poorly written cryptography and network code. Please dump the whole protocol and rewrite it from scratch, using **modern standards**.
-
-</details>
 
 ### I18n (Internationalization)
 
@@ -166,5 +165,5 @@ Here is what happens when one runs `yarn build`:
 There are a few magic things going on in this repository:
 
 - `$` resolves to `./src`, it is defined in `package.json` (for Parcel), `rollup.config.js` and `tsconfig.json`.
-- `~` resolves to `.`, it is a default for Parcel defined in `tsconfig.json`.
-- Code is automatically tested and formatted before committing.
+- `~` resolves to `.`, it is a default for Parcel, and also defined in `tsconfig.json`.
+- Code is automatically tested and formatted before committing, thanks to [lint-staged](https://github.com/okonet/lint-staged#readme).
