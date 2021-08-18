@@ -1,9 +1,52 @@
+/**
+ * See {@link BrowserStore}.
+ *
+ * @module
+ */
+
 import type { Subscriber, Unsubscriber, Updater, Writable } from 'svelte/store'
 import { browser, Storage } from 'webextension-polyfill-ts'
 
 /**
  * A {@link https://svelte.dev/docs#writable | writable store} backed by local storage.
  *
+ * Simple example with a string:
+ *
+ * ```ts
+ * import { get, writable } from 'svelte/store'
+ *
+ * //                                 Default value ↴
+ * const store = new BrowserStore('name', writable('Alice'))
+ * store.subscribe((name) => {
+ *   console.log(name)
+ * })
+ * // > 'Alice'
+ *
+ * // In another script
+ * const store = new BrowserStore('name', writable(''))
+ * await store.loadPromise
+ * console.log(get(store)) // > 'Alice'
+ * store.set('Bob')
+ * // The first script outputs 'Bob'
+ * ```
+ *
+ * For non JSON-serializable data, there is an additional argument that allows
+ * to provide two functions `fromJSON` and `toJSON`:
+ *
+ * ```ts
+ * import { fromUint8Array, toUint8Array } from 'js-base64'
+ *
+ * const binary = new BrowserStore('binary', writable(new Uint8Array(16)), {
+ *   // Store the binary array as base64
+ *   toJSON: (binary) => fromUint8Array(binary),
+ *   // Restore the array from base64
+ *   fromJSON: (base64) => toUint8Array(base64),
+ * })
+ * ```
+ *
+ * @remarks
+ *   The `Writable` argument provided is used as a default value; if the key is
+ *   found in storage, the value is overwritten.
  * @typeParam T - Type of the wrapped variable
  */
 export class BrowserStore<T> implements Writable<T> {

@@ -1,3 +1,10 @@
+/**
+ * Reports are asynchronous updates from a background task. They are used to
+ * display a task advancement to the user.
+ *
+ * @module
+ */
+
 import type { ErrorMessage } from '$/error'
 
 /** All possible updates from all the background tasks. */

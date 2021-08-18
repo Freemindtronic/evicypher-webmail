@@ -1,3 +1,9 @@
+/**
+ * See {@link Observable}.
+ *
+ * @module
+ */
+
 import type { Writable } from 'svelte/store'
 
 /**

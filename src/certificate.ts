@@ -1,13 +1,24 @@
+/**
+ * See {@link Certificate}.
+ *
+ * @module
+ */
+
 import { fromUint8Array, toUint8Array } from 'js-base64'
 
 const KEY_SIZE = 16
 
 /** A class to produce new certificates and to serialize them. */
 export class Certificate {
+  /** Unique identifier. */
   readonly id: Uint8Array
+  /** First key. */
   readonly fKey: Uint8Array
+  /** Second key. */
   readonly sKey: Uint8Array
+  /** Third key. */
   readonly tKey: Uint8Array
+  /** Jamming key. */
   readonly jamming: Uint8Array
 
   /** Initializes a certificate with the data given. */

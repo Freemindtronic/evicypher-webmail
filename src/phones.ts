@@ -1,9 +1,23 @@
+/**
+ * Phone management functions.
+ *
+ * - {@link Phone} contains details about a paired phone.
+ * - {@link phones} is the list of all paired phones, saved in a {@link BrowserStore}.
+ * - {@link favoritePhone} is the phone to use for all operations.
+ *
+ * @remarks
+ *   All variables are stores, which means they must have a `$` symbol beforehand
+ *   to access their value: `Phone {$favoritePhone.name} connected`. (Or use
+ *   `svelte/store.get`.)
+ * @module
+ */
+
 import { derived, writable, Writable, get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
 import { BrowserStore } from '$/browser-store'
 import { Certificate } from '$/certificate'
 
-/** Represent a phone, with a unique identifier and a name. */
+/** Represents a phone, with a unique identifier and a name. */
 export class Phone {
   /** Unique identifier. */
   id: number

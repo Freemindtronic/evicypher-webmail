@@ -1,3 +1,12 @@
+/**
+ * Extension errors.
+ *
+ * All the errors defined below are translated with a user-friendly message. See
+ * {@link i18n.translateError}. To throw user-friendly errors, use {@link ExtensionError}.
+ *
+ * @module
+ */
+
 /** List of all possible error messages. */
 export enum ErrorMessage {
   CANCELED_BY_USER = 'Canceled by user.',
@@ -22,8 +31,10 @@ export enum ErrorMessage {
  * They are meant to be translated and displayed to the user. They must contain
  * useful information to solve the issue.
  *
- * Not all errors should be extension errors -some are thrown because the
- * implementation is buggy- these should be usual Error.
+ * Not all errors should be extension errors (some are thrown because the
+ * implementation is buggy) these should be usual Error. If an Error propagates
+ * to the user interface, it displayed as an `UNKNOWN_ERROR`, reading `"The
+ * extension encountered an error and the operation failed."`.
  */
 export class ExtensionError extends Error {
   readonly message: ErrorMessage
