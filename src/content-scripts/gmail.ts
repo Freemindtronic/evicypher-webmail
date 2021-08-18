@@ -1,3 +1,9 @@
+/**
+ * Gmail content script.
+ *
+ * @module
+ */
+
 import type { Report } from '$/report'
 import { debug } from 'debug'
 import { browser } from 'webextension-polyfill-ts'
@@ -5,12 +11,13 @@ import { ErrorMessage, ExtensionError } from '$/error'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
+  addClickListener,
   containsEncryptedText,
   decryptString,
   encryptString,
   extractEncryptedString,
   isEncryptedText,
-} from './encryption'
+} from './common'
 
 /** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {
@@ -121,50 +128,6 @@ const handleToolbar = (toolbar: HTMLElement) => {
     ).then((encryptedString) => {
       mail.textContent = encryptedString
     })
-  })
-}
-
-/**
- * Adds all the listeners necessary to make the button interactive.
- *
- * @remarks
- *   This function ensures that the state of the button is always consistent.
- */
-const addClickListener = (
-  button: EncryptButton | DecryptButton,
-  listener: (
-    promise: Promise<void> | undefined,
-    resolved: boolean,
-    rejected: boolean,
-    signal: AbortSignal
-  ) => Promise<void> | undefined
-) => {
-  /** Abort controller, bound to a button in the tooltip. */
-  let controller: AbortController
-  button.$on('abort', () => {
-    controller.abort()
-    promise = undefined
-    button.$set({ promise })
-  })
-
-  let promise: Promise<void> | undefined
-  let resolved = false
-  let rejected = false
-
-  // When the button is clicked, trigger the event listener
-  button.$on('click', () => {
-    if (promise === undefined) controller = new AbortController()
-    promise = listener(promise, resolved, rejected, controller.signal)
-    button.$set({ promise })
-    resolved = false
-    rejected = false
-    promise
-      ?.then(() => {
-        resolved = true
-      })
-      .catch(() => {
-        rejected = true
-      })
   })
 }
 
