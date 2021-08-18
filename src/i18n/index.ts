@@ -1,3 +1,14 @@
+/**
+ * Internationalization (i18n) functions.
+ *
+ * A few functions are directly re-exported from
+ * [svelte-i18n](https://github.com/kaisermann/svelte-i18n/blob/main/docs/Methods.md).
+ *
+ * @remarks
+ *   This module has side-effects: importing it will fetch the locale files.
+ * @module
+ */
+
 import {
   getLocaleFromNavigator,
   init,
