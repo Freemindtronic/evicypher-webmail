@@ -1,5 +1,5 @@
 {
-  "i18n-ally.localesPaths": ["extension/locales"],
+  "i18n-ally.localesPaths": ["static/locales"],
   "i18n-ally.keystyle": "nested",
   "search.exclude": {
     "**/.yarn": true,
