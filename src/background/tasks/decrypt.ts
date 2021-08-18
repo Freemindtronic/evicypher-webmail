@@ -1,3 +1,12 @@
+/**
+ * Decryption tasks.
+ *
+ * - {@link decrypt} is used to decrypt strings;
+ * - {@link decryptFiles} is used to decrypt an array of files.
+ *
+ * @module
+ */
+
 import type { BackgroundTask } from '$/task'
 import { debug } from 'debug'
 import { get } from 'svelte/store'

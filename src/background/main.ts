@@ -1,3 +1,11 @@
+/**
+ * Persistent background script.
+ *
+ * The background script is responsible for starting backgrounds tasks and services.
+ *
+ * @module
+ */
+
 import type { Report } from '$/report'
 import debug, { Debugger } from 'debug'
 import { browser, Runtime } from 'webextension-polyfill-ts'
@@ -69,8 +77,8 @@ const startTask = async <TSent, TReceived, TReturn>(
 }
 
 /**
- * Runs one step of the generator (i.e. the code of background task between two
- * `yield`s), and returns the result.
+ * Runs one step of the generator (i.e. the code of a background task between
+ * two `yield`s), and returns the result.
  */
 const nextStep = async <TSent, TReceived, TReturn>(
   generator: AsyncGenerator<TSent, TReturn, TReceived>,
@@ -110,7 +118,7 @@ const nextStep = async <TSent, TReceived, TReturn>(
 // Enable logging
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
-// Disable CSP for pages hosting content scripts (see Outlook.ts for details)
+// Disable CSP for pages hosting content scripts (see outlook.ts for details)
 if (process.env.NODE_ENV !== 'production') {
   browser.webRequest.onHeadersReceived.addListener(
     ({ responseHeaders }) => {

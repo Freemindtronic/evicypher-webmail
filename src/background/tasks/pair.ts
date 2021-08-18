@@ -1,3 +1,9 @@
+/**
+ * {@link pair | Pairing task.}
+ *
+ * @module
+ */
+
 import type { BackgroundTask } from '$/task'
 import { get, writable } from 'svelte/store'
 import { ErrorMessage, ExtensionError } from '$/error'

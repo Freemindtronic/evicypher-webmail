@@ -1,3 +1,14 @@
+/**
+ * Zeroconf service.
+ *
+ * The service [asks a locally installed
+ * software](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging)
+ * ([EviDNS](https://github.com/Freemindtronic/eviDNS_zeroconf)) to scan the
+ * network for devices.
+ *
+ * @modules
+ */
+
 import type { TaskContext } from '$/task'
 import debug from 'debug'
 import { get } from 'svelte/store'

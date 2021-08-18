@@ -1,3 +1,12 @@
+/**
+ * Encryption tasks.
+ *
+ * - {@link encrypt} is used to encrypt strings;
+ * - {@link encryptFiles} is used to encrypt an array of files.
+ *
+ * @module
+ */
+
 import type { BackgroundTask } from '$/task'
 import debug from 'debug'
 import { get } from 'svelte/store'

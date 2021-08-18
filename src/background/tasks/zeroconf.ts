@@ -1,3 +1,11 @@
+/**
+ * Zeroconf-related tasks.
+ *
+ * - {@link isZeroconfRunning}: returns whether the Zeroconf service is running or not.
+ *
+ * @module
+ */
+
 import type { BackgroundTask } from '$/task'
 
 /**
