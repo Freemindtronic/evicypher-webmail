@@ -53,7 +53,7 @@ export enum Request {
   PING = '/P',
   /** A request to get encryption keys. */
   CIPHER_KEY = '/CK',
-  /** End of an exhange, producing a new certificate. */
+  /** End of an exhange, request for a new certificate. */
   END = '/f2',
   /** Acknowledgement of receipt of the `END` request. */
   END_OK = '/o',
@@ -67,13 +67,16 @@ export enum Request {
    */
   PAIRING_NAME = '/n',
   /**
-   * Implemented because the API is flawed: requests sent not matching a given
-   * pattern are responded with a 202 Accepted and an empty body.
+   * A request to check if the phone is accepting connections.
+   *
+   * @remarks
+   *   Not officially implemented, but requests not matching a given pattern are
+   *   responded with a 202 Accepted and an empty body.
    */
   IS_ALIVE = '/is-alive',
 }
 
-/** Maps Request constants to the correct request type. */
+/** Maps `{@link Request}` constants to the correct request type. */
 export interface RequestMap {
   [Request.PING]: PingRequest
   [Request.CIPHER_KEY]: CipherKeyRequest
@@ -85,7 +88,11 @@ export interface RequestMap {
   [Request.IS_ALIVE]: IsAliveRequest
 }
 
-/** Maps Request constants to the correct response type. */
+/**
+ * Maps `{@link Request}` constants to the correct response type.
+ *
+ * Some responses are empty, therefore typed by `Record<string, never>`.
+ */
 export interface ResponseMap {
   [Request.PING]: PingResponse
   [Request.CIPHER_KEY]: CipherKeyResponse
@@ -110,17 +117,27 @@ export interface PingRequest {
 }
 
 export interface PingResponse {
+  /** Initialization vector. */
   iv1: Uint8Array
+  /** Salt. */
   sa1: Uint8Array
+  /** Public ECC Cipher. */
   k1: Uint8Array
+  /** Initialization vector. */
   iv2: Uint8Array
+  /** Salt. */
   sa2: Uint8Array
+  /** Public ECC Cipher. */
   k2: Uint8Array
+  /** Initialization vector. */
   iv3: Uint8Array
+  /** Salt. */
   sa3: Uint8Array
+  /** Public ECC Cipher. */
   k3: Uint8Array
 }
 
+/** Type of a key request, when the user has to pick a key. */
 export interface CipherKeyRequestWithoutKey {
   i1: Uint8Array
   i2: Uint8Array
@@ -133,12 +150,14 @@ export interface CipherKeyRequestWithoutKey {
   d3: Uint8Array
 }
 
+/** Type of a key request, when the key is automatically picked. */
 export interface CipherKeyRequestWithKey extends CipherKeyRequestWithoutKey {
   ih: Uint8Array
   sh: Uint8Array
   dh: Uint8Array
 }
 
+/** See `{@link CipherKeyRequestWithoutKey}` and `{@link CipherKeyRequestWithKey}`. */
 export type CipherKeyRequest =
   | CipherKeyRequestWithoutKey
   | CipherKeyRequestWithKey
@@ -152,6 +171,7 @@ export interface CipherKeyResponse {
   d2: Uint8Array
 }
 
+/** There are four keys, probably because three were not enough. Who knows. */
 export interface EndRequest {
   id: Uint8Array
   k1: Uint8Array
@@ -187,25 +207,25 @@ export interface PairingSaltRequest {
 
 /** This is currently annotated with variable names found in the Android app code. */
 export interface PairingSaltResponse {
-  /** PublicECCCipher */
+  /** PublicECCCipher. */
   ek: Uint8Array
-  /** NameCipher */
+  /** NameCipher. */
   n: Uint8Array
-  /** UUIDCipher */
+  /** UUIDCipher. */
   u: Uint8Array
-  /** IvForEcc */
+  /** IvForEcc. */
   ik: Uint8Array
-  /** IvForName */
+  /** IvForName. */
   in: Uint8Array
-  /** IvForUUID */
+  /** IvForUUID. */
   iu: Uint8Array
-  /** SaltForEcc */
+  /** SaltForEcc. */
   sk: Uint8Array
-  /** SaltForName */
+  /** SaltForName. */
   sn: Uint8Array
-  /** SaltForUUID */
+  /** SaltForUUID. */
   su: Uint8Array
-  /** SaltForName */
+  /** SaltForName. */
   h: Uint8Array
 }
 
