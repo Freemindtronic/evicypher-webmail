@@ -213,10 +213,23 @@ const handleMutations = () => {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
+// Remove the service worker in development mode
+// Parcel has a feature named HMR (hot module replacement) that automatically
+// forwards changes to the browser. To do so, Parcel injects a script that
+// connects to `ws://localhost:1234`, but Outlook prevents this connection
+// because of its CSP policy. Therefore, there are two things to do to allow
+// this connection:
+//  - Remove the CSP header (done in background/main.ts)
+//  - Remove the service worker that caches these headers (here)
+if (process.env.NODE_ENV !== 'production') {
+  void navigator.serviceWorker.ready.then(async () => {
+    for (const worker of await navigator.serviceWorker.getRegistrations())
+      void worker.unregister()
+  })
+}
+
 // Start observing the DOM for changes
 new MutationObserver(handleMutations).observe(document.body, {
   subtree: true,
   childList: true,
 })
-
-console.log('help')
