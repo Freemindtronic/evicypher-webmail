@@ -15,7 +15,8 @@ body {
   // A square looks nice
   width: 400px;
   height: 400px;
-  overflow-x: hidden;
+  // Solve size issues when the icon is in the overflow menu
+  overflow-x: auto;
   // Make it dark so Firefox renders round corners correctly
   color: $background-color;
   background-color: $dark;
