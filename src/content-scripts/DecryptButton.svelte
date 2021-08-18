@@ -19,6 +19,15 @@
   IdleIcon={DecryptIdle}
   idleTooltip={$_('click-to-decrypt-this-message')}
   doneTooltip={$_('click-to-close-the-decrypted-mail')}
+  class="decrypt-button"
   on:click
   on:abort
-/>
+>
+  {$_('decrypt')}
+</Button>
+
+<style>
+  :global(.decrypt-button) {
+    padding: 4px !important;
+  }
+</style>

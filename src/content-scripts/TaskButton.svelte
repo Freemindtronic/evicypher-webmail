@@ -83,6 +83,7 @@
   class:button={true}
   {...$$restProps}
 >
+  <slot />
   {#if promise === undefined}
     <svelte:component this={IdleIcon} width="16" height="16" />
   {:else}

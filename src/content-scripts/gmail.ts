@@ -6,8 +6,10 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
+import { _ } from '$/i18n'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import {
@@ -22,9 +24,10 @@ import {
 /** Selectors for interesting HTML Elements of Gmail. */
 const Selector = {
   MAIL_CONTENT: '.a3s.aiL',
-  TOOLBAR: '.btx',
+  TOOLBAR: '.J-J5-Ji.btA',
   MAIL_EDITOR: '.iN',
   EDITOR_CONTENT: '[contenteditable]',
+  SEND_BUTTON: '.T-I.J-J5-Ji.aoO.v7.T-I-atl.L3',
 }
 
 /** A flag to mark already processed (having buttons added) HTML elements. */
@@ -102,17 +105,26 @@ const handleToolbar = (toolbar: HTMLElement) => {
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
 
+  const editor = toolbar.closest(Selector.MAIL_EDITOR)
+  const mail = editor?.querySelector(Selector.EDITOR_CONTENT)
+  const sendButton = editor?.querySelector<HTMLElement>(Selector.SEND_BUTTON)
+  if (!editor || !mail || !sendButton) return
+
   const button = new EncryptButton({
     target: toolbar,
+  })
+
+  const tooltip = tippy(sendButton, {
+    theme: 'light-border',
+  })
+  _.subscribe(($_) => {
+    tooltip.setContent($_('this-mail-is-not-encrypted'))
   })
 
   addClickListener(button, async (promise, resolved, rejected, signal) => {
     if (promise && !resolved && !rejected) return promise
 
-    const mail = toolbar
-      .closest(Selector.MAIL_EDITOR)
-      ?.querySelector(Selector.EDITOR_CONTENT)
-    if (!mail || !mail.textContent)
+    if (!mail.textContent)
       throw new ExtensionError(ErrorMessage.MAIL_CONTENT_UNDEFINED)
 
     button.$set({ report: undefined })
@@ -127,6 +139,7 @@ const handleToolbar = (toolbar: HTMLElement) => {
       signal
     ).then((encryptedString) => {
       mail.textContent = encryptedString
+      tooltip.destroy()
     })
   })
 }

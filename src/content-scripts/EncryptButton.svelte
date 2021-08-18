@@ -15,19 +15,22 @@
 <Button
   bind:report
   bind:promise
-  tooltipPlacement="top-end"
+  tooltipPlacement="top"
   IdleIcon={EncryptIdle}
   idleTooltip={$_('click-to-encrypt-this-message')}
   doneTooltip={$_('mail-encrypted-successfully-click-to-encrypt-once-again')}
   class="encrypt-button"
   on:click
   on:abort
-/>
+>
+  {$_('encrypt')}
+</Button>
 
 <style lang="scss">
   :global(.encrypt-button) {
     // While `!important` is usually a bad practice, I'd rather not use a
     // hack to ensure that this css is computed after the one of Button
     margin-left: 14px !important;
+    padding: 9px !important;
   }
 </style>

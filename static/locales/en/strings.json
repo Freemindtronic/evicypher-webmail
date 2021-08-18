@@ -57,5 +57,8 @@
   "request-timeout": "Timeout to validate the operation, the phone refused it.",
   "unknown-phone-error": "The exchange with the phone failed, please try again.",
   "click-here-for-help": "Click here for help.",
-  "are-you-sure": "Are you sure?"
+  "are-you-sure": "Are you sure?",
+  "this-mail-is-not-encrypted": "This mail is not encrypted",
+  "encrypt": "Encrypt",
+  "decrypt": "Decrypt"
 }
