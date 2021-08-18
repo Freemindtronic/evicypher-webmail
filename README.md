@@ -74,7 +74,7 @@ Here is a high-level overview of the repository structure:
 - **CHANGELOG.md**: Changelog file, **do not edit manually**, use `yarn release`.
 - **commitlint.config.cjs**: [Commitlint](https://commitlint.js.org/) configuration file, ensures [Conventional Commits](https://conventionalcommits.org/) compliancy.
 - **cypress.json**: [Cypress](https://www.cypress.io/) (end-to-end testing) configuration file.
-- **manifest.js**: Web extension manifest generator.
+- **manifest.js**: Web extension manifest generator. (And its `.d.ts` file, for TypeScript import.)
 - **package.json**: Node.js package configuration file.
 - **README.md**: This file.
 - **rollup.config.js**: [Rollup](https://rollupjs.org/) (bundler) configuration file.
