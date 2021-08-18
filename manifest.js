@@ -2,10 +2,8 @@
 import { writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 
-// Run `yarn tsc manifest.js --declaration --allowJs` to update the declaration file.
-
 /** A dynamically generated manifest, to keep the version number consistent. */
-export const manifest = (production = false) => ({
+export const manifest = {
   manifest_version: 2,
   name: 'EviCypher Webmail',
   // The extension version is the same as the package.json version
@@ -14,19 +12,7 @@ export const manifest = (production = false) => ({
     48: '~/assets/favicon.png',
     96: '~/assets/icon.svg',
   },
-  permissions: production
-    ? ['storage', 'nativeMessaging']
-    : [
-        // The development version blocks CSP headers, to allow Parcel's HMR
-        // (see background/main.ts and outlook.ts for details)
-        'storage',
-        'nativeMessaging',
-        'webRequest',
-        'webRequestBlocking',
-        'browsingData',
-        'http://*/*',
-        'https://*/*',
-      ],
+  permissions: ['storage', 'nativeMessaging'],
   background: {
     scripts: ['~/src/background/main.ts'],
     persistent: true,
@@ -50,25 +36,13 @@ export const manifest = (production = false) => ({
     },
   },
   web_accessible_resources: ['loading.gif', 'blank.html'],
-})
+}
 
 /** Writes `manifest` to `extension/manifest.json`. */
 export const writeManifest = () => {
-  const production = process.argv.length >= 3 && process.argv[2] === '--prod'
-  writeFileSync(
-    './build/manifest.json',
-    JSON.stringify(manifest(production), undefined, 2)
-  )
-  console.log(
-    '\u001B[32m%s\u001B[0m',
-    `created build/manifest.json [${production ? 'production' : 'development'}]`
-  )
+  writeFileSync('./build/manifest.json', JSON.stringify(manifest, undefined, 2))
+  console.log('\u001B[32m%s\u001B[0m', `created build/manifest.json`)
 }
 
 // Save the manifest if the file is run directly
-if (
-  process &&
-  fileURLToPath &&
-  process.argv[1] === fileURLToPath(import.meta.url)
-)
-  writeManifest()
+if (process.argv[1] === fileURLToPath(import.meta.url)) writeManifest()

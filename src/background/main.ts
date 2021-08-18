@@ -17,7 +17,6 @@ import {
   Task,
   TaskContext,
 } from '$/task'
-import { manifest } from '~/manifest'
 import {
   isZeroconfServiceInstalled,
   startZeroconfService,
@@ -117,28 +116,6 @@ const nextStep = async <TSent, TReceived, TReturn>(
 
 // Enable logging
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
-
-// Disable CSP for pages hosting content scripts (see outlook.ts for details)
-if (process.env.NODE_ENV !== 'production') {
-  browser.webRequest.onHeadersReceived.addListener(
-    ({ responseHeaders }) => {
-      if (!responseHeaders) return
-
-      for (const responseHeader of responseHeaders) {
-        if (responseHeader.name.toLowerCase() === 'content-security-policy')
-          responseHeader.value = ''
-      }
-
-      return { responseHeaders }
-    },
-    {
-      // Only intercepts requests from pages hosting content scripts
-      urls: manifest().content_scripts.flatMap((script) => script.matches),
-      types: ['main_frame', 'sub_frame'],
-    },
-    ['blocking', 'responseHeaders']
-  )
-}
 
 // Start the Zeroconf scanning service
 isZeroconfServiceInstalled()

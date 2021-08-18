@@ -74,9 +74,9 @@ Here is a high-level overview of the repository structure:
 - **CHANGELOG.md**: Changelog file, **do not edit manually**, use `yarn release`.
 - **commitlint.config.cjs**: [Commitlint](https://commitlint.js.org/) configuration file, ensures [Conventional Commits](https://conventionalcommits.org/) compliancy.
 - **cypress.json**: [Cypress](https://www.cypress.io/) (end-to-end testing) configuration file.
-- **manifest.js**: Web extension manifest generator. (And its `.d.ts` file, for TypeScript import.)
+- **manifest.js**: Web extension manifest generator.
 - **package.json**: Node.js package configuration file.
-- **README.md**: This file.
+- **README.md**: _This file._
 - **rollup.config.js**: [Rollup](https://rollupjs.org/) (bundler) configuration file.
 - **svelte.config.js**: [Svelte](https://svelte.dev/) (front-end framework) configuration file.
 - **tsconfig.json**: [TypeScript](https://www.typescriptlang.org/) configuration file.
@@ -168,7 +168,3 @@ There are a few magic things going on in this repository:
 - `$` resolves to `./src`, it is defined in `package.json` (for Parcel), `rollup.config.js` and `tsconfig.json`.
 - `~` resolves to `.`, it is a default for Parcel, and also defined in `tsconfig.json`.
 - Code is automatically tested and formatted before committing, thanks to [lint-staged](https://github.com/okonet/lint-staged#readme).
-
-## Known issues
-
-- Unregister Outlook's service worker to develop the content script.
