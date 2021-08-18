@@ -38,7 +38,7 @@ export const sha256 = async (data: Uint8Array): Promise<Uint8Array> => {
  *
  * @remarks
  *   This hash is not interoperable with other implementations of SHA-512 because
- *   of a bug. See {@link asyncSha256}.
+ *   of a bug. See {@link sha256}.
  */
 export const sha512 = async (data: Uint8Array): Promise<Uint8Array> =>
   new Uint8Array(
