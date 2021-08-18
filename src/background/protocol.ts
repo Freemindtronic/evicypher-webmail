@@ -76,7 +76,7 @@ export enum Request {
   IS_ALIVE = '/is-alive',
 }
 
-/** Maps `{@link Request}` constants to the correct request type. */
+/** Maps {@link Request} constants to the correct request type. */
 export interface RequestMap {
   [Request.PING]: PingRequest
   [Request.CIPHER_KEY]: CipherKeyRequest
@@ -89,7 +89,7 @@ export interface RequestMap {
 }
 
 /**
- * Maps `{@link Request}` constants to the correct response type.
+ * Maps {@link Request} constants to the correct response type.
  *
  * Some responses are empty, therefore typed by `Record<string, never>`.
  */
@@ -157,7 +157,7 @@ export interface CipherKeyRequestWithKey extends CipherKeyRequestWithoutKey {
   dh: Uint8Array
 }
 
-/** See `{@link CipherKeyRequestWithoutKey}` and `{@link CipherKeyRequestWithKey}`. */
+/** See {@link CipherKeyRequestWithoutKey}`and`{@link CipherKeyRequestWithKey}. */
 export type CipherKeyRequest =
   | CipherKeyRequestWithoutKey
   | CipherKeyRequestWithKey

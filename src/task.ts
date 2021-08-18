@@ -79,12 +79,12 @@
  *
  * ## How to create a new task?
  *
- * - Add a new constant to the `{@link Task}` enum.
+ * - Add a new constant to the {@link Task} enum.
  * - Implement the background generator in `src/background/tasks/*name*.ts`.
- * - Register the type in the `{@link TaskMap}`.
+ * - Register the type in the {@link TaskMap}.
  * - Implement the foreground generator in the front-end.
  *
- * To run this newly created task, you need call `{@link startBackgroundTask}` properly:
+ * To run this newly created task, you need call {@link startBackgroundTask} properly:
  *
  * ```ts
  * // A controller to cancel a running task
@@ -114,7 +114,7 @@
  * - `Abort` messages are used to abort the task, sent from the front to the back.
  * - `Error`s are exception raised in the pack, propagated to the front.
  *
- * See `{@link MessageFromBackToFront}` and `{@link MessageFromFrontToBack}` for
+ * See {@link MessageFromBackToFront}`and`{@link MessageFromFrontToBack} for
  * additional information.
  *
  * @module
@@ -137,15 +137,15 @@ import { ErrorMessage, ExtensionError } from '$/error'
 export enum Task {
   /** See {@link encrypt}. */
   ENCRYPT = 'encrypt',
-  /** See `{@link encryptFiles}`. */
+  /** See {@link encryptFiles}. */
   ENCRYPT_FILES = 'encrypt-files',
-  /** See `{@link decrypt}`. */
+  /** See {@link decrypt}. */
   DECRYPT = 'decrypt',
-  /** See `{@link decryptFiles}`. */
+  /** See {@link decryptFiles}. */
   DECRYPT_FILES = 'decrypt-files',
-  /** See `{@link pair}`. */
+  /** See {@link pair}. */
   PAIR = 'pair',
-  /** See `{@link isZeroconfRunning}`. */
+  /** See {@link isZeroconfRunning}. */
   IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
 }
 
@@ -227,9 +227,9 @@ export type ReturnType<T> = T extends BackgroundTask<
  *
  * - A `request`: the request content is returned by the `yield` keyword in the
  *   front end generator;
- * - A `result`: the final result as returned by `{@link startBackgroundTask}`;
- * - A `report`: an asynchronous update to the task status, see `{@link Report}`;
- * - An `error`: an exception to propagte, see `{@link ErrorMessage}`.
+ * - A `result`: the final result as returned by {@link startBackgroundTask};
+ * - A `report`: an asynchronous update to the task status, see {@link Report};
+ * - An `error`: an exception to propagte, see {@link ErrorMessage}.
  */
 export type MessageFromBackToFront<T> = T extends BackgroundTask<
   infer TSent,
@@ -299,7 +299,7 @@ export interface TaskContext {
       // The `phone` and `keys` keys are voluntarily not optional, it helps destructuring
       phone:
         | {
-            /** A store wrapping a `{@link Phone}` object. */
+            /** A store wrapping a {@link Phone} object. */
             store: Writable<Phone>
             /** If keys are fetched to identify the phone, they are cached here. */
             keys:
