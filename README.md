@@ -116,7 +116,7 @@ To ensure a certain degree of code quality, **the following design principles we
 
 ### I18n (Internationalization)
 
-The extension is fully translatable thanks to [svelte-i18n](https://github.com/kaisermann/svelte-i18n).
+The extension is fully translatable thanks to [svelte-i18n](https://github.com/kaisermann/svelte-i18n). See [TRANSLATE.md](./TRANSLATE.md) for instructions.
 
 ## Contributing
 
