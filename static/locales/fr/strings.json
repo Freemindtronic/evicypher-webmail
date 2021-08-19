@@ -60,5 +60,6 @@
   "are-you-sure": "Confirmer ?",
   "this-mail-is-not-encrypted": "Ce message n'est pas chiffré",
   "encrypt": "Chiffrer",
-  "decrypt": "Déchiffrer"
+  "decrypt": "Déchiffrer",
+  "ltr": "ltr"
 }

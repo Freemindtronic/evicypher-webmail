@@ -138,6 +138,8 @@
       },
     }
   }
+
+  $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
 </script>
 
 {#if !$isLoading}

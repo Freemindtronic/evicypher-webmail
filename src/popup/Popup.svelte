@@ -2,9 +2,11 @@
   import { fade } from 'svelte/transition'
   import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
   import Select from '$/components/Select.svelte'
-  import { locale, locales, isLoading } from '$/i18n'
+  import { locale, locales, isLoading, _ } from '$/i18n'
   import Logo from '../assets/logo.svg'
   import Phones from './Phones.svelte'
+
+  $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
 </script>
 
 <h1>

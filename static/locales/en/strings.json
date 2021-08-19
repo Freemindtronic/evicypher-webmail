@@ -60,5 +60,6 @@
   "are-you-sure": "Are you sure?",
   "this-mail-is-not-encrypted": "This mail is not encrypted",
   "encrypt": "Encrypt",
-  "decrypt": "Decrypt"
+  "decrypt": "Decrypt",
+  "ltr": "ltr"
 }

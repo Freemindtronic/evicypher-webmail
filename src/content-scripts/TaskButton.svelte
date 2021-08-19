@@ -81,6 +81,7 @@
   }}
   bind:this={button}
   class:button={true}
+  dir={$_('ltr')}
   {...$$restProps}
 >
   <slot />
@@ -102,7 +103,7 @@
   {/if}
 </button>
 
-<div bind:this={tippyElement} class="tooltip">
+<div bind:this={tippyElement} class="tooltip" dir={$_('ltr')}>
   {#if promise === undefined}
     {idleTooltip}
   {:else}
