@@ -50,6 +50,16 @@ export default [
     plugins: [svelte(config(production)), css({ output: 'popup.css' })],
   },
   {
+    input: 'src/zeroconf-unavailable/main.ts',
+    output: {
+      file: 'build/zeroconf-unavailable.js',
+    },
+    plugins: [
+      svelte(config(production)),
+      css({ output: 'zeroconf-unavailable.css' }),
+    ],
+  },
+  {
     input: 'src/evifile/main.ts',
     output: {
       file: 'build/evifile.js',

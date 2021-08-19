@@ -47,5 +47,11 @@
   "this-mail-is-not-encrypted": "Ce message n'est pas chiffré",
   "encrypt": "Chiffrer",
   "decrypt": "Déchiffrer",
-  "ltr": "ltr"
+  "ltr": "ltr",
+  "download-the-latest-version-of-evidns": "Télécharger la dernière version d'EviDNS.",
+  "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail ne trouve pas EviDNS sur votre système ; assurez-vous que ces deux logiciels sont installés et à jour. Vous pouvez télécharger EviDNS avec le lien ci-dessous.",
+  "evidns": "EviDNS",
+  "evidns-is-not-properly-installed": "EviDNS n'est pas installé correctement",
+  "is-a-software-that-allows": "est un logiciel qui permet d'appairer EviCypher Webmail et des téléphones sans configuration. Il marche en réseau local et permet l'appariement sans serveur central, ce qui rend EviCypher Webmail plus sécurisé que les solutions centralisées.",
+  "restart-your-browser-after-installing-evidns": "Redémarrez votre navigateur après avoir installé EviDNS."
 }

@@ -47,5 +47,11 @@
   "this-mail-is-not-encrypted": "This mail is not encrypted",
   "encrypt": "Encrypt",
   "decrypt": "Decrypt",
-  "ltr": "ltr"
+  "ltr": "ltr",
+  "evidns-is-not-properly-installed": "EviDNS is not properly installed",
+  "evidns": "EviDNS",
+  "is-a-software-that-allows": "is a software that allows EviCypher Webmail and phones to connect without configuration. It works on local networks and allows pairing without the need for a central server, making EviCypher Webmail more secure than other centralized solutions.",
+  "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail cannot find EviDNS on your system; please make sure both softwares are installed and up-to-date. You can download EviDNS with the link below.",
+  "restart-your-browser-after-installing-evidns": "Restart your browser after installing EviDNS.",
+  "download-the-latest-version-of-evidns": "Download the latest version of EviDNS."
 }
