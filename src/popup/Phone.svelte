@@ -82,10 +82,7 @@
       content: $_('last-seen-timeago', {
         values: { date: $timeago($phone.lastSeen, $time) },
       }),
-    }}
-    >({#if $time && $phone.isOnline}{$_('online')}{:else}{$_(
-        'offline'
-      )}{/if})</span
+    }}>({$time && $phone.isOnline ? $_('online') : $_('offline')})</span
   >
 </span>
 
