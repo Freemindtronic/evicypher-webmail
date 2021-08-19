@@ -1,14 +1,14 @@
-*This page is available in French only for now.*
+_This page is available in French only for now._
 
 # Traduire l'extension EviCypher Webmail
 
-On appelle *internationalization* (abrégé *i18n*) le fait de développer une application compatible avec différentes langues et régions. Le processus comprend la traduction de l'interface graphique, mais aussi l'utilisation de la monaie locale, du format usuel de dates et d'adresses, etc.
+On appelle _internationalization_ (abrégé _i18n_) le fait de développer une application compatible avec différentes langues et régions. Le processus comprend la traduction de l'interface graphique, mais aussi l'utilisation de la monaie locale, du format usuel de dates et d'adresses, etc.
 
-L'extension EviCypher webmail a été conçue avec ces contraintes en tête, ce qui permet l'ajout d'une langue ou d'une région sans modification *majeure* du code.
+L'extension EviCypher webmail a été conçue avec ces contraintes en tête, ce qui permet l'ajout d'une langue ou d'une région sans modification _majeure_ du code.
 
 ## Pour les traducteurs
 
-EviCypher Webmail utilise un format conventionnel pour ses fichiers de traduction : du JSON clé-valeur. Les clés sont des identifiants uniques écrits en *kebab-case*, et les valeurs sont les traductions affichées. Il existes de [nombreux logiciels](https://alternativeto.net/software/po-editor/) pour éditer ces fichiers avec une interface graphique, la suite de cette documentation est illustrée avec des captures de l'un de ces logiciels : [POEditor](https://poeditor.com/). En version gratuire, POEditor accepte de charger 1 000 traductions, ce qui est suffisant pour nos besoins pour l'instant. [Tarifs de POEditor.](https://github.com/marketplace/poeditor/)
+EviCypher Webmail utilise un format conventionnel pour ses fichiers de traduction : du JSON clé-valeur. Les clés sont des identifiants uniques écrits en _kebab-case_, et les valeurs sont les traductions affichées. Il existes de [nombreux logiciels](https://alternativeto.net/software/po-editor/) pour éditer ces fichiers avec une interface graphique, la suite de cette documentation est illustrée avec des captures de l'un de ces logiciels : [POEditor](https://poeditor.com/). En version gratuire, POEditor accepte de charger 1 000 traductions, ce qui est suffisant pour nos besoins pour l'instant. [Tarifs de POEditor.](https://github.com/marketplace/poeditor/)
 
 ### Créer un projet POEditor
 
@@ -32,11 +32,11 @@ On remarque que POEditor détecte automatique le format des fichiers de traducti
 
 **POEditor fonctionne en important d'abord les clés puis les valeurs.**
 
-Une fois toutes les langues ajoutées et reliées à un fichier du dépôt, il faut importer les clés. Pour chaque fichier chargé, cliquer sur *Get terms*.
+Une fois toutes les langues ajoutées et reliées à un fichier du dépôt, il faut importer les clés. Pour chaque fichier chargé, cliquer sur _Get terms_.
 
 ![image](https://user-images.githubusercontent.com/48261497/130033789-93038a2a-b051-4e29-8640-dc13311adcff.png)
 
-Une fois les clés chargées, il faut importer les traductions existantes. (Cocher *overwrite existing translations*, les fichiers du dépôt font foi.)
+Une fois les clés chargées, il faut importer les traductions existantes. (Cocher _overwrite existing translations_, les fichiers du dépôt font foi.)
 
 ![image](https://user-images.githubusercontent.com/48261497/130033353-d1a6c9c0-5b91-4469-8772-07be873d1cc6.png)
 
@@ -52,7 +52,7 @@ Revenir à l'accueil du projet.
 
 ### Traduire
 
-**Toujours commencer une session de traduction par importer les clés puis les valeurs** (étapes *Get terms* et *Import translations from GitHub* détaillées au dessus), pour mettre à jour la base de données de POEditor. Ce sont les fichiers du dépôt qui font foi, et ils peuvent être édités par d'autres outils.
+**Toujours commencer une session de traduction par importer les clés puis les valeurs** (étapes _Get terms_ et _Import translations from GitHub_ détaillées au dessus), pour mettre à jour la base de données de POEditor. Ce sont les fichiers du dépôt qui font foi, et ils peuvent être édités par d'autres outils.
 
 L'interface de traduction s'affiche en cliquant sur une langue.
 
@@ -64,7 +64,7 @@ L'interface de traduction s'affiche en cliquant sur une langue.
 
 **La traduction n'est pas effective tant que les fichiers du dépôts ne sont pas mis à jour.**
 
-Sur la même page que pour importer les traductions de GitHub, il est possible d'y exporter les traductions mises à jours. Sélectionnés les langues éditées, et cliquer sur *Go*.
+Sur la même page que pour importer les traductions de GitHub, il est possible d'y exporter les traductions mises à jours. Sélectionnés les langues éditées, et cliquer sur _Go_.
 
 ![image](https://user-images.githubusercontent.com/48261497/130036052-2b454c8e-304c-4bf5-9078-3b02422f0402.png)
 
@@ -86,7 +86,7 @@ Au survol d'une clé, les traductions faites et à faire s'affichent. Cliquer su
 
 ### Ajouter une clé
 
-Sélectionner du texte dans un fichier Svelte et cliquer sur 💡, puis 🌍 *Extract text into i18n messages*.
+Sélectionner du texte dans un fichier Svelte et cliquer sur 💡, puis 🌍 _Extract text into i18n messages_.
 
 ![image](https://user-images.githubusercontent.com/48261497/130037280-9a2ecb92-cdf2-48fb-a402-f0d45aa3f073.png)
 

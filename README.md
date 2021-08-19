@@ -79,6 +79,7 @@ Here is a high-level overview of the repository structure:
 - **README.md**: _This file._
 - **rollup.config.js**: [Rollup](https://rollupjs.org/) (bundler) configuration file.
 - **svelte.config.js**: [Svelte](https://svelte.dev/) (front-end framework) configuration file.
+- **TRANSLATE.md**: instructions for updating translations.
 - **tsconfig.json**: [TypeScript](https://www.typescriptlang.org/) configuration file.
 - **types.d.ts**: Custom type definitions.
 - **yarn.lock**: [Yarn](https://yarnpkg.com/) lock file.
