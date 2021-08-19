@@ -84,7 +84,6 @@
   dir={$_('ltr')}
   {...$$restProps}
 >
-  <slot />
   {#if promise === undefined}
     <svelte:component this={IdleIcon} width="16" height="16" />
   {:else}
@@ -101,6 +100,7 @@
       <FailedIcon width="16" height="16" />
     {/await}
   {/if}
+  <slot />
 </button>
 
 <div bind:this={tippyElement} class="tooltip" dir={$_('ltr')}>
