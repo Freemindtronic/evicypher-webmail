@@ -20,37 +20,41 @@ import { removeJamming } from '$/legacy-code/cryptography/jamming'
 import { random, sha512, xor } from '$/legacy-code/utils'
 import { Reporter, State } from '$/report'
 
-type Serialize<T> = {
-  readonly [K in keyof T]: string
-}
-
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
   `http://${ip}:${port}${type}`
 
-// `serialize` and `unserialize` are almost symmetic, but serialize converts
-// to URLSearchParams whereas unserialize converts from a JSON object.
-// There is probably a better way to do this, especially with two distincts
-// generic types.
-function serialize<T>(obj: T): Serialize<T> {
-  return Object.fromEntries(
+/**
+ * Converts a request object to an HTTP body object. For some unknown reasons,
+ * requests are URL-encoded, but responses are in JSON.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+const toURLSearchParams = (obj: object): URLSearchParams =>
+  new URLSearchParams(
     Object.entries(obj).map(([key, value]) => [
       key,
       value instanceof Uint8Array
         ? fromUint8Array(value)
         : `${value as string}`,
     ])
-  ) as Serialize<T>
+  )
+
+type JSONResponse<T> = {
+  readonly [K in keyof T]: string | number
 }
 
-function unserialize<T>(obj: Serialize<T>): T {
-  return Object.fromEntries(
+/**
+ * Converts a JSON-decoded response to a native JavaScript object. Strings are
+ * converted to `Uint8Array`.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
+  Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [
       key,
       typeof value === 'string' ? toUint8Array(value) : value,
     ])
   ) as unknown as T
-}
 
 /**
  * Sends a request to a phone.
@@ -94,7 +98,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // Send a POST request
   const response = await fetch(formatURL(ip, port, type), {
     method: 'POST',
-    body: new URLSearchParams(serialize(data)),
+    body: toURLSearchParams(data),
     signal: controller.signal,
     mode: 'cors',
   })
@@ -102,7 +106,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // If the phone responded with an HTTP error, throw
   throwOnHttpErrors(response)
 
-  const responseData = (await response.json()) as Serialize<ResponseMap[T]>
+  const responseData = (await response.json()) as JSONResponse<ResponseMap[T]>
 
   // @ts-expect-error For some mysterious reason, there is sometimes an
   // `n` field in the response, that contains a boolean (meaning "new"
@@ -110,7 +114,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // and it is not properly documented (ahah), we remove it.
   if (type !== Request.PAIRING_SALT) delete responseData.n
 
-  return unserialize(responseData)
+  return fromJSON(responseData)
 }
 
 /** Filters out responses containing an HTTP error code. */
