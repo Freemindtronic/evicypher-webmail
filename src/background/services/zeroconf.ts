@@ -216,7 +216,7 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
         port,
         type: Request.PING,
         data: { t: $phone.certificate.id },
-        timeout: 2000,
+        timeout: 20_000,
       })
 
       // The phone answered with a 2xx code, that's the right phone
