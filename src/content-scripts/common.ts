@@ -167,6 +167,7 @@ const addDecryptButton = (
 ) => {
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
+  target.style.display = 'block'
   const button = new DecryptButton({
     target,
     props: {
@@ -198,10 +199,7 @@ const addDecryptButton = (
       },
       signal
     ).then((decryptedString) => {
-      frame = displayDecryptedMail(
-        decryptedString,
-        node.parentNode as ParentNode
-      )
+      frame = displayDecryptedMail(decryptedString, target)
     })
   })
 }
@@ -259,12 +257,14 @@ const handleToolbar = (
 }
 
 /** Adds a frame containing a given string. */
-const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
+const displayDecryptedMail = (decryptedString: string, node: HTMLElement) => {
   const frame = document.createElement('iframe')
   Object.assign(frame.style, {
     display: 'block',
     width: '100%',
     maxWidth: '100%',
+    margin: '10px 0px',
+    border: '2px solid #555',
     boxSizing: 'border-box',
   })
 
@@ -272,7 +272,7 @@ const displayDecryptedMail = (decryptedString: string, parent: ParentNode) => {
   // we need a local frame, that we modify once loaded
   frame.src = browser.runtime.getURL('/blank.html')
 
-  parent.append(frame)
+  node.after(frame)
   frame.addEventListener('load', () => {
     if (!frame.contentDocument) throw new Error('Cannot change frame content.')
     // We are injecting raw HTML in a sandboxed environnement,

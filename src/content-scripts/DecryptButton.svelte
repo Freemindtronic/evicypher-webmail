@@ -19,7 +19,7 @@
   bind:report
   bind:promise
   {design}
-  tooltipPlacement="bottom-start"
+  tooltipPlacement="top-start"
   IdleIcon={DecryptIdle}
   idleTooltip={$_('click-to-decrypt-this-message')}
   doneTooltip={$_('click-to-close-the-decrypted-mail')}
