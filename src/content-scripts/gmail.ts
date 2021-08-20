@@ -68,7 +68,14 @@ const handleMailElement = (mailElement: HTMLElement) => {
 const addDecryptButton = (node: Text, encryptedString: string) => {
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
-  const button = new DecryptButton({ target })
+  const button = new DecryptButton({
+    target,
+    props: {
+      report: undefined,
+      promise: undefined,
+      design: 'gmail',
+    },
+  })
   node.before(target)
 
   /** Frame containing the decrypted mail. */
@@ -112,6 +119,11 @@ const handleToolbar = (toolbar: HTMLElement) => {
 
   const button = new EncryptButton({
     target: toolbar,
+    props: {
+      report: undefined,
+      promise: undefined,
+      design: 'gmail',
+    },
   })
 
   const tooltip = tippy(sendButton, {

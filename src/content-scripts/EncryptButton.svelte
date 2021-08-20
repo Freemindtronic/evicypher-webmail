@@ -9,28 +9,23 @@
 
   /** A promise for the state of the process. */
   export let promise: Promise<void> | undefined
+
+  /** Design option. */
+  export let design: 'gmail' | 'outlook' | undefined
 </script>
 
 <!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
 <Button
   bind:report
   bind:promise
+  {design}
   tooltipPlacement="top"
   IdleIcon={EncryptIdle}
   idleTooltip={$_('click-to-encrypt-this-message')}
   doneTooltip={$_('mail-encrypted-successfully-click-to-encrypt-once-again')}
-  class="encrypt-button"
   on:click
   on:abort
+  --margin-left={design === 'gmail' ? '12px' : '0px'}
 >
   {$_('encrypt')}
 </Button>
-
-<style lang="scss">
-  :global(.encrypt-button) {
-    // While `!important` is usually a bad practice, I'd rather not use a
-    // hack to ensure that this css is computed after the one of Button
-    margin-left: 14px !important;
-    padding: 9px !important;
-  }
-</style>

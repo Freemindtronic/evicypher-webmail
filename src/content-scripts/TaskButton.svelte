@@ -16,6 +16,9 @@
   /** A promise for the state of the process. */
   export let promise: Promise<void> | undefined
 
+  /** Button style. */
+  export let design: 'gmail' | 'outlook' | undefined
+
   /** Tootlip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
 
@@ -82,7 +85,8 @@
   bind:this={button}
   class:button={true}
   dir={$_('ltr')}
-  {...$$restProps}
+  class:gmail={design === 'gmail'}
+  class:outlook={design === 'outlook'}
 >
   {#if promise === undefined}
     <svelte:component this={IdleIcon} width="16" height="16" />
@@ -136,31 +140,69 @@
 
   .button {
     all: revert;
-    margin: 2px 5px;
+    margin: 2px 3px;
+    margin-right: var(--margin-right, 5px);
+    margin-left: var(--margin-left, 5px);
     padding: 3px;
     background-color: #fff;
     border: 0;
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 8, 16, 0.7);
-
-    // Enable animations if the user have not disabled them
-    @media (prefers-reduced-motion: no-preference) {
-      transition: box-shadow 0.1s;
-    }
 
     :global(svg),
     :global(img) {
       vertical-align: bottom;
     }
+  }
+
+  .button.gmail {
+    padding: 10px;
+    color: #5f6368;
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial,
+      sans-serif;
+    line-height: 1;
+    box-shadow: inset 0 0 0 1px #dadce0;
 
     &:hover,
     &:focus {
-      box-shadow: 0 2px 6px rgba(0, 8, 16, 0.7);
+      background-color: rgba(32, 33, 36, 0.039);
     }
 
     &:active {
-      box-shadow: 0 1px 2px rgba(0, 8, 16, 0.4),
-        0 1px 2px rgba(0, 8, 16, 0.8) inset;
+      background-color: rgba(32, 33, 36, 0.122);
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+        0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    }
+
+    // Enable animations if the user have not disabled them
+    @media (prefers-reduced-motion: no-preference) {
+      transition: box-shadow 0.5s;
+    }
+  }
+
+  .button.outlook {
+    position: relative;
+    padding: 6px 8px;
+    color: var(--neutralPrimary);
+    font-weight: 400;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system,
+      BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+    background-color: var(--white);
+    border: 1px solid rgb(138, 136, 134);
+    border-radius: 2px;
+    outline: transparent none medium;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: var(--neutralQuaternaryAlt);
+    }
+
+    &:active {
+      background-color: var(--neutralTertiaryAlt);
     }
   }
 
