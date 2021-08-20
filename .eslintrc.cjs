@@ -55,9 +55,12 @@ module.exports = {
     {
       files: ['*.svelte'],
       processor: 'svelte3/svelte3',
-      // This is not yet possible to enable some rules, see
-      // https://github.com/sveltejs/eslint-plugin-svelte3/issues/89
       rules: {
+        // Setting a variable to undefined is not the same thing as leaving the declaration empty
+        'no-undef-init': 'off',
+        'unicorn/no-useless-undefined': 'off',
+        // This is not yet possible to enable some typed rules, see
+        // https://github.com/sveltejs/eslint-plugin-svelte3/issues/89
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',

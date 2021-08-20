@@ -5,13 +5,13 @@
   import DecryptIdle from './assets/decrypt.svg'
 
   /** Tooltip content. */
-  export let report: Report | undefined
+  export let report: Report | undefined = undefined
 
   /** A promise for the state of the process. */
-  export let promise: Promise<void> | undefined
+  export let promise: Promise<void> | undefined = undefined
 
   /** Design option. */
-  export let design: 'gmail' | 'outlook' | undefined
+  export let design: 'gmail' | 'outlook' | undefined = undefined
 </script>
 
 <!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->

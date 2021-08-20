@@ -11,13 +11,13 @@
   import FailedIcon from './assets/failed.svg'
 
   /** Tooltip content. */
-  export let report: Report | undefined
+  export let report: Report | undefined = undefined
 
   /** A promise for the state of the process. */
-  export let promise: Promise<void> | undefined
+  export let promise: Promise<void> | undefined = undefined
 
   /** Button style. */
-  export let design: 'gmail' | 'outlook' | undefined
+  export let design: 'gmail' | 'outlook' | undefined = undefined
 
   /** Tootlip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement

@@ -170,11 +170,7 @@ const addDecryptButton = (
   target.style.display = 'block'
   const button = new DecryptButton({
     target,
-    props: {
-      report: undefined,
-      promise: undefined,
-      design,
-    },
+    props: { design },
   })
   node.before(target)
 
@@ -219,11 +215,7 @@ const handleToolbar = (
 
   const button = new EncryptButton({
     target: toolbar,
-    props: {
-      report: undefined,
-      promise: undefined,
-      design,
-    },
+    props: { design },
   })
 
   const tooltip = tippy(sendButton, {
