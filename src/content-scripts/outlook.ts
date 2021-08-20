@@ -13,7 +13,7 @@ const selectors = {
   TOOLBAR: '._2ELnTBajF7jzj_m_hoj3Xt',
   MAIL_EDITOR: '._17WvdmDfhREFqBNvlLv75X',
   EDITOR_CONTENT: '[contenteditable]',
-  SEND_BUTTON: '.css-373',
+  SEND_BUTTON: '._3BlbI7rjg2J-d7fY98r7tp',
 }
 
 // Enable logging in the page console (not the extension console)
