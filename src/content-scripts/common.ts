@@ -205,13 +205,13 @@ const handleToolbar = (
   toolbar: HTMLElement,
   { selectors, design }: Options
 ) => {
-  if (FLAG in toolbar.dataset) return
-  toolbar.dataset[FLAG] = '1'
-
   const editor = toolbar.closest(selectors.MAIL_EDITOR)
   const mail = editor?.querySelector(selectors.EDITOR_CONTENT)
   const sendButton = editor?.querySelector<HTMLElement>(selectors.SEND_BUTTON)
   if (!editor || !mail || !sendButton) return
+
+  if (FLAG in toolbar.dataset) return
+  toolbar.dataset[FLAG] = '1'
 
   const button = new EncryptButton({
     target: toolbar,
