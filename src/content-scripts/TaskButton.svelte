@@ -140,9 +140,9 @@
 
   .button {
     all: revert;
-    margin: 2px 3px;
-    margin-right: var(--margin-right, 5px);
-    margin-left: var(--margin-left, 5px);
+    margin: 2px;
+    margin-right: var(--margin-right, 2px);
+    margin-left: var(--margin-left, 2px);
     padding: 3px;
     background-color: #fff;
     border: 0;
