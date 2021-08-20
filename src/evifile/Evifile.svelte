@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Report } from '$/report'
   import Dropzone from 'dropzone'
+  import { browser } from 'webextension-polyfill-ts'
   import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
   import { ExtensionError } from '$/error'
   import { isLoading, translateError, translateReport, _ } from '$/i18n'
@@ -153,6 +154,12 @@
     {:else}
       {#await backgroundTask}
         <p>
+          <img
+            src={browser.runtime.getURL('/loading.gif')}
+            alt={$_('loading')}
+            width="16"
+            height="16"
+          />
           {#if tip === undefined}
             {$_('loading')}
           {:else}
