@@ -9,6 +9,8 @@ import svelte from 'rollup-plugin-svelte'
 import { svelteSVG } from 'rollup-plugin-svelte-svg'
 import { config } from './svelte.config'
 
+import webmails from './webmails.json'
+
 const production = !process.env.ROLLUP_WATCH
 
 /** Plugins used for all files. */
@@ -66,7 +68,7 @@ export default [
     },
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
-  ...['gmail', 'outlook'].map((webmail) => ({
+  ...Object.keys(webmails).map((webmail) => ({
     input: `src/content-scripts/${webmail}.ts`,
     output: {
       file: `build/content-script-${webmail}.js`,

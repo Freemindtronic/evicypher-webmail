@@ -1,6 +1,9 @@
 /* eslint-disable camelcase */
-import { writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const webmails = JSON.parse(readFileSync('./webmails.json'))
 
 /** A dynamically generated manifest, to keep the version number consistent. */
 export const manifest = {
@@ -20,16 +23,11 @@ export const manifest = {
   browser_action: {
     default_popup: 'popup.html',
   },
-  content_scripts: [
-    {
-      matches: ['https://mail.google.com/mail/*'],
-      js: ['content-script-gmail.js'],
-    },
-    {
-      matches: ['https://outlook.live.com/mail/*'],
-      js: ['content-script-outlook.js'],
-    },
-  ],
+  content_scripts: Object.entries(webmails).map(([key, matches]) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    matches,
+    js: [`content-script-${key}.js`],
+  })),
   browser_specific_settings: {
     gecko: {
       id: 'evicypher-webmail@freemindtronic.com',

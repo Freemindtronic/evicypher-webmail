@@ -1,0 +1,4 @@
+{
+  "gmail": ["https://mail.google.com/mail/*"],
+  "outlook": ["https://outlook.live.com/mail/*"]
+}
