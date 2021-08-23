@@ -215,5 +215,10 @@
     width: max-content;
     max-width: 100%;
     white-space: pre-line;
+
+    > :global(button) {
+      // Keep the button on a single line
+      flex-shrink: 0;
+    }
   }
 </style>
