@@ -1,4 +1,5 @@
 {
   "gmail": ["https://mail.google.com/mail/*"],
-  "outlook": ["https://outlook.live.com/mail/*"]
+  "outlook": ["https://outlook.live.com/mail/*"],
+  "yahoo": ["https://mail.yahoo.com/*"]
 }
