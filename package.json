@@ -111,7 +111,7 @@
     "*.{css,scss,svelte}": "stylelint --fix",
     "*.{js,cjs,ts,css,scss,html,svelte,json,md,yml}": "prettier --write"
   },
-  "packageManager": "yarn@3.0.0",
+  "packageManager": "yarn@3.0.1",
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
