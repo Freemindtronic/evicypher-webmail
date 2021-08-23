@@ -66,10 +66,10 @@ export default [
     },
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
-  {
-    input: 'src/content-scripts/gmail.ts',
+  ...['gmail', 'outlook'].map((webmail) => ({
+    input: `src/content-scripts/${webmail}.ts`,
     output: {
-      file: 'build/content-script-gmail.js',
+      file: `build/content-script-${webmail}.js`,
     },
     plugins: [
       svelte({
@@ -77,19 +77,7 @@ export default [
         emitCss: false,
       }),
     ],
-  },
-  {
-    input: 'src/content-scripts/outlook.ts',
-    output: {
-      file: 'build/content-script-outlook.js',
-    },
-    plugins: [
-      svelte({
-        ...config(production),
-        emitCss: false,
-      }),
-    ],
-  },
+  })),
 ].map((entry) => ({
   ...entry,
   output: {
