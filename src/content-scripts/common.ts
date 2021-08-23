@@ -5,6 +5,7 @@
  */
 
 import type { Report, Reporter } from '$/report'
+import type { Design } from './design'
 import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -28,8 +29,6 @@ export interface Selectors {
   /** Send button. A tooltip is added to the button if the mail written is not encrypted. */
   send: string
 }
-
-export type Design = 'gmail' | 'outlook' | undefined
 
 export interface Options {
   selectors: Selectors

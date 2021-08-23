@@ -9,6 +9,7 @@
   import { translateError, translateReport, _ } from '$/i18n'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
+  import { Design } from './design'
 
   /** Tooltip content. */
   export let report: Report | undefined = undefined
@@ -17,7 +18,7 @@
   export let promise: Promise<void> | undefined = undefined
 
   /** Button style. */
-  export let design: 'gmail' | 'outlook' | undefined = undefined
+  export let design: Design = Design.None
 
   /** Tootlip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
@@ -84,9 +85,8 @@
   }}
   bind:this={button}
   class:button={true}
+  class={design}
   dir={$_('ltr')}
-  class:gmail={design === 'gmail'}
-  class:outlook={design === 'outlook'}
 >
   {#if promise === undefined}
     <svelte:component this={IdleIcon} width="16" height="16" />
@@ -162,6 +162,7 @@
     font-family: 'Google Sans', Roboto, RobotoDraft, Helvetica, Arial,
       sans-serif;
     line-height: 1;
+    background-color: #fff;
     box-shadow: inset 0 0 0 1px #dadce0;
 
     &:hover,
@@ -203,6 +204,27 @@
 
     &:active {
       background-color: var(--neutralTertiaryAlt);
+    }
+  }
+
+  .button.yahoo {
+    padding: 10px 20px;
+    color: #188fff;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px currentColor;
+
+    &:hover,
+    &:focus {
+      color: rgb(0, 58, 188);
+      background-color: rgb(224, 228, 233);
+    }
+
+    &:hover {
+      background-color: #fff;
     }
   }
 

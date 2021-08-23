@@ -3,6 +3,7 @@
   import { _ } from '$/i18n'
   import Button from './TaskButton.svelte'
   import EncryptIdle from './assets/encrypt.svg'
+  import { Design } from './design'
 
   /** Tooltip content. */
   export let report: Report | undefined = undefined
@@ -11,7 +12,7 @@
   export let promise: Promise<void> | undefined = undefined
 
   /** Design option. */
-  export let design: 'gmail' | 'outlook' | undefined = undefined
+  export let design: Design = Design.None
 </script>
 
 <!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
