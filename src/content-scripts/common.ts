@@ -14,11 +14,19 @@ import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 
 export interface Selectors {
-  MAIL_CONTENT: string
-  TOOLBAR: string
-  MAIL_EDITOR: string
-  EDITOR_CONTENT: string
-  SEND_BUTTON: string
+  /**
+   * Mail element. All mail elements are processed to find encrypted text. If a
+   * mail contains encrypted text, a Decrypt button is added.
+   */
+  mail: string
+  /** Editor toolbar, where the Encrypt button will be added. */
+  toolbar: string
+  /** Mail editor. */
+  editor: string
+  /** Mail editor content. */
+  editorContent: string
+  /** Send button. A tooltip is added to the button if the mail written is not encrypted. */
+  send: string
 }
 
 export type Design = 'gmail' | 'outlook' | undefined
@@ -205,9 +213,9 @@ const handleToolbar = (
   toolbar: HTMLElement,
   { selectors, design }: Options
 ) => {
-  const editor = toolbar.closest(selectors.MAIL_EDITOR)
-  const mail = editor?.querySelector(selectors.EDITOR_CONTENT)
-  const sendButton = editor?.querySelector<HTMLElement>(selectors.SEND_BUTTON)
+  const editor = toolbar.closest(selectors.editor)
+  const mail = editor?.querySelector(selectors.editorContent)
+  const sendButton = editor?.querySelector<HTMLElement>(selectors.send)
   if (!editor || !mail || !sendButton) return
 
   if (FLAG in toolbar.dataset) return
@@ -285,13 +293,13 @@ const displayDecryptedMail = (decryptedString: string, node: HTMLElement) => {
 const handleMutations = (options: Options) => {
   // The user opens a mail
   const mails = document.body.querySelectorAll<HTMLElement>(
-    options.selectors.MAIL_CONTENT
+    options.selectors.mail
   )
   for (const mail of mails) handleMailElement(mail, options)
 
   // The user starts writing a mail
   const toolbars = document.body.querySelectorAll<HTMLElement>(
-    options.selectors.TOOLBAR
+    options.selectors.toolbar
   )
   for (const toolbar of toolbars) handleToolbar(toolbar, options)
 }

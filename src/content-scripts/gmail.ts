@@ -5,15 +5,15 @@
  */
 
 import { debug } from 'debug'
-import { observe } from './common'
+import { observe, Selectors } from './common'
 
 /** Selectors for interesting HTML Elements of Gmail. */
-const selectors = {
-  MAIL_CONTENT: '.a3s.aiL',
-  TOOLBAR: '.J-J5-Ji.btA',
-  MAIL_EDITOR: '.iN',
-  EDITOR_CONTENT: '[contenteditable]',
-  SEND_BUTTON: '.T-I.J-J5-Ji.aoO.v7.T-I-atl.L3',
+const selectors: Selectors = {
+  mail: '.a3s.aiL',
+  toolbar: '.J-J5-Ji.btA',
+  editor: '.iN',
+  editorContent: '[contenteditable]',
+  send: '.T-I.J-J5-Ji.aoO.v7.T-I-atl.L3',
 }
 
 // Enable logging in the page console (not the extension console)

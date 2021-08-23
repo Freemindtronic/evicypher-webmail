@@ -5,15 +5,15 @@
  */
 
 import { debug } from 'debug'
-import { observe } from './common'
+import { observe, Selectors } from './common'
 
 /** Selectors for interesting HTML Elements of Outlook. */
-const selectors = {
-  MAIL_CONTENT: '.QMubUjbS-BOly_BTHEZj7',
-  TOOLBAR: '._2ELnTBajF7jzj_m_hoj3Xt',
-  MAIL_EDITOR: '._17WvdmDfhREFqBNvlLv75X',
-  EDITOR_CONTENT: '[contenteditable]',
-  SEND_BUTTON: '._3BlbI7rjg2J-d7fY98r7tp',
+const selectors: Selectors = {
+  mail: '.QMubUjbS-BOly_BTHEZj7',
+  toolbar: '._2ELnTBajF7jzj_m_hoj3Xt',
+  editor: '._17WvdmDfhREFqBNvlLv75X',
+  editorContent: '[contenteditable]',
+  send: '._3BlbI7rjg2J-d7fY98r7tp',
 }
 
 // Enable logging in the page console (not the extension console)
