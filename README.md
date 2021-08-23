@@ -17,8 +17,8 @@ This extension is in four parts:
 
 - A background script, [background/main.ts](./src/background/main.ts), that runs in the background and communicates with phones and other devices.
 - A popup, [popup/Popup.svelte](./src/popup/Popup.svelte), that is displayed when the user clicks on the extension icon.
-- Several content scripts, (only one at this time: [content-scripts/gmail.ts](./src/content-scripts/gmail.ts)), that are injected into the pages they target.
-- Additional pages (only one at this time: [evifile/Evifile.svelte](./src/evifile/Evifile.svelte)), to provide common features.
+- Several content scripts, (currently: [content-scripts/gmail.ts](./src/content-scripts/gmail.ts) and [content-scripts/outlook.ts](./src/content-scripts/outlook.ts)), that are injected into the pages they target.
+- Additional pages (currently: [evifile/Evifile.svelte](./src/evifile/Evifile.svelte) and [zeroconf-unavailable/ZeroconfUnavailable.svelte](./src/zeroconf-unavailable/ZeroconfUnavailable.svelte)), to provide common features.
 
 Both tasks and services are running in the background, but they are two different kinds of work:
 
