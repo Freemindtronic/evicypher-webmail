@@ -55,6 +55,9 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.PhoneNameUndefined:
       return $_('phone-name-undefined')
 
+    case ErrorMessage.PrivateKeyIncorrectPassphrase:
+      return $_('the-passphrase-provided-is-incorrect')
+
     case ErrorMessage.RefuseOnPhone:
       return $_('refused-on-phone')
 
