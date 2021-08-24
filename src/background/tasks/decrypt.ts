@@ -35,15 +35,14 @@ import { State } from '$/report'
  * @param signal - An abort signal
  * @returns The decrypted string
  */
-export const decrypt: BackgroundTask<undefined, string, string> =
-  async function* () {
+export const decrypt: BackgroundTask<string | undefined, string, string> =
+  async function* (_context, _reporter, _signal) {
     const armoredMessage = yield
 
     const message = await readMessage({ armoredMessage })
 
-    const privateKey = await decryptKey({
-      privateKey: await readPrivateKey({
-        armoredKey: `-----BEGIN PGP PRIVATE KEY BLOCK-----
+    const encryptedKey = await readPrivateKey({
+      armoredKey: `-----BEGIN PGP PRIVATE KEY BLOCK-----
 
 lQWGBGEk0u0BDAC91yw37xKn04aTNeakDf8ywfTh9m4qyx3si9YRKTBQxyw2fEFw
 vOoocxzPZ0burcwbde+JWM02yGULwDF1hOrwY4Ig4USbVoxTQUMUiX0KiJVJxxKY
@@ -127,13 +126,23 @@ q55w0d6ElJs3NdwQ13YYcG3Kl2jC4/9YUhIl2sINlpgOeWTljcHTDhkSho9dVGXn
 lnVcu+64ysZ2+V08koUUhWbnQ4A=
 =ndN0
 -----END PGP PRIVATE KEY BLOCK-----`,
-      }),
-      passphrase: yield, // Note: the passphrase is "test"
     })
 
-    const decrypted = await decryptText({ message, decryptionKeys: privateKey })
+    try {
+      const privateKey = await decryptKey({
+        privateKey: encryptedKey,
+        // Note: the passphrase is "test"
+        passphrase: yield encryptedKey.getUserIDs().join(''),
+      })
 
-    return decrypted.data
+      const decrypted = await decryptText({
+        message,
+        decryptionKeys: privateKey,
+      })
+      return decrypted.data
+    } catch {
+      throw new ExtensionError(ErrorMessage.PrivateKeyIncorrectPassphrase)
+    }
   }
 
 /**

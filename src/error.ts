@@ -16,6 +16,7 @@ export enum ErrorMessage {
   FileNotRecognized = 'File not recognized.',
   MailContentUndefined = 'Mail content undefined.',
   PhoneNameUndefined = 'Phone name undefined.',
+  PrivateKeyIncorrectPassphrase = 'Incorrect passphrase for the private key.',
   RefuseOnPhone = 'Phone refused.',
   RequestTimeout = 'Request timeout.',
   TooManyAttempts = 'Too many attempts.',
