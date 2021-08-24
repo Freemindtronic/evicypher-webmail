@@ -263,17 +263,21 @@ const handleToolbar = (
     button.$set({ report: undefined })
 
     // Encrypt and replace
-    return encryptString(
+    const encryptedString = await encryptString(
       // Use innerHTML instead of textContent to support rich text
       mail.innerHTML,
       (report: Report) => {
         button.$set({ report })
       },
       signal
-    ).then((encryptedString) => {
-      mail.textContent = encryptedString
-      tooltip.destroy()
-    })
+    )
+
+    // Place the encrypted text un a preformatted text element
+    const pre = document.createElement('pre')
+    pre.append(encryptedString)
+    mail.innerHTML = ''
+    mail.append(pre)
+    tooltip.destroy()
   })
 }
 
