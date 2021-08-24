@@ -341,6 +341,8 @@
     align-items: center;
     width: max-content;
     max-width: 100%;
+    font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Ubuntu',
+      'Cantarell', 'Noto Sans', sans-serif;
     white-space: pre-line;
 
     // stylelint-disable-next-line no-descending-specificity
