@@ -32,6 +32,7 @@
     "dropzone": "^5.9.2",
     "javascript-time-ago": "^2.3.8",
     "js-base64": "^3.6.1",
+    "openpgp": "^5.0.0-6",
     "parcel": "^2.0.0-rc.0",
     "postcss": "^8.3.6",
     "qrcode": "^1.4.4",
@@ -151,7 +152,8 @@
     }
   },
   "alias": {
-    "$": "./src"
+    "$": "./src",
+    "openpgp": "openpgp/dist/openpgp.mjs"
   },
   "type": "module",
   "volta": {
