@@ -15,6 +15,8 @@ const selectors: Selectors = {
   editor: '.em_N.D_F.ek_BB.p_R.o_h',
   editorContent: '[contenteditable]',
   send: '.q_Z2aVTcY.e_dRA.k_w.r_P.H_6VdP.s_3mS2U.en_0.M_1gLo4F.V_M.cZ1RN91d_n.y_Z2hYGcu.A_6EqO.u_e69.b_0.C_52qC.I4_Z29WjXl.ir3_1JO2M7.it3_dRA',
+  encryptButtonSibling:
+    '.q_Z2aVTcY.e_dRA.k_w.r_P.H_6VdP.s_3mS2U.en_0.M_1gLo4F.V_M.cZ1RN91d_n.y_Z2hYGcu.A_6EqO.u_e69.b_0.C_52qC.I4_Z29WjXl.ir3_1JO2M7.it3_dRA',
 }
 
 // Enable logging in the page console (not the extension console)

@@ -28,6 +28,11 @@ export interface Selectors {
   editorContent: string
   /** Send button. A tooltip is added to the button if the mail written is not encrypted. */
   send: string
+  /**
+   * Place the encryption button right after this element. If not defined, place
+   * it at the end of the toolbar.
+   */
+  encryptButtonSibling?: string
 }
 
 export interface Options {
@@ -207,6 +212,16 @@ const addDecryptButton = (
   })
 }
 
+/** Returns the element to place the encrytion button after. */
+const encryptButtonSibling = (
+  { encryptButtonSibling }: Selectors,
+  toolbar: Element,
+  editor: Element | null
+) =>
+  encryptButtonSibling === undefined
+    ? toolbar.lastChild
+    : editor?.querySelector(encryptButtonSibling)
+
 /** Adds an encryption button in the toolbar. */
 const handleToolbar = (
   toolbar: HTMLElement,
@@ -214,16 +229,19 @@ const handleToolbar = (
 ) => {
   const editor = toolbar.closest(selectors.editor)
   const mail = editor?.querySelector(selectors.editorContent)
-  const sendButton = editor?.querySelector<HTMLElement>(selectors.send)
-  if (!editor || !mail || !sendButton) return
+  const sendButton = editor?.querySelector(selectors.send)
+  const node = encryptButtonSibling(selectors, toolbar, editor)
+  if (!editor || !mail || !sendButton || !node) return
 
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
 
+  const target = document.createElement('span')
   const button = new EncryptButton({
-    target: toolbar,
+    target,
     props: { design },
   })
+  node.after(target)
 
   const tooltip = tippy(sendButton, {
     theme: 'light-border',
