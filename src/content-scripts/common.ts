@@ -74,6 +74,8 @@ export const decryptString = async (
       // Suspend the foreground task until the background task asks for a string
       yield
       yield string
+      // eslint-disable-next-line no-alert
+      yield prompt() ?? ''
     },
     {
       reporter,
@@ -83,15 +85,17 @@ export const decryptString = async (
 
 /** @returns Whether the given string contains a known encryption header */
 export const containsEncryptedText = (string: string): boolean =>
-  string.includes('AAAAF')
+  string.includes('-----BEGIN PGP MESSAGE-----') &&
+  string.includes('-----END PGP MESSAGE-----')
 
 /** @returns Whether the given string is encrypted */
 export const isEncryptedText = (string: string): boolean =>
-  string.trimStart().startsWith('AAAAF')
+  string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
 
 /** @returns A trimmed encrypted message */
 export const extractEncryptedString = (string: string): string => {
-  const extracted = /AAAAF\S*/s.exec(string)?.[0]
+  const extracted =
+    /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(string)?.[0]
   if (!extracted) throw new Error('No encrypted string found to extract.')
   return extracted
 }
