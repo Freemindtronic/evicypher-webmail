@@ -24,6 +24,7 @@
   IdleIcon={DecryptIdle}
   idleTooltip={$_('click-to-decrypt-this-message')}
   doneTooltip={$_('click-to-close-the-decrypted-mail')}
+  task="decrypt"
   on:click
   on:abort
 >
