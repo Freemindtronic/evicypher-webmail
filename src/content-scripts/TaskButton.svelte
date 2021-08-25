@@ -32,6 +32,9 @@
   /** Tooltip content when the task completed successfully. */
   export let doneTooltip: string
 
+  /** Additional class. */
+  export let task = ''
+
   let button: HTMLButtonElement
   let tippyElement: HTMLElement
   let tippyInstance: Instance | undefined
@@ -85,7 +88,7 @@
   }}
   bind:this={button}
   class:button={true}
-  class={design}
+  class="{design} {task}"
   dir={$_('ltr')}
 >
   {#if promise === undefined}
@@ -140,13 +143,6 @@
 
   .button {
     all: revert;
-    margin: 2px;
-    margin-right: var(--margin-right, 2px);
-    margin-left: var(--margin-left, 2px);
-    padding: 3px;
-    background-color: #fff;
-    border: 0;
-    border-radius: 4px;
 
     :global(svg),
     :global(img) {
@@ -163,6 +159,8 @@
       sans-serif;
     line-height: 1;
     background-color: #fff;
+    border: 0;
+    border-radius: 4px;
     box-shadow: inset 0 0 0 1px #dadce0;
 
     &:hover,
@@ -174,6 +172,14 @@
       background-color: rgba(32, 33, 36, 0.122);
       box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
         0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    }
+
+    &.decrypt {
+      margin: 8px 3px;
+    }
+
+    &.encrypt {
+      margin-left: 8px;
     }
 
     // Enable animations if the user have not disabled them
@@ -191,6 +197,7 @@
     font-size: 14px;
     font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system,
       BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+    line-height: 1.28571;
     background-color: var(--white);
     border: 1px solid rgb(138, 136, 134);
     border-radius: 2px;
@@ -205,6 +212,14 @@
     &:active {
       background-color: var(--neutralTertiaryAlt);
     }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      margin-inline-end: 12px;
+    }
   }
 
   .button.yahoo {
@@ -214,6 +229,7 @@
     font-size: 13px;
     line-height: 1;
     background-color: #fff;
+    border: 0;
     border-radius: 2px;
     box-shadow: inset 0 0 0 1px currentColor;
 
@@ -225,6 +241,57 @@
 
     &:hover {
       background-color: #fff;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      margin: 16px 16px 16px 0;
+    }
+  }
+
+  .button.old-outlook {
+    margin: 0;
+    margin-right: 10px;
+    padding: 0 20px;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: 'wf_segoe-ui_semibold', 'Segoe UI Semibold',
+      'Segoe WP Semibold', 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    line-height: 2;
+    background-color: #f4f4f4;
+    border: 1px solid #f4f4f4;
+    border-radius: 0;
+    cursor: pointer;
+
+    &:focus {
+      border-color: #0078d7;
+    }
+
+    &:hover {
+      background-color: #eaeaea;
+      border-color: #eaeaea;
+    }
+
+    &:active {
+      color: #ffffff;
+      background-color: #0078d7;
+      border-color: #0078d7;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      float: left;
+    }
+
+    > :global(svg) {
+      vertical-align: middle;
     }
   }
 
@@ -238,6 +305,7 @@
     max-width: 100%;
     white-space: pre-line;
 
+    // stylelint-disable-next-line no-descending-specificity
     > :global(button) {
       // Keep the button on a single line
       flex-shrink: 0;

@@ -24,9 +24,9 @@
   IdleIcon={EncryptIdle}
   idleTooltip={$_('click-to-encrypt-this-message')}
   doneTooltip={$_('mail-encrypted-successfully-click-to-encrypt-once-again')}
+  task="encrypt"
   on:click
   on:abort
-  --margin-left={design === 'gmail' ? '12px' : '0px'}
 >
   {$_('encrypt')}
 </Button>

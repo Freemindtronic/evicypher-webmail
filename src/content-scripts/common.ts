@@ -237,6 +237,7 @@ const handleToolbar = (
   toolbar.dataset[FLAG] = '1'
 
   const target = document.createElement('span')
+  target.style.display = 'contents'
   const button = new EncryptButton({
     target,
     props: { design },
