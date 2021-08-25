@@ -354,7 +354,12 @@ export const startBackgroundTask = async <T extends keyof TaskMap>(
     // Forward abort signal to the back end
     signal.addEventListener('abort', () => {
       log('Aborting task %o', taskName)
-      port.postMessage({ type: 'abort' })
+      try {
+        port.postMessage({ type: 'abort' })
+      } catch {
+        // Ignore exceptions thrown when the port is closed because the task
+        // is already canceled
+      }
     })
 
     // Handle messages sent by the background task

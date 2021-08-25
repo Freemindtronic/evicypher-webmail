@@ -1,12 +1,14 @@
 <script lang="ts">
   import type { pair as pairTask } from '$/background/tasks/pair'
+  import type { ErrorMessage } from '$/error'
   import type { Report } from '$/report'
   import type { ForegroundTask } from '$/task'
   import { createEventDispatcher, onMount } from 'svelte'
   import { writable } from 'svelte/store'
   import Button from '$/components/Button.svelte'
   import QRCode from '$/components/QRCode.svelte'
-  import { _ } from '$/i18n'
+  import { ExtensionError } from '$/error'
+  import { translateError, _ } from '$/i18n'
   import { State } from '$/report'
   import { startBackgroundTask, Task } from '$/task'
 
@@ -21,6 +23,9 @@
 
   /** Current state of the pairing process. */
   let tip = $_('loading')
+
+  /** An error to display. */
+  let errorMessage: ErrorMessage | undefined
 
   /** A writable store updated when the user confirms the UID. */
   const confirmed = writable(false)
@@ -80,7 +85,7 @@
       dispatch('success')
     } catch (error: unknown) {
       console.error(error)
-      // TODO: handle errors
+      if (error instanceof ExtensionError) errorMessage = error.message
     }
   })
 </script>
@@ -97,10 +102,12 @@
 <p class="center">
   <QRCode data={qr} size={147} />
 </p>
-<p>
-  {#if uid === undefined}
-    {tip}
-  {:else}
+{#if errorMessage !== undefined}
+  <p class="error">{$translateError(errorMessage)}</p>
+{:else if uid === undefined}
+  <p>{tip}</p>
+{:else}
+  <p>
     {$_('is-the-code-uid-correct', { values: { uid: uid.toUpperCase() } })}
     <Button
       type="button"
@@ -116,9 +123,8 @@
         cancelPairing()
       }}>{$_('no')}</Button
     >
-  {/if}
-  <br />
-</p>
+  </p>
+{/if}
 
 <style lang="scss">
   :global(canvas) {
@@ -139,5 +145,10 @@
 
   .center {
     text-align: center;
+  }
+
+  .error {
+    color: $error;
+    font-weight: bold;
   }
 </style>
