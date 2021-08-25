@@ -53,5 +53,6 @@
   "evidns": "EviDNS",
   "evidns-is-not-properly-installed": "EviDNS n'est pas installé correctement",
   "is-a-software-that-allows": "est un logiciel qui permet d'appairer EviCypher Webmail et des téléphones sans configuration. Il marche en réseau local et permet l'appariement sans serveur central, ce qui rend EviCypher Webmail plus sécurisé que les solutions centralisées.",
-  "restart-your-browser-after-installing-evidns": "Redémarrez votre navigateur après avoir installé EviDNS."
+  "restart-your-browser-after-installing-evidns": "Redémarrez votre navigateur après avoir installé EviDNS.",
+  "a-phone-with-this-name-is-already-registered": "Un autre téléphone utilise déjà ce nom."
 }

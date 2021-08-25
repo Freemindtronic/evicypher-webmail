@@ -53,5 +53,6 @@
   "is-a-software-that-allows": "is a software that allows EviCypher Webmail and phones to connect without configuration. It works on local networks and allows pairing without the need for a central server, making EviCypher Webmail more secure than other centralized solutions.",
   "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail cannot find EviDNS on your system; please make sure both softwares are installed and up-to-date. You can download EviDNS with the link below.",
   "restart-your-browser-after-installing-evidns": "Restart your browser after installing EviDNS.",
-  "download-the-latest-version-of-evidns": "Download the latest version of EviDNS."
+  "download-the-latest-version-of-evidns": "Download the latest version of EviDNS.",
+  "a-phone-with-this-name-is-already-registered": "A phone with this name is already registered."
 }

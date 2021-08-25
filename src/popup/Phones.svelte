@@ -12,11 +12,19 @@
   /** Name of the phone to be added. */
   let phoneName = ''
 
+  /** When set to true, an error message is shown. */
+  let nameNotAvailable = false
+
   /** Wether to show the pairing screen. */
   let pairingInProgress = false
 
   /** Start the interactive process to register a new phone. */
   const addPhone = async () => {
+    if ($phones.some((phone) => get(phone).name === phoneName)) {
+      nameNotAvailable = true
+      return
+    }
+
     // Show the pairing screen and wait for it to load
     pairingInProgress = true
   }
@@ -55,9 +63,18 @@
   <form on:submit|preventDefault={addPhone}>
     <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
     <p>
-      <TextInput required={true} bind:value={phoneName}>{$_('name')}</TextInput>
+      <TextInput
+        required={true}
+        bind:value={phoneName}
+        on:input={() => {
+          nameNotAvailable = false
+        }}>{$_('name')}</TextInput
+      >
       <Button>{$_('add')}</Button>
     </p>
+    {#if nameNotAvailable}
+      <p class="error">{$_('a-phone-with-this-name-is-already-registered')}</p>
+    {/if}
   </form>
   <HR />
   <p style="text-align: center">
@@ -82,7 +99,7 @@
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      margin-block-start: 0;
+      margin: 0.5rem 0;
 
       > :global(input) {
         flex: 1;
@@ -96,5 +113,10 @@
     grid-template-columns: auto 1fr auto;
     gap: 0.5em;
     align-items: center;
+  }
+
+  .error {
+    color: $error;
+    font-weight: bold;
   }
 </style>
