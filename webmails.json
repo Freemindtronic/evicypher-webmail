@@ -1,6 +1,6 @@
 {
   "gmail": ["https://mail.google.com/mail/*"],
+  "old-outlook": ["https://webmail.mail.ovh.net/owa/*"],
   "outlook": ["https://outlook.live.com/mail/*"],
-  "yahoo": ["https://mail.yahoo.com/*"],
-  "ovh": ["https://webmail.mail.ovh.net/owa/*"]
+  "yahoo": ["https://mail.yahoo.com/*"]
 }
