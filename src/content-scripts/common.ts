@@ -50,7 +50,7 @@ export const encryptString = async (
   signal: AbortSignal
 ): Promise<string> =>
   startBackgroundTask(
-    Task.ENCRYPT,
+    Task.Encrypt,
     async function* () {
       // Suspend the foreground task until the background task asks for a string
       yield
@@ -69,7 +69,7 @@ export const decryptString = async (
   signal: AbortSignal
 ): Promise<string> =>
   startBackgroundTask(
-    Task.DECRYPT,
+    Task.Decrypt,
     async function* () {
       // Suspend the foreground task until the background task asks for a string
       yield
@@ -254,7 +254,7 @@ const handleToolbar = (
     if (promise && !resolved && !rejected) return promise
 
     if (!mail.textContent)
-      throw new ExtensionError(ErrorMessage.MAIL_CONTENT_UNDEFINED)
+      throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
     button.$set({ report: undefined })
 

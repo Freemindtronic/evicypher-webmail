@@ -136,12 +136,12 @@ isZeroconfServiceInstalled()
 // Every connection maps to a background task
 browser.runtime.onConnect.addListener(async (port) => {
   const task = {
-    [Task.PAIR]: pair,
-    [Task.ENCRYPT]: encrypt,
-    [Task.ENCRYPT_FILES]: encryptFiles,
-    [Task.DECRYPT]: decrypt,
-    [Task.DECRYPT_FILES]: decryptFiles,
-    [Task.IS_ZEROCONF_RUNNING]: isZeroconfRunning,
+    [Task.Pair]: pair,
+    [Task.Encrypt]: encrypt,
+    [Task.EncryptFiles]: encryptFiles,
+    [Task.Decrypt]: decrypt,
+    [Task.DecryptFiles]: decryptFiles,
+    [Task.IsZeroconfRunning]: isZeroconfRunning,
   }[port.name]
   if (task === undefined)
     throw new Error(`Unexpected connection: ${port.name}.`)
@@ -165,7 +165,7 @@ browser.runtime.onConnect.addListener(async (port) => {
       error:
         error instanceof ExtensionError
           ? error.message
-          : ErrorMessage.UNKNOWN_ERROR,
+          : ErrorMessage.UnknownError,
     })
   }
 })

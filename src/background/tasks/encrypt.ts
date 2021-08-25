@@ -39,7 +39,7 @@ export const encrypt: BackgroundTask<undefined, string, string> =
     const phone = get(favoritePhone)
 
     if (phone === undefined)
-      throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
+      throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
 
     // Send a request to the FMT app
     const keys = await fetchAndSaveKeys(context, phone, {
@@ -76,7 +76,7 @@ export const encryptFiles: BackgroundTask<
   const phone = get(favoritePhone)
 
   if (phone === undefined)
-    throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
+    throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
 
   // Send a request to the FMT app
   const keys = await fetchAndSaveKeys(context, phone, {
@@ -107,7 +107,7 @@ export const encryptFiles: BackgroundTask<
         const encryptedFile = new File(
           await evi.encryptFile(file, (progress: number) => {
             reporter({
-              state: State.SUBTASK_IN_PROGRESS,
+              state: State.SubtaskInProgress,
               taskId: url,
               progress,
             })
@@ -117,7 +117,7 @@ export const encryptFiles: BackgroundTask<
 
         // Report the encrypted file
         reporter({
-          state: State.SUBTASK_COMPLETE,
+          state: State.SubtaskComplete,
           taskId: url,
           name: encryptedName,
           url: URL.createObjectURL(encryptedFile),
@@ -127,12 +127,12 @@ export const encryptFiles: BackgroundTask<
 
         // Report the error and mark the subtask as failed
         reporter({
-          state: State.SUBTASK_FAILED,
+          state: State.SubtaskFailed,
           taskId: url,
           message:
             error instanceof ExtensionError
               ? error.message
-              : ErrorMessage.UNKNOWN_ERROR,
+              : ErrorMessage.UnknownError,
         })
       }
     })

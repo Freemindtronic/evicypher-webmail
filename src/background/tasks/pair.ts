@@ -44,7 +44,7 @@ export const pair: BackgroundTask<string, string, true> = async function* (
 
   // Send the UID, and receive the name of the phone
   const phoneName = yield key.UUID
-  if (!phoneName) throw new ExtensionError(ErrorMessage.PHONE_NAME_UNDEFINED)
+  if (!phoneName) throw new ExtensionError(ErrorMessage.PhoneNameUndefined)
 
   // Finish the pairing process
   const certificate = await device.sendNameInfo(phoneName, key.ECC)

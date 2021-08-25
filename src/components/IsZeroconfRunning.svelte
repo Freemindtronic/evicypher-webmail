@@ -15,7 +15,7 @@
 
   /** A promise wrapping the current state of the zeroconf service. */
   const zeroconfRunning = startBackgroundTask(
-    Task.IS_ZEROCONF_RUNNING,
+    Task.IsZeroconfRunning,
     async function* () {
       yield
     },

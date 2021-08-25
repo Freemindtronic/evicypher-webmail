@@ -90,7 +90,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
     }, timeout)
   }
 
-  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
+  if (signal?.aborted) throw new ExtensionError(ErrorMessage.CanceledByUser)
   signal?.addEventListener('abort', () => {
     controller.abort()
   })
@@ -112,7 +112,7 @@ export const sendRequest = async <T extends keyof RequestMap>({
   // `n` field in the response, that contains a boolean (meaning "new"
   // or something), but stored as a string. Since it breaks unserialization
   // and it is not properly documented (ahah), we remove it.
-  if (type !== Request.PAIRING_SALT) delete responseData.n
+  if (type !== Request.PairingSalt) delete responseData.n
 
   return fromJSON(responseData)
 }
@@ -123,25 +123,25 @@ export const throwOnHttpErrors = (response: Response): void => {
   // `204 No Content` is not properly used (who could have guessed?) and
   // is sent when the user refuses the request on their phone.
   if (response.status === 204)
-    throw new ExtensionError(ErrorMessage.REFUSED_ON_PHONE)
+    throw new ExtensionError(ErrorMessage.RefuseOnPhone)
 
   // `400 Bad Request` and `500 Internal Server Error` are generic errors,
   // sent whenever something is wrong, but it is not clear what exactly is wrong.
   if (response.status === 400 || response.status === 500)
-    throw new ExtensionError(ErrorMessage.UNKNOWN_PHONE_ERROR)
+    throw new ExtensionError(ErrorMessage.UnknownPhoneError)
 
   // When the user takes too long respond on their phone, the phone
   // automatically declines the request.
   if (response.status === 408)
-    throw new ExtensionError(ErrorMessage.REQUEST_TIMEOUT)
+    throw new ExtensionError(ErrorMessage.RequestTimeout)
 
   // When two or more requests are sent to the same phone, all but the last
   // one will be ignored.
-  if (response.status === 409) throw new ExtensionError(ErrorMessage.CONFLICT)
+  if (response.status === 409) throw new ExtensionError(ErrorMessage.Conflict)
 
   // When two or more requests are sent to the same phone, all but the last
   // one will be ignored.
-  if (response.status === 500) throw new ExtensionError(ErrorMessage.CONFLICT)
+  if (response.status === 500) throw new ExtensionError(ErrorMessage.Conflict)
 
   // Other error codes are not properly handled and translated yet, they will
   // be replaced with a generic error message: `UNKNOWN_ERROR`.
@@ -206,12 +206,12 @@ const fetchKeys = async (
     signal: AbortSignal
   }
 ): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  reporter({ state: State.WAITING_FOR_PHONE })
+  reporter({ state: State.WaitingForPhone })
   let { certificate } = phone
 
   const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
 
-  reporter({ state: State.WAITING_FOR_FIRST_RESPONSE })
+  reporter({ state: State.WaitingForFirstResponse })
 
   // If the keys expired, fetch a new certificate
   // The keys come from the Zeroconf service: when a phone is found by the
@@ -226,7 +226,7 @@ const fetchKeys = async (
     pingResponse = await sendRequest({
       ip,
       port,
-      type: Request.PING,
+      type: Request.Ping,
       data: { t: certificate.id },
     })
   } else {
@@ -236,7 +236,7 @@ const fetchKeys = async (
       ip,
       port,
       signal,
-      type: Request.IS_ALIVE,
+      type: Request.IsAlive,
       data: { oskour: 1 },
     })
   }
@@ -278,13 +278,13 @@ const fetchKeys = async (
     }
   }
 
-  reporter({ state: State.NOTIFICATION_SENT })
+  reporter({ state: State.NotificationSent })
 
   // Ask the phone for some more random data
   const cipherKeyResponse = await sendRequest({
     ip,
     port,
-    type: Request.CIPHER_KEY,
+    type: Request.CipherKey,
     data: cipherKeyRequest,
     signal,
   })
@@ -304,7 +304,7 @@ const fetchKeys = async (
   const newKey = await sendRequest({
     ip,
     port,
-    type: Request.END,
+    type: Request.End,
     data: {
       id: newShare.id.public,
       k1: newShare.k1.public,
@@ -327,7 +327,7 @@ const fetchKeys = async (
   await sendRequest({
     ip,
     port,
-    type: Request.END_OK,
+    type: Request.EndOk,
     data: acknowledgement,
     signal,
   })

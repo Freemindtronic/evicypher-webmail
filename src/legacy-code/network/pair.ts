@@ -91,7 +91,7 @@ export async function clientHello(
 ): Promise<Device> {
   const ip = await search(
     context,
-    Request.PAIRING_START,
+    Request.PairingStart,
     { t: await sha256(pairingKey.certificate.id) },
     {
       signal,
@@ -133,7 +133,7 @@ export class Device {
     const data = await sendRequest({
       ip: this.IP,
       port: this.port,
-      type: Request.PAIRING_SALT,
+      type: Request.PairingSalt,
       data: {
         t: await sha256(xor(this.certificate.id, this.pairingKey.salt)),
         s: enc,
@@ -178,7 +178,7 @@ export class Device {
     await sendRequest({
       ip: this.IP,
       port: this.port,
-      type: Request.PAIRING_NAME,
+      type: Request.PairingName,
       data: { i: ivS, n: enc, s: saltb },
     })
 

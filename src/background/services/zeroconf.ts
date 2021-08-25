@@ -214,7 +214,7 @@ const pingNewPhone = async (context: TaskContext, ip: string, port: number) => {
       const pingResponse = await sendRequest({
         ip,
         port,
-        type: Request.PING,
+        type: Request.Ping,
         data: { t: $phone.certificate.id },
         timeout: 20_000,
       })

@@ -59,7 +59,7 @@
   }
 
   const reporter = (report: Report) => {
-    if (report.state === State.SCANNING) {
+    if (report.state === State.Scanning) {
       tip =
         report.found === 0
           ? $_('make-sure-your-phone-and-your-computer-are-on-the-same-network')
@@ -71,7 +71,7 @@
   onMount(async () => {
     try {
       // Wait for the background task to finish
-      await startBackgroundTask(Task.PAIR, pair, {
+      await startBackgroundTask(Task.Pair, pair, {
         reporter,
         signal: controller.signal,
       })

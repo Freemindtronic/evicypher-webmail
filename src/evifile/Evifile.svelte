@@ -31,7 +31,7 @@
     (report: Report) => {
       // Handle subtask reports for each file
       switch (report.state) {
-        case State.SUBTASK_IN_PROGRESS:
+        case State.SubtaskInProgress:
           dropzone.emit(
             'uploadprogress',
             map.get(report.taskId),
@@ -39,13 +39,13 @@
           )
           break
 
-        case State.SUBTASK_COMPLETE:
+        case State.SubtaskComplete:
           triggerDownload(report.name, report.url)
           dropzone.emit('success', map.get(report.taskId))
           dropzone.emit('complete', map.get(report.taskId))
           break
 
-        case State.SUBTASK_FAILED:
+        case State.SubtaskFailed:
           dropzone.emit(
             'error',
             map.get(report.taskId),
@@ -62,7 +62,7 @@
 
   /** Starts the task given on the files given. */
   const startTask = async (
-    task: Task.ENCRYPT_FILES | Task.DECRYPT_FILES,
+    task: Task.EncryptFiles | Task.DecryptFiles,
     dropzone: Dropzone,
     files: Dropzone.DropzoneFile[]
   ) => {
@@ -103,7 +103,7 @@
    */
   const dropTask = (
     parent: HTMLElement,
-    task: Task.ENCRYPT_FILES | Task.DECRYPT_FILES
+    task: Task.EncryptFiles | Task.DecryptFiles
   ) => {
     const dropzone = new Dropzone(parent, {
       url: '#',
@@ -170,13 +170,13 @@
     {/if}
 
     <div class="grid">
-      <form class="dropzone" use:dropTask={Task.ENCRYPT_FILES}>
+      <form class="dropzone" use:dropTask={Task.EncryptFiles}>
         <h2 class="dz-message">
           <button type="button">{$_('drop-files-here-to-encrypt')}</button>
         </h2>
       </form>
 
-      <form class="dropzone" use:dropTask={Task.DECRYPT_FILES}>
+      <form class="dropzone" use:dropTask={Task.DecryptFiles}>
         <h2 class="dz-message">
           <button type="button">{$_('drop-files-here-to-decrypt')}</button>
         </h2>

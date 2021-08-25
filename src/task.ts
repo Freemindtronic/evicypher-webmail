@@ -136,27 +136,27 @@ import { ErrorMessage, ExtensionError } from '$/error'
 /** All the tasks available. */
 export enum Task {
   /** See {@link encrypt}. */
-  ENCRYPT = 'encrypt',
+  Encrypt = 'encrypt',
   /** See {@link encryptFiles}. */
-  ENCRYPT_FILES = 'encrypt-files',
+  EncryptFiles = 'encrypt-files',
   /** See {@link decrypt}. */
-  DECRYPT = 'decrypt',
+  Decrypt = 'decrypt',
   /** See {@link decryptFiles}. */
-  DECRYPT_FILES = 'decrypt-files',
+  DecryptFiles = 'decrypt-files',
   /** See {@link pair}. */
-  PAIR = 'pair',
+  Pair = 'pair',
   /** See {@link isZeroconfRunning}. */
-  IS_ZEROCONF_RUNNING = 'is-zeroconf-running',
+  IsZeroconfRunning = 'is-zeroconf-running',
 }
 
 /** Maps a task to the type of its background generator. */
 export type TaskMap = {
-  [Task.PAIR]: typeof pair
-  [Task.ENCRYPT]: typeof encrypt
-  [Task.ENCRYPT_FILES]: typeof encryptFiles
-  [Task.DECRYPT]: typeof decrypt
-  [Task.DECRYPT_FILES]: typeof decryptFiles
-  [Task.IS_ZEROCONF_RUNNING]: typeof isZeroconfRunning
+  [Task.Pair]: typeof pair
+  [Task.Encrypt]: typeof encrypt
+  [Task.EncryptFiles]: typeof encryptFiles
+  [Task.Decrypt]: typeof decrypt
+  [Task.DecryptFiles]: typeof decryptFiles
+  [Task.IsZeroconfRunning]: typeof isZeroconfRunning
 }
 
 /**

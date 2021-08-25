@@ -41,8 +41,7 @@ export const search = async <T extends keyof RequestMap>(
     // Try `maxNumberOfSearches` times to reach a phone
     while (maxNumberOfSearches > 0) {
       // Shall we continue?
-      if (signal.aborted)
-        throw new ExtensionError(ErrorMessage.CANCELED_BY_USER)
+      if (signal.aborted) throw new ExtensionError(ErrorMessage.CanceledByUser)
 
       // Run the search loop
       const res = await searchLoop(context, type, data, {
@@ -59,7 +58,7 @@ export const search = async <T extends keyof RequestMap>(
       maxNumberOfSearches--
     }
 
-    throw new ExtensionError(ErrorMessage.TOO_MANY_ATTEMPTS)
+    throw new ExtensionError(ErrorMessage.TooManyAttempts)
   } finally {
     context.scanFaster.set(false)
   }
@@ -96,7 +95,7 @@ const searchLoop = async <T extends keyof RequestMap>(
   // Connect to the Zeroconf/mDNS service locally installed
   const devicesFound = context.network
 
-  reporter({ state: State.SCANNING, found: devicesFound.size })
+  reporter({ state: State.Scanning, found: devicesFound.size })
 
   // Abort the operation if no device is found
   if (devicesFound.size === 0) return

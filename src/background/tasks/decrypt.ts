@@ -38,7 +38,7 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     // Fetch the favorite phone in browser storage
     const phone = get(favoritePhone)
     if (phone === undefined)
-      throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
+      throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
 
     // Send a request to the FMT app
     const keys = await fetchAndSaveKeys(context, phone, {
@@ -76,7 +76,7 @@ export const decryptFiles: BackgroundTask<
   const phone = get(favoritePhone)
 
   if (phone === undefined)
-    throw new ExtensionError(ErrorMessage.FAVORITE_PHONE_UNDEFINED)
+    throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
 
   const firstFile = files.pop()
   if (!firstFile) throw new Error('Array of files cannot be empty.')
@@ -118,7 +118,7 @@ export const decryptFiles: BackgroundTask<
           buffer,
           (progress: number) => {
             reporter({
-              state: State.SUBTASK_IN_PROGRESS,
+              state: State.SubtaskInProgress,
               taskId: url,
               progress,
             })
@@ -127,7 +127,7 @@ export const decryptFiles: BackgroundTask<
 
         // Report the decrypted file
         reporter({
-          state: State.SUBTASK_COMPLETE,
+          state: State.SubtaskComplete,
           taskId: url,
           name: decryptedFile.name,
           url: URL.createObjectURL(decryptedFile),
@@ -137,12 +137,12 @@ export const decryptFiles: BackgroundTask<
 
         // Report the error and mark the subtask as failed
         reporter({
-          state: State.SUBTASK_FAILED,
+          state: State.SubtaskFailed,
           taskId: url,
           message:
             error instanceof ExtensionError
               ? error.message
-              : ErrorMessage.UNKNOWN_ERROR,
+              : ErrorMessage.UnknownError,
         })
       }
     })

@@ -86,7 +86,7 @@ export class EviCrypt {
     progressReporter: (progress: number) => void
   ): Promise<BlobPart[]> {
     if (file.name.length > 256)
-      throw new ExtensionError(ErrorMessage.FILE_NAME_TOO_LONG)
+      throw new ExtensionError(ErrorMessage.FileNameTooLong)
 
     progressReporter(0)
 
@@ -164,7 +164,7 @@ export class EviCrypt {
       buffer.length < 122 || // 4 + 20 + 16 + 32 + 16 + 32 + 2
       !buffer.slice(0, 4).every((n, i) => n === ID_FILE[i])
     )
-      throw new ExtensionError(ErrorMessage.FILE_NOT_RECOGNIZED)
+      throw new ExtensionError(ErrorMessage.FileNotRecognized)
 
     progressReporter(0)
 
@@ -174,7 +174,7 @@ export class EviCrypt {
     ).slice(0, 20)
 
     if (!buffer.slice(5, 25).every((n, i) => n === idKey[i]))
-      throw new ExtensionError(ErrorMessage.WRONG_KEY)
+      throw new ExtensionError(ErrorMessage.WrongKey)
 
     const jam = shiftRight(buffer.slice(25, 73), buffer[4] ^ this.keys.low[24])
 

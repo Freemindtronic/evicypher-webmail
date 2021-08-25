@@ -34,43 +34,43 @@ export const locale = new BrowserStore<string>('locale', localeStore, {
 // eslint-disable-next-line complexity
 export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
   switch (error) {
-    case ErrorMessage.CANCELED_BY_USER:
+    case ErrorMessage.CanceledByUser:
       return $_('canceled-by-user')
 
-    case ErrorMessage.CONFLICT:
+    case ErrorMessage.Conflict:
       return $_('conflict')
 
-    case ErrorMessage.FAVORITE_PHONE_UNDEFINED:
+    case ErrorMessage.FavoritePhoneUndefined:
       return $_('favorite-phone-undefined')
 
-    case ErrorMessage.FILE_NAME_TOO_LONG:
+    case ErrorMessage.FileNameTooLong:
       return $_('file-name-too-long')
 
-    case ErrorMessage.FILE_NOT_RECOGNIZED:
+    case ErrorMessage.FileNotRecognized:
       return $_('file-not-recognized')
 
-    case ErrorMessage.MAIL_CONTENT_UNDEFINED:
+    case ErrorMessage.MailContentUndefined:
       return $_('mail-content-undefined')
 
-    case ErrorMessage.PHONE_NAME_UNDEFINED:
+    case ErrorMessage.PhoneNameUndefined:
       return $_('phone-name-undefined')
 
-    case ErrorMessage.REFUSED_ON_PHONE:
+    case ErrorMessage.RefuseOnPhone:
       return $_('refused-on-phone')
 
-    case ErrorMessage.REQUEST_TIMEOUT:
+    case ErrorMessage.RequestTimeout:
       return $_('request-timeout')
 
-    case ErrorMessage.TOO_MANY_ATTEMPTS:
+    case ErrorMessage.TooManyAttempts:
       return $_('too-many-attempts')
 
-    case ErrorMessage.UNKNOWN_ERROR:
+    case ErrorMessage.UnknownError:
       return $_('unknown-error')
 
-    case ErrorMessage.UNKNOWN_PHONE_ERROR:
+    case ErrorMessage.UnknownPhoneError:
       return $_('unknown-phone-error')
 
-    case ErrorMessage.WRONG_KEY:
+    case ErrorMessage.WrongKey:
       return $_('wrong-key')
 
     // This switch statement is exhaustive
@@ -82,21 +82,21 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
 // eslint-disable-next-line complexity
 export const translateReport = derived(_, ($_) => (report: Report) => {
   switch (report.state) {
-    case State.NOTIFICATION_SENT:
+    case State.NotificationSent:
       return $_('notification-sent')
 
-    case State.WAITING_FOR_PHONE:
+    case State.WaitingForPhone:
       return $_('waiting-for-phone')
 
-    case State.WAITING_FOR_FIRST_RESPONSE:
+    case State.WaitingForFirstResponse:
       return $_('waiting-for-first-response')
 
-    case State.SCANNING:
+    case State.Scanning:
       throw new Error('Not implemented yet: State.SCANNING case')
 
-    case State.SUBTASK_IN_PROGRESS:
-    case State.SUBTASK_COMPLETE:
-    case State.SUBTASK_FAILED:
+    case State.SubtaskInProgress:
+    case State.SubtaskComplete:
+    case State.SubtaskFailed:
       throw new Error('Not implemented yet: State.SUBTASK_* case')
 
     // This switch statement is exhaustive

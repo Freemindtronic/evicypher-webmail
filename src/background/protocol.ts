@@ -50,22 +50,22 @@ export enum Request {
    * response, the keys to use for the rest of the exchange. It's the first step
    * of a handshake.
    */
-  PING = '/P',
+  Ping = '/P',
   /** A request to get encryption keys. */
-  CIPHER_KEY = '/CK',
+  CipherKey = '/CK',
   /** End of an exhange, request for a new certificate. */
-  END = '/f2',
+  End = '/f2',
   /** Acknowledgement of receipt of the `END` request. */
-  END_OK = '/o',
+  EndOk = '/o',
   /** The first request of the pairing process. */
-  PAIRING_START = '/t',
+  PairingStart = '/t',
   /** A key exhange during the pairing process. */
-  PAIRING_SALT = '/c',
+  PairingSalt = '/c',
   /**
    * The final part of the pairing process, when the response is received, the
    * device have to be saved in persistent storage.
    */
-  PAIRING_NAME = '/n',
+  PairingName = '/n',
   /**
    * A request to check if the phone is accepting connections.
    *
@@ -73,19 +73,19 @@ export enum Request {
    *   Not officially implemented, but requests not matching a given pattern are
    *   responded with a 202 Accepted and an empty body.
    */
-  IS_ALIVE = '/is-alive',
+  IsAlive = '/is-alive',
 }
 
 /** Maps {@link Request} constants to the correct request type. */
 export interface RequestMap {
-  [Request.PING]: PingRequest
-  [Request.CIPHER_KEY]: CipherKeyRequest
-  [Request.END]: EndRequest
-  [Request.END_OK]: EndOkRequest
-  [Request.PAIRING_START]: PairingStartRequest
-  [Request.PAIRING_SALT]: PairingSaltRequest
-  [Request.PAIRING_NAME]: PairingNameRequest
-  [Request.IS_ALIVE]: IsAliveRequest
+  [Request.Ping]: PingRequest
+  [Request.CipherKey]: CipherKeyRequest
+  [Request.End]: EndRequest
+  [Request.EndOk]: EndOkRequest
+  [Request.PairingStart]: PairingStartRequest
+  [Request.PairingSalt]: PairingSaltRequest
+  [Request.PairingName]: PairingNameRequest
+  [Request.IsAlive]: IsAliveRequest
 }
 
 /**
@@ -94,14 +94,14 @@ export interface RequestMap {
  * Some responses are empty, therefore typed by `Record<string, never>`.
  */
 export interface ResponseMap {
-  [Request.PING]: PingResponse
-  [Request.CIPHER_KEY]: CipherKeyResponse
-  [Request.END]: EndResponse
-  [Request.END_OK]: Record<string, never>
-  [Request.PAIRING_START]: Record<string, never>
-  [Request.PAIRING_SALT]: PairingSaltResponse
-  [Request.PAIRING_NAME]: PairingNameResponse
-  [Request.IS_ALIVE]: Record<string, never>
+  [Request.Ping]: PingResponse
+  [Request.CipherKey]: CipherKeyResponse
+  [Request.End]: EndResponse
+  [Request.EndOk]: Record<string, never>
+  [Request.PairingStart]: Record<string, never>
+  [Request.PairingSalt]: PairingSaltResponse
+  [Request.PairingName]: PairingNameResponse
+  [Request.IsAlive]: Record<string, never>
 }
 
 /**
