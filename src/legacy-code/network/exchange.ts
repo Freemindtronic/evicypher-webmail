@@ -56,6 +56,18 @@ const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
     ])
   ) as unknown as T
 
+/** Default timeout values, based on the request type. */
+export const defaultTimeouts = {
+  [Request.Ping]: 20_000,
+  [Request.CipherKey]: 180_000,
+  [Request.End]: 3000,
+  [Request.EndOk]: 3000,
+  [Request.PairingStart]: 20_000,
+  [Request.PairingSalt]: 3000,
+  [Request.PairingName]: 3000,
+  [Request.IsAlive]: 180_000,
+}
+
 /**
  * Sends a request to a phone.
  *
@@ -63,7 +75,8 @@ const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
  * @param port - The port of the phone
  * @param type - The request type, see {@link Request}
  * @param data - The request body, see {@link RequestMap}
- * @param timeout - A time out, in milliseconds
+ * @param timeout - A time out, in milliseconds (-1 to disable timeout, see
+ *   {@link defaultTimeouts})
  * @param signal - An abort signal
  * @returns A promise that resolves to the response, see {@link ResponseMap}
  */
@@ -79,12 +92,14 @@ export const sendRequest = async <T extends keyof RequestMap>({
   port: number
   type: T
   data: RequestMap[T]
-  timeout?: number // TODO re-introduce a default timeout
+  timeout?: number
   signal?: AbortSignal
 }): Promise<ResponseMap[T]> => {
   // Create an AbortController to trigger a timeout
   const controller = new AbortController()
-  if (timeout) {
+
+  timeout = timeout ?? defaultTimeouts[type]
+  if (timeout >= 0) {
     setTimeout(() => {
       controller.abort()
     }, timeout)
