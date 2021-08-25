@@ -55,7 +55,7 @@ Here is a high-level overview of the repository structure:
   - **components/**: Common Svelte components, such as buttons.
   - **content-scripts/**: Scripts injected in pages.
   - **evifile/**: EviFile components.
-  - **legacy-code/**: [Terrible code to be refactored.](https://en.wikipedia.org/wiki/Technical_debt) Poorly written cryptography and network code.
+  - **legacy-code/**: Code to be refactored, [inherited](https://en.wikipedia.org/wiki/Technical_debt) from the previous extension.
   - **pages/**: [Nunjucks](https://www.11ty.dev/docs/languages/nunjucks/) templates used to produce plain HTML.
   - **popup/**: Popup components.
   - **stories/**: Style-guide written with [Storybook](https://storybook.js.org/).

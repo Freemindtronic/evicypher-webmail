@@ -1,15 +1,4 @@
 /* eslint-disable max-params */
-
-/**
- * This file contains "jamming," a custom cryptography that only makes
- * implementation more difficult and error prone.
- * https://security.stackexchange.com/q/18197
- *
- * Since I have no idea what this does, I'm not going to document it.
- *
- * @module
- */
-
 import { xor } from '../utils'
 import { shiftLeft, shiftRight } from './AesUtil'
 

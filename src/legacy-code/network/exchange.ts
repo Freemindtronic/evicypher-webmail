@@ -371,7 +371,7 @@ const encryptKey = (
   return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
 }
 
-/** What you're about to read does not even come close to looking like cryptography. */
+/** Unjams keys. */
 const unjamKeys = async (
   keysExchange: Array<{
     sharedKey: Uint8Array
@@ -414,7 +414,6 @@ const unjamKeys = async (
     highJammingPosition,
     highJammingShift
   )
-  // Here is the only "sane" thing: actual AES
   const high = AES.decryptCTR(
     highInitializationVector,
     highSalt,
