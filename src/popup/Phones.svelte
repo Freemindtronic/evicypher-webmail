@@ -64,6 +64,7 @@
     <h3><label for="phone-name">{$_('register-a-new-phone')}</label></h3>
     <p>
       <TextInput
+        id="phone-name"
         required={true}
         bind:value={phoneName}
         on:input={() => {
