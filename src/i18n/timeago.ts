@@ -24,8 +24,8 @@ import { derived } from 'svelte/store'
 import { locale } from '.'
 
 // Initialize TimeAgo
-TimeAgo.addLocale(ara)
-TimeAgo.addLocale(cat)
+TimeAgo.addLocale({ ...ara, locale: 'ara' })
+TimeAgo.addLocale({ ...cat, locale: 'cat' })
 TimeAgo.addLocale(de)
 TimeAgo.addDefaultLocale(en)
 TimeAgo.addLocale(es)
@@ -35,7 +35,11 @@ TimeAgo.addLocale(ja)
 TimeAgo.addLocale(pt)
 TimeAgo.addLocale(ro)
 TimeAgo.addLocale(ru)
-TimeAgo.addLocale(zhs)
+TimeAgo.addLocale({ ...zhs, locale: 'zhs' })
+
+// Some locale codes are overridden because not mapped correctly;
+// for instance, the correct locale code for Catalan is "cat" because
+// "ca" stands for Canada.
 
 /**
  * Formats a date into an "x minutes ago" string.
