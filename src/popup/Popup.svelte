@@ -41,8 +41,9 @@
     line-height: 1;
 
     > :global(select) {
+      padding-inline-start: 1px;
       font-weight: normal;
-      font-size: 1rem;
+      font-size: 0.75rem;
       line-height: 1.5;
     }
 
