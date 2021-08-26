@@ -69,3 +69,27 @@
   <Select bind:value {...args} />
   <p>{value}</p>
 </Story>
+
+<Story
+  name="Record"
+  args={{
+    options: {
+      ara: 'عربي',
+      cat: 'Catalá',
+      de: 'Deutsch',
+      en: 'English',
+      fr: 'Français',
+      it: 'Italiano',
+      ja: '日本の',
+      pt: 'Português',
+      ro: 'Românesc',
+      ru: 'Русский',
+      es: 'Español',
+      zhs: '简体中文',
+    },
+  }}
+  let:args
+>
+  <Select bind:value {...args} />
+  <p>{value}</p>
+</Story>
