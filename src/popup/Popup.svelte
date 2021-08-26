@@ -2,7 +2,8 @@
   import { fade } from 'svelte/transition'
   import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
   import Select from '$/components/Select.svelte'
-  import { locale, locales, isLoading, _ } from '$/i18n'
+  import { locale, isLoading, _ } from '$/i18n'
+  import locales from '~/locales.json'
   import Logo from '../assets/logo.svg'
   import Phones from './Phones.svelte'
 
@@ -16,7 +17,7 @@
     Webmail
   </span>
   {#if !$isLoading}
-    <Select bind:value={$locale} options={$locales} />
+    <Select bind:value={$locale} options={locales} />
   {/if}
 </h1>
 {#if !$isLoading}

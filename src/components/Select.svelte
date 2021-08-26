@@ -21,13 +21,15 @@
    *
    * @default An empty array
    */
-  export let options: T[] | Map<T, string> = []
+  export let options: T[] | Map<T, string> | Record<string, string> = []
 
-  // Transform arrays to maps
+  // Transform arrays and records to maps
   $: map =
     options instanceof Map
       ? options
-      : new Map(options.map((value) => [value, value]))
+      : Array.isArray(options)
+      ? new Map(options.map((value) => [value, value]))
+      : new Map(Object.entries(options))
 </script>
 
 {#if $$slots.default}
