@@ -21,15 +21,21 @@
    *
    * @default An empty array
    */
-  export let options: T[] = []
+  export let options: T[] | Map<T, string> = []
+
+  // Transform arrays to maps
+  $: map =
+    options instanceof Map
+      ? options
+      : new Map(options.map((value) => [value, value]))
 </script>
 
 {#if $$slots.default}
   <label for={id}><slot /></label>
 {/if}
 <select {id} bind:value on:input {...$$restProps}>
-  {#each options as option (option)}
-    <option value={option}>{option}</option>
+  {#each [...map] as [key, value] (key)}
+    <option value={key}>{value}</option>
   {/each}
 </select>
 

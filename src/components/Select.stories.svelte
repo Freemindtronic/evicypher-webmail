@@ -55,3 +55,17 @@
   <Select bind:value {...args} />
   <p>{value}</p>
 </Story>
+
+<Story
+  name="Keys and values"
+  args={{
+    options: new Map([
+      ['en', 'English'],
+      ['fr', 'French'],
+    ]),
+  }}
+  let:args
+>
+  <Select bind:value {...args} />
+  <p>{value}</p>
+</Story>
