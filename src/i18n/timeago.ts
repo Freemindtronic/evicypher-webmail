@@ -8,14 +8,34 @@
  */
 
 import TimeAgo from 'javascript-time-ago'
+import ara from 'javascript-time-ago/locale/ar'
+import cat from 'javascript-time-ago/locale/ca'
+import de from 'javascript-time-ago/locale/de'
 import en from 'javascript-time-ago/locale/en'
+import es from 'javascript-time-ago/locale/es'
 import fr from 'javascript-time-ago/locale/fr'
+import it from 'javascript-time-ago/locale/it'
+import ja from 'javascript-time-ago/locale/ja'
+import pt from 'javascript-time-ago/locale/pt'
+import ro from 'javascript-time-ago/locale/ro'
+import ru from 'javascript-time-ago/locale/ru'
+import zhs from 'javascript-time-ago/locale/zh'
 import { derived } from 'svelte/store'
 import { locale } from '.'
 
 // Initialize TimeAgo
+TimeAgo.addLocale(ara)
+TimeAgo.addLocale(cat)
+TimeAgo.addLocale(de)
 TimeAgo.addDefaultLocale(en)
+TimeAgo.addLocale(es)
 TimeAgo.addLocale(fr)
+TimeAgo.addLocale(it)
+TimeAgo.addLocale(ja)
+TimeAgo.addLocale(pt)
+TimeAgo.addLocale(ro)
+TimeAgo.addLocale(ru)
+TimeAgo.addLocale(zhs)
 
 /**
  * Formats a date into an "x minutes ago" string.

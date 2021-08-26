@@ -109,8 +109,18 @@ const loader = (locale: string) => async () =>
   (await fetch(browser.runtime.getURL(`locales/${locale}/strings.json`))).json()
 
 // Register languages
+register('ara', loader('ara'))
+register('cat', loader('cat'))
+register('de', loader('de'))
 register('en', loader('en'))
+register('es', loader('es'))
 register('fr', loader('fr'))
+register('it', loader('it'))
+register('ja', loader('ja'))
+register('pt', loader('pt'))
+register('ro', loader('ro'))
+register('ru', loader('ru'))
+register('zhs', loader('zhs'))
 
 // Initialize FormatJS
 init({
