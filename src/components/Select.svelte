@@ -57,6 +57,11 @@
     -moz-appearance: none;
     -webkit-appearance: none;
 
+    :global([dir='rtl']) & {
+      padding: 3 * $px 5 * $px 3 * $px 15 * $px;
+      background-position: left center;
+    }
+
     &:hover,
     &:focus {
       border-color: scale-color($input-color, $lightness: -30%);

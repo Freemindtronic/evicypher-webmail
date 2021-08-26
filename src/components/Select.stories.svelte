@@ -74,7 +74,6 @@
   name="Record"
   args={{
     options: {
-      ara: 'عربي',
       cat: 'Catalá',
       de: 'Deutsch',
       en: 'English',
@@ -92,4 +91,14 @@
 >
   <Select bind:value {...args} />
   <p>{value}</p>
+</Story>
+
+<Story
+  name="Right to left"
+  args={{
+    options: { ara: 'عربي' },
+  }}
+  let:args
+>
+  <div dir="rtl" style="display:contents"><Select {...args} /></div>
 </Story>
