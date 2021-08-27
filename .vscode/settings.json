@@ -1,10 +1,16 @@
 {
   "i18n-ally.localesPaths": ["static/locales"],
   "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "en",
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "eslint.run": "onSave",
+  "eslint.validate": ["js", "ts", "svelte"],
+  "svelte.enable-ts-plugin": true
 }
