@@ -12,9 +12,9 @@ body {
   // Make it a flex container to ease space-management
   display: flex;
   flex-direction: column;
-  // A square looks nice
-  width: 400px;
-  height: 400px;
+  // Allow the popup to grow to fit the content
+  min-width: 400px;
+  min-height: 400px;
   // Solve size issues when the icon is in the overflow menu
   overflow-x: auto;
   // Make it dark so Firefox renders round corners correctly
