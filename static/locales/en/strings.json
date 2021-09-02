@@ -55,6 +55,6 @@
   "restart-your-browser-after-installing-evidns": "Restart your browser after installing EviDNS.",
   "download-the-latest-version-of-evidns": "Download the latest version of EviDNS.",
   "a-phone-with-this-name-is-already-registered": "A phone with this name is already registered.",
-  "the-passphrase-provided-is-incorrect": "The passphrase provided is incorrect. Make sure you are using the right key–passphrase combination.",
-  "enter-the-passphrase": "Enter the passphrase of the key {key}:"
+  "the-passphrase-provided-is-incorrect": "The key chosen cannot be used to decrypt this message.",
+  "format-not-implemented": "EviCypher Webmail cannot decrypt this message, it may be corrupted."
 }

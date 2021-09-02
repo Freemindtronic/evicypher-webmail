@@ -6,7 +6,6 @@
  *
  * @module
  */
-
 /** List of all possible error messages. */
 export enum ErrorMessage {
   CanceledByUser = 'Canceled by user.',
@@ -14,6 +13,7 @@ export enum ErrorMessage {
   FavoritePhoneUndefined = 'No favorite phone set.',
   FileNameTooLong = 'Filename too long.',
   FileNotRecognized = 'File not recognized.',
+  FormatNotImplmented = 'Format not implemented.',
   MailContentUndefined = 'Mail content undefined.',
   PhoneNameUndefined = 'Phone name undefined.',
   PrivateKeyIncorrectPassphrase = 'Incorrect passphrase for the private key.',

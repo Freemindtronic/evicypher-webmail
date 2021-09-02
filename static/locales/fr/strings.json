@@ -55,6 +55,6 @@
   "is-a-software-that-allows": "est un logiciel qui permet d'appairer EviCypher Webmail et des téléphones sans configuration. Il marche en réseau local et permet l'appariement sans serveur central, ce qui rend EviCypher Webmail plus sécurisé que les solutions centralisées.",
   "restart-your-browser-after-installing-evidns": "Redémarrez votre navigateur après avoir installé EviDNS.",
   "a-phone-with-this-name-is-already-registered": "Un autre téléphone utilise déjà ce nom.",
-  "the-passphrase-provided-is-incorrect": "Le mot de passe donné est incorrect. Assurez-vous d'utiliser la bonne combinaison clé–mot de passe.",
-  "enter-the-passphrase": "Entrez le mot de passe de la clé {key} :"
+  "the-passphrase-provided-is-incorrect": "La clé choisie est ne permet pas de déchiffrer ce message.",
+  "format-not-implemented": "EviCypher Webmail ne peut pas déchiffrer ce message, il est peut-être corrompu."
 }

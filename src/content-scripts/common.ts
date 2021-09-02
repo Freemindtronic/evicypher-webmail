@@ -6,7 +6,6 @@
 
 import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
-import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -74,10 +73,7 @@ export const decryptString = async (
     async function* () {
       // Suspend the foreground task until the background task asks for a string
       yield
-      const key = yield string
-      const $_ = get(_)
-      // eslint-disable-next-line no-alert
-      yield prompt($_('enter-the-passphrase', { values: { key } })) ?? ''
+      yield string
     },
     {
       reporter,
