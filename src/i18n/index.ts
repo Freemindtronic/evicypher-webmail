@@ -49,6 +49,9 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.FileNotRecognized:
       return $_('file-not-recognized')
 
+    case ErrorMessage.FormatNotImplmented:
+      return $_('format-not-implemented')
+
     case ErrorMessage.MailContentUndefined:
       return $_('mail-content-undefined')
 

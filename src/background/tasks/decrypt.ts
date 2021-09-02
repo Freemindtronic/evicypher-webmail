@@ -35,7 +35,12 @@ export const decrypt: BackgroundTask<undefined, string, string> =
   async function* (context, reporter, signal) {
     const armoredMessage = yield
 
-    const message = await readMessage({ armoredMessage })
+    let message
+    try {
+      message = await readMessage({ armoredMessage })
+    } catch {
+      throw new ExtensionError(ErrorMessage.FormatNotImplmented)
+    }
 
     await BrowserStore.allLoaded
 
