@@ -3,5 +3,6 @@
   "old-outlook": ["https://webmail.mail.ovh.net/owa/*"],
   "outlook": ["https://outlook.live.com/mail/*"],
   "yahoo": ["https://mail.yahoo.com/*"],
-  "roundcube": ["https://mail.ovh.net/owa/*"]
+  "roundcube": ["https://mail.ovh.net/owa/*"],
+  "proton": ["https://mail.protonmail.com/*"]
 }

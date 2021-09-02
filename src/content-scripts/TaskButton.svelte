@@ -71,6 +71,7 @@
       theme: 'light-border',
       interactive: true,
       placement: tooltipPlacement,
+      appendTo: document.body,
     })
   })
 
@@ -295,9 +296,46 @@
     }
   }
 
+  .button.proton {
+    margin: 0;
+    margin-right: 10px;
+    padding: 0 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: 'wf_segoe-ui_semibold', 'Segoe UI Semibold',
+      'Segoe WP Semibold', 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    line-height: 2;
+    background-color: #262a33;
+    border: 1px solid #464b58;
+    border-radius: var(--border-radius-medium);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus,
+    &:hover {
+      border-color: #575d6b;
+      box-shadow: 0 0 0 1px #575d6b inset;
+    }
+
+    &:active {
+      border-color: #696f7d;
+      box-shadow: 0 0 0 1px #696f7d inset;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    > :global(svg) {
+      vertical-align: text-bottom;
+    }
+  }
+
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {
+    all: unset;
     display: flex;
     gap: 0.5em;
     align-items: center;
