@@ -41,7 +41,7 @@ export interface Options {
 }
 
 /** A flag to mark already processed (having buttons added) HTML elements. */
-const FLAG = 'freemindtronic'
+export const FLAG = 'freemindtronic'
 
 /** Sends a request to the background script to encrypt the given string. */
 export const encryptString = async (
@@ -141,7 +141,10 @@ export const addClickListener = (
 }
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
-const handleMailElement = (mailElement: HTMLElement, options: Options) => {
+export const handleMailElement = (
+  mailElement: HTMLElement,
+  options: Options
+): void => {
   // Mark the element
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
@@ -172,11 +175,11 @@ const handleMailElement = (mailElement: HTMLElement, options: Options) => {
 }
 
 /** Adds a decryption button next to the text node given. */
-const addDecryptButton = (
+export const addDecryptButton = (
   node: Text,
   encryptedString: string,
   { design }: Options
-) => {
+): void => {
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
   target.style.display = 'block'
@@ -213,14 +216,14 @@ const addDecryptButton = (
 }
 
 /** Returns the element to place the encrytion button after. */
-const encryptButtonSibling = (
+export const encryptButtonSibling = (
   { encryptButtonSibling }: Selectors,
   toolbar: Element,
   editor: Element | null
-) =>
-  encryptButtonSibling === undefined
+): ChildNode | undefined =>
+  (encryptButtonSibling === undefined
     ? toolbar.lastChild
-    : editor?.querySelector(encryptButtonSibling)
+    : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
 /** Adds an encryption button in the toolbar. */
 const handleToolbar = (
@@ -275,7 +278,10 @@ const handleToolbar = (
 }
 
 /** Adds a frame containing a given string. */
-const displayDecryptedMail = (decryptedString: string, node: HTMLElement) => {
+export const displayDecryptedMail = (
+  decryptedString: string,
+  node: HTMLElement
+): HTMLIFrameElement => {
   const frame = document.createElement('iframe')
   Object.assign(frame.style, {
     display: 'block',
