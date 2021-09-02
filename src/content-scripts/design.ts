@@ -4,4 +4,5 @@ export enum Design {
   OldOutlook = 'old-outlook',
   Outlook = 'outlook',
   Yahoo = 'yahoo',
+  Proton = 'proton',
 }
