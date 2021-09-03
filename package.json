@@ -120,11 +120,11 @@
   "private": true,
   "repository": "github:Freemindtronic/evicypher-webmail",
   "scripts": {
-    "build": "yarn build:eleventy-rollup && yarn build:static && yarn build:parcel",
+    "build": "yarn build:eleventy-rollup && yarn build:static && yarn build:parcel && node manifest.js --patch",
     "build-storybook": "build-storybook -s extension",
     "build:eleventy-rollup": "eleventy --input=src/pages --output=build & rollup -c &",
     "build:parcel": "parcel build 'build/{*.html,*.gif,manifest.json}' --target extension",
-    "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js --prod &",
+    "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js &",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
     "check:ci": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
     "clean": "rm -rf build extension",
