@@ -141,6 +141,22 @@ Additional documentation:
   - Notable pages: `background/protocol` and `task`
 - Read the storybook with `yarn storybook`
 
+### How to debug
+
+The extension use a debug module that have scope to debug specific part of the extension. To enable debug of the all extension run this command in the browser console
+
+```js
+localStorage.debug = '*'
+```
+
+To debug with a scope for example services you can run :
+
+```js
+localStorage.debug = 'service:*'
+```
+
+More information about this tool on their [README](https://github.com/visionmedia/debug#browser-support)
+
 ### Committing changes
 
 Commits are linted with [commitlint](https://commitlint.js.org/), type `yarn cz` to write [conforming commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
