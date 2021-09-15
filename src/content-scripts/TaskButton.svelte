@@ -332,6 +332,42 @@
     }
   }
 
+  .button.yandex {
+    margin: 0;
+    margin-right: 10px;
+    padding: 5px 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    background-color: #6086bf;
+    border: 1px solid #6086bf;
+    border-radius: var(--border-radius-medium);
+    border-radius: 18px !important;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus,
+    &:hover {
+      border-color: #4c76b7;
+      box-shadow: 0 0 0 1px #4c76b7 inset;
+    }
+
+    &:active {
+      border-color: #4269a4;
+      box-shadow: 0 0 0 1px #4269a4 inset;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    > :global(svg) {
+      vertical-align: text-bottom;
+    }
+  }
+
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {
