@@ -38,7 +38,7 @@
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Make sure your phone and your computer are on the same network.",
   "scan-the-qr-code-with-the-application": "Scan the QR code with the application.",
   "last-seen-timeago": "Last seen {date}.",
-  "conflict": "The phone received multiple requests at one and declined this operation. Please complete all previous operations and retry.",
+  "conflict": "The phone received multiple requests at one and declined this operation. \nPlease complete all previous operations and retry.",
   "refused-on-phone": "Operation declined on the phone.",
   "request-timeout": "Timeout to validate the operation, the phone refused it.",
   "unknown-phone-error": "The exchange with the phone failed, please try again.",
@@ -51,10 +51,14 @@
   "evidns-is-not-properly-installed": "EviDNS is not properly installed",
   "evidns": "EviDNS",
   "is-a-software-that-allows": "is a software that allows EviCypher Webmail and phones to connect without configuration. It works on local networks and allows pairing without the need for a central server, making EviCypher Webmail more secure than other centralized solutions.",
-  "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail cannot find EviDNS on your system; please make sure both softwares are installed and up-to-date. You can download EviDNS with the link below.",
+  "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail cannot find EviDNS on your system; please make sure both softwares are installed and up-to-date. \nYou can download EviDNS with the link below.",
   "restart-your-browser-after-installing-evidns": "Restart your browser after installing EviDNS.",
   "download-the-latest-version-of-evidns": "Download the latest version of EviDNS.",
   "a-phone-with-this-name-is-already-registered": "A phone with this name is already registered.",
   "the-passphrase-provided-is-incorrect": "The key chosen cannot be used to decrypt this message.",
-  "format-not-implemented": "EviCypher Webmail cannot decrypt this message, it may be corrupted."
+  "format-not-implemented": "EviCypher Webmail cannot decrypt this message, it may be corrupted.",
+  "click-to-close-the-qr-code": "Click to close the QR Code.",
+  "the-message-exceeds-the-maximum-number-of-characters-allowed": "The message exceeds the maximum number of characters allowed.",
+  "qr-code": "QR Code",
+  "character-limit-exceeded": "Character limit exceeded (2231)"
 }
