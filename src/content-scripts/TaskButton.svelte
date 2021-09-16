@@ -332,6 +332,49 @@
     }
   }
 
+  .button.andorratelecom {
+    margin: 0;
+    margin-right: 10px;
+    padding: 0 20px;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: 'wf_segoe-ui_semibold', 'Segoe UI Semibold',
+      'Segoe WP Semibold', 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    line-height: 2;
+    background-color: #f7e0e2;
+    border: 1px solid #f7e0e2;
+    border-radius: 0;
+    cursor: pointer;
+
+    &:focus {
+      border-color: #d5006d;
+    }
+
+    &:hover {
+      background-color: #f0c1c5;
+      border-color: #f0c1c5;
+    }
+
+    &:active {
+      color: #ffffff;
+      background-color: #d5006d;
+      border-color: #d5006d;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      float: left;
+    }
+
+    > :global(svg) {
+      vertical-align: middle;
+    }
+  }
+
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {
