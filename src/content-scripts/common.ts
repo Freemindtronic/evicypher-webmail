@@ -407,13 +407,14 @@ export const displayQREncryptedMail = (
       frame.contentWindow?.document.body.append(target)
 
       // We take the QRCode Height and copy it to the frame
-      // eslint-disable-next-line prefer-const
-      let iframeHeight = document
-        .querySelectorAll('iframe')[4]
-        .contentDocument?.querySelector('canvas')?.style.height
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const FrameHeightWidht = Number.parseInt(iframeHeight!, 10) + 20
+      const elemento: HTMLIFrameElement = document.querySelector('#iframeid')!
+      const canvas = elemento.contentDocument?.querySelector('canvas')
+      const height = canvas?.style.height
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const FrameHeightWidht = Number.parseInt(height!, 10) + 20
 
       frame.style.height = FrameHeightWidht.toString() + 'px'
 
