@@ -4,5 +4,6 @@
   "outlook": ["https://outlook.live.com/mail/*"],
   "yahoo": ["https://mail.yahoo.com/*"],
   "roundcube": ["https://mail.ovh.net/owa/*"],
-  "proton": ["https://mail.protonmail.com/*"]
+  "proton": ["https://mail.protonmail.com/*"],
+  "andorratelecom": ["https://correu.andorra.ad/owa/*"]
 }
