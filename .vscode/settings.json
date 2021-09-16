@@ -15,11 +15,6 @@
   "svelte.enable-ts-plugin": true,
   "i18n-ally.extract.ignored": [
     "-----BEGIN PGP MESSAGE-----",
-    "-----END PGP MESSAGE-----",
-    "No encrypted string found to extract.",
-    "Cannot change frame content.",
-    "2px solid #555",
-    "10px 0px",
-    "The element #target not found"
+    "-----END PGP MESSAGE-----"
   ]
 }
