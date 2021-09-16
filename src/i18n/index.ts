@@ -79,8 +79,6 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
     case ErrorMessage.WrongKey:
       return $_('wrong-key')
 
-    case ErrorMessage.CharacterLimit:
-      return $_('character-limit-exceeded')
     // This switch statement is exhaustive
     // No default
   }

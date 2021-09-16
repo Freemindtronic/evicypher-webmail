@@ -11,10 +11,8 @@ import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
 import { startBackgroundTask, Task } from '$/task'
-import QRCode from '../components/QRCode.svelte'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
-import QRCodeButton from './QRCodeButton.svelte'
 
 export interface Selectors {
   /**
@@ -93,7 +91,7 @@ export const isEncryptedText = (string: string): boolean =>
   string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
 
 /** @returns A trimmed encrypted message */
-const extractEncryptedString = (string: string): string => {
+export const extractEncryptedString = (string: string): string => {
   const extracted =
     /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(string)?.[0]
   if (!extracted) throw new Error('No encrypted string found to extract.')
@@ -155,7 +153,6 @@ export const handleMailElement = (
 
   // If it's not an encrypted mail, ignore it
   const mailString = mailElement.textContent
-
   if (!mailString || !containsEncryptedText(mailString)) return
 
   // Find all encrypted parts
@@ -176,7 +173,6 @@ export const handleMailElement = (
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
     addDecryptButton(node as Text, encryptedString, options)
-    addQRDecryptButton(node as Text, encryptedString, options)
   }
 }
 
@@ -189,8 +185,6 @@ export const addDecryptButton = (
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
   target.style.display = 'block'
-  target.id = 'DecryptSpan'
-
   const button = new DecryptButton({
     target,
     props: { design },
@@ -220,39 +214,6 @@ export const addDecryptButton = (
     ).then((decryptedString) => {
       frame = displayDecryptedMail(decryptedString, target)
     })
-  })
-}
-
-/** Adds a QR decryption button next to the Decrypt Button. */
-export const addQRDecryptButton = (
-  node: Text,
-  encryptedString: string,
-  { design }: Options
-): void => {
-  // eslint-disable-next-line unicorn/prefer-query-selector
-  const target = document.getElementById('DecryptSpan')
-  if (!target) throw new Error('The element #target not found')
-
-  const button = new QRCodeButton({
-    target,
-    props: { design },
-  })
-  node.before(target)
-
-  /** Frame containing the decrypted mail. */
-  let frame: HTMLIFrameElement
-
-  addClickListener(button, (promise, resolved, rejected) => {
-    if (resolved) {
-      frame.parentNode?.removeChild(frame)
-      return
-    }
-
-    if (promise && !rejected) return promise
-
-    button.$set({ report: undefined })
-
-    frame = displayQREncryptedMail(encryptedString, target)
   })
 }
 
@@ -352,74 +313,6 @@ export const displayDecryptedMail = (
     // Make the frame as tall as its content
     frame.height = `${frame.contentDocument.body.scrollHeight + 20}`
   })
-
-  return frame
-}
-
-/** Adds a frame containing a QRCode. */
-export const displayQREncryptedMail = (
-  encryptedString: string,
-  node: HTMLElement
-): HTMLIFrameElement => {
-  const frame = document.createElement('iframe')
-  frame.id = 'iframeid'
-
-  if (encryptedString.length > 2331) {
-    let errorMsg = ''
-
-    _.subscribe(($_) => {
-      errorMsg = $_(
-        'the-message-exceeds-the-maximum-number-of-characters-allowed'
-      )
-    })
-    // eslint-disable-next-line no-alert
-    alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
-  } else {
-    document.querySelector('#iframeid')?.remove()
-
-    Object.assign(frame.style, {
-      display: 'block',
-      maxWidth: '100%',
-      margin: '10px 0px',
-      border: '2px solid #555',
-      boxSizing: 'border-box',
-    })
-
-    node.after(frame)
-    frame.addEventListener('load', () => {
-      if (!frame.contentDocument)
-        throw new Error('Cannot change frame content.')
-
-      // We create a Span inside the iframe to put the QRCode Element
-      const target = document.createElement('span')
-      target.id = 'spanQR'
-      target.style.display = 'contents'
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const QR = new QRCode({
-        target,
-        props: {
-          data: encryptedString,
-          size: 100,
-          scale: 3,
-        },
-      })
-      frame.contentWindow?.document.body.append(target)
-
-      // We take the QRCode Height and copy it to the frame
-      // eslint-disable-next-line prefer-const
-      let iframeHeight = document
-        .querySelectorAll('iframe')[4]
-        .contentDocument?.querySelector('canvas')?.style.height
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const FrameHeightWidht = Number.parseInt(iframeHeight!, 10) + 20
-
-      frame.style.height = FrameHeightWidht.toString() + 'px'
-
-      frame.style.width = FrameHeightWidht.toString() + 'px'
-    })
-  }
 
   return frame
 }
