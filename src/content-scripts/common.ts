@@ -265,7 +265,7 @@ const handleToolbar = (
     button.$set({ report: undefined })
 
     // Encrypt and replace
-    let encryptedString = await encryptString(
+    const encryptedString = await encryptString(
       // Use innerHTML instead of textContent to support rich text
       mail.innerHTML,
       (report: Report) => {
@@ -276,7 +276,6 @@ const handleToolbar = (
 
     // Place the encrypted text un a preformatted text element
     const pre = document.createElement('pre')
-    encryptedString += '\r'
     pre.append(encryptedString)
     mail.innerHTML = ''
     mail.append(pre)
