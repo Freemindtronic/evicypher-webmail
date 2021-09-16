@@ -5,5 +5,4 @@ export enum Design {
   Outlook = 'outlook',
   Yahoo = 'yahoo',
   Proton = 'proton',
-  AndorraTelecom = 'andorratelecom',
 }
