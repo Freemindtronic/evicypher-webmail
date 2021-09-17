@@ -223,14 +223,13 @@ export const addDecryptButton = (
   })
 }
 
-/** Adds a QR decryption button next to the Decrypt Button. */
+/** Adds a QR code button next to the Decrypt Button. */
 export const addQRDecryptButton = (
   node: Text,
   encryptedString: string,
   { design }: Options
 ): void => {
-  // eslint-disable-next-line unicorn/prefer-query-selector
-  const target = document.getElementById('DecryptSpan')
+  const target = document.querySelector('#DecryptSpan')
   if (!target) throw new Error('The element #target not found')
 
   const button = new QRCodeButton({
@@ -252,7 +251,7 @@ export const addQRDecryptButton = (
 
     button.$set({ report: undefined })
 
-    frame = displayQREncryptedMail(encryptedString, target)
+    frame = displayQREncryptedMail(encryptedString, target as HTMLElement)
   })
 }
 
@@ -375,6 +374,7 @@ export const displayQREncryptedMail = (
     // eslint-disable-next-line no-alert
     alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
   } else {
+    // Check if QRCode Iframe already exist and remove it
     document.querySelector('#iframeid')?.remove()
 
     Object.assign(frame.style, {
@@ -408,13 +408,12 @@ export const displayQREncryptedMail = (
 
       // We take the QRCode Height and copy it to the frame
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const elemento: HTMLIFrameElement = document.querySelector('#iframeid')!
-      const canvas = elemento.contentDocument?.querySelector('canvas')
+      const canvas = frame.contentDocument?.querySelector('canvas')
       const height = canvas?.style.height
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const FrameHeightWidht = Number.parseInt(height!, 10) + 20
+      if (height === undefined) return
+
+      const FrameHeightWidht = Number.parseInt(height, 10) + 20
 
       frame.style.height = FrameHeightWidht.toString() + 'px'
 
