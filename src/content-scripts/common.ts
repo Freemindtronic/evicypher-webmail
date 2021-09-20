@@ -188,7 +188,7 @@ export const addDecryptButton = (
 ): void => {
   // Add the button right before the beginning of the encrypted content
   const target = document.createElement('span')
-  target.style.display = 'block'
+  target.style.display = 'inline'
   target.id = 'DecryptSpan'
 
   const button = new DecryptButton({
@@ -229,14 +229,17 @@ export const addQRDecryptButton = (
   encryptedString: string,
   { design }: Options
 ): void => {
-  const target = document.querySelector('#DecryptSpan')
-  if (!target) throw new Error('The element #target not found')
+  const target = document.createElement('span')
+  const br = document.createElement('br')
+  target.style.display = 'inline'
+  target.id = 'QRCodeSpan'
 
   const button = new QRCodeButton({
     target,
     props: { design },
   })
   node.before(target)
+  node.before(br)
 
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
@@ -317,7 +320,6 @@ const handleToolbar = (
     encryptedString += '\r'
     pre.append(encryptedString)
     mail.innerHTML = ''
-    mail.append(pre)
     tooltip.destroy()
   })
 }
