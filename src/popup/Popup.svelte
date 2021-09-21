@@ -5,6 +5,7 @@
   import { locale, isLoading, _ } from '$/i18n'
   import locales from '~/locales.json'
   import Logo from '../assets/logo.svg'
+  import Options from './Options.svelte'
   import Phones from './Phones.svelte'
 
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
@@ -24,6 +25,7 @@
   <main in:fade={{ duration: 75 }}>
     <IsZeroconfRunning />
     <Phones />
+    <Options />
   </main>
 {/if}
 

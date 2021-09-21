@@ -83,6 +83,7 @@
       {$_('evifile')}
     </a>
   </p>
+  <HR />
 {/if}
 
 <style lang="scss">

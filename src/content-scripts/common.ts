@@ -6,10 +6,12 @@
 
 import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
+import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
 import { startBackgroundTask, Task } from '$/task'
+import { isOpenpgpEnabled } from '~src/options'
 import QRCode from '../components/QRCode.svelte'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
@@ -84,18 +86,33 @@ export const decryptString = async (
   )
 
 /** @returns Whether the given string contains a known encryption header */
-export const containsEncryptedText = (string: string): boolean =>
-  string.includes('-----BEGIN PGP MESSAGE-----') &&
-  string.includes('-----END PGP MESSAGE-----')
+export const containsEncryptedText = (string: string): boolean => {
+  if (get(isOpenpgpEnabled)) {
+    return (
+      string.includes('-----BEGIN PGP MESSAGE-----') &&
+      string.includes('-----END PGP MESSAGE-----')
+    )
+  }
+
+  return string.includes('AAAAF')
+}
 
 /** @returns Whether the given string is encrypted */
-export const isEncryptedText = (string: string): boolean =>
-  string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
+export const isEncryptedText = (string: string): boolean => {
+  if (get(isOpenpgpEnabled))
+    return string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
+
+  return string.trimStart().startsWith('AAAAF')
+}
 
 /** @returns A trimmed encrypted message */
 const extractEncryptedString = (string: string): string => {
-  const extracted =
-    /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(string)?.[0]
+  const extracted = get(isOpenpgpEnabled)
+    ? /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(
+        string
+      )?.[0]
+    : /AAAAF\S*/s.exec(string)?.[0]
+
   if (!extracted) throw new Error('No encrypted string found to extract.')
   return extracted
 }

@@ -23,6 +23,7 @@ import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
 import { version } from '~/package.json'
+import { isOpenpgpEnabled } from '~src/options'
 
 /**
  * Sends an encryption request to the favorite phone. The encryption is performed locally.
@@ -53,15 +54,20 @@ export const encrypt: BackgroundTask<undefined, string, string> =
       reporter,
       signal,
     })
+    if (get(isOpenpgpEnabled)) {
+      return openpgpEncrypt({
+        message: await createMessage({ text }),
+        passwords: fromUint8Array(keys.high),
+        config: {
+          showVersion: true,
+          versionString: `EviCypher Webmail ${version} (${openpgpConfig.versionString})`,
+        },
+      })
+    }
+    // Encrypt the text
 
-    return openpgpEncrypt({
-      message: await createMessage({ text }),
-      passwords: fromUint8Array(keys.high),
-      config: {
-        showVersion: true,
-        versionString: `EviCypher Webmail ${version} (${openpgpConfig.versionString})`,
-      },
-    })
+    const evi = new EviCrypt(keys)
+    return evi.encryptText(text)
   }
 
 /**

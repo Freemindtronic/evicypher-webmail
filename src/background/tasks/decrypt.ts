@@ -7,17 +7,19 @@
  * @module
  */
 
-import type { BackgroundTask } from '$/task'
+import type { Reporter } from '$/report'
+import type { BackgroundTask, TaskContext } from '$/task'
 import { debug } from 'debug'
 import { fromUint8Array } from 'js-base64'
 import { readMessage, decrypt as pgpDecrypt } from 'openpgp'
 import { get } from 'svelte/store'
 import { BrowserStore } from '$/browser-store'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { EviCrypt } from '$/legacy-code/cryptography/EviCrypt'
+import { EviCrypt, keyUsed } from '$/legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
+import { isOpenpgpEnabled } from '~src/options'
 
 /**
  * Sends a decryption request to the favorite phone. The decryption is performed locally.
@@ -33,39 +35,77 @@ import { State } from '$/report'
  */
 export const decrypt: BackgroundTask<undefined, string, string> =
   async function* (context, reporter, signal) {
-    const armoredMessage = yield
+    const msgToDecrypt = yield
 
-    let message
-    try {
-      message = await readMessage({ armoredMessage })
-    } catch {
-      throw new ExtensionError(ErrorMessage.FormatNotImplemented)
-    }
+    if (get(isOpenpgpEnabled))
+      return decryptOpenpgp(msgToDecrypt, context, reporter, signal)
 
-    await BrowserStore.allLoaded
-
-    // Fetch the favorite phone in browser storage
-    const phone = get(favoritePhone)
-    if (phone === undefined)
-      throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
-
-    // Send a request to the FMT app
-    const keys = await fetchAndSaveKeys(context, phone, {
-      reporter,
-      signal,
-    })
-
-    // Decrypt the text
-    try {
-      const decrypted = await pgpDecrypt({
-        message,
-        passwords: fromUint8Array(keys.high),
-      })
-      return decrypted.data
-    } catch {
-      throw new ExtensionError(ErrorMessage.PrivateKeyIncorrectPassphrase)
-    }
+    return decryptLegacy(msgToDecrypt, context, reporter, signal)
   }
+
+/** Decrypt using legacy method */
+async function decryptLegacy(
+  msgToDecrypt: string,
+  context: TaskContext,
+  reporter: Reporter,
+  signal: AbortSignal
+) {
+  await BrowserStore.allLoaded
+
+  // Fetch the favorite phone in browser storage
+  const phone = get(favoritePhone)
+  if (phone === undefined)
+    throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
+
+  // Send a request to the FMT app
+  const keys = await fetchAndSaveKeys(context, phone, {
+    reporter,
+    signal,
+    keyToGet: keyUsed(msgToDecrypt),
+  })
+  // Decrypt the text
+  const evi = new EviCrypt(keys)
+  return evi.decryptText(msgToDecrypt)
+}
+
+/** Decrypt using OpenPgp */
+async function decryptOpenpgp(
+  armoredMessage: string,
+  context: TaskContext,
+  reporter: Reporter,
+  signal: AbortSignal
+) {
+  let message
+  try {
+    message = await readMessage({ armoredMessage })
+  } catch {
+    throw new ExtensionError(ErrorMessage.FormatNotImplemented)
+  }
+
+  await BrowserStore.allLoaded
+
+  // Fetch the favorite phone in browser storage
+  const phone = get(favoritePhone)
+  if (phone === undefined)
+    throw new ExtensionError(ErrorMessage.FavoritePhoneUndefined)
+
+  // Send a request to the FMT app
+  const keys = await fetchAndSaveKeys(context, phone, {
+    reporter,
+    signal,
+  })
+
+  // Decrypt the text
+  try {
+    const decrypted = await pgpDecrypt({
+      message,
+      passwords: fromUint8Array(keys.high),
+    })
+    return decrypted.data
+  } catch {
+    throw new ExtensionError(ErrorMessage.PrivateKeyIncorrectPassphrase)
+  }
+}
 
 /**
  * Decrypts files locally with keys fetched from the favorite phone.
