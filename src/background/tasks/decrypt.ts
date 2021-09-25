@@ -2,23 +2,19 @@
  * Decryption tasks.
  *
  * - {@link decrypt} is used to decrypt strings;
- * - {@link decryptFiles} is used to decrypt an array of files.
  *
  * @module
  */
 
 import type { BackgroundTask } from '$/task'
 import { debug } from 'debug'
-import { fromUint8Array } from 'js-base64'
-import { readMessage, decrypt as pgpDecrypt } from 'openpgp'
 import { get } from 'svelte/store'
 import { BrowserStore } from '$/browser-store'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { EviCrypt } from '$/legacy-code/cryptography/EviCrypt'
+import { EviCrypt, keyUsed } from '$/legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
-
 /**
  * Sends a decryption request to the favorite phone. The decryption is performed locally.
  *
@@ -33,14 +29,7 @@ import { State } from '$/report'
  */
 export const decrypt: BackgroundTask<undefined, string, string> =
   async function* (context, reporter, signal) {
-    const armoredMessage = yield
-
-    let message
-    try {
-      message = await readMessage({ armoredMessage })
-    } catch {
-      throw new ExtensionError(ErrorMessage.FormatNotImplmented)
-    }
+    const str = yield
 
     await BrowserStore.allLoaded
 
@@ -53,31 +42,14 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     const keys = await fetchAndSaveKeys(context, phone, {
       reporter,
       signal,
+      keyToGet: keyUsed(str),
     })
 
     // Decrypt the text
-    try {
-      const decrypted = await pgpDecrypt({
-        message,
-        passwords: fromUint8Array(keys.high),
-      })
-      return decrypted.data
-    } catch {
-      throw new ExtensionError(ErrorMessage.PrivateKeyIncorrectPassphrase)
-    }
+    const evi = new EviCrypt(keys)
+    return evi.decryptText(str)
   }
 
-/**
- * Decrypts files locally with keys fetched from the favorite phone.
- *
- * @remarks
- *   The files are not sent directly to the task, but through `blob:` URL. (see
- *   https://stackoverflow.com/a/30881444)
- *
- *   The task returns `undefined` because decrypted files are reported when ready.
- *   Subtasks of decryption can be tracked through `SUBTASK_IN_PROGRESS`,
- *   `SUBTASK_COMPLETE` and `SUBTASK_FAILED` reports.
- */
 export const decryptFiles: BackgroundTask<
   undefined,
   Array<{ name: string; url: string }>,

@@ -9,12 +9,6 @@
 
 import type { BackgroundTask } from '$/task'
 import debug from 'debug'
-import { fromUint8Array } from 'js-base64'
-import {
-  createMessage,
-  encrypt as openpgpEncrypt,
-  config as openpgpConfig,
-} from 'openpgp'
 import { get } from 'svelte/store'
 import { BrowserStore } from '$/browser-store'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -22,7 +16,6 @@ import { EviCrypt } from '$/legacy-code/cryptography/EviCrypt'
 import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
-import { version } from '~/package.json'
 
 /**
  * Sends an encryption request to the favorite phone. The encryption is performed locally.
@@ -38,7 +31,7 @@ import { version } from '~/package.json'
  */
 export const encrypt: BackgroundTask<undefined, string, string> =
   async function* (context, reporter, signal) {
-    const text = yield
+    const str = yield
 
     await BrowserStore.allLoaded
 
@@ -54,14 +47,9 @@ export const encrypt: BackgroundTask<undefined, string, string> =
       signal,
     })
 
-    return openpgpEncrypt({
-      message: await createMessage({ text }),
-      passwords: fromUint8Array(keys.high),
-      config: {
-        showVersion: true,
-        versionString: `EviCypher Webmail ${version} (${openpgpConfig.versionString})`,
-      },
-    })
+    // Encrypt the text
+    const evi = new EviCrypt(keys)
+    return evi.encryptText(str)
   }
 
 /**

@@ -6,6 +6,9 @@
 
 import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
+import { Buffer } from 'buffer'
+import * as base85 from 'base85'
+import { Base64 } from 'js-base64'
 import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -85,17 +88,13 @@ export const decryptString = async (
 
 /** @returns Whether the given string contains a known encryption header */
 export const containsEncryptedText = (string: string): boolean =>
-  string.includes('-----BEGIN PGP MESSAGE-----') &&
-  string.includes('-----END PGP MESSAGE-----')
-
+  string.includes('AAAAF')
 /** @returns Whether the given string is encrypted */
 export const isEncryptedText = (string: string): boolean =>
-  string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
-
+  string.trimStart().startsWith('AAAAF')
 /** @returns A trimmed encrypted message */
 const extractEncryptedString = (string: string): string => {
-  const extracted =
-    /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(string)?.[0]
+  const extracted = /AAAAF\S*/s.exec(string)?.[0]
   if (!extracted) throw new Error('No encrypted string found to extract.')
   return extracted
 }
@@ -176,7 +175,15 @@ export const handleMailElement = (
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
     addDecryptButton(node as Text, encryptedString, options)
-    addQRDecryptButton(node as Text, encryptedString, options)
+
+    const rawData = Base64.toUint8Array(encryptedString)
+
+    // Reencode data in Ascii85 for a smaller QRcode
+    let encryptedStringQRB85 = base85.encode(Buffer.from(rawData), 'ascii85')
+    // Remove enclosure added by the base85 lib
+    encryptedStringQRB85 = encryptedStringQRB85.slice(2, -2)
+
+    addQRDecryptButton(node as Text, encryptedStringQRB85, options)
   }
 }
 
