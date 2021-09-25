@@ -320,6 +320,7 @@ const handleToolbar = (
     encryptedString += '\r'
     pre.append(encryptedString)
     mail.innerHTML = ''
+    mail.append(pre)
     tooltip.destroy()
   })
 }
