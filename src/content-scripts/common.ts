@@ -8,6 +8,7 @@ import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
 import { Buffer } from 'buffer'
 import * as base85 from 'base85'
+import { convert } from 'html-to-text'
 import { Base64 } from 'js-base64'
 import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
@@ -312,10 +313,14 @@ const handleToolbar = (
 
     button.$set({ report: undefined })
 
+    // Use innerHTML instead of textContent to support rich text
+    const htmlText = mail.innerHTML
+
+    // Convert html text to plaintext for easier reading on Android App
+    const plainText = convert(htmlText, { wordwrap: 130 })
     // Encrypt and replace
     let encryptedString = await encryptString(
-      // Use innerHTML instead of textContent to support rich text
-      mail.innerHTML,
+      plainText,
       (report: Report) => {
         button.$set({ report })
       },
