@@ -84,6 +84,7 @@
 </script>
 
 <button
+  type="button"
   on:click={() => {
     dispatch('click')
   }}
@@ -360,6 +361,45 @@
       color: #ffffff;
       background-color: #d5006d;
       border-color: #d5006d;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      float: left;
+    }
+
+    > :global(svg) {
+      vertical-align: middle;
+    }
+  }
+
+  .button.governandorra {
+    margin: 0;
+    margin-right: 10px;
+    padding: 4 7px;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 12px;
+    font-family: 'Helvetica, Arial', 'Segoe UI Semibold', 'Segoe WP Semibold',
+      'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    line-height: 2;
+    background-image: url(/iNotes/Forms9.nsf/mButtonBlueGradient.png?OpenFileResource&amp;MX&amp;TS=20170116T174646,01Z);
+    background-repeat: repeat-x;
+    background-position: 0px -1px;
+    border: 1px solid #19365f;
+    border-radius: 0;
+    cursor: pointer;
+
+    &:focus {
+      border-color: #bccad7;
+    }
+
+    &:hover {
+      background-color: #bccad7;
+      border-color: #39577a;
     }
 
     &.decrypt {

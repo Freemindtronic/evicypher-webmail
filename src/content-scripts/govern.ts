@@ -1,11 +1,11 @@
 /**
- * Common functions for content scripts.
+ * Govern Andorra functions for content scripts.
  *
  * @module
  */
 
 import type { Report, Reporter } from '$/report'
-import type { Design } from './design'
+import { debug } from 'debug'
 import tippy from 'tippy.js'
 import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -15,6 +15,7 @@ import QRCode from '../components/QRCode.svelte'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import QRCodeButton from './QRCodeButton.svelte'
+import { Design } from './design'
 
 export interface Selectors {
   /**
@@ -168,7 +169,6 @@ export const handleMailElement = (
           : NodeFilter.FILTER_SKIP,
     }
   )
-
   let node: Node | null
   while ((node = treeWalker.nextNode())) {
     // Add a "Decrypt" button next to the node
@@ -180,6 +180,7 @@ export const handleMailElement = (
 }
 
 /** Adds a decryption button next to the text node given. */
+
 export const addDecryptButton = (
   node: Text,
   encryptedString: string,
@@ -269,10 +270,11 @@ const handleToolbar = (
   toolbar: HTMLElement,
   { selectors, design }: Options
 ) => {
-  const editor = toolbar.closest(selectors.editor)
-  const mail = editor?.querySelector(selectors.editorContent)
-  const sendButton = editor?.querySelector(selectors.send)
+  const editor = document.querySelector('#theForm')
+  const mail: HTMLInputElement | null = document.querySelector('#msgBody')
+  const sendButton = document.querySelector('.headerButtonSave.breadCrumbText')
   const node = encryptButtonSibling(selectors, toolbar, editor)
+
   if (!editor || !mail || !sendButton || !node) return
 
   if (FLAG in toolbar.dataset) return
@@ -296,27 +298,23 @@ const handleToolbar = (
   addClickListener(button, async (promise, resolved, rejected, signal) => {
     if (promise && !resolved && !rejected) return promise
 
-    if (!mail.textContent)
+    if (mail.value === '')
       throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
     button.$set({ report: undefined })
 
     // Encrypt and replace
     let encryptedString = await encryptString(
-      // Use innerHTML instead of textContent to support rich text
-      mail.innerHTML,
+      // Use value of textarea
+      mail.value.replaceAll('\n', '<br>'),
       (report: Report) => {
         button.$set({ report })
       },
       signal
     )
-
     // Place the encrypted text un a preformatted text element
-    const pre = document.createElement('pre')
     encryptedString += '\r'
-    pre.append(encryptedString)
-    mail.innerHTML = ''
-    mail.append(pre)
+    mail.value = encryptedString
     tooltip.destroy()
   })
 }
@@ -453,3 +451,22 @@ export const observe = (options: Options): void => {
     childList: true,
   })
 }
+
+/** Selectors for interesting HTML Elements of Gmail. */
+const selectors: Selectors = {
+  mail: '.msgBody',
+  toolbar: '.saveCancelFooter',
+  // Following selectors are not used
+  editor: '',
+  editorContent: '',
+  send: '',
+  encryptButtonSibling: '.memoHeaders',
+}
+
+// Enable logging in the page console (not the extension console)
+if (process.env.NODE_ENV !== 'production') debug.enable('*')
+
+// A timeout must be set so that the observer is executed once html is loaded.
+setTimeout(() => {
+  observe({ selectors, design: Design.GovernAndorra })
+}, 500)
