@@ -6,6 +6,7 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { convert } from 'html-to-text'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
@@ -60,10 +61,15 @@ const handleToolbar = (
 
     button.$set({ report: undefined })
 
+    // Use innerHTML instead of textContent to support rich text
+    const htmlText = mail.innerHTML
+
+    // Convert html text to plaintext for easier reading on Android App
+    const plainText = convert(htmlText, { wordwrap: 130 })
+
     // Encrypt and replace
     return encryptString(
-      // Use innerHTML instead of textContent to support rich text
-      mail.innerHTML,
+      plainText,
       (report: Report) => {
         button.$set({ report })
       },
