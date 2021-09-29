@@ -38,7 +38,7 @@
     "make-sure-your-phone-and-your-computer-are-on-the-same-network": "電話とコンピューターが同じネットワーク上にあることを確認してください。",
     "scan-the-qr-code-with-the-application": "アプリケーションでQRコードをスキャンします。",
     "last-seen-timeago": "最後に見た{日付}。",
-    "conflict": "電話機は一度に複数の要求を受信し、この操作を拒否しました。\n以前のすべての操作を完了して、再試行してください。",
+    "conflict": "電話機は一度に複数の要求を受信し、この操作を拒否しました。以前のすべての操作を完了して、再試行してください。",
     "refused-on-phone": "電話での操作は拒否されました。",
     "request-timeout": "操作を検証するためのタイムアウト、電話はそれを拒否しました。",
     "unknown-phone-error": "電話との交換に失敗しました。もう一度やり直してください。",
@@ -54,8 +54,5 @@
     "evicypher-webmail-cannot-find-evidns": "EviCypherWebメールはシステム上でEviDNSを見つけることができません。両方のソフトウェアがインストールされ、最新であることを確認してください。以下のリンクからEviDNSをダウンロードできます。",
     "restart-your-browser-after-installing-evidns": "EviDNSをインストールした後、ブラウザを再起動します。",
     "download-the-latest-version-of-evidns": "EviDNSの最新バージョンをダウンロードします。",
-    "a-phone-with-this-name-is-already-registered": "この名前の電話はすでに登録されています。",
-    "click-to-close-the-qr-code": "クリックしてQRコードを閉じます。",
-    "qr-code": "QRコード",
-    "format-not-implemented": "EviCypher Webmailはこのメッセージを復号化できません、破損している可能性があります。"
+    "a-phone-with-this-name-is-already-registered": "この名前の電話はすでに登録されています。"
 }
