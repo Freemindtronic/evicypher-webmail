@@ -54,5 +54,9 @@
   "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail no pot trobar EviDNS al vostre sistema; assegureu-vos que tots dos programes estan instal·lats i actualitzats. Podeu descarregar EviDNS amb l'enllaç següent.",
   "restart-your-browser-after-installing-evidns": "Reinicieu el navegador després d'instal·lar EviDNS.",
   "download-the-latest-version-of-evidns": "Descarregueu l'última versió d'EviDNS.",
-  "a-phone-with-this-name-is-already-registered": "Un telèfon amb aquest nom ja està registrat."
+  "a-phone-with-this-name-is-already-registered": "Un telèfon amb aquest nom ja està registrat.",
+  "click-to-close-the-qr-code": "Feu clic per tancar el codi QR.",
+  "the-message-exceeds-the-maximum-number-of-characters-allowed": "El missatge supera el nombre màxim de caràcters permès.",
+  "qr-code": "Codi QR",
+  "format-not-implemented": "EviCypher Webmail no pot desxifrar aquest missatge, pot estar danyat."
 }
