@@ -38,7 +38,7 @@
     "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assicurati che il tuo telefono e il tuo computer siano sulla stessa rete.",
     "scan-the-qr-code-with-the-application": "Scansiona il codice QR con l'applicazione.",
     "last-seen-timeago": "Ultimo accesso {data}.",
-    "conflict": "Il telefono ha ricevuto più richieste in una e ha rifiutato questa operazione. \nCompleta tutte le operazioni precedenti e riprova.",
+    "conflict": "Il telefono ha ricevuto più richieste in una e ha rifiutato questa operazione. Completa tutte le operazioni precedenti e riprova.",
     "refused-on-phone": "Operazione rifiutata al telefono.",
     "request-timeout": "Timeout per convalidare l'operazione, il telefono l'ha rifiutata.",
     "unknown-phone-error": "Lo scambio con il telefono non è riuscito, riprova.",
@@ -54,9 +54,5 @@
     "evicypher-webmail-cannot-find-evidns": "EviCypher Webmail non riesce a trovare EviDNS sul tuo sistema; assicurati che entrambi i software siano installati e aggiornati. Puoi scaricare EviDNS con il link sottostante.",
     "restart-your-browser-after-installing-evidns": "Riavvia il browser dopo aver installato EviDNS.",
     "download-the-latest-version-of-evidns": "Scarica l'ultima versione di EviDNS.",
-    "a-phone-with-this-name-is-already-registered": "Un telefono con questo nome è già registrato.",
-    "click-to-close-the-qr-code": "Fare clic per chiudere il codice QR.",
-    "the-message-exceeds-the-maximum-number-of-characters-allowed": "Il messaggio supera il numero massimo di caratteri consentito.",
-    "qr-code": "QR Code",
-    "format-not-implemented": "EviCypher Webmail non può decifrare questo messaggio, potrebbe essere danneggiato."
+    "a-phone-with-this-name-is-already-registered": "Un telefono con questo nome è già registrato."
 }
