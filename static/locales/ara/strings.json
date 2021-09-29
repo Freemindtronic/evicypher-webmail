@@ -54,8 +54,5 @@
     "evicypher-webmail-cannot-find-evidns": "لا يمكن لـ EviCypher Webmail العثور على EviDNS على نظامك ؛ يرجى التأكد من تثبيت كلا البرنامجين وتحديثهما. يمكنك تنزيل EviDNS بالرابط أدناه.",
     "restart-your-browser-after-installing-evidns": "أعد تشغيل المتصفح بعد تثبيت EviDNS.",
     "download-the-latest-version-of-evidns": "قم بتنزيل أحدث إصدار من EviDNS.",
-    "a-phone-with-this-name-is-already-registered": "تم تسجيل هاتف بهذا الاسم بالفعل.",
-    "qr-code": "رمز الاستجابة السريعة",
-    "click-to-close-the-qr-code": "انقر لإغلاق رمز الاستجابة السريعة.",
-    "format-not-implemented": ""
+    "a-phone-with-this-name-is-already-registered": "تم تسجيل هاتف بهذا الاسم بالفعل."
 }
