@@ -15,6 +15,7 @@ import QRCode from '../components/QRCode.svelte'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import QRCodeButton from './QRCodeButton.svelte'
+import { Mail } from './mail'
 
 export interface Selectors {
   /**
@@ -274,10 +275,12 @@ const handleToolbar = (
   { selectors, design }: Options
 ) => {
   const editor = toolbar.closest(selectors.editor)
-  const mail = editor?.querySelector(selectors.editorContent)
+  const mailSelector = editor?.querySelector(selectors.editorContent)
   const sendButton = editor?.querySelector(selectors.send)
   const node = encryptButtonSibling(selectors, toolbar, editor)
-  if (!editor || !mail || !sendButton || !node) return
+  if (!editor || !mailSelector || !sendButton || !node) return
+
+  const mail = new Mail(mailSelector)
 
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
@@ -300,7 +303,7 @@ const handleToolbar = (
   addClickListener(button, async (promise, resolved, rejected, signal) => {
     if (promise && !resolved && !rejected) return promise
 
-    if (!mail.textContent)
+    if (mail.isEmpty())
       throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
     button.$set({ report: undefined })
@@ -308,19 +311,15 @@ const handleToolbar = (
     // Encrypt and replace
     let encryptedString = await encryptString(
       // Use innerHTML instead of textContent to support rich text
-      mail.innerHTML,
+      mail.getContent(),
       (report: Report) => {
         button.$set({ report })
       },
       signal
     )
 
-    // Place the encrypted text un a preformatted text element
-    const pre = document.createElement('pre')
     encryptedString += '\r'
-    pre.append(encryptedString)
-    mail.innerHTML = ''
-    mail.append(pre)
+    mail.setContent(encryptedString)
     tooltip.destroy()
   })
 }
