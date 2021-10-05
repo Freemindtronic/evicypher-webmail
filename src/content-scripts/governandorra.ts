@@ -154,6 +154,10 @@ export const handleMailElement = (
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
 
+  // I get the innerHTML because i need the br tags to put later the \n to avoid
+  // the formatting error from the foreground task
+  const mailStringInnerHTML = mailElement.innerHTML
+
   // If it's not an encrypted mail, ignore it
   const mailString = mailElement.textContent
   if (!mailString || !containsEncryptedText(mailString)) return
@@ -174,7 +178,7 @@ export const handleMailElement = (
     // Add a "Decrypt" button next to the node
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
-    addDecryptButton(node as Text, encryptedString, options)
+    addDecryptButton(node as Text, mailStringInnerHTML, options)
     addQRDecryptButton(node as Text, encryptedString, options)
   }
 }
@@ -201,22 +205,25 @@ export const addDecryptButton = (
   let frame: HTMLIFrameElement
 
   addClickListener(button, (promise, resolved, rejected, signal) => {
-    console.log('promise:', promise)
-    console.log('resolved:', resolved)
-    console.log('rejected:', rejected)
-    console.log('signal:', signal)
     if (resolved) {
       frame.parentNode?.removeChild(frame)
       return
     }
 
-    // If (promise && !rejected) return promise
+    if (promise && !rejected) return promise
 
     button.$set({ report: undefined })
 
+    // The encryptedString is the string with all the HTML tags
+    // so first I take away the div tags and i left the br only
+    const stringWithBrTags = encryptedString.slice(75, -21)
+    // I treat the <br> and put \n
+    // with this I avoid the foreground task formnatting error
+    const encryptedStringCorrected = stringWithBrTags.replaceAll('<br>', '\n')
+
     // Decrypt and display
     return decryptString(
-      encryptedString,
+      encryptedStringCorrected,
       (report: Report) => {
         button.$set({ report })
       },
@@ -482,4 +489,4 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 setTimeout(() => {
   observe({ selectors, design: Design.GovernAndorra })
-}, 4000)
+}, 1000)
