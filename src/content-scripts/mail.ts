@@ -1,5 +1,15 @@
+/**
+ * Mail class representation
+ *
+ * Allow easier manipulation of compose mail element
+ *
+ * @class
+ */
+
 export class Mail {
+  /** Element containing the email compose UI */
   selector: Element
+  /** Is the selected element a text area element */
   isTextArea: boolean
 
   constructor(selector: Element) {
@@ -7,6 +17,7 @@ export class Mail {
     this.isTextArea = selector.localName === 'textarea'
   }
 
+  /** Return if the mail is empty */
   isEmpty(): boolean {
     if (this.isTextArea)
       return (this.selector as HTMLTextAreaElement).value === ''
@@ -14,6 +25,7 @@ export class Mail {
     return !this.selector.textContent
   }
 
+  /** Get the content of the mail */
   getContent(): string {
     if (this.isTextArea) {
       // Convert text to html to make line return visible when decrypting
@@ -26,6 +38,7 @@ export class Mail {
     return this.selector.innerHTML
   }
 
+  /** Set the content of the mail */
   setContent(text: string): void {
     if (this.isTextArea) {
       ;(this.selector as HTMLTextAreaElement).value = text

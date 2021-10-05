@@ -1,5 +1,8 @@
 /**
- * Govern Andorra functions for content scripts.
+ * Light Andorra Government functions for content scripts.
+ *
+ * The govern andorra webmail is compose of 2 UI. One light and one heavy. The
+ * light one is the easier of the 2 and works as other webmail
  *
  * @module
  */
