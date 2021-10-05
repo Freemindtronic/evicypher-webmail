@@ -278,15 +278,29 @@ export const encryptButtonSibling = (
     : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
 /** Adds an encryption button in the toolbar. */
-const handleToolbar = (
-  toolbar: HTMLElement,
-  { selectors, design }: Options
-) => {
-  const editor = document.querySelector('iframe')
-  const mail = editor?.contentDocument?.querySelector('[contenteditable]')
-  const footer = document.querySelector('footer')
-  const sendButton = footer?.querySelector('button')
-  const node = encryptButtonSibling(selectors, toolbar, editor)
+const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
+  console.log('toolbnar', toolbar)
+  const editor = document
+    .querySelector('frame')
+    ?.contentDocument?.querySelector(
+      '#e-content-inner > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)'
+    )
+  console.log('editor', editor)
+  const mail = editor?.querySelectorAll('iframe')[2]
+  console.log('mail', mail)
+  const sendButton = document
+    .querySelector('frame')
+    ?.contentDocument?.querySelector('#e-actions-mailedit-send-text')
+  console.log('sendButton', sendButton)
+
+  const node = document
+    .querySelector('frame')
+    ?.contentDocument?.querySelector(
+      '#e-$new-0-bodyrich-commands > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1)'
+    )
+
+  console.log('HOLIS')
+
   if (!editor || !mail || !sendButton || !node) return
 
   if (FLAG in toolbar.dataset) return
@@ -456,7 +470,6 @@ const handleMutations = (options: Options) => {
   const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
     options.selectors.toolbar
   )
-  console.log('TOOLBARS:', toolbar)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   for (const toolbar of toolbars!) handleToolbar(toolbar, options)
 }
