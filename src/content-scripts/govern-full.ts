@@ -1,5 +1,5 @@
 /**
- * Govern Andorra functions for content scripts.
+ * Govern Andorra Full mode interface functions for content scripts.
  *
  * @module
  */
@@ -447,7 +447,7 @@ const handleMutations = (options: Options) => {
   const mails = frame1?.contentDocument?.querySelectorAll<HTMLElement>(
     options.selectors.mail
   )
-  console.log('MAILS:', mails)
+  console.log('MAILSS:', mails)
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   for (const mail of mails!) handleMailElement(mail, options)
