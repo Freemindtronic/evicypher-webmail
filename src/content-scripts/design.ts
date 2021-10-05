@@ -1,8 +1,8 @@
 export enum Design {
   None = '',
   Gmail = 'gmail',
-  OldOutlook = 'old-outlook',
   Outlook = 'outlook',
+  OutlookOld = 'outlook-old',
   Yahoo = 'yahoo',
   Proton = 'proton',
   AndorraTelecom = 'andorratelecom',
