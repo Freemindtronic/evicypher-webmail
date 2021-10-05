@@ -155,6 +155,7 @@ export const handleMailElement = (
 
   // If it's not an encrypted mail, ignore it
   const mailString = mailElement.textContent
+
   if (!mailString || !containsEncryptedText(mailString)) return
 
   // Find all encrypted parts
