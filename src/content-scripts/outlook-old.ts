@@ -21,4 +21,4 @@ const selectors: Selectors = {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
-observe({ selectors, design: Design.OldOutlook })
+observe({ selectors, design: Design.OutlookOld })
