@@ -117,6 +117,7 @@
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint --fix",
     "*.{css,scss,svelte}": "stylelint --fix",
+    "*.{js,cjs,ts,css,scss,html,svelte,md,yml}": "cspell --no-progress '**'",
     "*.{js,cjs,ts,css,scss,html,svelte,json,md,yml}": "prettier --write"
   },
   "packageManager": "yarn@3.0.1",
@@ -128,8 +129,8 @@
     "build:eleventy-rollup": "eleventy --input=src/pages --output=build & rollup -c &",
     "build:parcel": "parcel build 'build/{*.html,*.gif,manifest.json}' --target extension",
     "build:static": "mkdir -p build extension && cp -r static/* extension & node manifest.js &",
-    "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json &",
-    "check:ci": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json",
+    "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json & cspell --gitignore --no-progress '**' &",
+    "check:ci": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json && cspell --gitignore --no-progress '**'",
     "clean": "rm -rf build extension",
     "doc": "typedoc src --sort source-order --listInvalidSymbolLinks",
     "postinstall": "husky install",
