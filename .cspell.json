@@ -27,18 +27,9 @@
     "src/legacy-code/",
     "static/",
 
-    "build/**",
-    "cypress/screenshots/**",
-    "cypress/videos/**",
-    "docs/**",
-    "extension/**",
-    "node_modules/**",
-    "storybook-static/**",
-
     "*.svg",
     "*.config.*",
-    "locales.json",
-    "package.json"
+    "*.json"
   ],
   "flagWords": [],
   "patterns": [
@@ -75,8 +66,8 @@
   ],
   "overrides": [
     {
-      "filename": "**/*.md",
-      "language": "fr,en,en-gb"
+      "filename": "TRANSLATE.md",
+      "language": "fr,en"
     },
     {
       "filename": "README.md",
@@ -112,5 +103,6 @@
       "filename": "**/*.scss",
       "ignoreRegExpList": ["svelte-url"]
     }
-  ]
+  ],
+  "import": ["@cspell/dict-fr-fr/cspell-ext.json"]
 }
