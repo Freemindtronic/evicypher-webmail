@@ -376,7 +376,7 @@
     }
   }
 
-  .button.governandorra {
+  .button.govern-andorra {
     margin: 0;
     margin-right: 10px;
     padding: 4 7px;

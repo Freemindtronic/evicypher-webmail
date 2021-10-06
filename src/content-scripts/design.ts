@@ -6,5 +6,5 @@ export enum Design {
   Yahoo = 'yahoo',
   Proton = 'proton',
   AndorraTelecom = 'andorratelecom',
-  GovernAndorra = 'governandorra',
+  GovernAndorra = 'govern-andorra',
 }
