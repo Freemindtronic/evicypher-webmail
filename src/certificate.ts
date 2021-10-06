@@ -58,7 +58,7 @@ export class Certificate {
     })
   }
 
-  /** Unserializes the certificate. */
+  /** Unserialize the certificate. */
   static fromJSON({
     id,
     fKey,

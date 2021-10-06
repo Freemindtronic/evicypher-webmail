@@ -15,7 +15,7 @@
   export let design: Design = Design.None
 </script>
 
-<!-- Svelte favors composition over inheritence, so this is the "Svelte-way" of recycling components -->
+<!-- Svelte favors composition over inheritance, so this is the "Svelte-way" of recycling components -->
 <Button
   bind:report
   bind:promise
@@ -24,7 +24,7 @@
   IdleIcon={QRIdle}
   idleTooltip={$_('scan-the-qr-code-with-the-application')}
   doneTooltip={$_('click-to-close-the-qr-code')}
-  task="qrcode"
+  task="qr-code"
   on:click
   on:abort
 >

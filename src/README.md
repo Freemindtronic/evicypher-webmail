@@ -95,7 +95,7 @@ What is the difference between **assets/**, **src/assets/** and **static/**?
 
 - `yarn build`: Builds the extension. (There are other `build:...` commands, see below.)
 - `yarn build-storybook`: Produces a self-contained Storybook, open it with `npx serve storybook-static`.
-- `yarn check`: Runs ESLint, styllint and svelte-check.
+- `yarn check`: Runs ESLint, stylelint and svelte-check.
 - `yarn clean`: Removes the built extension.
 - `yarn doc`: Builds the documentation.
 - `yarn postinstall`: Installs git hooks. _(runs automatically.)_
@@ -168,7 +168,7 @@ To release a new version, run `yarn release`, it will update the version number 
 There are three different bundlers installed:
 
 - [Rollup.js](https://rollupjs.org/guide/en/) is used to transform Svelte files to JavaScript. It cannot process HTML files and `manifest.json`, that's why there is also...
-- [Parcel](https://v2.parceljs.org/) is used to produce a complete [web extension](https://v2.parceljs.org/recipes/web-extension/). It processes the manifest to find entrypoints. Svelte files are not yet supported by Parcel.
+- [Parcel](https://v2.parceljs.org/) is used to produce a complete [web extension](https://v2.parceljs.org/recipes/web-extension/). It processes the manifest to find entry points. Svelte files are not yet supported by Parcel.
 - [Webpack](https://webpack.js.org/) is used by [Storybook](https://storybook.js.org/).
 
 Here is what happens when one runs `yarn build`:

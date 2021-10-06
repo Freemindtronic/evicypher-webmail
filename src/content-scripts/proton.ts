@@ -27,7 +27,7 @@ const handleToolbar = (
   { selectors, design }: Options
 ) => {
   const editor = document.querySelector('iframe')
-  const mail = editor?.contentDocument?.querySelector('[contenteditable]')
+  const mail = editor?.contentDocument?.querySelector(selectors.editorContent)
   const footer = document.querySelector('footer')
   const sendButton = footer?.querySelector('button')
   const node = encryptButtonSibling(selectors, toolbar, editor)
@@ -110,9 +110,9 @@ export const observe = (options: Options): void => {
 const selectors: Selectors = {
   mail: '.message-content > :first-child',
   toolbar: '.composer-actions',
-  // Selectors below are not used because CSS selectors cannot get through iframes
+  // Selectors below are not used because CSS selectors cannot get through iframe
   editor: '',
-  editorContent: '',
+  editorContent: '[contenteditable]',
   send: '',
 }
 

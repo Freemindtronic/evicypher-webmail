@@ -1,0 +1,116 @@
+{
+  "version": "0.2",
+  "language": "en, en-gb",
+  "dictionaries": ["softwareTerms", "fonts", "php"],
+  "words": [
+    "andorratelecom",
+    "cooldown",
+    "evicypher",
+    "evidns",
+    "evifile",
+    "evitoken",
+    "freemindtronic",
+    "gmail",
+    "openpgp",
+    "roundcube",
+    "sandboxed",
+    "unsanitized",
+    "unsubscriber",
+    "webextension",
+    "webmail",
+    "webmails",
+    "zeroconf"
+  ],
+  "ignoreWords": ["timeago", "dropzone"],
+  "ignorePaths": [
+    "CHANGELOG.md",
+    "src/legacy-code/",
+    "static/",
+
+    "build/**",
+    "cypress/screenshots/**",
+    "cypress/videos/**",
+    "docs/**",
+    "extension/**",
+    "node_modules/**",
+    "storybook-static/**",
+
+    "*.svg",
+    "*.config.*",
+    "locales.json",
+    "package.json"
+  ],
+  "flagWords": [],
+  "patterns": [
+    {
+      "name": "typescript-import",
+      "pattern": "import .* from .*$"
+    },
+    {
+      "name": "mail-selector",
+      "pattern": "const selectors: Selectors = {\\s(.*\\s)+}"
+    },
+    {
+      "name": "eslint-disable",
+      "pattern": "/(/|\\*) eslint-disable.*"
+    },
+    {
+      "name": "stylelint-disable",
+      "pattern": "/(/|\\*) stylelint-disable.*"
+    },
+    {
+      "name": "svelte-url",
+      "pattern": "url(.*)"
+    },
+    {
+      "name": "dropzone-event",
+      "pattern": "dropzone\\.(emit|on)\\(\\s*'.*'"
+    }
+  ],
+  "ignoreRegExpList": [
+    "eslint-disable",
+    "mail-selector",
+    "stylelint-disable",
+    "typescript-import"
+  ],
+  "overrides": [
+    {
+      "filename": "**/*.md",
+      "language": "fr,en,en-gb"
+    },
+    {
+      "filename": "README.md",
+      "ignoreWords": [
+        "cloc",
+        "commitlint",
+        "czrc",
+        "eleventy",
+        "parcelrc",
+        "prettierrc",
+        "stylelint",
+        "stylelintrc"
+      ]
+    },
+    {
+      "filename": "**/*.njk",
+      "languageId": "html"
+    },
+    {
+      "filename": "**/*.svelte",
+      "dictionaries": ["html", "typescript", "fonts", "php"],
+      "ignoreRegExpList": ["svelte-url", "dropzone-event"],
+      "ignoreWords": [
+        "Catalá",
+        "Italiano",
+        "Português",
+        "Românesc",
+        "Русский",
+        "عربي"
+      ]
+    },
+    {
+      "filename": "**/*.scss",
+      "ignoreRegExpList": ["svelte-url"]
+    }
+  ]
+}

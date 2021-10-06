@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "代码 {uid} 是否正确？",
   "yes": "是的",
   "no": "不",
-  "pairing-with-phonename": "与{phoneName}配对",
   "online": "在线的",
   "offline": "离线",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "确保您的手机和计算机在同一网络上。",
@@ -57,5 +56,6 @@
   "a-phone-with-this-name-is-already-registered": "已注册具有此名称的电话。",
   "qr-code": "二维码",
   "click-to-close-the-qr-code": "点击关闭二维码。",
-  "format-not-implemented": "EviCypher Webmail 无法解密此邮件，它可能已损坏。"
+  "format-not-implemented": "EviCypher Webmail 无法解密此邮件，它可能已损坏。",
+  "pairing-with-phone-name": "与{phoneName}配对"
 }

@@ -7,6 +7,8 @@
  * @module
  */
 
+// cSpell:ignore timeago
+
 import TimeAgo from 'javascript-time-ago'
 import ara from 'javascript-time-ago/locale/ar'
 import cat from 'javascript-time-ago/locale/ca'

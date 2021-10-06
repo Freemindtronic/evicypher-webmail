@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "O código {uid} está correto?",
   "yes": "sim",
   "no": "Não",
-  "pairing-with-phonename": "Pareando com {phoneName}",
   "online": "conectados",
   "offline": "desligada",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Certifique-se de que seu telefone e seu computador estejam na mesma rede.",
@@ -58,5 +57,6 @@
   "click-to-close-the-qr-code": "Clique para fechar o QR Code.",
   "the-message-exceeds-the-maximum-number-of-characters-allowed": "A mensagem excede o número máximo de caracteres permitido.",
   "qr-code": "Código QR",
-  "format-not-implemented": "EviCypher Webmail não pode descriptografar esta mensagem, ela pode estar corrompida."
+  "format-not-implemented": "EviCypher Webmail não pode descriptografar esta mensagem, ela pode estar corrompida.",
+  "pairing-with-phone-name": "Pareando com {phoneName}"
 }

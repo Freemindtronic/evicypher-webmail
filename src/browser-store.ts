@@ -63,7 +63,7 @@ export class BrowserStore<T> implements Writable<T> {
   readonly loadPromise: Promise<void>
 
   /**
-   * Instanciate a writable store backed by a local storage.
+   * Instantiate a writable store backed by a local storage.
    *
    * @param name - Name of the store, must be unique
    * @param writable - A writable object to wrap
