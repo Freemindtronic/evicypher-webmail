@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "Is the code {uid} correct?",
   "yes": "Yes",
   "no": "No",
-  "pairing-with-phonename": "Pairing with {phoneName}",
   "online": "online",
   "offline": "offline",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Make sure your phone and your computer are on the same network.",
@@ -60,5 +59,6 @@
   "click-to-close-the-qr-code": "Click to close the QR Code.",
   "the-message-exceeds-the-maximum-number-of-characters-allowed": "The message exceeds the maximum number of characters allowed.",
   "qr-code": "QR Code",
-  "character-limit-exceeded": "Character limit exceeded (2231)"
+  "character-limit-exceeded": "Character limit exceeded (2231)",
+  "pairing-with-phone-name": "Pairing with {phoneName}"
 }

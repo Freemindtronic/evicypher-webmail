@@ -39,7 +39,7 @@ export const decrypt: BackgroundTask<undefined, string, string> =
     try {
       message = await readMessage({ armoredMessage })
     } catch {
-      throw new ExtensionError(ErrorMessage.FormatNotImplmented)
+      throw new ExtensionError(ErrorMessage.FormatNotImplemented)
     }
 
     await BrowserStore.allLoaded
@@ -87,7 +87,7 @@ export const decryptFiles: BackgroundTask<
 
   await BrowserStore.allLoaded
 
-  // Fetch the cerificate of the favorite phone in browser storage
+  // Fetch the certificate of the favorite phone in browser storage
   const phone = get(favoritePhone)
 
   if (phone === undefined)
@@ -114,7 +114,7 @@ export const decryptFiles: BackgroundTask<
 
   // Parallelize decryption
   // Note: since the decryption is done by CryptoJS, it is not possible
-  // to effectively parallize tasks, they are run in the same thread
+  // to effectively parallelize tasks, they are run in the same thread
   await Promise.allSettled(
     [
       // Download all the files from `blob:` URLs

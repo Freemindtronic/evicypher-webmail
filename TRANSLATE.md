@@ -8,7 +8,7 @@ L'extension EviCypher Webmail a été conçue avec ces contraintes en tête, ce 
 
 ## Pour les traducteurs
 
-EviCypher Webmail utilise un format conventionnel pour ses fichiers de traduction : du JSON clé-valeur. Les clés sont des identifiants uniques écrits en _kebab-case_, et les valeurs sont les traductions affichées. Il existes de [nombreux logiciels](https://alternativeto.net/software/po-editor/) pour éditer ces fichiers avec une interface graphique, la suite de cette documentation est illustrée avec des captures de l'un de ces logiciels : [POEditor](https://poeditor.com/). En version gratuire, POEditor accepte de charger 1 000 traductions, ce qui est suffisant pour nos besoins pour l'instant. [Tarifs de POEditor.](https://github.com/marketplace/poeditor/)
+EviCypher Webmail utilise un format conventionnel pour ses fichiers de traduction : du JSON clé-valeur. Les clés sont des identifiants uniques écrits en _kebab-case_, et les valeurs sont les traductions affichées. Il existes de [nombreux logiciels](https://alternativeto.net/software/po-editor/) pour éditer ces fichiers avec une interface graphique, la suite de cette documentation est illustrée avec des captures de l'un de ces logiciels : [POEditor](https://poeditor.com/). En version gratuite, POEditor accepte de charger 1 000 traductions, ce qui est suffisant pour nos besoins pour l'instant. [Tarifs de POEditor.](https://github.com/marketplace/poeditor/)
 
 ### Créer un projet POEditor
 
@@ -16,7 +16,7 @@ Se connecter à POEditor avec un compte GitHub et créer un nouveau projet, nomm
 
 ![image](https://user-images.githubusercontent.com/48261497/130031880-ec063587-ccf2-4170-b899-ec794ac212b7.png)
 
-Ajouter les langues dans lequelles on veut que l'extension soit disponible. Pour l'instant les langues créées sont vides, aucune clé n'est chargée.
+Ajouter les langues dans lesquelles on veut que l'extension soit disponible. Pour l'instant les langues créées sont vides, aucune clé n'est chargée.
 
 ![image](https://user-images.githubusercontent.com/48261497/130032055-595789aa-5508-4cac-aafa-3d142489054e.png)
 
@@ -94,7 +94,7 @@ L'extension propose une nouvelle clé générée automatiquement, puis le code �
 
 ### Supprimer les clés inutilisées
 
-L'onglet de l'extension offre de nombreuses fonctionnalités, dont la possiblité de supprimer les clés qui n'apparaissent pas dans le code.
+L'onglet de l'extension offre de nombreuses fonctionnalités, dont la possibilité de supprimer les clés qui n'apparaissent pas dans le code.
 
 ![image](https://user-images.githubusercontent.com/48261497/130038087-eceafc2e-a0fe-41fe-bca1-2ee04612ca4c.png)
 

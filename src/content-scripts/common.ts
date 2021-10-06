@@ -258,7 +258,7 @@ export const addQRDecryptButton = (
   })
 }
 
-/** Returns the element to place the encrytion button after. */
+/** Returns the element to place the encryption button after. */
 export const encryptButtonSibling = (
   { encryptButtonSibling }: Selectors,
   toolbar: Element,
@@ -364,7 +364,7 @@ export const displayQREncryptedMail = (
   node: HTMLElement
 ): HTMLIFrameElement => {
   const frame = document.createElement('iframe')
-  frame.id = 'iframeid'
+  frame.id = 'iframe_id'
 
   if (encryptedString.length > 2331) {
     let errorMsg = ''
@@ -378,7 +378,7 @@ export const displayQREncryptedMail = (
     alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
   } else {
     // Check if QRCode Iframe already exist and remove it
-    document.querySelector('#iframeid')?.remove()
+    document.querySelector('#iframe_id')?.remove()
 
     Object.assign(frame.style, {
       display: 'block',
@@ -416,11 +416,11 @@ export const displayQREncryptedMail = (
 
       if (height === undefined) return
 
-      const FrameHeightWidht = Number.parseInt(height, 10) + 20
+      const FrameHeightWidth = Number.parseInt(height, 10) + 20
 
-      frame.style.height = FrameHeightWidht.toString() + 'px'
+      frame.style.height = FrameHeightWidth.toString() + 'px'
 
-      frame.style.width = FrameHeightWidht.toString() + 'px'
+      frame.style.width = FrameHeightWidth.toString() + 'px'
     })
   }
 

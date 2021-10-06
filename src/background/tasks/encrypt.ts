@@ -42,7 +42,7 @@ export const encrypt: BackgroundTask<undefined, string, string> =
 
     await BrowserStore.allLoaded
 
-    // Fetch the cerificate of the favorite phone in browser storage
+    // Fetch the certificate of the favorite phone in browser storage
     const phone = get(favoritePhone)
 
     if (phone === undefined)
@@ -84,7 +84,7 @@ export const encryptFiles: BackgroundTask<
 
   await BrowserStore.allLoaded
 
-  // Fetch the cerificate of the favorite phone in browser storage
+  // Fetch the certificate of the favorite phone in browser storage
   const phone = get(favoritePhone)
 
   if (phone === undefined)

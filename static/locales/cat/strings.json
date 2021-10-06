@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "El codi {uid} és correcte?",
   "yes": "Sí",
   "no": "No",
-  "pairing-with-phonename": "Sincronització amb {phoneName}",
   "online": "en línia",
   "offline": "fora de línia",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assegureu-vos que el telèfon i l'ordinador estiguin a la mateixa xarxa.",
@@ -58,5 +57,6 @@
   "click-to-close-the-qr-code": "Feu clic per tancar el codi QR.",
   "the-message-exceeds-the-maximum-number-of-characters-allowed": "El missatge supera el nombre màxim de caràcters permès.",
   "qr-code": "Codi QR",
-  "format-not-implemented": "EviCypher Webmail no pot desxifrar aquest missatge, pot estar danyat."
+  "format-not-implemented": "EviCypher Webmail no pot desxifrar aquest missatge, pot estar danyat.",
+  "pairing-with-phone-name": "Sincronització amb {phoneName}"
 }

@@ -1,6 +1,6 @@
 import Popup from './Popup.svelte'
 
-// Instanciate the main component
+// Instantiate the main component
 export default new Popup({
   target: document.body,
 })

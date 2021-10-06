@@ -20,7 +20,7 @@
   /** Button style. */
   export let design: Design = Design.None
 
-  /** Tootlip placement. */
+  /** Tooltip placement. */
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
 
   /** Default icon, when the button is in idle state. */

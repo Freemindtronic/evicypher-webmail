@@ -91,7 +91,7 @@
 </script>
 
 <h2>
-  {$_('pairing-with-phonename', { values: { phoneName } })}
+  {$_('pairing-with-phone-name', { values: { phoneName } })}
   <Button
     type="button"
     on:click={() => {

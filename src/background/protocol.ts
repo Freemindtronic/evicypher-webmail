@@ -13,7 +13,7 @@
  * The exchange is in four consecutive steps:
  *
  * - **Ping:** the beginning of the handshake. (The name Ping is improperly used.)
- * - **CypherKey:** effective exchange, the keys are ecrypted by the phone, sent
+ * - **CypherKey:** effective exchange, the keys are encrypted by the phone, sent
  *   and decrypted by the extension.
  * - **EndRequest:** a new key is generated for the next exchange with the phone.
  * - **EndOkRequest:** acknowledgement of the end of the exchange.
@@ -53,13 +53,13 @@ export enum Request {
   Ping = '/P',
   /** A request to get encryption keys. */
   CipherKey = '/CK',
-  /** End of an exhange, request for a new certificate. */
+  /** End of an exchange, request for a new certificate. */
   End = '/f2',
   /** Acknowledgement of receipt of the `END` request. */
   EndOk = '/o',
   /** The first request of the pairing process. */
   PairingStart = '/t',
-  /** A key exhange during the pairing process. */
+  /** A key exchange during the pairing process. */
   PairingSalt = '/c',
   /**
    * The final part of the pairing process, when the response is received, the
@@ -105,7 +105,7 @@ export interface ResponseMap {
 }
 
 /**
- * Every exchange starts with a handcheck improperly named "ping". It contains a
+ * Every exchange starts with a handshake improperly named "ping". It contains a
  * hash sent to all available devices, used by the devices to know if they are
  * the correct recipient:
  *
@@ -239,6 +239,7 @@ export interface PairingNameResponse {
   h: Uint8Array
 }
 
+// CSpell:words oskour
 export interface IsAliveRequest {
   /**
    * The Android application crashes if the request body is empty, so let's add

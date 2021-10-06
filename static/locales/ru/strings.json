@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "Код {uid} правильный?",
   "yes": "да",
   "no": "Нет",
-  "pairing-with-phonename": "Подключение к {phoneName}",
   "online": "онлайн",
   "offline": "не в сети",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Убедитесь, что ваш телефон и компьютер находятся в одной сети.",
@@ -57,5 +56,6 @@
   "a-phone-with-this-name-is-already-registered": "Телефон с таким именем уже зарегистрирован.",
   "click-to-close-the-qr-code": "Щелкните, чтобы закрыть QR-код.",
   "qr-code": "QR код",
-  "format-not-implemented": "EviCypher Webmail не может расшифровать это сообщение, оно может быть повреждено."
+  "format-not-implemented": "EviCypher Webmail не может расшифровать это сообщение, оно может быть повреждено.",
+  "pairing-with-phone-name": "Подключение к {phoneName}"
 }

@@ -229,7 +229,7 @@ export type ReturnType<T> = T extends BackgroundTask<
  *   front end generator;
  * - A `result`: the final result as returned by {@link startBackgroundTask};
  * - A `report`: an asynchronous update to the task status, see {@link Report};
- * - An `error`: an exception to propagte, see {@link ErrorMessage}.
+ * - An `error`: an exception to propagate, see {@link ErrorMessage}.
  */
 export type MessageFromBackToFront<T> = T extends BackgroundTask<
   infer TSent,
@@ -293,8 +293,8 @@ export interface TaskContext {
        */
       lastSeen: number
       /**
-       * If the device is a paired phone with the Freemindtonic app installed,
-       * this propery is defined.
+       * If the device is a paired phone with the Freemindtronic app installed,
+       * this property is defined.
        */
       // The `phone` and `keys` keys are voluntarily not optional, it helps destructuring
       phone:
@@ -312,7 +312,7 @@ export interface TaskContext {
         | undefined
     }
   >
-  /** Set `scanFaster` to true to make the Zeroconf service run without cooldown. */
+  /** Set `scanFaster` to true to make the Zeroconf service run without cool-down. */
   scanFaster: Observable<boolean>
   /** A void Observable triggered every time a new device is found on the network. */
   newDeviceFound: Observable<void>

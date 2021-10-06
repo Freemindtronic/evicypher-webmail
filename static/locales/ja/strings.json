@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "コード{uid}は正しいですか？",
   "yes": "はい",
   "no": "番号",
-  "pairing-with-phonename": "{phoneName}とのペアリング",
   "online": "オンライン",
   "offline": "オフライン",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "電話とコンピューターが同じネットワーク上にあることを確認してください。",
@@ -57,5 +56,6 @@
   "a-phone-with-this-name-is-already-registered": "この名前の電話はすでに登録されています。",
   "click-to-close-the-qr-code": "クリックしてQRコードを閉じます。",
   "qr-code": "QRコード",
-  "format-not-implemented": "EviCypher Webmailはこのメッセージを復号化できません、破損している可能性があります。"
+  "format-not-implemented": "EviCypher Webmailはこのメッセージを復号化できません、破損している可能性があります。",
+  "pairing-with-phone-name": "{phoneName}とのペアリング"
 }

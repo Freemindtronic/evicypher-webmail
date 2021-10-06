@@ -32,7 +32,6 @@
   "is-the-code-uid-correct": "Codul {uid} este corect?",
   "yes": "Da",
   "no": "Nu",
-  "pairing-with-phonename": "Împerecherea cu {phoneName}",
   "online": "pe net",
   "offline": "deconectat",
   "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Asigurați-vă că telefonul și computerul dvs. sunt în aceeași rețea.",
@@ -57,5 +56,6 @@
   "a-phone-with-this-name-is-already-registered": "Un telefon cu acest nume este deja înregistrat.",
   "click-to-close-the-qr-code": "Faceți clic pentru a închide codul QR.",
   "qr-code": "Cod QR",
-  "format-not-implemented": "EviCypher Webmail nu poate decripta acest mesaj, poate fi corupt."
+  "format-not-implemented": "EviCypher Webmail nu poate decripta acest mesaj, poate fi corupt.",
+  "pairing-with-phone-name": "Împerecherea cu {phoneName}"
 }

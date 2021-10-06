@@ -69,7 +69,7 @@ export const isZeroconfServiceInstalled = async (): Promise<boolean> => {
     log(`Zeroconf version: ${response.version}.`)
     if (![1].includes(response.version)) {
       // The only compatible version is 1, update the array above
-      // if more versions are suported
+      // if more versions are supported
       // Note: `response.version` is the MAJOR version number
       console.error(
         `Zeroconf version ${response.version} is not compatible with this extension.`
