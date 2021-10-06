@@ -216,7 +216,7 @@ export const addDecryptButton = (
 
     // The encryptedString is the string with all the HTML tags
     // so first I take away the div tags and i left the br only
-    const stringWithBrTags = encryptedString.slice(75, -21)
+    const stringWithBrTags = encryptedString.slice(76, -9)
     // I treat the <br> and put \n
     // with this I avoid the foreground task formnatting error
     const encryptedStringCorrected = stringWithBrTags.replaceAll('<br>', '\n')
@@ -326,18 +326,19 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     button.$set({ report: undefined })
 
     // Encrypt and replace
-    return encryptString(
-      // Use innerHTML instead of textContent to support rich text
+    let encryptedString = await encryptString(
+      // Use value of textarea
       mail.innerHTML,
       (report: Report) => {
         button.$set({ report })
       },
       signal
-    ).then((encryptedString) => {
-      encryptedString.replaceAll('\n', '<br>')
-      mail.textContent = encryptedString
-      tooltip.destroy()
-    })
+    )
+    // Place the encrypted text un a preformatted text element
+    encryptedString.replaceAll('\n', '<br>')
+    encryptedString += '\r'
+    mail.textContent = encryptedString
+    tooltip.destroy()
   })
 }
 
