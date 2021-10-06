@@ -279,28 +279,26 @@ export const encryptButtonSibling = (
 
 /** Adds an encryption button in the toolbar. */
 const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
-  console.log('toolbnar', toolbar)
   const editor = document
     .querySelector('frame')
-    ?.contentDocument?.querySelector(
-      '#e-content-inner > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)'
-    )
+    ?.contentDocument?.querySelector('#e-contentpanel-container')
   console.log('editor', editor)
-  const mail = editor?.querySelectorAll('iframe')[2]
+  const mail = document
+    .querySelector('frame')
+    ?.contentDocument?.querySelectorAll('iframe')[2]
+    .contentDocument?.querySelector('body')
   console.log('mail', mail)
-  const sendButton = document
-    .querySelector('frame')
-    ?.contentDocument?.querySelector('#e-actions-mailedit-send-text')
+  const searchSendButton = document.querySelector('frame')?.contentDocument
+  const sendButton = searchSendButton?.querySelector(
+    '#e-actions-mailedit-send-text'
+  )
   console.log('sendButton', sendButton)
+  const auxnode = document.querySelector('frame')
+  const node = auxnode?.querySelector(
+    '#e-$new-0-body-commands > div:nth-child(1)'
+  )
 
-  const node = document
-    .querySelector('frame')
-    ?.contentDocument?.querySelector(
-      '#e-$new-0-bodyrich-commands > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(1)'
-    )
-
-  console.log('HOLIS')
-
+  console.log('node', node)
   if (!editor || !mail || !sendButton || !node) return
 
   if (FLAG in toolbar.dataset) return
@@ -312,7 +310,7 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     target,
     props: { design },
   })
-  node.after(target)
+  node.before(target)
 
   const tooltip = tippy(sendButton, {
     theme: 'light-border',
@@ -470,6 +468,7 @@ const handleMutations = (options: Options) => {
   const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
     options.selectors.toolbar
   )
+  console.log('TOOOLBARS:', toolbar)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   for (const toolbar of toolbars!) handleToolbar(toolbar, options)
 }
@@ -482,7 +481,7 @@ export const observe = (options: Options): void => {
   new MutationObserver(() => {
     handleMutations(options)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  }).observe(document.body.querySelector('frame')!.contentDocument!.body, {
+  }).observe(document.querySelector('frame')!.contentDocument!, {
     subtree: true,
     childList: true,
   })
@@ -502,4 +501,4 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 setTimeout(() => {
   observe({ selectors, design: Design.GovernAndorra })
-}, 1000)
+}, 5000)
