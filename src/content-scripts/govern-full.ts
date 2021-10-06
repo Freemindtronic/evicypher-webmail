@@ -293,10 +293,8 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     '#e-actions-mailedit-send-text'
   )
   console.log('sendButton', sendButton)
-  const auxnode = document.querySelector('frame')
-  const node = auxnode?.querySelector(
-    '#e-$new-0-body-commands > div:nth-child(1)'
-  )
+  const auxnode = document.querySelector('frame')?.contentDocument
+  const node = auxnode?.querySelectorAll('.s-basicpanel')[29]
 
   console.log('node', node)
   if (!editor || !mail || !sendButton || !node) return
@@ -336,6 +334,7 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
       },
       signal
     ).then((encryptedString) => {
+      encryptedString.replaceAll('\n', '<br>')
       mail.textContent = encryptedString
       tooltip.destroy()
     })
