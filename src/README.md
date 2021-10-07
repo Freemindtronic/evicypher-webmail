@@ -186,3 +186,7 @@ There are a few magic things going on in this repository:
 - `$` resolves to `./src`, it is defined in `package.json` (for Parcel), `rollup.config.js` and `tsconfig.json`.
 - `~` resolves to `.`, it is a default for Parcel, and also defined in `tsconfig.json`.
 - Code is automatically tested and formatted before committing, thanks to [lint-staged](https://github.com/okonet/lint-staged#readme).
+
+### Known issues
+
+- `yarn start` does not work on Chrome. This is because `web_accessible_resources` in `manifest.json` file is not correctly fill by parcel. Hence the patch apply on `yarn build`

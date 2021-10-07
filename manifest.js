@@ -33,7 +33,11 @@ export const manifest = {
       id: 'evicypher-webmail@freemindtronic.com',
     },
   },
-  web_accessible_resources: ['loading.gif', 'blank.html', 'locales/*.json'],
+  web_accessible_resources: [
+    'loading.gif',
+    'blank.html',
+    'locales/*/strings.json',
+  ],
 }
 
 /** Writes `manifest` to `build/manifest.json`. */
