@@ -7,7 +7,6 @@
 import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
 import tippy from 'tippy.js'
-import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
 import { startBackgroundTask, Task } from '$/task'
@@ -341,18 +340,25 @@ export const displayDecryptedMail = (
 
   // To address issues with Content-Security-Policy,
   // we need a local frame, that we modify once loaded
-  frame.src = browser.runtime.getURL('/blank.html')
+  // frame.src = browser.runtime.getURL('/blank.html')
 
   node.after(frame)
-  frame.addEventListener('load', () => {
+
+  const setContent = () => {
     if (!frame.contentDocument) throw new Error('Cannot change frame content.')
     // We are injecting raw HTML in a sandboxed environnement,
     // no need to sanitize it
     // eslint-disable-next-line no-unsanitized/property
     frame.contentDocument.body.innerHTML = decryptedString
     // Make the frame as tall as its content
+    frame.height = '1'
     frame.height = `${frame.contentDocument.body.scrollHeight + 20}`
-  })
+  }
+
+  setContent()
+
+  // On Firefox the iframe empty itself on load so we have to fill it again
+  frame.addEventListener('load', setContent)
 
   return frame
 }
@@ -388,7 +394,8 @@ export const displayQREncryptedMail = (
     })
 
     node.after(frame)
-    frame.addEventListener('load', () => {
+
+    const setQrCode = () => {
       if (!frame.contentDocument)
         throw new Error('Cannot change frame content.')
 
@@ -420,7 +427,12 @@ export const displayQREncryptedMail = (
       frame.style.height = FrameHeightWidth.toString() + 'px'
 
       frame.style.width = FrameHeightWidth.toString() + 'px'
-    })
+    }
+
+    setQrCode()
+
+    // On Firefox the iframe empty itself on load so we have to fill it again
+    frame.addEventListener('load', setQrCode)
   }
 
   return frame
