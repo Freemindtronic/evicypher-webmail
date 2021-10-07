@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /**
  * Govern Andorra Full mode interface functions for content scripts.
  *
@@ -278,6 +279,7 @@ export const encryptButtonSibling = (
     : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
 /** Adds an encryption button in the toolbar. */
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   const editor = document
     .querySelector('frame')
@@ -294,14 +296,16 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   )
   console.log('sendButton', sendButton)
   const auxnode = document.querySelector('frame')?.contentDocument
-  const node = auxnode?.querySelectorAll('.s-basicpanel')[29]
+  let node = auxnode?.querySelectorAll('.s-basicpanel')[29]
+
+  if (mail?.innerHTML === '')
+    node = auxnode?.querySelectorAll('s-basicpanel')[43]
 
   console.log('node', node)
   if (!editor || !mail || !sendButton || !node) return
 
   if (FLAG in toolbar.dataset) return
   toolbar.dataset[FLAG] = '1'
-
   const target = document.createElement('span')
   target.style.display = 'contents'
   const button = new EncryptButton({
@@ -470,16 +474,24 @@ const handleMutations = (options: Options) => {
   )
   console.log('TOOOLBARS:', toolbar)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  for (const toolbar of toolbars!) handleToolbar(toolbar, options)
+  for (const toolbar of toolbars!) {
+    setTimeout(() => {
+      handleToolbar(toolbar, options)
+    }, 1000)
+  }
 }
 
 /** Observes the DOM for changes. Should work for most webmails. */
 export const observe = (options: Options): void => {
   // Run the listener on page load
+
+  console.log('first handleMutation')
   handleMutations(options)
   // Start observing the DOM for changes
   new MutationObserver(() => {
+    console.log('2nd handleMutation')
     handleMutations(options)
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   }).observe(document.querySelector('frame')!.contentDocument!, {
     subtree: true,
@@ -501,4 +513,4 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 setTimeout(() => {
   observe({ selectors, design: Design.GovernAndorra })
-}, 5000)
+}, 1000)
