@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable complexity */
 /**
  * Govern Andorra Full mode interface functions for content scripts.
@@ -303,10 +304,20 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
 
   console.log('node', node)
   if (!editor || !mail || !sendButton || !node) return
+  console.log('AQUI NO HAY NADA NULL')
+  console.log('TOLLBAR', toolbar)
 
-  if (FLAG in toolbar.dataset) return
+  if (
+    document
+      .querySelector('frame')
+      ?.contentDocument?.querySelector('#spanEncryptButton')
+  )
+    return
+
+  console.log('AQUI NO HAY BANDERITA')
   toolbar.dataset[FLAG] = '1'
   const target = document.createElement('span')
+  target.id = 'spanEncryptButton'
   target.style.display = 'contents'
   const button = new EncryptButton({
     target,
@@ -511,6 +522,27 @@ const selectors: Selectors = {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
+const getJSONstatus = function (url: string) {
+  const xhr = new XMLHttpRequest()
+  xhr.open('GET', url, true)
+  xhr.responseType = 'json'
+  // eslint-disable-next-line unicorn/prefer-add-event-listener
+  xhr.onload = function () {
+    const { status } = xhr
+    if (status === 200) return true
+
+    return false
+  }
+
+  xhr.send()
+}
+
+getJSONstatus(
+  'https://missatgeria.govern.ad/mail/ncifnom2.nsf/iNotes/Proxy/?OpenDocument&Form=l_CommonPollJSON&PresetFields=FolderName;($Alarms),DBQuotaInfo;1&TZType=UTC&KeyType=time&StartKey=19700101T000000,00Z&UntilKey=20211008T220000,00Z&Count=100&NKA'
+)
+
+// eslint-disable-next-line no-unmodified-loop-condition
+while (!getJSONstatus) {}
 setTimeout(() => {
   observe({ selectors, design: Design.GovernAndorra })
 }, 1000)
