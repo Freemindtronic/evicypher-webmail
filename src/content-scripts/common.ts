@@ -338,10 +338,6 @@ export const displayDecryptedMail = (
     boxSizing: 'border-box',
   })
 
-  // To address issues with Content-Security-Policy,
-  // we need a local frame, that we modify once loaded
-  // frame.src = browser.runtime.getURL('/blank.html')
-
   node.after(frame)
 
   const setContent = () => {
