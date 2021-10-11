@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.2.0...v1.3.0) (2021-10-11)
+
+### Features
+
+- add support for Gov.Andorra ([b2bb860](https://github.com/Freemindtronic/evicypher-webmail/commit/b2bb860035389ef1226ad6e022e4c22a6d5971c8))
+- added support for Andorra Telecom ([ca7785d](https://github.com/Freemindtronic/evicypher-webmail/commit/ca7785d64039784482f2a65507fc4e04e5532fa0))
+- qrcode implementation ([dc4d49e](https://github.com/Freemindtronic/evicypher-webmail/commit/dc4d49e5fe55d5ee65338638da9eb28c95d8ac0a))
+- qrcode implementation ([09d0e10](https://github.com/Freemindtronic/evicypher-webmail/commit/09d0e10fc145e1c58099c54a723b022350be82a8))
+
+### Bug Fixes
+
+- chrome compatibility ([2555126](https://github.com/Freemindtronic/evicypher-webmail/commit/255512641ea13f11797a46ee19562ace86d33373))
+- correct encryptedtext format in mail responses ([057079d](https://github.com/Freemindtronic/evicypher-webmail/commit/057079d40d327b32e954c5bcb8cd34c5613dc1ac))
+- encrypt btn do not write encrypted email ([0c4ee57](https://github.com/Freemindtronic/evicypher-webmail/commit/0c4ee57afdc5506c153d6c8ff03b2a1ca91a3047))
+- forgot to add andorra telecom button styles ([bb68895](https://github.com/Freemindtronic/evicypher-webmail/commit/bb6889530682e5fb44ac218dfa6367bcf40e5b36))
+- **qrcode:** bad iframe detection ([e3c2c91](https://github.com/Freemindtronic/evicypher-webmail/commit/e3c2c91ddb04ea71b42d75852a3b51a4f8c2fd14))
+- response messages has it's own buttons ([7a87ae7](https://github.com/Freemindtronic/evicypher-webmail/commit/7a87ae7626b49e2876d4f61012a455f8ff5a9d69))
+- revert to old translation ([6e3d1d9](https://github.com/Freemindtronic/evicypher-webmail/commit/6e3d1d90619fafaf86544e498e47e653555a81ee))
+- update strings.json ([7ee5ec7](https://github.com/Freemindtronic/evicypher-webmail/commit/7ee5ec73d9396de8fadda06b8d933a918d43f750))
+- update strings.json(2) ([9975762](https://github.com/Freemindtronic/evicypher-webmail/commit/997576294bf5352818ce8799dc10be29ede073a9))
+- yahoo webmail selector change ([82e9231](https://github.com/Freemindtronic/evicypher-webmail/commit/82e9231accc8c378a5fb6f4b0684ef56115ea8b9))
+
 ## [1.2.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.1.0...v1.2.0) (2021-09-03)
 
 ### Features
