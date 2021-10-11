@@ -117,7 +117,7 @@
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint --fix",
     "*.{css,scss,svelte}": "stylelint --fix",
-    "*.{js,cjs,ts,css,scss,html,svelte,md,yml}": "cspell --no-progress",
+    "*.{js,cjs,ts,css,scss,html,svelte,md,yml}": "cspell --no-progress --no-must-find-files",
     "*.{js,cjs,ts,css,scss,html,svelte,json,md,yml}": "prettier --write"
   },
   "packageManager": "yarn@3.0.1",
