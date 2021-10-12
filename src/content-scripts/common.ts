@@ -179,7 +179,7 @@ export const handleMailElement = (
 
     const rawData = Base64.toUint8Array(encryptedString)
 
-    // Reencode data in Ascii85 for a smaller QRcode
+    // Re-encode data in Ascii85 for a smaller QRcode
     let encryptedStringQRB85 = base85.encode(Buffer.from(rawData), 'ascii85')
     // Remove enclosure added by the base85 lib
     encryptedStringQRB85 = encryptedStringQRB85.slice(2, -2)
