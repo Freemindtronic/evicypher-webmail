@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable complexity */
 /**
@@ -9,7 +10,6 @@
 import type { Report } from '$/report'
 import type { Selectors } from './common'
 import { debug } from 'debug'
-import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
 import QRCode from '../components/QRCode.svelte'
@@ -156,33 +156,19 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   const editor = document
     .querySelector('frame')
     ?.contentDocument?.querySelector('#e-contentpanel-container')
-  console.log('editor', editor)
-  const mail = document
-    .querySelector('frame')
-    ?.contentDocument?.querySelectorAll('iframe')[2]
-    .contentDocument?.querySelector('body')
-  console.log('mail', mail)
-  const searchSendButton = document.querySelector('frame')?.contentDocument
-  const sendButton = searchSendButton?.querySelector(
-    '#e-actions-mailedit-send-text'
-  )
-  console.log('sendButton', sendButton)
-  const auxnode = document.querySelector('frame')?.contentDocument
-  const node = auxnode?.querySelectorAll('iframe[id$=editorframe]')
+
+  const frame = document.querySelector('frame')?.contentDocument
+  if (!frame) return
+
+  const iframe: NodeListOf<HTMLIFrameElement> | undefined =
+    frame?.querySelectorAll('iframe[id$=editorframe]')
+  if (!iframe) return
+
+  const sendButton = frame.querySelector('#e-actions-mailedit-send-text')
+  const node = frame.querySelectorAll('iframe[id$=editorframe]')
   console.log('node', node)
 
-  if (!editor || !mail || !sendButton || !node) return
-  console.log('AQUI NO HAY NADA NULL')
-  console.log('TOLLBAR', toolbar)
-
-  if (
-    document
-      .querySelector('frame')
-      ?.contentDocument?.querySelector('#spanEncryptButton')
-  )
-    return
-
-  console.log('AQUI NO HAY BANDERITA')
+  if (!editor || !sendButton || !node) return
 
   toolbar.dataset[FLAG] = '1'
   const target = document.createElement('span')
@@ -193,16 +179,21 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     props: { design },
   })
 
-  for (const leaf of node) leaf.before(target)
-
-  const tooltip = tippy(sendButton, {
-    theme: 'light-border',
-  })
-  _.subscribe(($_) => {
-    tooltip.setContent($_('this-mail-is-not-encrypted'))
-  })
+  // Bucle para poner el boton en el iframe que no tiene y que se ha abierto
+  for (const leaf of node) {
+    console.log('BOTON PUESTO EN', leaf)
+    if (!leaf.previousSibling) leaf.before(target)
+  }
 
   addClickListener(button, async (promise, resolved, rejected, signal) => {
+    // Verificar el contenido mail ( no funciona)
+    const mailAux: HTMLIFrameElement | null = frame?.querySelector(
+      'iframe[id$=editorframe]'
+    )
+    const mail = mailAux?.contentDocument?.body
+
+    if (mail === undefined) return
+
     if (promise && !resolved && !rejected) return promise
 
     if (!mail.textContent)
@@ -223,7 +214,6 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     encryptedString.replaceAll('\n', '<br>')
     encryptedString += '\r'
     mail.textContent = encryptedString
-    tooltip.destroy()
   })
 }
 
@@ -310,7 +300,6 @@ const handleMutations = (options: Options) => {
   const mails = frame1?.contentDocument?.querySelectorAll<HTMLElement>(
     options.selectors.mail
   )
-  console.log('MAILSS:', mails)
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   for (const mail of mails!) handleMailElement(mail, options)
@@ -319,7 +308,6 @@ const handleMutations = (options: Options) => {
   const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
     options.selectors.toolbar
   )
-  console.log('TOOOLBARS:', toolbar)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   for (const toolbar of toolbars!) {
     setTimeout(() => {
@@ -332,11 +320,9 @@ const handleMutations = (options: Options) => {
 export const observe = (options: Options): void => {
   // Run the listener on page load
 
-  console.log('first handleMutation')
   handleMutations(options)
   // Start observing the DOM for changes
   new MutationObserver(() => {
-    console.log('2nd handleMutation')
     handleMutations(options)
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
