@@ -1,4 +1,4 @@
-/* eslint-disable no-empty */
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable complexity */
 /**
  * Govern Andorra Full mode interface functions for content scripts.
@@ -6,146 +6,28 @@
  * @module
  */
 
-import type { Report, Reporter } from '$/report'
+import type { Report } from '$/report'
+import type { Selectors } from './common'
 import { debug } from 'debug'
 import tippy from 'tippy.js'
-import { browser } from 'webextension-polyfill-ts'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
-import { startBackgroundTask, Task } from '$/task'
 import QRCode from '../components/QRCode.svelte'
 import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
 import QRCodeButton from './QRCodeButton.svelte'
+import {
+  FLAG,
+  Options,
+  addClickListener,
+  containsEncryptedText,
+  decryptString,
+  displayDecryptedMail,
+  encryptString,
+  extractEncryptedString,
+  isEncryptedText,
+} from './common'
 import { Design } from './design'
-
-export interface Selectors {
-  /**
-   * Mail element. All mail elements are processed to find encrypted text. If a
-   * mail contains encrypted text, a Decrypt button is added.
-   */
-  mail: string
-  /** Editor toolbar, where the Encrypt button will be added. */
-  toolbar: string
-  /** Mail editor. */
-  editor: string
-  /** Mail editor content. */
-  editorContent: string
-  /** Send button. A tooltip is added to the button if the mail written is not encrypted. */
-  send: string
-  /**
-   * Place the encryption button right after this element. If not defined, place
-   * it at the end of the toolbar.
-   */
-  encryptButtonSibling?: string
-}
-
-export interface Options {
-  selectors: Selectors
-  design: Design
-}
-
-/** A flag to mark already processed (having buttons added) HTML elements. */
-export const FLAG = 'freemindtronic'
-
-/** Sends a request to the background script to encrypt the given string. */
-export const encryptString = async (
-  string: string,
-  reporter: Reporter,
-  signal: AbortSignal
-): Promise<string> =>
-  startBackgroundTask(
-    Task.Encrypt,
-    async function* () {
-      // Suspend the foreground task until the background task asks for a string
-      yield
-      yield string
-    },
-    {
-      reporter,
-      signal,
-    }
-  )
-
-/** Sends a request to the background script to decrypt the given string. */
-export const decryptString = async (
-  string: string,
-  reporter: Reporter,
-  signal: AbortSignal
-): Promise<string> =>
-  startBackgroundTask(
-    Task.Decrypt,
-    async function* () {
-      // Suspend the foreground task until the background task asks for a string
-      yield
-      yield string
-    },
-    {
-      reporter,
-      signal,
-    }
-  )
-
-/** @returns Whether the given string contains a known encryption header */
-export const containsEncryptedText = (string: string): boolean =>
-  string.includes('-----BEGIN PGP MESSAGE-----') &&
-  string.includes('-----END PGP MESSAGE-----')
-
-/** @returns Whether the given string is encrypted */
-export const isEncryptedText = (string: string): boolean =>
-  string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
-
-/** @returns A trimmed encrypted message */
-const extractEncryptedString = (string: string): string => {
-  const extracted =
-    /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(string)?.[0]
-  if (!extracted) throw new Error('No encrypted string found to extract.')
-  return extracted
-}
-
-/**
- * Adds all the listeners necessary to make the button interactive.
- *
- * @remarks
- *   This function ensures that the state of the button is always consistent.
- */
-export const addClickListener = (
-  button: EncryptButton | DecryptButton,
-  listener: (
-    promise: Promise<void> | undefined,
-    resolved: boolean,
-    rejected: boolean,
-    signal: AbortSignal
-  ) => Promise<void> | undefined
-): void => {
-  /** Abort controller, bound to a button in the tooltip. */
-  let controller: AbortController
-  button.$on('abort', () => {
-    controller.abort()
-    promise = undefined
-    button.$set({ promise })
-  })
-
-  let promise: Promise<void> | undefined
-  let resolved = false
-  let rejected = false
-
-  // When the button is clicked, trigger the event listener
-  button.$on('click', () => {
-    if (promise === undefined) controller = new AbortController()
-    promise = listener(promise, resolved, rejected, controller.signal)
-    button.$set({ promise })
-    resolved = false
-    rejected = false
-    promise
-      ?.then(() => {
-        resolved = true
-      })
-      .catch(() => {
-        rejected = true
-      })
-  })
-}
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
 export const handleMailElement = (
@@ -269,18 +151,7 @@ export const addQRDecryptButton = (
   })
 }
 
-/** Returns the element to place the encrytion button after. */
-export const encryptButtonSibling = (
-  { encryptButtonSibling }: Selectors,
-  toolbar: Element,
-  editor: Element | null
-): ChildNode | undefined =>
-  (encryptButtonSibling === undefined
-    ? toolbar.lastChild
-    : editor?.querySelector(encryptButtonSibling)) ?? undefined
-
 /** Adds an encryption button in the toolbar. */
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   const editor = document
     .querySelector('frame')
@@ -297,12 +168,9 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   )
   console.log('sendButton', sendButton)
   const auxnode = document.querySelector('frame')?.contentDocument
-  let node = auxnode?.querySelectorAll('.s-basicpanel')[29]
-
-  if (mail?.innerHTML === '')
-    node = auxnode?.querySelectorAll('s-basicpanel')[43]
-
+  const node = auxnode?.querySelectorAll('iframe[id$=editorframe]')
   console.log('node', node)
+
   if (!editor || !mail || !sendButton || !node) return
   console.log('AQUI NO HAY NADA NULL')
   console.log('TOLLBAR', toolbar)
@@ -315,6 +183,7 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     return
 
   console.log('AQUI NO HAY BANDERITA')
+
   toolbar.dataset[FLAG] = '1'
   const target = document.createElement('span')
   target.id = 'spanEncryptButton'
@@ -323,7 +192,8 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
     target,
     props: { design },
   })
-  node.before(target)
+
+  for (const leaf of node) leaf.before(target)
 
   const tooltip = tippy(sendButton, {
     theme: 'light-border',
@@ -357,39 +227,6 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   })
 }
 
-/** Adds a frame containing a given string. */
-export const displayDecryptedMail = (
-  decryptedString: string,
-  node: HTMLElement
-): HTMLIFrameElement => {
-  const frame = document.createElement('iframe')
-  Object.assign(frame.style, {
-    display: 'block',
-    width: '100%',
-    maxWidth: '100%',
-    margin: '10px 0px',
-    border: '2px solid #555',
-    boxSizing: 'border-box',
-  })
-
-  // To address issues with Content-Security-Policy,
-  // we need a local frame, that we modify once loaded
-  frame.src = browser.runtime.getURL('/blank.html')
-
-  node.after(frame)
-  frame.addEventListener('load', () => {
-    if (!frame.contentDocument) throw new Error('Cannot change frame content.')
-    // We are injecting raw HTML in a sandboxed environnement,
-    // no need to sanitize it
-    // eslint-disable-next-line no-unsanitized/property
-    frame.contentDocument.body.innerHTML = decryptedString
-    // Make the frame as tall as its content
-    frame.height = `${frame.contentDocument.body.scrollHeight + 20}`
-  })
-
-  return frame
-}
-
 /** Adds a frame containing a QRCode. */
 export const displayQREncryptedMail = (
   encryptedString: string,
@@ -412,8 +249,7 @@ export const displayQREncryptedMail = (
     // Check if QRCode Iframe already exist and remove it
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const frame1 = document.querySelector('frame')!.contentDocument!.body
-    const frame2 = frame1.querySelectorAll('iframe')[2]
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    const frame2 = frame1.querySelector('#iframeid')
     frame2?.remove()
 
     Object.assign(frame.style, {
@@ -522,27 +358,6 @@ const selectors: Selectors = {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
-const getJSONstatus = function (url: string) {
-  const xhr = new XMLHttpRequest()
-  xhr.open('GET', url, true)
-  xhr.responseType = 'json'
-  // eslint-disable-next-line unicorn/prefer-add-event-listener
-  xhr.onload = function () {
-    const { status } = xhr
-    if (status === 200) return true
-
-    return false
-  }
-
-  xhr.send()
-}
-
-getJSONstatus(
-  'https://missatgeria.govern.ad/mail/ncifnom2.nsf/iNotes/Proxy/?OpenDocument&Form=l_CommonPollJSON&PresetFields=FolderName;($Alarms),DBQuotaInfo;1&TZType=UTC&KeyType=time&StartKey=19700101T000000,00Z&UntilKey=20211008T220000,00Z&Count=100&NKA'
-)
-
-// eslint-disable-next-line no-unmodified-loop-condition
-while (!getJSONstatus) {}
 setTimeout(() => {
   observe({ selectors, design: Design.GovernAndorra })
 }, 1000)
