@@ -20,52 +20,12 @@ import {
   FLAG,
   Options,
   addClickListener,
-  containsEncryptedText,
   decryptString,
   displayDecryptedMail,
   encryptString,
-  extractEncryptedString,
-  isEncryptedText,
+  handleMailElement,
 } from './common'
 import { Design } from './design'
-
-/** Adds a button to a given element to decrypt all encrypted parts found. */
-export const handleMailElement = (
-  mailElement: HTMLElement,
-  options: Options
-): void => {
-  // Mark the element
-  if (FLAG in mailElement.dataset) return
-  mailElement.dataset[FLAG] = '1'
-
-  // I get the innerHTML because i need the br tags to put later the \n to avoid
-  // the formatting error from the foreground task
-  const mailStringInnerHTML = mailElement.innerHTML
-
-  // If it's not an encrypted mail, ignore it
-  const mailString = mailElement.textContent
-  if (!mailString || !containsEncryptedText(mailString)) return
-
-  // Find all encrypted parts
-  const treeWalker = document.createTreeWalker(
-    mailElement,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: (textNode: Text) =>
-        isEncryptedText(textNode.data)
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_SKIP,
-    }
-  )
-  let node: Node | null
-  while ((node = treeWalker.nextNode())) {
-    // Add a "Decrypt" button next to the node
-    if (!node.parentNode?.textContent) continue
-    const encryptedString = extractEncryptedString(node.parentNode.textContent)
-    addDecryptButton(node as Text, mailStringInnerHTML, options)
-    addQRDecryptButton(node as Text, encryptedString, options)
-  }
-}
 
 /** Adds a decryption button next to the text node given. */
 
