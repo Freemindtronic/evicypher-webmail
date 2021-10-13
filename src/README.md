@@ -190,3 +190,11 @@ There are a few magic things going on in this repository:
 ### Known issues
 
 - `yarn start` does not work on Chrome. This is because `web_accessible_resources` in `manifest.json` file is not correctly fill by parcel. Hence the patch apply on `yarn build`
+
+### Justification of the authorizations
+
+- storage: Required to save the state of the extension between sessions
+
+- nativeMessaging: Required for communication with our executable which must be installed separately. The executable discover local devices compatible with the extension
+
+- content_scripts: Required to inject buttons and textual content on the webmail we support
