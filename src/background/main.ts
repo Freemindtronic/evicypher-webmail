@@ -23,6 +23,7 @@ import {
 } from './services/zeroconf'
 import { decrypt, decryptFiles } from './tasks/decrypt'
 import { encrypt, encryptFiles } from './tasks/encrypt'
+import { login } from './tasks/login'
 import { pair } from './tasks/pair'
 import { isZeroconfRunning } from './tasks/zeroconf'
 
@@ -135,14 +136,17 @@ isZeroconfServiceInstalled()
 
 // Every connection maps to a background task
 browser.runtime.onConnect.addListener(async (port) => {
-  const task = {
+  const taskMap: Record<Task, BackgroundTask<unknown, unknown, unknown>> = {
     [Task.Pair]: pair,
+    [Task.Login]: login,
     [Task.Encrypt]: encrypt,
     [Task.EncryptFiles]: encryptFiles,
     [Task.Decrypt]: decrypt,
     [Task.DecryptFiles]: decryptFiles,
     [Task.IsZeroconfRunning]: isZeroconfRunning,
-  }[port.name]
+  }
+
+  const task = taskMap[port.name as Task]
   if (task === undefined)
     throw new Error(`Unexpected connection: ${port.name}.`)
 
@@ -151,11 +155,7 @@ browser.runtime.onConnect.addListener(async (port) => {
 
   try {
     // Run the task until completion
-    await startTask(
-      task as BackgroundTask<unknown, unknown, unknown>,
-      port,
-      log
-    )
+    await startTask(task, port, log)
   } catch (error: unknown) {
     log('%o', error)
 
