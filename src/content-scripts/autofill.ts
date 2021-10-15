@@ -1,8 +1,14 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable complexity */
 /**
- * Content script that looks for login field in the page
+ * Content script that manage auto-login in the page
  *
+ * - It looks for login field in the page
+ * - It adds an auto-login button to each login field found
+ * - It fills login field on button press
+ *
+ * @remarks
+ *   Ma remarque
  * @module
  */
 
