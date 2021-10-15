@@ -128,6 +128,7 @@ import type { isZeroconfRunning } from '$/background/tasks/zeroconf'
 import type { Observable } from '$/observable'
 import type { Phone } from '$/phones'
 import type { Report, Reporter } from '$/report'
+import type { login } from './background/tasks/login'
 import type { Writable } from 'svelte/store'
 import debug, { Debugger } from 'debug'
 import { browser, Runtime } from 'webextension-polyfill-ts'
@@ -145,6 +146,8 @@ export enum Task {
   DecryptFiles = 'decrypt-files',
   /** See {@link pair}. */
   Pair = 'pair',
+  /** See {@link login}. */
+  Login = 'login',
   /** See {@link isZeroconfRunning}. */
   IsZeroconfRunning = 'is-zeroconf-running',
 }
@@ -152,6 +155,7 @@ export enum Task {
 /** Maps a task to the type of its background generator. */
 export type TaskMap = {
   [Task.Pair]: typeof pair
+  [Task.Login]: typeof login
   [Task.Encrypt]: typeof encrypt
   [Task.EncryptFiles]: typeof encryptFiles
   [Task.Decrypt]: typeof decrypt

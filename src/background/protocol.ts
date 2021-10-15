@@ -51,6 +51,8 @@ export enum Request {
    * of a handshake.
    */
   Ping = '/P',
+  /** A request to get credential information to login a website */
+  Credential = '/C',
   /** A request to get encryption keys. */
   CipherKey = '/CK',
   /** End of an exchange, request for a new certificate. */
@@ -79,6 +81,7 @@ export enum Request {
 /** Maps {@link Request} constants to the correct request type. */
 export interface RequestMap {
   [Request.Ping]: PingRequest
+  [Request.Credential]: CredentialRequest
   [Request.CipherKey]: CipherKeyRequest
   [Request.End]: EndRequest
   [Request.EndOk]: EndOkRequest
@@ -95,6 +98,7 @@ export interface RequestMap {
  */
 export interface ResponseMap {
   [Request.Ping]: PingResponse
+  [Request.Credential]: CredentialResponse
   [Request.CipherKey]: CipherKeyResponse
   [Request.End]: EndResponse
   [Request.EndOk]: Record<string, never>
@@ -137,8 +141,7 @@ export interface PingResponse {
   k3: Uint8Array
 }
 
-/** Type of a key request, when the user has to pick a key. */
-export interface CipherKeyRequestWithoutKey {
+export interface BasicRequest {
   i1: Uint8Array
   i2: Uint8Array
   i3: Uint8Array
@@ -149,6 +152,35 @@ export interface CipherKeyRequestWithoutKey {
   d2: Uint8Array
   d3: Uint8Array
 }
+
+export type CredentialRequestWithoutUrl = BasicRequest
+
+/** Type of a credential request, when the user has a label with login information. */
+
+export interface CredentialRequestWithUrl extends CredentialRequestWithoutUrl {
+  dd: Uint8Array
+  id: Uint8Array
+  sd: Uint8Array
+}
+
+export type CredentialRequest =
+  | CredentialRequestWithUrl
+  | CredentialRequestWithoutUrl
+
+/** Type of a credential response, it is automatically picked if web url already known */
+export interface CredentialResponse {
+  d2: Uint8Array
+  d: Uint8Array
+  i2: Uint8Array
+  i: Uint8Array
+  n: Uint8Array
+  s2: Uint8Array
+  s: Uint8Array
+  t: Uint8Array
+}
+
+/** Type of a key request, when the user has to pick a key. */
+export type CipherKeyRequestWithoutKey = BasicRequest
 
 /** Type of a key request, when the key is automatically picked. */
 export interface CipherKeyRequestWithKey extends CipherKeyRequestWithoutKey {

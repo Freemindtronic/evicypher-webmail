@@ -68,6 +68,18 @@ export default [
     },
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
+  {
+    input: 'src/content-scripts/autofill.ts',
+    output: {
+      file: 'build/content-script-autofill.js',
+    },
+    plugins: [
+      svelte({
+        ...config(production),
+        emitCss: false,
+      }),
+    ],
+  },
   ...Object.keys(webmails).map((webmail) => ({
     input: `src/content-scripts/${webmail}.ts`,
     output: {

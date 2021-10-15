@@ -6,6 +6,7 @@ import { get, Writable } from 'svelte/store'
 import {
   CipherKeyRequest,
   CipherKeyResponse,
+  CredentialRequest,
   EndOkRequest,
   EndResponse,
   PingResponse,
@@ -57,8 +58,9 @@ const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
   ) as unknown as T
 
 /** Default timeout values, based on the request type. */
-export const defaultTimeouts = {
+export const defaultTimeouts: Record<Request, number> = {
   [Request.Ping]: 20_000,
+  [Request.Credential]: 180_000,
   [Request.CipherKey]: 180_000,
   [Request.End]: 3000,
   [Request.EndOk]: 3000,
@@ -305,6 +307,177 @@ const fetchKeys = async (
   })
 
   const keys = await unjamKeys(keysExchange, certificate, cipherKeyResponse)
+
+  // To ensure forward secrecy, we share a new secret
+  const newShare = {
+    id: axlsign.generateKeyPair(random(32)),
+    k1: axlsign.generateKeyPair(random(32)),
+    k2: axlsign.generateKeyPair(random(32)),
+    k3: axlsign.generateKeyPair(random(32)),
+    k4: axlsign.generateKeyPair(random(32)),
+  }
+
+  // Send the new secret to the phone
+  const newKey = await sendRequest({
+    ip,
+    port,
+    type: Request.End,
+    data: {
+      id: newShare.id.public,
+      k1: newShare.k1.public,
+      k2: newShare.k2.public,
+      k3: newShare.k3.public,
+      k4: newShare.k4.public,
+    },
+    signal,
+  })
+
+  // Create a new certificate with the new secret
+  const { acknowledgement, newCertificate } = createNewCertificate(
+    newShare,
+    newKey,
+    certificate
+  )
+  certificate = newCertificate
+
+  // Send an acknowledgement to the phone, to close the exchange
+  await sendRequest({
+    ip,
+    port,
+    type: Request.EndOk,
+    data: acknowledgement,
+    signal,
+  })
+  return { keys, newCertificate }
+}
+
+export const fetchAndSaveCredentials = async (
+  context: TaskContext,
+  phone: Writable<Phone>,
+  {
+    websiteUrl,
+    reporter,
+    signal,
+  }: {
+    websiteUrl?: string
+    reporter: Reporter
+    signal: AbortSignal
+  }
+): Promise<KeyPair> => {
+  const $phone = get(phone)
+  const { keys, newCertificate } = await fetchCredential(context, $phone, {
+    websiteUrl,
+    reporter,
+    signal,
+  })
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+  return keys
+}
+
+/**
+ * Ask the phone for a credential pair (login/password).
+ *
+ * @returns A pair containing the credential asked, and a new certificate to
+ *   save if it was renewed during the exchange.
+ */
+const fetchCredential = async (
+  context: TaskContext,
+  phone: Phone,
+  {
+    websiteUrl,
+    reporter,
+    signal,
+  }: {
+    websiteUrl?: string
+    reporter: Reporter
+    signal: AbortSignal
+  }
+): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
+  reporter({ state: State.WaitingForPhone })
+  let { certificate } = phone
+
+  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
+
+  reporter({ state: State.WaitingForFirstResponse })
+
+  // If the keys expired, fetch a new certificate
+  // The keys come from the Zeroconf service: when a phone is found by the
+  // service, the service tries to idenfies it. Since the protocol was not
+  // designed for this feature, the service tries all known certificates by
+  // starting a key exchange with the phone. Because of another weird design
+  // choice, the phone does not allow to start two exchanges in less than
+  // 3 seconds. Therefore, the keys are stored in the context, and only
+  // regenerated if expired. (i.e. more than 3 seconds elapsed)
+  let pingResponse: PingResponse
+  if (!phoneKeys || phoneKeys.date + 3000 < Date.now()) {
+    pingResponse = await sendRequest({
+      ip,
+      port,
+      type: Request.Ping,
+      data: { t: certificate.id },
+    })
+  } else {
+    pingResponse = phoneKeys.pingResponse
+    // Just check that the phone is online
+    await sendRequest({
+      ip,
+      port,
+      signal,
+      type: Request.IsAlive,
+      data: { oskour: 1 },
+    })
+  }
+
+  // Prepare the three shared secrets for the rest of the exchange
+  const keysExchange = ([1, 2, 3] as const).map((i) =>
+    encryptKey(
+      pingResponse[`iv${i}` as const],
+      pingResponse[`sa${i}` as const],
+      certificate.tKey,
+      pingResponse[`k${i}` as const]
+    )
+  )
+
+  let credentialRequest: CredentialRequest = {
+    i1: keysExchange[0].iv,
+    i2: keysExchange[1].iv,
+    i3: keysExchange[2].iv,
+    s1: keysExchange[0].salt,
+    s2: keysExchange[1].salt,
+    s3: keysExchange[2].salt,
+    d1: keysExchange[0].encryptedKey,
+    d2: keysExchange[1].encryptedKey,
+    d3: keysExchange[2].encryptedKey,
+  }
+
+  // If we want a specific key, add its signature to the payload
+  if (websiteUrl !== undefined) {
+    const ivd = random(16)
+    const saltd = random(16)
+    const keyd = xor(keysExchange[1].sharedKey, certificate.sKey)
+    const AES = new AesUtil(256, 1000)
+    const encd = AES.encryptCBC(ivd, saltd, keyd, websiteUrl)
+    credentialRequest = {
+      ...credentialRequest,
+      id: ivd,
+      sd: saltd,
+      dd: encd,
+    }
+  }
+
+  reporter({ state: State.NotificationSent })
+
+  // Ask the phone for some more random data
+  const credentialResponse = await sendRequest({
+    ip,
+    port,
+    type: Request.Credential,
+    data: credentialRequest,
+    signal,
+  })
+
+  const keys = await unjamKeys(keysExchange, certificate, credentialResponse)
 
   // To ensure forward secrecy, we share a new secret
   const newShare = {
