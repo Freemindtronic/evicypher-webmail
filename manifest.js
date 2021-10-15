@@ -5,6 +5,19 @@ import { readFileSync, writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 
 const webmails = JSON.parse(readFileSync('./webmails.json'))
+const contentScriptWebmail = Object.entries(webmails).map(([key, matches]) => ({
+  matches,
+  js: [`content-script-${key}.js`],
+}))
+const contentScript = [
+  ...contentScriptWebmail,
+  {
+    matches: ['<all_urls>'],
+    js: ['content-script-autofill.js'],
+    all_frame: true,
+    run_at: 'document_end',
+  },
+]
 
 /** A dynamically generated manifest, to keep the version number consistent. */
 export const manifest = {
@@ -24,10 +37,7 @@ export const manifest = {
   browser_action: {
     default_popup: 'popup.html',
   },
-  content_scripts: Object.entries(webmails).map(([key, matches]) => ({
-    matches,
-    js: [`content-script-${key}.js`],
-  })),
+  content_scripts: contentScript,
   browser_specific_settings: {
     gecko: {
       id: 'evicypher-webmail@freemindtronic.com',

@@ -105,3 +105,11 @@ export function uint8ToHex(uint8: Uint8Array): string {
     ''
   )
 }
+
+export function stringToUint8Array(string: string): Uint8Array {
+  return new TextEncoder().encode(string)
+}
+
+export function uint8ArrayToString(array: Uint8Array): string {
+  return new TextDecoder().decode(array)
+}
