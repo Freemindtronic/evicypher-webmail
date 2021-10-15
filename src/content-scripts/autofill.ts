@@ -143,17 +143,17 @@ new MutationObserver(findForms).observe(document.body, {
   childList: true,
 })
 
-const iconEnabled =
+const iconFocus =
   "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAl0lEQVQ4jb3SvQkCQRCG4cef0NQGTKxBMDAxMLGmq0EtRURMDKzCxBI0MTPYS044hHEXD3xhYNiZ/b7dYehILzjfYVpw/xoJJNyaiJg0EQpUGfcKqZ9pyhIJbHFs5SeMfjVZ44XLh0iFNFQ28Tvm2GPRLnSeQQlfvxC9YINZky9xxgrPUtf/7UHnVR4ExTGi2psHDpmePDWvfx8XBIor3gAAAABJRU5ErkJggg==')"
 
-const iconDisabled =
+const iconBlur =
   "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA70lEQVQ4jaWTMU4DMRBF3yBvxynS5AxIFCBBgYQouIO90kK4AjkDIVvMbkdNhwCJggYJrkCTI6SitDQ0WwU7XpQvufEfzzzNjGFHSeoyhHAPTEe8/3YZ4wpYDSenCXCSSwDwoKrznBlCmAO3ewXEopIEZrYws9eh0sLMplVVXbZt+7MZmyTouu6m7/uvIdmbiBzHGF+aptn/QzCy42vgMMb4BBwVCf4jp6rX2wK89xci8gh8OOfON/0kgff+rq7rAwAROTWzd+fcWaqJySmIyMzM1sCnqs62Ee7cg9xfMMat8iS3ykvKo10BzyXCon4Bst5MTSd6lpEAAAAASUVORK5CYII=')"
 
 function addButton(input: HTMLInputElement) {
-  let isEnabled = false
+  let isFocus = false
 
   setTimeout(() => {
-    input.style.backgroundImage = iconDisabled
+    input.style.backgroundImage = iconBlur
     input.style.backgroundRepeat = 'no-repeat'
     input.style.backgroundAttachment = 'scroll'
     input.style.backgroundSize = '16px 18px'
@@ -161,18 +161,47 @@ function addButton(input: HTMLInputElement) {
     input.style.cursor = 'auto'
   })
 
-  const enableBtn = () => {
-    isEnabled = true
-    input.style.backgroundImage = iconEnabled
+  const clickHandler = async () => {
+    const controller = new AbortController()
+
+    const credential = await startBackgroundTask(Task.Login, login, {
+      signal: controller.signal,
+      reporter,
+    })
+
+    const loginFields: NodeListOf<HTMLInputElement> =
+      document.querySelectorAll('[data-autofill-prototype-input=login]') ??
+      undefined
+
+    const passwordFields: NodeListOf<HTMLInputElement> =
+      document.querySelectorAll('[data-autofill-prototype-input=password]') ??
+      undefined
+
+    for (const field of loginFields) {
+      field.value = credential.login
+      field.focus()
+    }
+
+    for (const field of passwordFields) {
+      field.value = credential.password
+      field.focus()
+    }
+
+    input.focus()
+  }
+
+  const focusButton = () => {
+    isFocus = true
+    input.style.backgroundImage = iconFocus
     input.style.cursor = 'pointer'
     input.addEventListener('click', clickHandler)
   }
 
-  const disableBtn = () => {
-    input.style.backgroundImage = iconDisabled
+  const blurButton = () => {
+    input.style.backgroundImage = iconBlur
     input.style.cursor = 'auto'
     input.removeEventListener('click', clickHandler)
-    isEnabled = false
+    isFocus = false
   }
 
   const mouseoverHandler = (e: MouseEvent) => {
@@ -180,12 +209,12 @@ function addButton(input: HTMLInputElement) {
     const x = e.clientX - rect.left
     const threshold = rect.width * 0.98 - 24
 
-    if (x >= threshold && !isEnabled) enableBtn()
-    else if (x < threshold && isEnabled) disableBtn()
+    if (x >= threshold && !isFocus) focusButton()
+    else if (x < threshold && isFocus) blurButton()
   }
 
   const mouseoutHandler = () => {
-    if (isEnabled) disableBtn()
+    if (isFocus) blurButton()
   }
 
   input.addEventListener('mousemove', mouseoverHandler)
@@ -207,27 +236,4 @@ const login: ForegroundTask<typeof loginTask> = async function* () {
 const getHostname = () => {
   const array = window.location.hostname.split('.')
   return array[array.length - 2]
-}
-
-const clickHandler = async () => {
-  const controller = new AbortController()
-
-  const credential = await startBackgroundTask(Task.Login, login, {
-    signal: controller.signal,
-    reporter,
-  })
-
-  const loginFields =
-    document.querySelectorAll('[data-autofill-prototype-input=login]') ??
-    undefined
-
-  const passwordFields =
-    document.querySelectorAll('[data-autofill-prototype-input=password]') ??
-    undefined
-
-  for (const field of loginFields)
-    (field as HTMLInputElement).value = credential.login
-
-  for (const field of passwordFields)
-    (field as HTMLInputElement).value = credential.password
 }
