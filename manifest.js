@@ -5,6 +5,8 @@ import { readFileSync, writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 
 const webmails = JSON.parse(readFileSync('./webmails.json'))
+
+// List of content script running on each webmail supported
 const contentScriptWebmail = Object.entries(webmails).map(([key, matches]) => ({
   matches,
   js: [`content-script-${key}.js`],
