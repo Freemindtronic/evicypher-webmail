@@ -226,7 +226,7 @@ const fetchKeys = async (
   reporter({ state: State.WaitingForPhone })
   let { certificate } = phone
 
-  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
+  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, signal, phone)
 
   reporter({ state: State.WaitingForFirstResponse })
 
@@ -397,7 +397,7 @@ const fetchCredential = async (
   reporter({ state: State.WaitingForPhone })
   let { certificate } = phone
 
-  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
+  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, signal, phone)
 
   reporter({ state: State.WaitingForFirstResponse })
 
@@ -654,6 +654,7 @@ const createNewCertificate = (
  */
 const getPhoneIp = async (
   context: TaskContext,
+  signal: AbortSignal,
   phone: Phone
 ): Promise<{
   ip: string
@@ -682,6 +683,13 @@ const getPhoneIp = async (
         }
       ]
     | undefined
+
+  // Stop fast scanning if abort
+  if (signal.aborted) throw new Error(ErrorMessage.CanceledByUser)
+  signal.addEventListener('abort', () => {
+    context.scanFaster.set(false)
+    throw new Error(ErrorMessage.CanceledByUser)
+  })
 
   // Tell the Zeroconf service to scan faster
   context.scanFaster.set(true)
