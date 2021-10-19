@@ -117,21 +117,32 @@ const loader = (locale: string) => async () =>
   (await fetch(browser.runtime.getURL(`locales/${locale}/strings.json`))).json()
 
 // Register languages
-register('ara', loader('ara'))
-register('cat', loader('cat'))
-register('de', loader('de'))
-register('en', loader('en'))
-register('es', loader('es'))
-register('fr', loader('fr'))
-register('it', loader('it'))
-register('ja', loader('ja'))
-register('pt', loader('pt'))
-register('ro', loader('ro'))
-register('ru', loader('ru'))
-register('zhs', loader('zhs'))
+const localeList = [
+  'ara',
+  'cat',
+  'de',
+  'en',
+  'es',
+  'fr',
+  'it',
+  'ja',
+  'pt',
+  'ro',
+  'ru',
+  'zhs',
+]
+for (const locale of localeList) register(locale, loader(locale))
+
+const getInitialLocal = () => {
+  const locale = getLocaleFromNavigator()
+  if (localeList.includes(locale)) return locale
+
+  // Remove variety if not supported (i.e. `en-US` becomes `en`)
+  return locale.split('-')[0]
+}
 
 // Initialize FormatJS
 init({
   fallbackLocale: 'en',
-  initialLocale: getLocaleFromNavigator(),
+  initialLocale: getInitialLocal(),
 })
