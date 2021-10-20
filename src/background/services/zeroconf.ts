@@ -115,22 +115,18 @@ export const startZeroconfService = async (
 
     // Avoid scan spamming
     const duration = performance.now() - start
-    if (duration < MINIMUM_COOLDOWN) {
-      await new Promise((resolve) => {
-        setTimeout(resolve, MINIMUM_COOLDOWN - duration)
-      })
-    }
+    if (duration < MINIMUM_COOLDOWN) await delay(MINIMUM_COOLDOWN - duration)
 
     if (context.scanFaster.get()) continue
 
-    await Promise.race([
-      context.scanFaster.observe(),
-      new Promise((resolve) => {
-        setTimeout(resolve, DEFAULT_COOLDOWN)
-      }),
-    ])
+    await Promise.race([context.scanFaster.observe(), delay(DEFAULT_COOLDOWN)])
   }
 }
+
+const delay = async (time: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time)
+  })
 
 /**
  * Updates the `context` with the `response`. If a new phone is found in the
