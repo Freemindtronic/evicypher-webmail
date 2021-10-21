@@ -22,7 +22,8 @@ const processed = new Set()
 export {}
 
 /** A basic last-resort regex to find login fields. */
-const loginRegex = /\b(login|user|username|email|mail|phone|telephone)\b/i
+const loginRegex =
+  /\b(login|user|username|loginusername|email|mail|phone|telephone|account)\b/i
 
 /** Adds a data attribute to an input. */
 function processInput(input: HTMLInputElement, type: 'login' | 'password') {
@@ -47,7 +48,11 @@ function processGroup(inputs: HTMLInputElement[]) {
     }
 
     // Filter out search inputs
-    if (loginRegex.test(input.name) || loginRegex.test(input.id)) {
+    if (
+      loginRegex.test(input.name) ||
+      loginRegex.test(input.id) ||
+      loginRegex.test(input.className)
+    ) {
       processed.add(input)
       processInput(input, 'login')
       return
