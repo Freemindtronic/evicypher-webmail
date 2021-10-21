@@ -7,4 +7,5 @@ export enum Design {
   Proton = 'proton',
   AndorraTelecom = 'andorratelecom',
   GovernAndorra = 'govern-andorra',
+  WhatsApp = 'whatsapp',
 }
