@@ -392,6 +392,7 @@ export const displayDecryptedMail = (
     margin: '10px 0px',
     border: '2px solid #555',
     boxSizing: 'border-box',
+    background: 'white',
   })
 
   node.append(frame)
@@ -443,6 +444,7 @@ export const displayQREncryptedMail = (
       margin: '10px 0px',
       border: '2px solid #555',
       boxSizing: 'border-box',
+      background: 'white',
     })
 
     node.append(frame)
