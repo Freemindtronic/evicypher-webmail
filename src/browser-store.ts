@@ -104,6 +104,8 @@ export class BrowserStore<T> implements Writable<T> {
     // Set to true when `get(this.writable) === storage.get(this.name)`
     let loaded = false
     let ignoreNextEvent = false
+    /** Store if browser storage write fulfilled */
+    let writeFulfilled = true
 
     // Asynchronously load data from browser storage
     this.loadPromise = new Promise((resolve) => {
@@ -124,10 +126,18 @@ export class BrowserStore<T> implements Writable<T> {
     this.writable.subscribe((value) => {
       if (!loaded) return
 
+      // If previous write not fulfilled ignore new one
+      if (!writeFulfilled) return
+
       // Do not trigger the event listener below
       ignoreNextEvent = true
+      writeFulfilled = false
 
-      void storage.set({ [this.name]: JSON.stringify(toJSON(value)) })
+      void storage
+        .set({ [this.name]: JSON.stringify(toJSON(value)) })
+        .then(() => {
+          writeFulfilled = true
+        })
     })
 
     // Make a nice promise chain
