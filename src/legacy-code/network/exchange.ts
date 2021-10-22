@@ -511,12 +511,14 @@ const getPhoneIp = async (
       ]
     | undefined
 
-  // Stop fast scanning if abort
-  if (signal.aborted) throw new Error(ErrorMessage.CanceledByUser)
-  signal.addEventListener('abort', () => {
+  const handleAbort = () => {
     context.scanFaster.set(false)
     throw new Error(ErrorMessage.CanceledByUser)
-  })
+  }
+
+  // Stop fast scanning if abort
+  if (signal.aborted) throw new Error(ErrorMessage.CanceledByUser)
+  signal.addEventListener('abort', handleAbort)
 
   // Tell the Zeroconf service to scan faster
   context.scanFaster.set(true)
@@ -532,6 +534,7 @@ const getPhoneIp = async (
   }
 
   context.scanFaster.set(false)
+  signal.removeEventListener('abort', handleAbort)
 
   // Extract the IP address, port, and keys
   const [
