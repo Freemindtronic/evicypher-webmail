@@ -21,10 +21,10 @@ import { Request } from '../protocol'
 const APPLICATION_ID = 'com.freemindtronic.evidns'
 
 /** Time (in ms) between two scans. */
-const DEFAULT_COOLDOWN = 20_000
+const DEFAULT_COOLDOWN = 10_000
 
 /** Minimum time between two scans, even if `scanFaster` is set to true. */
-const MINIMUM_COOLDOWN = 100
+const MINIMUM_COOLDOWN = 200
 
 /** A response object, sent by EviDNS v1. */
 export interface ZeroconfResponse {
