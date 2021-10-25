@@ -154,6 +154,13 @@ const iconFocus =
 const iconBlur =
   "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA70lEQVQ4jaWTMU4DMRBF3yBvxynS5AxIFCBBgYQouIO90kK4AjkDIVvMbkdNhwCJggYJrkCTI6SitDQ0WwU7XpQvufEfzzzNjGFHSeoyhHAPTEe8/3YZ4wpYDSenCXCSSwDwoKrznBlCmAO3ewXEopIEZrYws9eh0sLMplVVXbZt+7MZmyTouu6m7/uvIdmbiBzHGF+aptn/QzCy42vgMMb4BBwVCf4jp6rX2wK89xci8gh8OOfON/0kgff+rq7rAwAROTWzd+fcWaqJySmIyMzM1sCnqs62Ee7cg9xfMMat8iS3ykvKo10BzyXCon4Bst5MTSd6lpEAAAAASUVORK5CYII=')"
 
+const fillField = (field: HTMLInputElement, value: string) => {
+  field.value = value
+  field.dispatchEvent(new Event('input', { bubbles: true }))
+  field.dispatchEvent(new Event('change', { bubbles: true }))
+  field.focus()
+}
+
 function addButton(input: HTMLInputElement) {
   let isFocus = false
 
@@ -182,15 +189,9 @@ function addButton(input: HTMLInputElement) {
       document.querySelectorAll('[data-autofill-prototype-input=password]') ??
       undefined
 
-    for (const field of loginFields) {
-      field.value = credential.login
-      field.focus()
-    }
+    for (const field of loginFields) fillField(field, credential.login)
 
-    for (const field of passwordFields) {
-      field.value = credential.password
-      field.focus()
-    }
+    for (const field of passwordFields) fillField(field, credential.password)
 
     input.focus()
   }
