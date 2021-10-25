@@ -106,7 +106,7 @@ export const isEncryptedText = (string: string): boolean => {
 }
 
 /** @returns A trimmed encrypted message */
-const extractEncryptedString = (string: string): string => {
+export const extractEncryptedString = (string: string): string => {
   const extracted = get(isOpenpgpEnabled)
     ? /-----BEGIN PGP MESSAGE-----.+-----END PGP MESSAGE-----/s.exec(
         string

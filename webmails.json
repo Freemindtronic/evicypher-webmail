@@ -6,5 +6,6 @@
   "roundcube": ["https://mail.ovh.net/owa/*"],
   "proton": ["https://mail.protonmail.com/*"],
   "andorratelecom": ["https://correu.andorra.ad/owa/*"],
-  "govern-light": ["https://missatgeria.govern.ad/*"]
+  "govern": ["https://missatgeria.govern.ad/*"],
+  "governandorra": ["https://missatgeria.govern.ad/*"]
 }
