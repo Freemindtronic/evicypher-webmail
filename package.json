@@ -140,7 +140,7 @@
     "release": "standard-version",
     "start": "yarn build:static && yarn build:eleventy-rollup && eleventy --watch --input=src/pages --output=build & rollup -c -w & parcel watch 'build/{*.html,manifest.json}' --no-hmr --target extension-dev &",
     "storybook": "start-storybook -p 6006 -s extension",
-    "test": "cypress run -b firefox"
+    "test": "playwright test tests/ --retries=2"
   },
   "targets": {
     "extension-dev": {
