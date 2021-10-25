@@ -102,6 +102,10 @@
     {
       "filename": "**/*.scss",
       "ignoreRegExpList": ["svelte-url"]
+    },
+    {
+      "filename": "src/content-scripts/govern-full.ts",
+      "ignoreWords": ["contentpanel", "editorframe", "mailedit", "bodyrich"]
     }
   ],
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"]
