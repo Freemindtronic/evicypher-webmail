@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable complexity */
 /**
- * Govern Andorra functions for content scripts.
+ * Govern Andorra Full mode interface functions for content scripts.
  *
  * @module
  */
