@@ -71,6 +71,8 @@ test.describe('Fields are detected on', async () => {
   // === Tests ===
   // Please keep the tests in alphabetical order
 
+  /* cSpell:disable */
+
   // ===0 - 9 ===
   void testSite('https://www.1001-deco-table.com/', async ({ page }) => {
     await page.click('text=Tout accepter')
@@ -530,4 +532,6 @@ test.describe('Fields are detected on', async () => {
     '[placeholder="Email Address"]',
     '[placeholder="Password"]'
   )
+
+  /* CSpell:enable */
 })
