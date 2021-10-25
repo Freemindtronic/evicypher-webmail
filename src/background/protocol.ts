@@ -141,7 +141,7 @@ export interface PingResponse {
   k3: Uint8Array
 }
 
-export interface BasicRequest {
+export interface BasicLabelRequest {
   i1: Uint8Array
   i2: Uint8Array
   i3: Uint8Array
@@ -153,7 +153,16 @@ export interface BasicRequest {
   d3: Uint8Array
 }
 
-export type CredentialRequestWithoutUrl = BasicRequest
+export interface BasicLabelResponse {
+  i: Uint8Array
+  s: Uint8Array
+  d: Uint8Array
+  i2: Uint8Array
+  s2: Uint8Array
+  d2: Uint8Array
+}
+
+export type CredentialRequestWithoutUrl = BasicLabelRequest
 
 /** Type of a credential request, when the user has a label with login information. */
 
@@ -168,19 +177,13 @@ export type CredentialRequest =
   | CredentialRequestWithoutUrl
 
 /** Type of a credential response, it is automatically picked if web url already known */
-export interface CredentialResponse {
-  d2: Uint8Array
-  d: Uint8Array
-  i2: Uint8Array
-  i: Uint8Array
+export interface CredentialResponse extends BasicLabelResponse {
   n: Uint8Array
-  s2: Uint8Array
-  s: Uint8Array
   t: Uint8Array
 }
 
 /** Type of a key request, when the user has to pick a key. */
-export type CipherKeyRequestWithoutKey = BasicRequest
+export type CipherKeyRequestWithoutKey = BasicLabelRequest
 
 /** Type of a key request, when the key is automatically picked. */
 export interface CipherKeyRequestWithKey extends CipherKeyRequestWithoutKey {
@@ -194,14 +197,7 @@ export type CipherKeyRequest =
   | CipherKeyRequestWithoutKey
   | CipherKeyRequestWithKey
 
-export interface CipherKeyResponse {
-  i: Uint8Array
-  s: Uint8Array
-  d: Uint8Array
-  i2: Uint8Array
-  s2: Uint8Array
-  d2: Uint8Array
-}
+export type CipherKeyResponse = BasicLabelResponse
 
 /** There are four keys, probably because three were not enough. Who knows. */
 export interface EndRequest {
