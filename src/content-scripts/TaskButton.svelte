@@ -71,7 +71,8 @@
       theme: 'light-border',
       interactive: true,
       placement: tooltipPlacement,
-      appendTo: document.body,
+      // Works on all webmails, despite is targetting the iframe
+      appendTo: document.querySelector('frame')?.contentDocument?.body,
     })
   })
 
