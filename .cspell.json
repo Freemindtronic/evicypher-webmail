@@ -21,7 +21,7 @@
     "webmails",
     "zeroconf"
   ],
-  "ignoreWords": ["timeago", "dropzone", "AAAAF"],
+  "ignoreWords": ["AAAAF", "dropzone", "loginusername", "timeago"],
   "ignorePaths": [
     "CHANGELOG.md",
     "src/legacy-code/",
