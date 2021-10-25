@@ -1,9 +1,10 @@
+/* eslint-disable sonarjs/no-identical-functions */
 /* eslint-disable sonarjs/no-duplicate-string */
 import fs from 'fs/promises'
 import os from 'os'
 import path from 'path'
-import { expect, test } from '@playwright/test'
-import { BrowserContext, chromium, Frame, Page } from 'playwright'
+import { BrowserContext, expect, test } from '@playwright/test'
+import { chromium, Frame, Page } from 'playwright'
 
 // Mark the tests as slow
 test.slow()
@@ -37,37 +38,32 @@ const expectDataAttribute = async (
   }
 }
 
-// Start the test suite
-test.describe('Fields are detected on', async () => {
-  /** A browser context. */
-  let context: BrowserContext
+/** A browser context. */
+let context: BrowserContext
 
-  /** Opens a site and runs `fn`. */
-  const testSite = async (
-    site: string,
-    fn: ({ page }: { page: Page }) => Promise<void>,
-    only = false
-  ) => {
-    ;(only ? test.only : test)(new URL(site).hostname, async () => {
-      if (!context) context = await createContext()
-      const page = await context.newPage()
-      await page.goto(site)
-      await fn({ page })
-      await page.close()
-    })
-  }
+/** Opens a site and runs `fn`. */
+const testSite = async (
+  site: string,
+  fn: ({ page }: { page: Page }) => Promise<void>,
+  only = false
+) => {
+  ;(only ? test.only : test)(new URL(site).hostname, async () => {
+    if (!context) context = await createContext()
+    const page = await context.newPage()
+    await page.goto(site)
+    await fn({ page })
+    await page.close()
+  })
+}
 
-  const testSiteOnly = async (
-    site: string,
-    fn: ({ page }: { page: Page }) => Promise<void>
-  ) => testSite(site, fn, true)
+/** A test suite that should work for most websites. */
+const testBasicSite = async (site: string, ...selectors: string[]) =>
+  testSite(site, async ({ page }) => {
+    await expectDataAttribute(page, ...selectors)
+  })
 
-  /** A test suite that should work for most websites. */
-  const testBasicSite = async (site: string, ...selectors: string[]) =>
-    testSite(site, async ({ page }) => {
-      await expectDataAttribute(page, ...selectors)
-    })
-
+// Start the test suite in parallel for faster test
+test.describe.parallel('Fields are detected on', async () => {
   // === Tests ===
   // Please keep the tests in alphabetical order
 
@@ -170,6 +166,7 @@ test.describe('Fields are detected on', async () => {
   })
   void testSite('https://appleid.apple.com/', async ({ page }) => {
     const frame = page.frame('aid-auth-widget')
+    if (frame === null) throw new Error('frame not found')
 
     await expectDataAttribute(frame, '[placeholder="Apple ID"]')
     await frame.type('[placeholder="Apple ID"]', 'test@example.org')
