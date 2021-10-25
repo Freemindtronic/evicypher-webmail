@@ -54,6 +54,8 @@ export const encrypt: BackgroundTask<undefined, string, string> =
       reporter,
       signal,
     })
+
+    // If using OpenPGP encrypt text with AES key
     if (get(isOpenpgpEnabled)) {
       return openpgpEncrypt({
         message: await createMessage({ text }),
@@ -64,8 +66,8 @@ export const encrypt: BackgroundTask<undefined, string, string> =
         },
       })
     }
-    // Encrypt the text
 
+    // If using legacy
     const evi = new EviCrypt(keys)
     return evi.encryptText(text)
   }
