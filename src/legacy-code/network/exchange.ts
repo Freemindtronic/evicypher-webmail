@@ -4,8 +4,9 @@ import axlsign from 'axlsign'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import { get, Writable } from 'svelte/store'
 import {
+  BasicLabelRequest,
+  BasicLabelResponse,
   CipherKeyRequest,
-  CipherKeyResponse,
   CredentialRequest,
   EndOkRequest,
   EndResponse,
@@ -18,7 +19,7 @@ import { Certificate } from '$/certificate'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { AesUtil } from '$/legacy-code/cryptography/AesUtil'
 import { removeJamming } from '$/legacy-code/cryptography/jamming'
-import { random, sha512, xor } from '$/legacy-code/utils'
+import { random, sha512, xor, stringToUint8Array } from '$/legacy-code/utils'
 import { Reporter, State } from '$/report'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
@@ -171,54 +172,34 @@ export const throwOnHttpErrors = (response: Response): void => {
   }
 }
 
-/**
- * Sends a key request to the phone, saves the new certificate, prepares the
- * next exchange and returns the keys.
- */
-export const fetchAndSaveKeys = async (
-  context: TaskContext,
-  phone: Writable<Phone>,
-  {
-    keyToGet,
-    reporter,
-    signal,
-  }: {
-    keyToGet?: Uint8Array
-    reporter: Reporter
-    signal: AbortSignal
-  }
-): Promise<KeyPair> => {
-  const $phone = get(phone)
-  const { keys, newCertificate } = await fetchKeys(context, $phone, {
-    keyToGet,
-    reporter,
-    signal,
-  })
-  $phone.certificate = newCertificate
-  phone.update(($phone) => $phone)
-  return keys
-}
-
 interface KeyPair {
   high: Uint8Array
   low: Uint8Array
 }
 
 /**
- * Ask the phone for a symetric key.
+ * Ask the phone for a label
  *
- * @returns A pair containing the key asked, and a new certificate to save if it
- *   was renewed during the exchange.
+ * @returns A pair containing the label asked, and a new certificate to save if
+ *   it was renewed during the exchange.
  */
-const fetchKeys = async (
-  context: TaskContext,
+const fetchRequest = async (
   phone: Phone,
+  getDataRequest: (
+    toGet: Uint8Array | undefined,
+    sharedKey: Uint8Array,
+    sKey: Uint8Array,
+    request: BasicLabelRequest
+  ) => BasicLabelRequest,
+  requestType: Request,
   {
-    keyToGet,
+    toGet,
+    context,
     reporter,
     signal,
   }: {
-    keyToGet?: Uint8Array
+    toGet?: Uint8Array
+    context: TaskContext
     reporter: Reporter
     signal: AbortSignal
   }
@@ -268,7 +249,7 @@ const fetchKeys = async (
     )
   )
 
-  let cipherKeyRequest: CipherKeyRequest = {
+  let dataRequest: BasicLabelRequest = {
     i1: keysExchange[0].iv,
     i2: keysExchange[1].iv,
     i3: keysExchange[2].iv,
@@ -280,33 +261,25 @@ const fetchKeys = async (
     d3: keysExchange[2].encryptedKey,
   }
 
-  // If we want a specific key, add its signature to the payload
-  if (keyToGet !== undefined) {
-    const ivd = random(16)
-    const saltd = random(16)
-    const keyd = xor(keysExchange[1].sharedKey, certificate.sKey)
-    const AES = new AesUtil(256, 1000)
-    const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
-    cipherKeyRequest = {
-      ...cipherKeyRequest,
-      ih: ivd,
-      sh: saltd,
-      dh: encd,
-    }
-  }
+  dataRequest = getDataRequest(
+    toGet,
+    keysExchange[1].sharedKey,
+    certificate.sKey,
+    dataRequest
+  )
 
   reporter({ state: State.NotificationSent })
 
   // Ask the phone for some more random data
-  const cipherKeyResponse = await sendRequest({
+  const labelResponse = (await sendRequest({
     ip,
     port,
-    type: Request.CipherKey,
-    data: cipherKeyRequest,
+    type: requestType,
+    data: dataRequest,
     signal,
-  })
+  })) as BasicLabelResponse
 
-  const keys = await unjamKeys(keysExchange, certificate, cipherKeyResponse)
+  const keys = await unjamKeys(keysExchange, certificate, labelResponse)
 
   // To ensure forward secrecy, we share a new secret
   const newShare = {
@@ -351,6 +324,91 @@ const fetchKeys = async (
   return { keys, newCertificate }
 }
 
+/** Return the key data request enrich with the key hash */
+const getKeyRequestData = (
+  keyToGet: Uint8Array | undefined,
+  sharedKey: Uint8Array,
+  sKey: Uint8Array,
+  request: CipherKeyRequest
+): CipherKeyRequest => {
+  if (keyToGet === undefined) return request
+
+  // If we want a specific key, add its signature to the payload
+  const ivd = random(16)
+  const saltd = random(16)
+  const keyd = xor(sharedKey, sKey)
+  const AES = new AesUtil(256, 1000)
+  const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
+  return {
+    ...request,
+    ih: ivd,
+    sh: saltd,
+    dh: encd,
+  }
+}
+
+/** Return the credential data request enrich with the website url */
+const getCredentialRequestData = (
+  websiteUrl: Uint8Array | undefined,
+  sharedKey: Uint8Array,
+  sKey: Uint8Array,
+  request: CredentialRequest
+): CredentialRequest => {
+  // If we want a specific key, add its signature to the payload
+  if (websiteUrl === undefined) return request
+
+  const ivd = random(16)
+  const saltd = random(16)
+  const keyd = xor(sharedKey, sKey)
+  const AES = new AesUtil(256, 1000)
+  const encd = AES.encryptCBC(ivd, saltd, keyd, websiteUrl)
+  return {
+    ...request,
+    id: ivd,
+    sd: saltd,
+    dd: encd,
+  }
+}
+
+/**
+ * Sends a key request to the phone, saves the new certificate, prepares the
+ * next exchange and returns the keys.
+ */
+export const fetchAndSaveKeys = async (
+  context: TaskContext,
+  phone: Writable<Phone>,
+  {
+    keyToGet,
+    reporter,
+    signal,
+  }: {
+    keyToGet?: Uint8Array
+    reporter: Reporter
+    signal: AbortSignal
+  }
+): Promise<KeyPair> => {
+  const $phone = get(phone)
+  const { keys, newCertificate } = await fetchRequest(
+    $phone,
+    getKeyRequestData,
+    Request.CipherKey,
+    {
+      toGet: keyToGet,
+      context,
+      reporter,
+      signal,
+    }
+  )
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+  return keys
+}
+
+/**
+ * Ask the phone for a credential pair (login/password).
+ *
+ * @returns A pair containing the credential asked
+ */
 export const fetchAndSaveCredentials = async (
   context: TaskContext,
   phone: Writable<Phone>,
@@ -365,161 +423,21 @@ export const fetchAndSaveCredentials = async (
   }
 ): Promise<KeyPair> => {
   const $phone = get(phone)
-  const { keys, newCertificate } = await fetchCredential(context, $phone, {
-    websiteUrl,
-    reporter,
-    signal,
-  })
+  const toGet = websiteUrl ? stringToUint8Array(websiteUrl) : undefined
+  const { keys, newCertificate } = await fetchRequest(
+    $phone,
+    getCredentialRequestData,
+    Request.Credential,
+    {
+      toGet,
+      context,
+      reporter,
+      signal,
+    }
+  )
   $phone.certificate = newCertificate
   phone.update(($phone) => $phone)
   return keys
-}
-
-/**
- * Ask the phone for a credential pair (login/password).
- *
- * @returns A pair containing the credential asked, and a new certificate to
- *   save if it was renewed during the exchange.
- */
-const fetchCredential = async (
-  context: TaskContext,
-  phone: Phone,
-  {
-    websiteUrl,
-    reporter,
-    signal,
-  }: {
-    websiteUrl?: string
-    reporter: Reporter
-    signal: AbortSignal
-  }
-): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
-  reporter({ state: State.WaitingForPhone })
-  let { certificate } = phone
-
-  const { ip, port, keys: phoneKeys } = await getPhoneIp(context, phone)
-
-  reporter({ state: State.WaitingForFirstResponse })
-
-  // If the keys expired, fetch a new certificate
-  // The keys come from the Zeroconf service: when a phone is found by the
-  // service, the service tries to idenfies it. Since the protocol was not
-  // designed for this feature, the service tries all known certificates by
-  // starting a key exchange with the phone. Because of another weird design
-  // choice, the phone does not allow to start two exchanges in less than
-  // 3 seconds. Therefore, the keys are stored in the context, and only
-  // regenerated if expired. (i.e. more than 3 seconds elapsed)
-  let pingResponse: PingResponse
-  if (!phoneKeys || phoneKeys.date + 3000 < Date.now()) {
-    pingResponse = await sendRequest({
-      ip,
-      port,
-      type: Request.Ping,
-      data: { t: certificate.id },
-    })
-  } else {
-    pingResponse = phoneKeys.pingResponse
-    // Just check that the phone is online
-    await sendRequest({
-      ip,
-      port,
-      signal,
-      type: Request.IsAlive,
-      data: { oskour: 1 },
-    })
-  }
-
-  // Prepare the three shared secrets for the rest of the exchange
-  const keysExchange = ([1, 2, 3] as const).map((i) =>
-    encryptKey(
-      pingResponse[`iv${i}` as const],
-      pingResponse[`sa${i}` as const],
-      certificate.tKey,
-      pingResponse[`k${i}` as const]
-    )
-  )
-
-  let credentialRequest: CredentialRequest = {
-    i1: keysExchange[0].iv,
-    i2: keysExchange[1].iv,
-    i3: keysExchange[2].iv,
-    s1: keysExchange[0].salt,
-    s2: keysExchange[1].salt,
-    s3: keysExchange[2].salt,
-    d1: keysExchange[0].encryptedKey,
-    d2: keysExchange[1].encryptedKey,
-    d3: keysExchange[2].encryptedKey,
-  }
-
-  // If we want a specific key, add its signature to the payload
-  if (websiteUrl !== undefined) {
-    const ivd = random(16)
-    const saltd = random(16)
-    const keyd = xor(keysExchange[1].sharedKey, certificate.sKey)
-    const AES = new AesUtil(256, 1000)
-    const encd = AES.encryptCBC(ivd, saltd, keyd, websiteUrl)
-    credentialRequest = {
-      ...credentialRequest,
-      id: ivd,
-      sd: saltd,
-      dd: encd,
-    }
-  }
-
-  reporter({ state: State.NotificationSent })
-
-  // Ask the phone for some more random data
-  const credentialResponse = await sendRequest({
-    ip,
-    port,
-    type: Request.Credential,
-    data: credentialRequest,
-    signal,
-  })
-
-  const keys = await unjamKeys(keysExchange, certificate, credentialResponse)
-
-  // To ensure forward secrecy, we share a new secret
-  const newShare = {
-    id: axlsign.generateKeyPair(random(32)),
-    k1: axlsign.generateKeyPair(random(32)),
-    k2: axlsign.generateKeyPair(random(32)),
-    k3: axlsign.generateKeyPair(random(32)),
-    k4: axlsign.generateKeyPair(random(32)),
-  }
-
-  // Send the new secret to the phone
-  const newKey = await sendRequest({
-    ip,
-    port,
-    type: Request.End,
-    data: {
-      id: newShare.id.public,
-      k1: newShare.k1.public,
-      k2: newShare.k2.public,
-      k3: newShare.k3.public,
-      k4: newShare.k4.public,
-    },
-    signal,
-  })
-
-  // Create a new certificate with the new secret
-  const { acknowledgement, newCertificate } = createNewCertificate(
-    newShare,
-    newKey,
-    certificate
-  )
-  certificate = newCertificate
-
-  // Send an acknowledgement to the phone, to close the exchange
-  await sendRequest({
-    ip,
-    port,
-    type: Request.EndOk,
-    data: acknowledgement,
-    signal,
-  })
-  return { keys, newCertificate }
 }
 
 /** Does some encryption stuff, it's still unclear at this time of refactoring. */
@@ -560,7 +478,7 @@ const unjamKeys = async (
     i2: lowInitializationVector,
     s2: lowSalt,
     d2: lowDataJam,
-  }: CipherKeyResponse
+  }: BasicLabelResponse
 ): Promise<{ high: Uint8Array; low: Uint8Array }> => {
   const AES = new AesUtil(256, 1000)
 

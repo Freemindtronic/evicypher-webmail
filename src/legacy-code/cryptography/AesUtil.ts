@@ -1,10 +1,6 @@
 /* eslint-disable unicorn/filename-case */
 import CryptoJS from 'crypto-js'
-import {
-  stringToUint8Array,
-  uint8ArrayToWordArray,
-  wordArrayToUint8Array,
-} from '../utils'
+import { uint8ArrayToWordArray, wordArrayToUint8Array } from '../utils'
 
 type BlockCipherMode = typeof CryptoJS.mode.CBC
 type Padding = typeof CryptoJS.pad.NoPadding
@@ -73,13 +69,13 @@ export class AesUtil {
     iv: Uint8Array,
     salt: Uint8Array,
     passPhrase: Uint8Array,
-    plainText: string
+    plainText: Uint8Array
   ): Uint8Array {
     return this.encrypt(
       iv,
       salt,
       passPhrase,
-      stringToUint8Array(plainText),
+      plainText,
       CryptoJS.mode.CBC,
       CryptoJS.pad.Pkcs7
     )
