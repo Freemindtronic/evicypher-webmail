@@ -372,7 +372,7 @@
     line-height: 1.6;
     text-transform: uppercase;
     background-color: var(--panel-background-colored);
-    border: 1px solid transparent;
+    border: 2px solid white;
     border-radius: 3px;
     cursor: pointer;
     transition: box-shadow 0.18s ease-out, background 0.18s ease-out,
@@ -407,6 +407,7 @@
     color: var(--icon);
     font-size: 0;
     background-color: var(--rich-text-panel-background);
+    border: transparent;
     content: '';
   }
 </style>
