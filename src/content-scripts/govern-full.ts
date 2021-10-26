@@ -7,30 +7,28 @@
  */
 
 import type { Report } from '$/report'
-import type { Selectors } from './common'
 import { debug } from 'debug'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
-import QRCode from '../components/QRCode.svelte'
-import DecryptButton from './DecryptButton.svelte'
 import EncryptButton from './EncryptButton.svelte'
-import QRCodeButton from './QRCodeButton.svelte'
 import {
+  addDecryptButton,
+  Selectors,
   FLAG,
   Options,
   addClickListener,
   containsEncryptedText,
-  decryptString,
-  displayDecryptedMail,
   encryptString,
   extractEncryptedString,
   isEncryptedText,
+  initInjectionTarget,
+  addQRDecryptButton,
 } from './common'
 import { Design } from './design'
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
-export const handleMailElement = (
+const handleMailElement = (
   mailElement: HTMLElement,
   options: Options
 ): void => {
@@ -62,103 +60,35 @@ export const handleMailElement = (
     // Add a "Decrypt" button next to the node
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
-    addDecryptButton(node as Text, mailStringInnerHTML, options)
-    addQRDecryptButton(node as Text, encryptedString, options)
+    const workspace = initInjectionTarget(node as Text)
+    addDecryptButton(
+      workspace,
+      correctEncryptedMail(mailStringInnerHTML),
+      options
+    )
+    addQRDecryptButton(workspace, encryptedString, options)
   }
 }
 
-/** Adds a decryption button next to the text node given. */
-
-export const addDecryptButton = (
-  node: Text,
-  encryptedString: string,
-  { design }: Options
-): void => {
-  // Add the button right before the beginning of the encrypted content
-  const target = document.createElement('span')
-  target.style.display = 'block'
-  target.id = 'DecryptSpan'
-
-  const button = new DecryptButton({
-    target,
-    props: { design },
-  })
-  node.before(target)
-
-  /** Frame containing the decrypted mail. */
-  let frame: HTMLIFrameElement
-
-  addClickListener(button, (promise, resolved, rejected, signal) => {
-    if (resolved) {
-      frame.parentNode?.removeChild(frame)
-      return
+const correctEncryptedMail = (encryptedString: string) => {
+  // The encryptedString is the string with all the HTML tags
+  // so first I take away the div tags and i left the br only
+  const stringWithBrTags = encryptedString.slice(81, -13)
+  // I treat the <br> and put \n
+  // with this I avoid the foreground task formatting error
+  const encryptedStringCorrected = stringWithBrTags.replaceAll('<br>', '\n')
+  let encryptedStringCorrectedFinal = ''
+  let x = 0
+  for (x; x < encryptedStringCorrected.length; x++) {
+    if (encryptedStringCorrected.charAt(x) === '\n') {
+      encryptedStringCorrectedFinal += '\n'
+      x++
+    } else {
+      encryptedStringCorrectedFinal += encryptedStringCorrected.charAt(x)
     }
+  }
 
-    if (promise && !rejected) return promise
-
-    button.$set({ report: undefined })
-
-    // The encryptedString is the string with all the HTML tags
-    // so first I take away the div tags and i left the br only
-    const stringWithBrTags = encryptedString.slice(81, -13)
-    // I treat the <br> and put \n
-    // with this I avoid the foreground task formatting error
-    const encryptedStringCorrected = stringWithBrTags.replaceAll('<br>', '\n')
-    let encryptedStringCorrectedFinal = ''
-    let x = 0
-    for (x; x < encryptedStringCorrected.length; x++) {
-      if (encryptedStringCorrected.charAt(x) === '\n') {
-        encryptedStringCorrectedFinal += '\n'
-        x++
-      } else {
-        encryptedStringCorrectedFinal += encryptedStringCorrected.charAt(x)
-      }
-    }
-
-    // Decrypt and display
-    return decryptString(
-      encryptedStringCorrectedFinal,
-      (report: Report) => {
-        button.$set({ report })
-      },
-      signal
-    ).then((decryptedString) => {
-      frame = displayDecryptedMail(decryptedString, target)
-    })
-  })
-}
-
-/** Adds a QR code button next to the Decrypt Button. */
-export const addQRDecryptButton = (
-  node: Text,
-  encryptedString: string,
-  { design }: Options
-): void => {
-  const frame1 = document.querySelectorAll('frame')[0]
-  const target = frame1?.contentDocument?.querySelector('#DecryptSpan')
-  if (!target) throw new Error('The element #target not found')
-
-  const button = new QRCodeButton({
-    target,
-    props: { design },
-  })
-  node.before(target)
-
-  /** Frame containing the decrypted mail. */
-  let frame: HTMLIFrameElement
-
-  addClickListener(button, (promise, resolved, rejected) => {
-    if (resolved) {
-      frame.parentNode?.removeChild(frame)
-      return
-    }
-
-    if (promise && !rejected) return promise
-
-    button.$set({ report: undefined })
-
-    frame = displayQREncryptedMail(encryptedString, target as HTMLElement)
-  })
+  return encryptedStringCorrectedFinal
 }
 
 /** Adds an encryption button in the toolbar. */
@@ -267,78 +197,6 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
   }
 }
 
-/** Adds a frame containing a QRCode. */
-export const displayQREncryptedMail = (
-  encryptedString: string,
-  node: HTMLElement
-): HTMLIFrameElement => {
-  const frame = document.createElement('iframe')
-  frame.id = 'iframe-id'
-
-  if (encryptedString.length > 2331) {
-    let errorMsg = ''
-
-    _.subscribe(($_) => {
-      errorMsg = $_(
-        'the-message-exceeds-the-maximum-number-of-characters-allowed'
-      )
-    })
-    // eslint-disable-next-line no-alert
-    alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
-  } else {
-    // Check if QRCode Iframe already exist and remove it
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const frame1 = document.querySelector('frame')!.contentDocument!.body
-    const frame2 = frame1.querySelector('#iframe-id')
-    frame2?.remove()
-
-    Object.assign(frame.style, {
-      display: 'block',
-      maxWidth: '100%',
-      margin: '10px 0px',
-      border: '2px solid #555',
-      boxSizing: 'border-box',
-    })
-
-    node.after(frame)
-    frame.addEventListener('load', () => {
-      if (!frame.contentDocument)
-        throw new Error('Cannot change frame content.')
-
-      // We create a Span inside the iframe to put the QRCode Element
-      const target = document.createElement('span')
-      target.id = 'spanQR'
-      target.style.display = 'contents'
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const QR = new QRCode({
-        target,
-        props: {
-          data: encryptedString,
-          size: 100,
-          scale: 3,
-        },
-      })
-      frame.contentWindow?.document.body.append(target)
-
-      // We take the QRCode Height and copy it to the frame
-
-      const canvas = frame.contentDocument?.querySelector('canvas')
-      const height = canvas?.style.height
-
-      if (height === undefined) return
-
-      const FrameHeightWidth = Number.parseInt(height, 10) + 20
-
-      frame.style.height = FrameHeightWidth.toString() + 'px'
-
-      frame.style.width = FrameHeightWidth.toString() + 'px'
-    })
-  }
-
-  return frame
-}
-
 /**
  * Handles mutations observed by the `MutationObserver` below, i.e.
  * notifications of elements added or removed from the page.
@@ -367,7 +225,7 @@ const handleMutations = (options: Options) => {
 }
 
 /** Observes the DOM for changes. Should work for most webmails. */
-export const observe = (options: Options): void => {
+const observe = (options: Options): void => {
   // Run the listener on page load
 
   handleMutations(options)
@@ -391,9 +249,15 @@ const selectors: Selectors = {
   send: '',
 }
 
-// Function that injects the styles for the button to appear with all the styles
-// I do this because the actual system has an error trying to fetch the source
-// Of the styles
+/**
+ * Function that injects the styles for the button to appear with all the styles
+ * I do this because the actual system has an error trying to fetch the source
+ * Of the styles
+ *
+ * @remarks
+ *   This a workaround of a bug of svelte that inject the css of an app in an
+ *   unaccessible head if the app is in an frame
+ */
 const injectCSS = (function () {
   return function () {
     // Entire css to be injected
