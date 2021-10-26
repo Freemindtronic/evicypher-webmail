@@ -481,4 +481,60 @@
     border: transparent;
     content: '';
   }
+
+  .button.telegram {
+    margin: 0;
+    padding: 0px 3px;
+    color: var(--primary-text-color);
+    font-weight: bold;
+    font-size: 12px;
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,
+      DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, Courier,
+      monospace;
+    line-height: 1.6;
+    text-transform: uppercase;
+    background-color: var(--panel-background-colored);
+    border: 2px solid;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: box-shadow 0.18s ease-out, background 0.18s ease-out,
+      color 0.18s ease-out;
+    &:focus {
+      border-color: #e5ddd5;
+    }
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    &.decrypt {
+      margin: 8px 0;
+    }
+    &.encrypt {
+      float: left;
+    }
+    > :global(svg) {
+      display: inline !important;
+      vertical-align: middle;
+    }
+    > :global(img) {
+      width: 13% !important;
+      height: 13% !important;
+    }
+  }
+  //pending to decide
+  .telegram.encrypt {
+    padding: 10px 5px;
+    color: var(--secondary-text-color);
+    font-size: 0;
+    border: transparent;
+    content: '';
+    &:hover {
+      background-color: var(--light-secondary-text-color);
+    }
+    > :global(svg) {
+      display: inline !important;
+      width: 22px;
+      height: 22px;
+      vertical-align: middle;
+    }
+  }
 </style>

@@ -7,6 +7,7 @@ export enum Design {
   Outlook = 'outlook',
   OutlookOld = 'outlook-old',
   Proton = 'proton',
+  Telegram = 'telegram',
   WhatsApp = 'whatsapp',
   Yahoo = 'yahoo',
 }

@@ -25,7 +25,7 @@
     "whatsapp",
     "zeroconf"
   ],
-  "ignoreWords": ["AAAAF", "dropzone", "loginusername", "timeago"],
+  "ignoreWords": ["AAAAF", "dropzone", "loginusername", "tgico", "timeago"],
   "ignorePaths": [
     "CHANGELOG.md",
     "src/legacy-code/",
