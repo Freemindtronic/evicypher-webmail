@@ -192,14 +192,33 @@ export const handleMailElement = (
     // Add a "Decrypt" button next to the node
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
-    addDecryptButton(node as Text, encryptedString, options)
-    addQRDecryptButton(node as Text, encryptedString, options)
+    const workspace = initInjectionTarget(node as Text)
+    addDecryptButton(workspace, encryptedString, options)
+    addQRDecryptButton(workspace, encryptedString, options)
   }
+}
+
+type Workspace = {
+  buttonArea: HTMLDivElement
+  iframeArea: HTMLDivElement
+}
+
+export const initInjectionTarget = (node: Text): Workspace => {
+  const workspace = document.createElement('div')
+  workspace.id = 'evicypher-workspace'
+  const buttonArea = document.createElement('div')
+  buttonArea.id = 'evicypher-area-button'
+  const iframeArea = document.createElement('div')
+  iframeArea.id = 'evicypher-area-iframe'
+  workspace.append(buttonArea)
+  workspace.append(iframeArea)
+  node.before(workspace)
+  return { buttonArea, iframeArea }
 }
 
 /** Adds a decryption button next to the text node given. */
 export const addDecryptButton = (
-  node: Text,
+  workspace: Workspace,
   encryptedString: string,
   { design }: Options
 ): void => {
@@ -212,7 +231,8 @@ export const addDecryptButton = (
     target,
     props: { design },
   })
-  node.before(target)
+
+  workspace.buttonArea.append(target)
 
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
@@ -235,19 +255,18 @@ export const addDecryptButton = (
       },
       signal
     ).then((decryptedString) => {
-      frame = displayDecryptedMail(decryptedString, target)
+      frame = displayDecryptedMail(decryptedString, workspace.iframeArea)
     })
   })
 }
 
 /** Adds a QR code button next to the Decrypt Button. */
 export const addQRDecryptButton = (
-  node: Text,
+  workspace: Workspace,
   encryptedString: string,
   { design }: Options
 ): void => {
   const target = document.createElement('span')
-  const br = document.createElement('br')
   target.style.display = 'inline'
   target.id = 'QRCodeSpan'
 
@@ -255,8 +274,7 @@ export const addQRDecryptButton = (
     target,
     props: { design },
   })
-  node.before(target)
-  node.before(br)
+  workspace.buttonArea.append(target)
 
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
@@ -271,7 +289,7 @@ export const addQRDecryptButton = (
 
     button.$set({ report: undefined })
 
-    frame = displayQREncryptedMail(encryptedString, target as HTMLElement)
+    frame = displayQREncryptedMail(encryptedString, workspace.iframeArea)
   })
 }
 
@@ -355,7 +373,7 @@ export const displayDecryptedMail = (
     boxSizing: 'border-box',
   })
 
-  node.after(frame)
+  node.append(frame)
 
   const setContent = () => {
     if (!frame.contentDocument) throw new Error('Cannot change frame content.')
@@ -406,7 +424,7 @@ export const displayQREncryptedMail = (
       boxSizing: 'border-box',
     })
 
-    node.after(frame)
+    node.append(frame)
 
     const setQrCode = () => {
       if (!frame.contentDocument)
