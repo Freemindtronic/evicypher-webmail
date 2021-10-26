@@ -8,6 +8,7 @@
   "outlook-old": ["https://webmail.mail.ovh.net/owa/*"],
   "proton": ["https://mail.protonmail.com/*"],
   "roundcube": ["https://mail.ovh.net/owa/*"],
+  "telegram": ["https://web.telegram.org/k/*"],
   "whatsapp": ["https://web.whatsapp.com/*"],
   "yahoo": ["https://mail.yahoo.com/*"]
 }
