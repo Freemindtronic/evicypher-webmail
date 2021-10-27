@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { Report } from '$/report'
-  import type { SvelteComponent } from 'svelte/internal'
-  import type { Instance, Placement } from 'tippy.js'
-  import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
+  import type { Placement } from 'tippy.js'
+  import { createEventDispatcher } from 'svelte'
+  import { onMount, SvelteComponent } from 'svelte/internal'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
-  import Button from '$/components/Button.svelte'
-  import { translateError, translateReport, _ } from '$/i18n'
+  import { _ } from '$/i18n'
+  import TaskTippy from './TaskTippy.svelte'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
   import { Design } from './design'
@@ -36,52 +36,14 @@
   export let task = ''
 
   let button: HTMLButtonElement
-  let tippyElement: HTMLElement
-  let tippyInstance: Instance | undefined
-
-  const dispatch =
-    createEventDispatcher<{ click: undefined; abort: undefined }>()
-
-  const resetTippy = () => {
-    if (tippyInstance) {
-      tippyInstance.setProps({
-        trigger: tippy.defaultProps.trigger,
-      })
-    }
-  }
-
-  // Make the tooltip persistent when the task is running
-  $: if (promise === undefined) {
-    resetTippy()
-  } else {
-    if (tippyInstance) {
-      tippyInstance.setProps({
-        trigger: 'manual',
-      })
-    }
-
-    promise.then(resetTippy).catch(resetTippy)
-  }
-
-  onMount(() => {
-    // Create a new tippy instance when the component is mounted
-    tippyInstance = tippy(button, {
-      content: tippyElement,
-      hideOnClick: false,
-      theme: 'light-border',
-      interactive: true,
-      placement: tooltipPlacement,
-      // Works on all webmails, despite is targetting the iframe
-      appendTo: document.querySelector('frame')?.contentDocument?.body,
+  const isMounted = new Promise<void>((resolve) => {
+    onMount(() => {
+      resolve()
     })
   })
 
-  afterUpdate(() => {
-    // Recompute the location of the tooltip after each update
-    if (!tippyInstance) return
-    tippyInstance.setContent(tippyElement)
-    if (promise !== undefined) tippyInstance.show()
-  })
+  const dispatch =
+    createEventDispatcher<{ click: undefined; abort: undefined }>()
 </script>
 
 <button
@@ -113,37 +75,19 @@
   <slot />
 </button>
 
-<div bind:this={tippyElement} class="tooltip" dir={$_('ltr')}>
-  {#if promise === undefined}
+{#await isMounted then _}
+  <TaskTippy
+    bind:report
+    bind:promise
+    {tooltipPlacement}
     {idleTooltip}
-  {:else}
-    {#await promise}
-      <span>
-        {#if report === undefined}
-          {$_('loading')}
-        {:else}
-          {$translateReport(report)}
-        {/if}
-      </span>
-      <Button
-        type="button"
-        on:click={() => {
-          dispatch('abort')
-        }}>{$_('cancel')}</Button
-      >
-    {:then}
-      {doneTooltip}
-    {:catch { message }}
-      {$translateError(message)}
-    {/await}
-  {/if}
-</div>
+    {doneTooltip}
+    element={button}
+    on:abort
+  />
+{/await}
 
 <style lang="scss">
-  :global {
-    @import '../assets/tippy';
-  }
-
   .button {
     all: revert;
 
@@ -413,26 +357,6 @@
 
     > :global(svg) {
       vertical-align: middle;
-    }
-  }
-
-  // Make the tooltip a flex container, to allow the Cancel button
-  // to be in the right-hand side of the tooltip
-  .tooltip {
-    all: unset;
-    display: flex;
-    gap: 0.5em;
-    align-items: center;
-    width: max-content;
-    max-width: 100%;
-    font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Ubuntu',
-      'Cantarell', 'Noto Sans', sans-serif;
-    white-space: pre-line;
-
-    // stylelint-disable-next-line no-descending-specificity
-    > :global(button) {
-      // Keep the button on a single line
-      flex-shrink: 0;
     }
   }
 </style>
