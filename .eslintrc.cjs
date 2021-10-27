@@ -33,7 +33,7 @@ module.exports = {
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/prefer-node-protocol': 'off',
     'unicorn/require-post-message-target-origin': 'off',
-    'sonarjs/cognitive-complexity': ['error', 8],
+    'sonarjs/cognitive-complexity': ['error', 10],
     'import/order': [
       'error',
       {
