@@ -6,6 +6,9 @@
 
 import type { Report, Reporter } from '$/report'
 import type { Design } from './design'
+import * as base85 from 'base85'
+import { convert } from 'html-to-text'
+import { Base64 } from 'js-base64'
 import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -289,7 +292,21 @@ export const addQRDecryptButton = (
 
     button.$set({ report: undefined })
 
-    frame = displayQREncryptedMail(encryptedString, workspace.iframeArea)
+    let encryptedStringToDisplay = encryptedString
+
+    if (!get(isOpenpgpEnabled)) {
+      const rawData = Base64.toUint8Array(encryptedStringToDisplay)
+
+      // Re-encode data in Ascii85 for a smaller QRcode
+      encryptedStringToDisplay = base85.encode(Buffer.from(rawData), 'ascii85')
+      // Remove enclosure added by the base85 lib
+      encryptedStringToDisplay = encryptedStringToDisplay.slice(2, -2)
+    }
+
+    frame = displayQREncryptedMail(
+      encryptedStringToDisplay,
+      workspace.iframeArea
+    )
   })
 }
 
@@ -342,10 +359,14 @@ const handleToolbar = (
 
     button.$set({ report: undefined })
 
+    let mailContent = mail.getContent()
+
+    if (!get(isOpenpgpEnabled))
+      mailContent = convert(mailContent, { wordwrap: 130 })
+
     // Encrypt and replace
     let encryptedString = await encryptString(
-      // Use innerHTML instead of textContent to support rich text
-      mail.getContent(),
+      mailContent,
       (report: Report) => {
         button.$set({ report })
       },
@@ -400,7 +421,7 @@ export const displayQREncryptedMail = (
   node: HTMLElement
 ): HTMLIFrameElement => {
   const frame = document.createElement('iframe')
-  frame.id = 'iframe_id'
+  frame.id = 'iframe-id'
 
   if (encryptedString.length > 2331) {
     let errorMsg = ''
@@ -414,7 +435,7 @@ export const displayQREncryptedMail = (
     alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
   } else {
     // Check if QRCode Iframe already exist and remove it
-    document.querySelector('#iframe_id')?.remove()
+    document.querySelector('#iframe-id')?.remove()
 
     Object.assign(frame.style, {
       display: 'block',
