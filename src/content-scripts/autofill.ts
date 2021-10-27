@@ -8,18 +8,22 @@
  * - It fills login field on button press
  *
  * @remarks
- *   Ma remarque
+ *   It work by adding a background image to each input field found. The
+ *   background image is set to not repeat and be located at the end of the
+ *   input fields. It also add a listener for mouse-event on the input and if
+ *   the mouse if close enough to the background image it add an onclick
+ *   listener to catch any user click
  * @module
  */
 
 import type { login as loginTask } from '$/background/tasks/login'
 import type { Report } from '~src/report'
+import { writable } from 'svelte/store'
 import { ForegroundTask, startBackgroundTask, Task } from '~src/task'
+import AutofillButton from './AutofillButton.svelte'
 
 /** Keeps track of which password fields have been processed. */
 const processed = new Set()
-
-export {}
 
 /** A basic last-resort regex to find login fields. */
 const loginRegex =
@@ -148,24 +152,58 @@ new MutationObserver(findForms).observe(document.body, {
   childList: true,
 })
 
-const iconFocus =
-  "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAl0lEQVQ4jb3SvQkCQRCG4cef0NQGTKxBMDAxMLGmq0EtRURMDKzCxBI0MTPYS044hHEXD3xhYNiZ/b7dYehILzjfYVpw/xoJJNyaiJg0EQpUGfcKqZ9pyhIJbHFs5SeMfjVZ44XLh0iFNFQ28Tvm2GPRLnSeQQlfvxC9YINZky9xxgrPUtf/7UHnVR4ExTGi2psHDpmePDWvfx8XBIor3gAAAABJRU5ErkJggg==')"
+/** Image used as a background image for the input. It gives the illusion of a button */
+const icon = {
+  focus:
+    "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAl0lEQVQ4jb3SvQkCQRCG4cef0NQGTKxBMDAxMLGmq0EtRURMDKzCxBI0MTPYS044hHEXD3xhYNiZ/b7dYehILzjfYVpw/xoJJNyaiJg0EQpUGfcKqZ9pyhIJbHFs5SeMfjVZ44XLh0iFNFQ28Tvm2GPRLnSeQQlfvxC9YINZky9xxgrPUtf/7UHnVR4ExTGi2psHDpmePDWvfx8XBIor3gAAAABJRU5ErkJggg==')",
+  blur: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA70lEQVQ4jaWTMU4DMRBF3yBvxynS5AxIFCBBgYQouIO90kK4AjkDIVvMbkdNhwCJggYJrkCTI6SitDQ0WwU7XpQvufEfzzzNjGFHSeoyhHAPTEe8/3YZ4wpYDSenCXCSSwDwoKrznBlCmAO3ewXEopIEZrYws9eh0sLMplVVXbZt+7MZmyTouu6m7/uvIdmbiBzHGF+aptn/QzCy42vgMMb4BBwVCf4jp6rX2wK89xci8gh8OOfON/0kgff+rq7rAwAROTWzd+fcWaqJySmIyMzM1sCnqs62Ee7cg9xfMMat8iS3ykvKo10BzyXCon4Bst5MTSd6lpEAAAAASUVORK5CYII=')",
+}
 
-const iconBlur =
-  "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA70lEQVQ4jaWTMU4DMRBF3yBvxynS5AxIFCBBgYQouIO90kK4AjkDIVvMbkdNhwCJggYJrkCTI6SitDQ0WwU7XpQvufEfzzzNjGFHSeoyhHAPTEe8/3YZ4wpYDSenCXCSSwDwoKrznBlCmAO3ewXEopIEZrYws9eh0sLMplVVXbZt+7MZmyTouu6m7/uvIdmbiBzHGF+aptn/QzCy42vgMMb4BBwVCf4jp6rX2wK89xci8gh8OOfON/0kgff+rq7rAwAROTWzd+fcWaqJySmIyMzM1sCnqs62Ee7cg9xfMMat8iS3ykvKo10BzyXCon4Bst5MTSd6lpEAAAAASUVORK5CYII=')"
-
+/**
+ * Fill an HTMLInputElement with the specified value. It also dispatch some
+ * event to trick website of a real input
+ */
 const fillField = (field: HTMLInputElement, value: string) => {
   field.value = value
   field.dispatchEvent(new Event('input', { bubbles: true }))
   field.dispatchEvent(new Event('change', { bubbles: true }))
-  field.focus()
 }
 
+/**
+ * Add a so call button to an input. It does so by adding a background image to
+ * the input and listeners. When the mouse is located at the far right activate
+ * the button
+ */
 function addButton(input: HTMLInputElement) {
+  /** Contains either if the mouse is currently over the button */
   let isFocus = false
 
+  const controller = new AbortController()
+  /** A target is needed for svelte to inject a component */
+  const target = document.createElement('span')
+  /** A writable use to communicate with tippy for when to show the tooltip */
+  const isTippyEnabled = writable(false)
+
+  /** The tooltip that will be display above the input */
+  const tooltip = new AutofillButton({
+    target,
+    props: {
+      element: input,
+      enable: isTippyEnabled,
+    },
+  })
+
+  // Manage user click on abort
+  tooltip.$on('abort', () => {
+    // Propagate the information to the background task
+    controller.abort()
+    // Reset tooltip
+    tooltip.$set({ promise: undefined })
+  })
+
+  // Style modifications can't be made on the same thread, hence the setTimeout
   setTimeout(() => {
-    input.style.backgroundImage = iconBlur
+    input.style.backgroundImage = icon.blur
     input.style.backgroundRepeat = 'no-repeat'
     input.style.backgroundAttachment = 'scroll'
     input.style.backgroundSize = '16px 18px'
@@ -173,18 +211,27 @@ function addButton(input: HTMLInputElement) {
     input.style.cursor = 'auto'
   })
 
+  // Manage button click event
   const clickHandler = async () => {
-    const controller = new AbortController()
+    // Set tooltip to manual to make it stay on screen
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    tooltip.$set({ promise: new Promise(() => {}) })
 
+    // Start a background task to fetch login credentials
     const credential = await startBackgroundTask(Task.Login, login, {
       signal: controller.signal,
-      reporter,
+      reporter: (report: Report) => {
+        console.log(report)
+        tooltip.$set({ report })
+      },
     })
 
+    /** List of all login field detected */
     const loginFields: NodeListOf<HTMLInputElement> =
       document.querySelectorAll('[data-autofill-prototype-input=login]') ??
       undefined
 
+    /** List of all password field detected */
     const passwordFields: NodeListOf<HTMLInputElement> =
       document.querySelectorAll('[data-autofill-prototype-input=password]') ??
       undefined
@@ -193,20 +240,23 @@ function addButton(input: HTMLInputElement) {
 
     for (const field of passwordFields) fillField(field, credential.password)
 
-    input.focus()
+    // Reset tooltip
+    tooltip.$set({ promise: Promise.resolve() })
   }
 
   const focusButton = () => {
     isFocus = true
-    input.style.backgroundImage = iconFocus
+    input.style.backgroundImage = icon.focus
     input.style.cursor = 'pointer'
     input.addEventListener('click', clickHandler)
+    isTippyEnabled.set(true)
   }
 
   const blurButton = () => {
-    input.style.backgroundImage = iconBlur
+    input.style.backgroundImage = icon.blur
     input.style.cursor = 'auto'
     input.removeEventListener('click', clickHandler)
+    isTippyEnabled.set(false)
     isFocus = false
   }
 
@@ -227,11 +277,7 @@ function addButton(input: HTMLInputElement) {
   input.addEventListener('mouseout', mouseoutHandler)
 }
 
-// A reporter to get the status of the task
-const reporter = (report: Report) => {
-  console.log(report)
-}
-
+/** Foreground task, tasked to send the hostname of the current page to the background task */
 const login: ForegroundTask<typeof loginTask> = async function* () {
   // Suspend the task until the front sends the first request
   yield
@@ -239,6 +285,16 @@ const login: ForegroundTask<typeof loginTask> = async function* () {
   yield getHostname()
 }
 
+/**
+ * Get the hostname of the current page
+ *
+ * @example
+ *   // on 'www.google.com'
+ *   // returns 'google'
+ *   getHostname()
+ *
+ * @returns Return the hostname
+ */
 const getHostname = () => {
   const array = window.location.hostname.split('.')
   return array[array.length - 2]

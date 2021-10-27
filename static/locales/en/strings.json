@@ -60,5 +60,7 @@
   "the-message-exceeds-the-maximum-number-of-characters-allowed": "The message exceeds the maximum number of characters allowed.",
   "qr-code": "QR Code",
   "character-limit-exceeded": "Character limit exceeded (2231)",
-  "pairing-with-phone-name": "Pairing with {phoneName}"
+  "pairing-with-phone-name": "Pairing with {phoneName}",
+  "click-to-autofill": "Click to autofill",
+  "autofill-successful": "Autofill successful"
 }
