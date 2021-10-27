@@ -29,7 +29,8 @@
 
     "*.svg",
     "*.config.*",
-    "*.json"
+    "*.json",
+    "*.cjs"
   ],
   "flagWords": [],
   "patterns": [
