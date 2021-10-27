@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.3.0...v1.8.0) (2021-10-27)
+
+### Features
+
+- add login autofill ([312cd7f](https://github.com/Freemindtronic/evicypher-webmail/commit/312cd7f5c63b7f5901bd10fd4b137e754f4f6a09))
+- add option between OpenPGP anf legacy encryption ([902ca7b](https://github.com/Freemindtronic/evicypher-webmail/commit/902ca7b505fe9e0376f3ac12a35eccf3463460ad))
+- add tooltip to autofill ([051411f](https://github.com/Freemindtronic/evicypher-webmail/commit/051411ffe2b2c20b7921d57ad141b3d9372355c4))
+- added support for governandorra-full version ([1646e74](https://github.com/Freemindtronic/evicypher-webmail/commit/1646e745166fa58e659db5feb6749f065e8b15f8))
+- better autofill of field ([44ebdb0](https://github.com/Freemindtronic/evicypher-webmail/commit/44ebdb06bce085f6c1475c6f99e8bfb9f006e307))
+
+### Bug Fixes
+
+- add login regex ([591da19](https://github.com/Freemindtronic/evicypher-webmail/commit/591da19f45dacdd0c9282810915c83c553b5b941))
+- add minimum scan time ([fecbf21](https://github.com/Freemindtronic/evicypher-webmail/commit/fecbf214ab5cf4e7091e2cf3b5250d3e2d108b54))
+- changed filenames ([01950c0](https://github.com/Freemindtronic/evicypher-webmail/commit/01950c04e76a0d1e4cedf07246d59fcfc0eeb8f0))
+- code cleanup ([7e62e0d](https://github.com/Freemindtronic/evicypher-webmail/commit/7e62e0dd60fbd44d38a5d284fc3bf084ede60dbd))
+- legacy qrcode and rich text support ([dfaec73](https://github.com/Freemindtronic/evicypher-webmail/commit/dfaec73be9a96eb639d2464d620dbbc28b6634ce))
+- listener not removed ([5a43269](https://github.com/Freemindtronic/evicypher-webmail/commit/5a43269797b04f07bfc9d66c555b98df5a1a9639))
+- localization ignore variety ([d3ab35b](https://github.com/Freemindtronic/evicypher-webmail/commit/d3ab35b5405921a4ca858866e7560cfcc46aab08)), closes [#28](https://github.com/Freemindtronic/evicypher-webmail/issues/28)
+- stop fast scan if cancel ([cf82b16](https://github.com/Freemindtronic/evicypher-webmail/commit/cf82b16ef6e156b1df4f62bc92fdc11cd946a5ff))
+- store data not propagating ([1174e91](https://github.com/Freemindtronic/evicypher-webmail/commit/1174e919a9470b70f3daa3e328a46479e6773b50))
+- use better cooldown value ([1c1a9e3](https://github.com/Freemindtronic/evicypher-webmail/commit/1c1a9e3b93e2403714b1b70e2f3d4fdedf96a130))
+
 ## [1.3.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.2.0...v1.3.0) (2021-10-11)
 
 ### Features
