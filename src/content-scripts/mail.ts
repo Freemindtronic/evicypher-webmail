@@ -50,5 +50,9 @@ export class Mail {
     pre.append(text)
     this.selector.innerHTML = ''
     this.selector.append(pre)
+
+    // Declare changes to page scripts
+    const event = new InputEvent('input', { bubbles: true })
+    this.selector.dispatchEvent(event)
   }
 }
