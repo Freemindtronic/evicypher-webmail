@@ -1,11 +1,11 @@
 export enum Design {
   None = '',
+  AndorraTelecom = 'andorratelecom',
   Gmail = 'gmail',
+  GovernAndorra = 'govern-andorra',
   Outlook = 'outlook',
   OutlookOld = 'outlook-old',
-  Yahoo = 'yahoo',
   Proton = 'proton',
-  AndorraTelecom = 'andorratelecom',
-  GovernAndorra = 'govern-andorra',
   WhatsApp = 'whatsapp',
+  Yahoo = 'yahoo',
 }
