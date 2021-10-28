@@ -321,10 +321,10 @@ export const encryptButtonSibling = (
     : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
 /** Adds an encryption button in the toolbar. */
-const handleToolbar = (
+export const handleToolbar = (
   toolbar: HTMLElement,
   { selectors, design }: Options
-) => {
+): void => {
   const editor = toolbar.closest(selectors.editor)
   const mailSelector = editor?.querySelector(selectors.editorContent)
   const sendButton = editor?.querySelector(selectors.send)
