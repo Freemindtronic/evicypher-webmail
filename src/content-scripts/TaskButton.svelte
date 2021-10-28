@@ -5,7 +5,7 @@
   import { onMount, SvelteComponent } from 'svelte/internal'
   import tippy from 'tippy.js'
   import { browser } from 'webextension-polyfill-ts'
-  import { _ } from '$/i18n'
+  import { isLoading, _ } from '$/i18n'
   import TaskTippy from './TaskTippy.svelte'
   import DoneIcon from './assets/done.svg'
   import FailedIcon from './assets/failed.svg'
@@ -46,34 +46,36 @@
     createEventDispatcher<{ click: undefined; abort: undefined }>()
 </script>
 
-<button
-  type="button"
-  on:click={() => {
-    dispatch('click')
-  }}
-  bind:this={button}
-  class:button={true}
-  class="{design} {task}"
-  dir={$_('ltr')}
->
-  {#if promise === undefined}
-    <svelte:component this={IdleIcon} width="16" height="16" />
-  {:else}
-    {#await promise}
-      <img
-        src={browser.runtime.getURL('/loading.gif')}
-        alt="..."
-        width="16"
-        height="16"
-      />
-    {:then}
-      <DoneIcon width="16" height="16" />
-    {:catch}
-      <FailedIcon width="16" height="16" />
-    {/await}
-  {/if}
-  <slot />
-</button>
+{#if !$isLoading}
+  <button
+    type="button"
+    on:click={() => {
+      dispatch('click')
+    }}
+    bind:this={button}
+    class:button={true}
+    class="{design} {task}"
+    dir={$_('ltr')}
+  >
+    {#if promise === undefined}
+      <svelte:component this={IdleIcon} width="16" height="16" />
+    {:else}
+      {#await promise}
+        <img
+          src={browser.runtime.getURL('/loading.gif')}
+          alt="..."
+          width="16"
+          height="16"
+        />
+      {:then}
+        <DoneIcon width="16" height="16" />
+      {:catch}
+        <FailedIcon width="16" height="16" />
+      {/await}
+    {/if}
+    <slot />
+  </button>
+{/if}
 
 {#await isMounted then _}
   <TaskTippy

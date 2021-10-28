@@ -6,7 +6,7 @@
   import { get } from 'svelte/store'
   import tippy from 'tippy.js'
   import Button from '$/components/Button.svelte'
-  import { translateError, translateReport, _ } from '$/i18n'
+  import { isLoading, translateError, translateReport, _ } from '$/i18n'
 
   /** Tooltip content. */
   export let report: Report | undefined = undefined
@@ -98,31 +98,33 @@
   })
 </script>
 
-<div bind:this={tippyElement} class="tooltip" dir={$_('ltr')}>
-  {#if promise === undefined}
-    {idleTooltip}
-  {:else}
-    {#await promise}
-      <span>
-        {#if report === undefined}
-          {$_('loading')}
-        {:else}
-          {$translateReport(report)}
-        {/if}
-      </span>
-      <Button
-        type="button"
-        on:click={() => {
-          dispatch('abort')
-        }}>{$_('cancel')}</Button
-      >
-    {:then}
-      {doneTooltip}
-    {:catch { message }}
-      {$translateError(message)}
-    {/await}
-  {/if}
-</div>
+{#if !$isLoading}
+  <div bind:this={tippyElement} class="tooltip">
+    {#if promise === undefined}
+      {idleTooltip}
+    {:else}
+      {#await promise}
+        <span>
+          {#if report === undefined}
+            {$_('loading')}
+          {:else}
+            {$translateReport(report)}
+          {/if}
+        </span>
+        <Button
+          type="button"
+          on:click={() => {
+            dispatch('abort')
+          }}>{$_('cancel')}</Button
+        >
+      {:then}
+        {doneTooltip}
+      {:catch { message }}
+        {$translateError(message)}
+      {/await}
+    {/if}
+  </div>
+{/if}
 
 <style lang="scss">
   :global {
