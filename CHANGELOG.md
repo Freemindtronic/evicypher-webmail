@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.8.0...v1.9.0) (2021-10-29)
+
+### Features
+
+- added support for whatsapp ([a1bde47](https://github.com/Freemindtronic/evicypher-webmail/commit/a1bde474914147f0b61fe985d4c1f8bba761413b))
+
+### Bug Fixes
+
+- button moving on chrome ([3ba4f1e](https://github.com/Freemindtronic/evicypher-webmail/commit/3ba4f1e7f25ad2a66af4ba00570be78cb69c9a56))
+- button not showing if translation not loaded ([5c90b41](https://github.com/Freemindtronic/evicypher-webmail/commit/5c90b41778178749a2d207d271b4eb9fb6f79058))
+- change css Whatsapp ([8d1b7bd](https://github.com/Freemindtronic/evicypher-webmail/commit/8d1b7bd4eb3b66faeb47d48edc460d87fe6a332a))
+
 ## [1.8.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.3.0...v1.8.0) (2021-10-27)
 
 ### Features
