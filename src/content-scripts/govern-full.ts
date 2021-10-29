@@ -36,9 +36,9 @@ const handleMailElement = (
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
 
-  // I get the innerHTML because i need the br tags to put later the \n to avoid
-  // the formatting error from the foreground task
-  const mailStringInnerHTML = mailElement.innerHTML
+  // I get the innerText because i need the br tags to be rendered
+  // eslint-disable-next-line unicorn/prefer-dom-node-text-content
+  const mailStringInnerText = mailElement.innerText
 
   // If it's not an encrypted mail, ignore it
   const mailString = mailElement.textContent
@@ -61,34 +61,9 @@ const handleMailElement = (
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
     const workspace = initInjectionTarget(node as Text)
-    addDecryptButton(
-      workspace,
-      correctEncryptedMail(mailStringInnerHTML),
-      options
-    )
+    addDecryptButton(workspace, mailStringInnerText, options)
     addQRDecryptButton(workspace, encryptedString, options)
   }
-}
-
-const correctEncryptedMail = (encryptedString: string) => {
-  // The encryptedString is the string with all the HTML tags
-  // so first I take away the div tags and i left the br only
-  const stringWithBrTags = encryptedString.slice(81, -13)
-  // I treat the <br> and put \n
-  // with this I avoid the foreground task formatting error
-  const encryptedStringCorrected = stringWithBrTags.replaceAll('<br>', '\n')
-  let encryptedStringCorrectedFinal = ''
-  let x = 0
-  for (x; x < encryptedStringCorrected.length; x++) {
-    if (encryptedStringCorrected.charAt(x) === '\n') {
-      encryptedStringCorrectedFinal += '\n'
-      x++
-    } else {
-      encryptedStringCorrectedFinal += encryptedStringCorrected.charAt(x)
-    }
-  }
-
-  return encryptedStringCorrectedFinal
 }
 
 /** Adds an encryption button in the toolbar. */
