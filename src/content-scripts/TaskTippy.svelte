@@ -74,6 +74,10 @@
   }
 
   onMount(() => {
+    // Fix bad rendering on pages with element inside a frame
+    const frameBody = document.querySelector('frame')?.contentDocument?.body
+    const appendTo = frameBody ? frameBody : document.body
+
     // Create a new tippy instance when the component is mounted
     tippyInstance = tippy(element, {
       content: tippyElement,
@@ -83,7 +87,7 @@
       placement: tooltipPlacement,
       arrow: tooltipArrow,
       // Works on all webmails, despite is targetting the iframe
-      appendTo: document.querySelector('frame')?.contentDocument?.body,
+      appendTo,
     })
 
     // Once mounted check if it enabled
