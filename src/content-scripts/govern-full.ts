@@ -8,9 +8,11 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
+import { isOpenpgpEnabled } from '~src/options'
 import EncryptButton from './EncryptButton.svelte'
 import {
   addDecryptButton,
@@ -29,12 +31,18 @@ import { Design } from './design'
 
 /** Adds a button to a given element to decrypt all encrypted parts found. */
 const handleMailElement = (
-  mailElement: HTMLElement,
-  options: Options
+  mailElement: HTMLElement | undefined,
+  options: Options,
+  iframe: HTMLIFrameElement | undefined | null
 ): void => {
   // Mark the element
+  if (mailElement === undefined) return
   if (FLAG in mailElement.dataset) return
   mailElement.dataset[FLAG] = '1'
+
+  // We enter the body of the iframe to retrieve the text
+  if (iframe) mailElement = iframe.contentDocument?.body
+  if (mailElement === undefined) return
 
   // I get the innerText because i need the br tags to be rendered
   // eslint-disable-next-line unicorn/prefer-dom-node-text-content
@@ -61,7 +69,10 @@ const handleMailElement = (
     if (!node.parentNode?.textContent) continue
     const encryptedString = extractEncryptedString(node.parentNode.textContent)
     const workspace = initInjectionTarget(node as Text)
-    addDecryptButton(workspace, mailStringInnerText, options)
+    if (get(isOpenpgpEnabled))
+      addDecryptButton(workspace, mailStringInnerText, options)
+    else addDecryptButton(workspace, encryptedString, options)
+
     addQRDecryptButton(workspace, encryptedString, options)
   }
 }
@@ -119,6 +130,7 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
         )
 
         const mail = mailAux?.contentDocument?.body
+
         if (mail === undefined) return
 
         if (promise && !resolved && !rejected) return promise
@@ -167,6 +179,8 @@ const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
         // Append the final div with all the br in the mail
         mail.append(div)
         tooltip.destroy()
+
+        if (!get(isOpenpgpEnabled)) mail.textContent = encryptedString
       })
     }
   }
@@ -185,7 +199,20 @@ const handleMutations = (options: Options) => {
   )
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  for (const mail of mails!) handleMailElement(mail, options)
+  for (const mail of mails!) {
+    let iframe: HTMLIFrameElement | null | undefined
+    // We check if the content of the mail is embedded in an iframe
+    if (mail.children[0].tagName === 'IFRAME') {
+      iframe = mail.children[0] as HTMLIFrameElement
+      // Verify that the iframe is loaded
+      iframe.addEventListener('load', () => {
+        handleMailElement(mail, options, iframe)
+      })
+    } else {
+      iframe = undefined
+      handleMailElement(mail, options, iframe)
+    }
+  }
 
   // The user starts writing a mail
   const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
