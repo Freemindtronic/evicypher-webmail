@@ -26,5 +26,5 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // A timeout must be set so that the observer is executed once html is loaded.
 setTimeout(() => {
-  observe({ selectors, design: Design.GovernAndorra })
+  observe({ selectors, design: Design.GovernAndorraLight })
 }, 500)

@@ -262,5 +262,5 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 setTimeout(() => {
   // Injects the string CSS in the iframe head style part of goverandorra-full
   injectCSS()
-  observe({ selectors, design: Design.GovernAndorra })
+  observe({ selectors, design: Design.GovernAndorraFull })
 }, 1000)

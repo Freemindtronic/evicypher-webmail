@@ -323,7 +323,7 @@
     }
   }
 
-  .button.govern-andorra {
+  .button.govern-andorra-light {
     margin: 0;
     margin-right: 10px;
     padding: 4 7px;
@@ -359,6 +359,43 @@
 
     > :global(svg) {
       vertical-align: middle;
+    }
+  }
+
+  .button.govern-andorra-full {
+    margin: 5px;
+    margin-right: 10px;
+    padding: 4 7px;
+    color: #4f4f4f;
+    font-weight: bold;
+    font-size: 12px;
+    font-family: arial, helvetica, sans-serif;
+    line-height: 2;
+    background: rgba(0, 0, 0, 0)
+      linear-gradient(rgb(249, 249, 249) 0%, rgb(226, 226, 226) 100%) repeat
+      scroll 0% 0%;
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 0;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0)
+        linear-gradient(rgb(249, 249, 249) 0%, rgb(209, 209, 209) 100%) repeat
+        scroll 0% 0%;
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      float: left;
+    }
+
+    > :global(svg) {
+      vertical-align: middle;
+      -webkit-transform: translateY(0%);
+      transform: translateY(0%);
     }
   }
 
