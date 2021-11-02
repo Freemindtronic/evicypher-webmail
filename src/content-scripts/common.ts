@@ -230,12 +230,12 @@ export const addDecryptButton = (
   target.style.display = 'inline'
   target.id = 'DecryptSpan'
 
+  workspace.buttonArea.append(target)
+
   const button = new DecryptButton({
     target,
     props: { design },
   })
-
-  workspace.buttonArea.append(target)
 
   /** Frame containing the decrypted mail. */
   let frame: HTMLIFrameElement
