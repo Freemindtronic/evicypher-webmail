@@ -290,11 +290,21 @@ export class Webmail {
     workspace.buttonArea.append(target)
 
     /** Frame containing the decrypted mail. */
-    let frame: HTMLIFrameElement
+    /**
+     * Frame can be undefined because the QRCode if we want to hide it when
+     * addClickListener(button, (promise, resolved, rejected) => { clicking
+     * again we have to hide it/ put the value undefined if (resolved) {
+     */
+    let frame: HTMLIFrameElement | undefined
 
-    this.addClickListener(button, (promise, resolved, rejected) => {
-      if (resolved) {
+    this.addClickListener(button, (promise, _resolved, rejected) => {
+      /**
+       * Checks if it's defined and if it is, put undefined to frame for the
+       * next time we want to click on the qr button to make it appear again
+       */
+      if (frame) {
         frame.parentNode?.removeChild(frame)
+        frame = undefined
         return
       }
 
@@ -316,21 +326,10 @@ export class Webmail {
         encryptedStringToDisplay = encryptedStringToDisplay.slice(2, -2)
       }
 
-      // - frameElements is equal to an HTMLElement if an already QR is placed in the
-      // evicypher-area-iframe, or is null if the QR code is not in the area
-      const frameElements =
-        workspace.buttonArea.nextElementSibling?.querySelector('#iframe-id')
-
-      // - if frameElements has an element then it removes it,
-      // - if not then the QR code is placed in the area
-      if (frameElements) {
-        frameElements.remove()
-      } else {
-        frame = this.displayQREncryptedMail(
-          encryptedStringToDisplay,
-          workspace.iframeArea
-        )
-      }
+      frame = this.displayQREncryptedMail(
+        encryptedStringToDisplay,
+        workspace.iframeArea
+      )
     })
   }
 
@@ -450,7 +449,7 @@ export class Webmail {
     node: HTMLElement
   ): HTMLIFrameElement => {
     const frame = document.createElement('iframe')
-    frame.id = 'iframe-id'
+    frame.id = 'iframe-qrcode'
 
     if (encryptedString.length > 2331) {
       let errorMsg = ''
@@ -463,9 +462,6 @@ export class Webmail {
       // eslint-disable-next-line no-alert
       alert(errorMsg + '\n' + encryptedString.length.toString() + '/2331')
     } else {
-      // Check if QRCode Iframe already exist and remove it
-      document.querySelector('#iframe-id')?.remove()
-
       Object.assign(frame.style, {
         display: 'block',
         maxWidth: '100%',
