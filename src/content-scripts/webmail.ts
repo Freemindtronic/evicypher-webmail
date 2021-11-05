@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type { Design } from './design'
 import type { Report, Reporter } from '~src/report'
 import * as base85 from 'base85'
@@ -345,6 +346,7 @@ export class Webmail {
       : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
   /** Adds an encryption button in the toolbar. */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = toolbar.closest(this.selectors.editor)
 
@@ -360,7 +362,14 @@ export class Webmail {
     if (FLAG in toolbar.dataset) return
     toolbar.dataset[FLAG] = '1'
 
+    // In the case of facebook, the toolbar restarts every time you send a message,
+    // that causes a duplication of the Encrypt button,
+    // so I check if it already exists to remove it and avoid a duplication.
+    const spanButton = editor.querySelector('#EncryptButtonSpan')
+    if (spanButton) spanButton.remove()
+
     const target = document.createElement('span')
+    target.id = 'EncryptButtonSpan'
     target.style.display = 'contents'
     const { design } = this
     const button = new EncryptButton({
