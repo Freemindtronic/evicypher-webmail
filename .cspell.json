@@ -11,6 +11,7 @@
     "evitoken",
     "freemindtronic",
     "gmail",
+    "linkedin",
     "monospace",
     "openpgp",
     "qrcode",
@@ -110,6 +111,10 @@
     {
       "filename": "src/content-scripts/govern-full.ts",
       "ignoreWords": ["contentpanel", "editorframe", "mailedit", "bodyrich"]
+    },
+    {
+      "filename": "src/content-scripts/linkedin.ts",
+      "ignoreWords": ["convo"]
     }
   ],
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"]
