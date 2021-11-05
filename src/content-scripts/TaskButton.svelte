@@ -403,6 +403,78 @@
     }
   }
 
+  .button.linkedin {
+    padding: 5px 5px;
+    color: var(--color-text-low-emphasis-shift);
+    font-weight: 500;
+    font-size: 1.4rem;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto,
+      Helvetica Neue, Fira Sans, Ubuntu, Oxygen, Oxygen Sans, Cantarell,
+      Droid Sans, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+      Lucida Grande, Helvetica, Arial, sans-serif;
+    line-height: 1;
+    background-color: #fff;
+    border: 0;
+    border-radius: var(--corner-radius-small) !important;
+    box-shadow: inset 0 0 0 1px #dadce0;
+
+    &:hover,
+    &:focus {
+      color: var(--color-text-low-emphasis-shift);
+      background-color: var(--color-background-none-tint-hover);
+    }
+
+    &:active {
+      background-color: rgba(32, 33, 36, 0.122);
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+        0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    }
+
+    &.decrypt {
+      margin: 8px 3px;
+    }
+
+    &.encrypt {
+      margin-left: 3px;
+    }
+
+    // Enable animations if the user have not disabled them
+    @media (prefers-reduced-motion: no-preference) {
+      transition: box-shadow 0.5s;
+    }
+  }
+
+  .linkedin.encrypt {
+    padding: 5px 5px;
+    color: var(--color-text-low-emphasis-shift);
+    font-size: 0;
+    background-color: var(--rich-text-panel-background);
+    border: transparent;
+    border-radius: 120px !important;
+    box-shadow: none;
+    content: '';
+  }
+
+  // Make the tooltip a flex container, to allow the Cancel button
+  // to be in the right-hand side of the tooltip
+  .tooltip {
+    all: unset;
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Ubuntu',
+      'Cantarell', 'Noto Sans', sans-serif;
+    white-space: pre-line;
+
+    // stylelint-disable-next-line no-descending-specificity
+    > :global(button) {
+      // Keep the button on a single line
+      flex-shrink: 0;
+    }
+  }
+
   //pending to decide
   .whatsapp.encrypt {
     padding: 5px 5px;
