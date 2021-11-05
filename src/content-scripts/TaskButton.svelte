@@ -362,7 +362,7 @@
     }
   }
 
-  .button.whatsapp {
+  .button.facebook {
     margin: 0;
     padding: 0px 3px;
     color: #ffffff;
@@ -385,7 +385,6 @@
     }
 
     &:hover {
-      color: var(--secondary);
       background-color: var(--rich-text-panel-background);
     }
 
@@ -402,14 +401,13 @@
       vertical-align: middle;
     }
   }
-
-  //pending to decide
-  .whatsapp.encrypt {
+  .facebook.encrypt {
     padding: 5px 5px;
-    color: var(--icon);
+    color: #0084ff;
     font-size: 0;
     background-color: var(--rich-text-panel-background);
     border: transparent;
     content: '';
+    height: 50px;
   }
 </style>
