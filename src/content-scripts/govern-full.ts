@@ -14,232 +14,212 @@ import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
 import { isOpenpgpEnabled } from '~src/options'
 import EncryptButton from './EncryptButton.svelte'
-import {
-  addDecryptButton,
-  Selectors,
-  FLAG,
-  Options,
-  addClickListener,
-  containsEncryptedText,
-  encryptString,
-  extractEncryptedString,
-  isEncryptedText,
-  initInjectionTarget,
-  addQRDecryptButton,
-} from './common'
 import { Design } from './design'
+import { FLAG, Selectors, Webmail } from './webmail'
 
-/** Adds a button to a given element to decrypt all encrypted parts found. */
-const handleMailElement = (
-  mailElement: HTMLElement | undefined,
-  options: Options,
-  iframe: HTMLIFrameElement | undefined | null
-): void => {
-  // Mark the element
-  if (mailElement === undefined) return
-  if (FLAG in mailElement.dataset) return
-  mailElement.dataset[FLAG] = '1'
+class GovernFull extends Webmail {
+  /** Observes the DOM for changes. Should work for most webmails. */
+  public observe = (): void => {
+    // Run the listener on page load
 
-  // We enter the body of the iframe to retrieve the text
-  if (iframe) mailElement = iframe.contentDocument?.body
-  if (mailElement === undefined) return
+    this.handleMutations()
+    // Start observing the DOM for changes
+    new MutationObserver(() => {
+      this.handleMutations()
 
-  // I get the innerText because i need the br tags to be rendered
-  // eslint-disable-next-line unicorn/prefer-dom-node-text-content
-  const mailStringInnerText = mailElement.innerText
-
-  // If it's not an encrypted mail, ignore it
-  const mailString = mailElement.textContent
-  if (!mailString || !containsEncryptedText(mailString)) return
-
-  // Find all encrypted parts
-  const treeWalker = document.createTreeWalker(
-    mailElement,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: (textNode: Text) =>
-        isEncryptedText(textNode.data)
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_SKIP,
-    }
-  )
-  let node: Node | null
-  while ((node = treeWalker.nextNode())) {
-    // Add a "Decrypt" button next to the node
-    if (!node.parentNode?.textContent) continue
-    const encryptedString = extractEncryptedString(node.parentNode.textContent)
-    const workspace = initInjectionTarget(node as Text)
-    if (get(isOpenpgpEnabled))
-      addDecryptButton(workspace, mailStringInnerText, options)
-    else addDecryptButton(workspace, encryptedString, options)
-
-    addQRDecryptButton(workspace, encryptedString, options)
-  }
-}
-
-/** Adds an encryption button in the toolbar. */
-const handleToolbar = (toolbar: HTMLElement, { design }: Options) => {
-  const editor = document
-    .querySelector('frame')
-    ?.contentDocument?.querySelector('#e-contentpanel-container')
-
-  const frame = document.querySelector('frame')?.contentDocument
-  if (!frame) return
-
-  const iframe: NodeListOf<HTMLIFrameElement> | undefined =
-    frame?.querySelectorAll('iframe[id$=editorframe]')
-  if (!iframe) return
-
-  const sendButton = frame.querySelector('#e-actions-mailedit-send-text')
-  const node = frame.querySelectorAll('iframe[id$=editorframe]')
-
-  if (!editor || !sendButton || !node) return
-
-  toolbar.dataset[FLAG] = '1'
-  const target = document.createElement('span')
-  target.id = 'spanEncryptButton'
-  target.style.display = 'contents'
-  const button = new EncryptButton({
-    target,
-    props: { design },
-  })
-
-  // Loop to put the button in the iframe that does not have and has been opened
-  // node is the collection of iframe
-  for (const leaf of node) {
-    if (!leaf.previousSibling) {
-      let iframeID: RegExpMatchArray | null | undefined | string =
-        leaf.id.match(/\d/g)
-      iframeID = iframeID?.join('')
-
-      target.id += iframeID
-
-      leaf.before(target)
-
-      const tooltip = tippy(sendButton, {
-        theme: 'light-border',
-      })
-      _.subscribe(($_) => {
-        tooltip.setContent($_('this-mail-is-not-encrypted'))
-      })
-
-      addClickListener(button, async (promise, resolved, rejected, signal) => {
-        const mailAux: HTMLIFrameElement | null = frame?.querySelector(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `#e-\\$new-${iframeID}-bodyrich-editorframe`
-        )
-
-        const mail = mailAux?.contentDocument?.body
-
-        if (mail === undefined) return
-
-        if (promise && !resolved && !rejected) return promise
-
-        if (!mail.textContent)
-          throw new ExtensionError(ErrorMessage.MailContentUndefined)
-
-        button.$set({ report: undefined })
-
-        // Encrypt and replace
-        let encryptedString = await encryptString(
-          // Use value of textarea
-          mail.innerHTML,
-          (report: Report) => {
-            button.$set({ report })
-          },
-          signal
-        )
-
-        // Clear the textContent because i want it empty for the next steps
-        mail.textContent = ''
-
-        // TextContent of GovernAndorra is attached to the body, to the \n wont actually be there
-        // So the solution i found is to make a hierarchy like most of normal webmails do
-        const div = document.createElement('div')
-        // Adding \r at the end solves the multiple responses problem
-        encryptedString += '\r'
-        // String needed to put the parts of the string in each part
-        let encryptedStringFinal = ''
-        let x = 0
-        for (x; x < encryptedString.length; x++) {
-          // When I find a \n I want to insert the actual string in the div and then place a br,
-          // And clear the auxiliary string for the next parts
-          if (encryptedString.charAt(x) === '\n') {
-            encryptedStringFinal += encryptedString.charAt(x)
-            div.append(encryptedStringFinal)
-            const br = document.createElement('br')
-            div.append(br)
-            encryptedStringFinal = ''
-          } else {
-            // If is not a \n I just keep placing chars in the auxiliary string
-            encryptedStringFinal += encryptedString.charAt(x)
-          }
-        }
-
-        // Append the final div with all the br in the mail
-        mail.append(div)
-        tooltip.destroy()
-
-        if (!get(isOpenpgpEnabled)) mail.textContent = encryptedString
-      })
-    }
-  }
-}
-
-/**
- * Handles mutations observed by the `MutationObserver` below, i.e.
- * notifications of elements added or removed from the page.
- */
-const handleMutations = (options: Options) => {
-  // The user opens a mail
-  const frame1 = document.querySelectorAll('frame')[0]
-
-  const mails = frame1?.contentDocument?.querySelectorAll<HTMLElement>(
-    options.selectors.mail
-  )
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  for (const mail of mails!) {
-    let iframe: HTMLIFrameElement | null | undefined
-    // We check if the content of the mail is embedded in an iframe
-    if (mail.children[0].tagName === 'IFRAME') {
-      iframe = mail.children[0] as HTMLIFrameElement
-      // Verify that the iframe is loaded
-      iframe.addEventListener('load', () => {
-        handleMailElement(mail, options, iframe)
-      })
-    } else {
-      iframe = undefined
-      handleMailElement(mail, options, iframe)
-    }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    }).observe(document.querySelector('frame')!.contentDocument!, {
+      subtree: true,
+      childList: true,
+    })
   }
 
-  // The user starts writing a mail
-  const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
-    options.selectors.toolbar
-  )
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  for (const toolbar of toolbars!) {
-    setTimeout(() => {
-      handleToolbar(toolbar, options)
-    }, 1000)
-  }
-}
+  /**
+   * Handles mutations observed by the `MutationObserver` below, i.e.
+   * notifications of elements added or removed from the page.
+   */
+  protected handleMutations = () => {
+    // The user opens a mail
+    const frame1 = document.querySelectorAll('frame')[0]
 
-/** Observes the DOM for changes. Should work for most webmails. */
-const observe = (options: Options): void => {
-  // Run the listener on page load
-
-  handleMutations(options)
-  // Start observing the DOM for changes
-  new MutationObserver(() => {
-    handleMutations(options)
+    const mails = frame1?.contentDocument?.querySelectorAll<HTMLElement>(
+      this.selectors.mail
+    )
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  }).observe(document.querySelector('frame')!.contentDocument!, {
-    subtree: true,
-    childList: true,
-  })
+    for (const mail of mails!) {
+      let iframe: HTMLIFrameElement | null | undefined
+      // We check if the content of the mail is embedded in an iframe
+      if (mail.children[0].tagName === 'IFRAME') {
+        iframe = mail.children[0] as HTMLIFrameElement
+        // Verify that the iframe is loaded
+        iframe.addEventListener('load', () => {
+          this.handleMailElementGov(mail, iframe)
+        })
+      } else {
+        iframe = undefined
+        this.handleMailElementGov(mail, iframe)
+      }
+    }
+
+    // The user starts writing a mail
+    const toolbars = frame1.contentDocument?.querySelectorAll<HTMLElement>(
+      this.selectors.toolbar
+    )
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    for (const toolbar of toolbars!) {
+      setTimeout(() => {
+        this.handleToolbar(toolbar)
+      }, 1000)
+    }
+  }
+
+  protected handleMailElementGov(
+    mailElement: HTMLElement | undefined,
+    iframe: HTMLIFrameElement | undefined | null
+  ) {
+    // Mark the element
+    if (mailElement === undefined) return
+    if (FLAG in mailElement.dataset) return
+    mailElement.dataset[FLAG] = '1'
+
+    // We enter the body of the iframe to retrieve the text
+    if (iframe) mailElement = iframe.contentDocument?.body
+    if (mailElement === undefined) return
+
+    this.handleMailElement(mailElement)
+  }
+
+  /** Adds a button to a given element to decrypt all encrypted parts found. */
+  protected handleMailElement = (mailElement: HTMLElement): void => {
+    // I get the innerText because i need the br tags to be rendered
+    // eslint-disable-next-line unicorn/prefer-dom-node-text-content
+    const mailStringInnerText = mailElement.innerText
+
+    // If it's not an encrypted mail, ignore it
+    const mailString = mailElement.textContent
+    if (!mailString || !this.containsEncryptedText(mailString)) return
+
+    // Find all encrypted parts
+    const treeWalker = document.createTreeWalker(
+      mailElement,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (textNode: Text) =>
+          this.isEncryptedText(textNode.data)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_SKIP,
+      }
+    )
+    let node: Node | null
+    while ((node = treeWalker.nextNode())) {
+      // Add a "Decrypt" button next to the node
+      if (!node.parentNode?.textContent) continue
+      const encryptedString = this.extractEncryptedString(
+        node.parentNode.textContent
+      )
+      const workspace = this.initInjectionTarget(node as Text)
+      if (get(isOpenpgpEnabled))
+        this.addDecryptButton(workspace, mailStringInnerText)
+      else this.addDecryptButton(workspace, encryptedString)
+
+      this.addQRDecryptButton(workspace, encryptedString)
+    }
+  }
+
+  /** Adds an encryption button in the toolbar. */
+  protected handleToolbar = (toolbar: HTMLElement) => {
+    const editor = document
+      .querySelector('frame')
+      ?.contentDocument?.querySelector('#e-contentpanel-container')
+
+    const frame = document.querySelector('frame')?.contentDocument
+    if (!frame) return
+
+    const iframe: NodeListOf<HTMLIFrameElement> | undefined =
+      frame?.querySelectorAll('iframe[id$=editorframe]')
+    if (!iframe) return
+
+    const sendButton = frame.querySelector('#e-actions-mailedit-send-text')
+    const node = frame.querySelectorAll('iframe[id$=editorframe]')
+
+    if (!editor || !sendButton || !node) return
+
+    toolbar.dataset[FLAG] = '1'
+    const target = document.createElement('span')
+    target.id = 'spanEncryptButton'
+    target.style.display = 'contents'
+    const { design } = this
+    const button = new EncryptButton({
+      target,
+      props: { design },
+    })
+
+    // Loop to put the button in the iframe that does not have and has been opened
+    // node is the collection of iframe
+    for (const leaf of node) {
+      if (!leaf.previousSibling) {
+        let iframeID: RegExpMatchArray | null | undefined | string =
+          leaf.id.match(/\d/g)
+        iframeID = iframeID?.join('')
+
+        target.id += iframeID
+
+        leaf.before(target)
+
+        const tooltip = tippy(sendButton, {
+          theme: 'light-border',
+        })
+        _.subscribe(($_) => {
+          tooltip.setContent($_('this-mail-is-not-encrypted'))
+        })
+
+        this.addClickListener(
+          button,
+          async (promise, resolved, rejected, signal) => {
+            const mailAux: HTMLIFrameElement | null = frame?.querySelector(
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              `#e-\\$new-${iframeID}-bodyrich-editorframe`
+            )
+
+            const mail = mailAux?.contentDocument?.body
+
+            if (mail === undefined) return
+
+            if (promise && !resolved && !rejected) return promise
+
+            if (!mail.textContent)
+              throw new ExtensionError(ErrorMessage.MailContentUndefined)
+
+            button.$set({ report: undefined })
+
+            // Encrypt and replace
+            let encryptedString = await this.encryptString(
+              // Use value of textarea
+              mail.innerHTML,
+              (report: Report) => {
+                button.$set({ report })
+              },
+              signal
+            )
+
+            // Clear the textContent because i want it empty for the next steps
+            mail.textContent = ''
+
+            const pre = document.createElement('pre')
+            // Adding \r at the end solves the multiple responses problem
+            encryptedString += '\r'
+            pre.append(encryptedString)
+
+            mail.append(pre)
+            tooltip.destroy()
+
+            if (!get(isOpenpgpEnabled)) mail.textContent = encryptedString
+          }
+        )
+      }
+    }
+  }
 }
 
 /** Selectors for interesting HTML Elements of GovernAndorra. */
@@ -289,5 +269,6 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 setTimeout(() => {
   // Injects the string CSS in the iframe head style part of goverandorra-full
   injectCSS()
-  observe({ selectors, design: Design.GovernAndorra })
+  const webmail = new GovernFull(selectors, Design.GovernAndorra)
+  webmail.observe()
 }, 1000)

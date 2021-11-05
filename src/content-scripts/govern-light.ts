@@ -8,8 +8,8 @@
  */
 
 import { debug } from 'debug'
-import { observe, Selectors } from './common'
 import { Design } from './design'
+import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Govern Andorra - Ultra Light. */
 const selectors: Selectors = {
@@ -26,5 +26,6 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 // A timeout must be set so that the observer is executed once html is loaded.
 setTimeout(() => {
-  observe({ selectors, design: Design.GovernAndorra })
+  const webmail = new Webmail(selectors, Design.GovernAndorra)
+  webmail.observe()
 }, 500)
