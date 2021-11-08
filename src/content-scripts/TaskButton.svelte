@@ -444,17 +444,6 @@
     }
   }
 
-  .linkedin.encrypt {
-    padding: 5px 5px;
-    color: var(--color-text-low-emphasis-shift);
-    font-size: 0;
-    background-color: var(--rich-text-panel-background);
-    border: transparent;
-    border-radius: 120px !important;
-    box-shadow: none;
-    content: '';
-  }
-
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {
@@ -474,8 +463,16 @@
       flex-shrink: 0;
     }
   }
-
-  //pending to decide
+  .linkedin.encrypt {
+    padding: 5px 5px;
+    color: var(--color-text-low-emphasis-shift);
+    font-size: 0;
+    background-color: var(--rich-text-panel-background);
+    border: transparent;
+    border-radius: 120px !important;
+    box-shadow: none;
+    content: '';
+  }
   .whatsapp.encrypt {
     padding: 5px 5px;
     color: var(--icon);
