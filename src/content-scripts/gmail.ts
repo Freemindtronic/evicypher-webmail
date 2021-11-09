@@ -1,6 +1,8 @@
 /**
  * Gmail content script.
  *
+ * It works in the same way as most simple web mails.
+ *
  * @module
  */
 
@@ -9,7 +11,7 @@ import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Gmail. */
-const selectors: Selectors = {
+export const selectors: Selectors = {
   mail: '.a3s.aiL',
   toolbar: '.J-J5-Ji.btA',
   editor: '.iN',
@@ -20,5 +22,5 @@ const selectors: Selectors = {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
-const webmail = new Webmail(selectors, Design.Gmail)
+export const webmail = new Webmail(selectors, Design.Gmail)
 webmail.observe()

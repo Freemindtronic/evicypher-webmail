@@ -2,7 +2,12 @@
  * Light Andorra Government functions for content scripts.
  *
  * The govern andorra webmail is compose of 2 UI. One light and one heavy. The
- * light one is the easier of the 2 and works as other webmail
+ * light one is the easier of the 2 and works as other webmail.
+ *
+ * The only drawback compared to the other webmails, is that the JS was executed
+ * before the page was loaded so it was not possible to inject the buttons correctly.
+ *
+ * Solution: Put a setTimeout to the {@link observe} function.
  *
  * @module
  */
@@ -12,7 +17,7 @@ import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Govern Andorra - Ultra Light. */
-const selectors: Selectors = {
+export const selectors: Selectors = {
   mail: '.msgBody',
   toolbar: '.saveCancelFooter',
   editor: '#theForm',

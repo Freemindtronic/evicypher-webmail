@@ -3,6 +3,17 @@
 /**
  * Govern Andorra Full mode interface functions for content scripts.
  *
+ * The entire government page is inside a main frame, so the first step in most
+ * cases is to enter the main frame.
+ *
+ * Customisation in the following functions: {@link handleMutations} ,
+ * {@link handleMailElement} , {@link handleToolbar}
+ *
+ * A function is added to be able to inject the css code: {@link injectCSS}
+ *
+ * A setTimeout is also added to the {@link observe} function to be able to
+ * inject the JS code at the right time.
+ *
  * @module
  */
 
@@ -17,7 +28,7 @@ import EncryptButton from './EncryptButton.svelte'
 import { Design } from './design'
 import { FLAG, Selectors, Webmail } from './webmail'
 
-class GovernFull extends Webmail {
+export class GovernFull extends Webmail {
   /** Observes the DOM for changes. Should work for most webmails. */
   public observe = (): void => {
     // Run the listener on page load
@@ -37,6 +48,14 @@ class GovernFull extends Webmail {
   /**
    * Handles mutations observed by the `MutationObserver` below, i.e.
    * notifications of elements added or removed from the page.
+   *
+   * The first thing we do is enter the iframe.
+   *
+   * Once inside, it works more or less the same as the others. We have had to
+   * implement a condition to check if the encrypted mail which we are
+   * visualizing is inside an iframe, because there were cases in which the
+   * government received emails injected in an iframe (eg: Yahoo) and the
+   * decrypt buttons did not appear.
    */
   protected handleMutations = () => {
     // The user opens a mail
@@ -127,7 +146,20 @@ class GovernFull extends Webmail {
     }
   }
 
-  /** Adds an encryption button in the toolbar. */
+  /**
+   * Adds an encryption button in the toolbar.
+   *
+   * In this case, we do not use the selectors. First we access the iframe and
+   * take a container with the content of the mail and the toolbar.
+   *
+   * In the variable iframe we store all the iframe that can be inside the
+   * frame. Each iframe is equivalent to the input text of each tab opened to
+   * send messages.
+   *
+   * A loop is also created to go through the whole iframe collection, and in
+   * case that iframe does not have an encrypt button, it will be added to the iframe.
+   */
+
   protected handleToolbar = (toolbar: HTMLElement) => {
     const editor = document
       .querySelector('frame')
@@ -223,7 +255,7 @@ class GovernFull extends Webmail {
 }
 
 /** Selectors for interesting HTML Elements of GovernAndorra. */
-const selectors: Selectors = {
+export const selectors: Selectors = {
   mail: '.s-mailbody, .s-mailbody-preview',
   toolbar: '#e-toolbar',
   editor: '',
@@ -240,7 +272,7 @@ const selectors: Selectors = {
  *   This a workaround of a bug of svelte that inject the css of an app in an
  *   unaccessible head if the app is in an frame
  */
-const injectCSS = (function () {
+export const injectCSS = (function () {
   return function () {
     // Entire css to be injected
     // !! NEEDS TO BE CHANGED, BECAUSE ITS VERY TEDIOUS IF YOU WANT TO PERFORM A CHANGE IN THE STYLES

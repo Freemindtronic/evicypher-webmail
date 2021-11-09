@@ -15,6 +15,10 @@ import EncryptButton from './EncryptButton.svelte'
 import QRCodeButton from './QRCodeButton.svelte'
 import { Mail } from './mail'
 
+/**
+ * It contains the set of CSS identifiers that will allow the resolution of the
+ * different elements of the page.
+ */
 export interface Selectors {
   /**
    * Mail element. All mail elements are processed to find encrypted text. If a
@@ -44,8 +48,11 @@ type Workspace = {
   iframeArea: HTMLDivElement
 }
 
+/** Main skeleton of the application from which the other webmails are derived */
 export class Webmail {
+  /** Design that we will apply to the buttons. */
   protected readonly design: Design
+  /** CSS selectors for webmail components. */
   protected readonly selectors: Selectors
 
   constructor(selectors: Selectors, design: Design) {

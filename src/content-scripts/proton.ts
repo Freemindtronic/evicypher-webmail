@@ -1,6 +1,8 @@
 /**
  * Proton content script.
  *
+ * Some changes in Proton class
+ *
  * @module
  */
 
@@ -13,8 +15,24 @@ import EncryptButton from './EncryptButton.svelte'
 import { Design } from './design'
 import { FLAG, Selectors, Webmail } from './webmail'
 
-class Proton extends Webmail {
-  /** Adds an encryption button in the toolbar. */
+/**
+ * The problem encountered in Proton is that of iFrames. To access the different
+ * elements of the page, you have to pass this iframe. That's why, in this case,
+ * we don't use most of the selectors.
+ *
+ * Customisation of {@link handleToolbar}
+ */
+export class Proton extends Webmail {
+  /**
+   * Adds an encryption button in the toolbar.
+   *
+   * Here we customise the handleToolbar function to access the elements. The
+   * first step to implement the encryption button is to pass the iframe, so
+   * first we access it. Once passed, we access to its editable content where we
+   * will collect the text to encrypt. For the position of the button, the
+   * toolbar of the mail is in a footer, so we look for a footer and we take the
+   * button to send the mail as a reference to position the encryption button next to it.
+   */
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = document.querySelector('iframe')
     const mail = editor?.contentDocument?.querySelector(selectors.editorContent)

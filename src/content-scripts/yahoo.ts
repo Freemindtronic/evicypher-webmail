@@ -1,6 +1,8 @@
 /**
  * Yahoo content script.
  *
+ * It works in the same way as most simple web mails.
+ *
  * @module
  */
 
@@ -9,7 +11,7 @@ import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Yahoo. */
-const selectors: Selectors = {
+export const selectors: Selectors = {
   mail: '.I_52qC.D_FY.W_6D6F',
   toolbar: '.z_Z14vXdP.D_F.ab_C.I_52qC.W_6D6F.p_R.B_0',
   editor: '.em_N.D_F.ek_BB.p_R.o_h',
@@ -21,5 +23,5 @@ const selectors: Selectors = {
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
-const webmail = new Webmail(selectors, Design.Yahoo)
+export const webmail = new Webmail(selectors, Design.Yahoo)
 webmail.observe()
