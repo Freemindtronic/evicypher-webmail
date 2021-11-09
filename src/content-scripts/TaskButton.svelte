@@ -248,27 +248,27 @@
     margin: 0;
     margin-right: 10px;
     padding: 0 20px;
-    color: white;
+    color: var(--primary-contrast);
     font-weight: bold;
     font-size: 14px;
     font-family: 'wf_segoe-ui_semibold', 'Segoe UI Semibold',
       'Segoe WP Semibold', 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
     line-height: 2;
-    background-color: #262a33;
-    border: 1px solid #464b58;
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
     border-radius: var(--border-radius-medium);
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
 
     &:focus,
     &:hover {
-      border-color: #575d6b;
-      box-shadow: 0 0 0 1px #575d6b inset;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary) inset;
     }
 
     &:active {
-      border-color: #696f7d;
-      box-shadow: 0 0 0 1px #696f7d inset;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary) inset;
     }
 
     &.decrypt {
@@ -364,7 +364,7 @@
 
   .button.whatsapp {
     margin: 0;
-    padding: 0px 3px;
+    padding: 2px 3px;
     color: #ffffff;
     font-weight: bold;
     font-size: 12px;
