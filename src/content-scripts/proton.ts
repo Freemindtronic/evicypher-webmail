@@ -62,7 +62,11 @@ class Proton extends Webmail {
           },
           signal
         ).then((encryptedString) => {
-          mail.textContent = encryptedString
+          const preTag = document.createElement('pre')
+          mail.innerHTML = ''
+          preTag.append(encryptedString)
+          mail.append(preTag)
+
           tooltip.destroy()
         })
       }
