@@ -1,15 +1,11 @@
 /* eslint-disable complexity */
 /* eslint-disable sonarjs/cognitive-complexity */
+
 /**
  * Linkedin functions for content scripts.
  *
- * Linkedin Documentation: Linkedin has two different window editors that can
- * pop up at the same time, so we always have to keep track the elements that
- * corresponds to each window editor To handle with that for every time we call
- * the handleToolbar we send the entire interface of each window editors so
- * every knows where its elements are and don't interfere with the other window editor
- *
  * @module
+ * @see {@link Linkedin}
  */
 
 import type { Report } from '$/report'
@@ -29,12 +25,20 @@ export interface MailElements {
   send?: HTMLElement | null
 }
 
-class Linkedin extends Webmail {
+/**
+ * Linkedin has two different window editors that can pop up at the same time,
+ * so we always have to keep track of the elements that corresponds to each
+ * window editor, to handle the double editor, every time we call the
+ * {@link handleToolbar} we send the entire interface of each window editors so
+ * every one knows where its elements are and don't interfere with the other
+ * window editor
+ */
+export class Linkedin extends Webmail {
   /**
    * Handles mutations observed by the `MutationObserver` below, i.e.
    * notifications of elements added or removed from the page.
    */
-  protected handleMutations = () => {
+  protected handleMutations = (): void => {
     const mails = document.body.querySelectorAll<HTMLElement>(
       this.selectors.mail
     )
