@@ -446,6 +446,7 @@
 
   .button.icloud {
     position: relative;
+    margin-top: 10px;
     padding: 6px 8px;
     color: black;
     font-weight: 400;
