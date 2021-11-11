@@ -9,4 +9,5 @@ export enum Design {
   Proton = 'proton',
   WhatsApp = 'whatsapp',
   Yahoo = 'yahoo',
+  iCloud = 'icloud',
 }
