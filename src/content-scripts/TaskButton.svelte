@@ -444,6 +444,39 @@
     }
   }
 
+  .button.icloud {
+    position: relative;
+    padding: 6px 8px;
+    color: black;
+    font-weight: 400;
+    font-size: 17px;
+    font-family: 'SFUIText', Helvetica, sans-serif;
+    line-height: 21px;
+    background-color: rgb(228, 228, 230);
+    border: 0;
+    border-radius: 8px;
+    outline: transparent none medium;
+    cursor: pointer;
+
+    &:focus {
+      color: white;
+      background-color: rgb(0, 113, 235);
+    }
+
+    &:active {
+      color: black;
+      background-color: rgb(228, 228, 230);
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      margin-inline-end: 12px;
+    }
+  }
+
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {

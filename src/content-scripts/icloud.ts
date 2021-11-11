@@ -177,13 +177,13 @@ if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 if (document.location.hostname === 'www.icloud.com') {
   setTimeout(() => {
-    const webmail = new _iCloud(selectors, Design.Gmail)
+    const webmail = new _iCloud(selectors, Design.iCloud)
     webmail.observe()
   }, 1000)
 } else {
   console.log('---MAIL CHANGED---')
   setTimeout(() => {
-    const webmail = new Webmail(selectors, Design.Gmail)
+    const webmail = new Webmail(selectors, Design.iCloud)
     webmail.observe()
   }, 1000)
 }
