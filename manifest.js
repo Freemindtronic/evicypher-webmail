@@ -9,6 +9,7 @@ const webmails = JSON.parse(readFileSync('./webmails.json'))
 // List of content script running on each webmail supported
 const contentScriptWebmail = Object.entries(webmails).map(([key, matches]) => ({
   matches,
+  all_frames: true,
   js: [`content-script-${key}.js`],
 }))
 const contentScript = [
@@ -16,7 +17,7 @@ const contentScript = [
   {
     matches: ['<all_urls>'],
     js: ['content-script-autofill.js'],
-    all_frame: true,
+    all_frames: true,
     run_at: 'document_end',
   },
 ]
