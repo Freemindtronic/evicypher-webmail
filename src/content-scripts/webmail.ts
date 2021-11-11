@@ -34,6 +34,9 @@ export interface Selectors {
    * it at the end of the toolbar.
    */
   encryptButtonSibling?: string
+
+  /** If true place the button before the node if not after. */
+  isBefore?: boolean
 }
 
 /** A flag to mark already processed (having buttons added) HTML elements. */
@@ -343,6 +346,20 @@ export class Webmail {
       ? toolbar.lastChild
       : editor?.querySelector(encryptButtonSibling)) ?? undefined
 
+  protected addEncryptButton(node: ChildNode): EncryptButton {
+    const target = document.createElement('span')
+    target.style.display = 'contents'
+    const { design, selectors } = this
+    const button = new EncryptButton({
+      target,
+      props: { design },
+    })
+    if (selectors.isBefore) node.before(target)
+    else node.after(target)
+
+    return button
+  }
+
   /** Adds an encryption button in the toolbar. */
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = toolbar.closest(this.selectors.editor)
@@ -359,21 +376,14 @@ export class Webmail {
     if (FLAG in toolbar.dataset) return
     toolbar.dataset[FLAG] = '1'
 
-    const target = document.createElement('span')
-    target.style.display = 'contents'
-    const { design } = this
-    const button = new EncryptButton({
-      target,
-      props: { design },
-    })
-    node.after(target)
-
     const tooltip = tippy(sendButton, {
       theme: 'light-border',
     })
     _.subscribe(($_) => {
       tooltip.setContent($_('this-mail-is-not-encrypted'))
     })
+
+    const button = this.addEncryptButton(node)
 
     this.addClickListener(
       button,
