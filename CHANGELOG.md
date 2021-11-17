@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.9.0...v1.10.0) (2021-11-17)
+
+### Features
+
+- add support of iCloud ([#43](https://github.com/Freemindtronic/evicypher-webmail/issues/43)) ([44bc0b9](https://github.com/Freemindtronic/evicypher-webmail/commit/44bc0b9bb93f8ad356dffbf768cd6da4c402459a))
+- added support for linkedin ([63e105c](https://github.com/Freemindtronic/evicypher-webmail/commit/63e105ccbaad836cc8ae2ef5c2a3abdacb19cead))
+- added support Telegram ([f396033](https://github.com/Freemindtronic/evicypher-webmail/commit/f396033b8ef05829a280f59aa1cf4a67c279b653))
+- change style loading gif ([c5ed80f](https://github.com/Freemindtronic/evicypher-webmail/commit/c5ed80f42843f58406acefc63002781e2522e138))
+- qrcode closes when clicking again ([0ae2164](https://github.com/Freemindtronic/evicypher-webmail/commit/0ae21644cc9d2e21810909667718527b0f6f955a))
+
+### Bug Fixes
+
+- message in iframe ([7be043e](https://github.com/Freemindtronic/evicypher-webmail/commit/7be043eb5c04bcce33e6eae5f4684e73dc3314d9))
+
 ## [1.9.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.8.0...v1.9.0) (2021-10-29)
 
 ### Features
