@@ -1,4 +1,5 @@
 {
+  "icloud": ["https://www-mail.icloud-sandbox.com/*"],
   "andorratelecom": ["https://correu.andorra.ad/owa/*"],
   "gmail": ["https://mail.google.com/mail/*"],
   "govern-full": ["https://missatgeria.govern.ad/*"],

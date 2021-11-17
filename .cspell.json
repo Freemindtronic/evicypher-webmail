@@ -11,6 +11,7 @@
     "evitoken",
     "freemindtronic",
     "gmail",
+    "icloud",
     "linkedin",
     "monospace",
     "openpgp",
@@ -115,6 +116,10 @@
     {
       "filename": "src/content-scripts/linkedin.ts",
       "ignoreWords": ["convo"]
+    },
+    {
+      "filename": "src/content-scripts/TaskButton.svelte",
+      "ignoreWords": ["SFUI"]
     }
   ],
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"]
