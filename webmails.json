@@ -1,4 +1,5 @@
 {
+  "skype": ["https://web.skype.com/*"],
   "icloud": ["https://www-mail.icloud-sandbox.com/*"],
   "andorratelecom": ["https://correu.andorra.ad/owa/*"],
   "gmail": ["https://mail.google.com/mail/*"],
