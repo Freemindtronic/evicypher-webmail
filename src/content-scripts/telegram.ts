@@ -10,7 +10,7 @@ import { debug } from 'debug'
 import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
-/** Selectors for interesting HTML Elements of Gmail. */
+/** Selectors for interesting HTML Elements of Telegram. */
 export const selectors: Selectors = {
   mail: '.message',
   toolbar: '.chat-input',

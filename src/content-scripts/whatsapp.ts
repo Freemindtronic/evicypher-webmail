@@ -8,7 +8,7 @@ import { debug } from 'debug'
 import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
-/** Selectors for interesting HTML Elements of Gmail. */
+/** Selectors for interesting HTML Elements of Whatsapp. */
 const selectors: Selectors = {
   mail: '.message-out, .message-in',
   toolbar: '._1SEwr',

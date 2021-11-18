@@ -8,7 +8,7 @@ import { debug } from 'debug'
 import { Design } from './design'
 import { Webmail, Selectors } from './webmail'
 
-/** Selectors for interesting HTML Elements of Outlook. */
+/** Selectors for interesting HTML Elements of Old Outlook. */
 const selectors: Selectors = {
   mail: '._rp_U4 > :first-child',
   toolbar: '._mcp_H2',
