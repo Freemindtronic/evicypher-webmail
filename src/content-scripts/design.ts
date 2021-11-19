@@ -10,5 +10,6 @@ export enum Design {
   Telegram = 'telegram',
   WhatsApp = 'whatsapp',
   Yahoo = 'yahoo',
+  Yandex = 'yandex',
   iCloud = 'icloud',
 }
