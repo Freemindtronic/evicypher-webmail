@@ -10,9 +10,12 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { convert } from 'html-to-text'
+import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { _ } from '$/i18n'
 import { ErrorMessage, ExtensionError } from '~src/error'
+import { isOpenpgpEnabled } from '~src/options'
 import EncryptButton from './EncryptButton.svelte'
 import { Design } from './design'
 import { Webmail, FLAG, Selectors } from './webmail'
@@ -67,19 +70,15 @@ export class Yandex extends Webmail {
         mailElement.toolbar = window_.querySelector<HTMLElement>(
           this.selectors.toolbar
         )
-        console.log('mailElement.toolbar:', mailElement.toolbar)
         mailElement.editor = window_.querySelector<HTMLElement>(
           this.selectors.editor
         )
-        console.log('mailElement.editor:', mailElement.editor)
         mailElement.editorContent = window_.querySelector<HTMLElement>(
           this.selectors.editorContent
         )
-        console.log('mailElement.editorContent:', mailElement.editorContent)
         mailElement.send = window_.querySelector<HTMLElement>(
           this.selectors.send
         )
-        console.log('mailElement.send:', mailElement.send)
         this.handleToolbarYandex(mailElement)
       }
     } else {
@@ -153,10 +152,15 @@ export class Yandex extends Webmail {
 
         button.$set({ report: undefined })
         if (mailElements.editorContent === null) return
+
+        let mailContent = mailElements.editorContent.innerHTML
+        if (!get(isOpenpgpEnabled))
+          mailContent = convert(mailContent, { wordwrap: 130 })
+
         // Encrypt and replace
         let encryptedString = await this.encryptString(
           // Use innerHTML instead of textContent to support rich text
-          mailElements.editorContent.innerHTML,
+          mailContent,
           (report: Report) => {
             button.$set({ report })
           },
@@ -166,28 +170,33 @@ export class Yandex extends Webmail {
         encryptedString += '\r'
 
         mailElements.editorContent.innerHTML = ''
-        // For some reason yandex messages needs to be in the following format to be able to detect
-        // injected text like our encrypted string
-        // part message 1<br>
-        // part message 2<br> etc...
-        let position: number
-        let aux = encryptedString
         const pre = document.createElement('pre')
-        /**
-         * The way I do it it always remains one \n at the end to the final
-         * length is going to be 1
-         */
-        while (encryptedString.length !== 1) {
-          position = encryptedString.indexOf('\n')
-          aux = encryptedString.slice(0, position)
-          encryptedString = encryptedString.slice(
-            position + 1,
-            encryptedString.length
-          )
+        if (encryptedString.startsWith('AAAAF')) {
+          pre.append(encryptedString)
+        } else {
+          // For some reason yandex messages needs to be in the following format to be able to detect
+          // injected text like our encrypted string
+          // part message 1<br>
+          // part message 2<br> etc...
+          let position: number
+          let aux = encryptedString
 
-          const br = document.createElement('br')
-          pre.append(aux)
-          pre.append(br)
+          /**
+           * The way I do it it always remains one \n at the end to the final
+           * length is going to be 1
+           */
+          while (encryptedString.length !== 1) {
+            position = encryptedString.indexOf('\n')
+            aux = encryptedString.slice(0, position)
+            encryptedString = encryptedString.slice(
+              position + 1,
+              encryptedString.length
+            )
+
+            const br = document.createElement('br')
+            pre.append(aux)
+            pre.append(br)
+          }
         }
 
         mailElements.editorContent.append(pre)
