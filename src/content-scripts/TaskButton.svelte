@@ -478,6 +478,38 @@
     }
   }
 
+  .button.horde {
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    color: #616161;
+    font-weight: bold;
+    font-size: 0.875rem;
+    font-family: Arial, 'DejaVu Sans', sans-serif;
+    line-height: 1;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #616161;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(32, 33, 36, 0.039);
+    }
+
+    &:active {
+      background-color: rgba(32, 33, 36, 0.122);
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+        0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    }
+
+    &.decrypt {
+      margin: 8px 3px;
+    }
+
+    &.encrypt {
+      margin-left: 8px;
+    }
+  }
+
   // Make the tooltip a flex container, to allow the Cancel button
   // to be in the right-hand side of the tooltip
   .tooltip {
