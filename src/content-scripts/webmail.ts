@@ -187,6 +187,10 @@ export class Webmail {
     })
   }
 
+  protected getMailContent(mailElement: HTMLElement): string | null {
+    return mailElement.textContent
+  }
+
   /** Adds a button to a given element to decrypt all encrypted parts found. */
   protected handleMailElement = (mailElement: HTMLElement): void => {
     // Mark the element
@@ -194,7 +198,7 @@ export class Webmail {
     mailElement.dataset[FLAG] = '1'
 
     // If it's not an encrypted mail, ignore it
-    const mailString = mailElement.textContent
+    const mailString = this.getMailContent(mailElement)
 
     if (!mailString || !this.containsEncryptedText(mailString)) return
 
@@ -212,11 +216,11 @@ export class Webmail {
 
     let node: Node | null
     while ((node = treeWalker.nextNode())) {
+      const messageContent = this.getMailContent(node.parentNode as HTMLElement)
+
       // Add a "Decrypt" button next to the node
-      if (!node.parentNode?.textContent) continue
-      const encryptedString = this.extractEncryptedString(
-        node.parentNode.textContent
-      )
+      if (!messageContent) continue
+      const encryptedString = this.extractEncryptedString(messageContent)
       const workspace = this.initInjectionTarget(node as Text)
       this.addDecryptButton(workspace, encryptedString)
       this.addQRDecryptButton(workspace, encryptedString)
