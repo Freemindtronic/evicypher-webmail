@@ -438,8 +438,12 @@ export class Webmail {
         throw new Error('Cannot change frame content.')
       // We are injecting raw HTML in a sandboxed environnement,
       // no need to sanitize it
+
       // eslint-disable-next-line no-unsanitized/property
-      frame.contentDocument.body.innerHTML = decryptedString
+      frame.contentDocument.body.innerHTML = get(isOpenpgpEnabled)
+        ? decryptedString
+        : '<pre>' + decryptedString + '</pre>'
+
       // Make the frame as tall as its content
       frame.height = '1'
       frame.height = `${frame.contentDocument.body.scrollHeight + 20}`

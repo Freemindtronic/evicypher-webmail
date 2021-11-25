@@ -8,6 +8,7 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { convert } from 'html-to-text'
 import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
@@ -193,10 +194,14 @@ class GovernFull extends Webmail {
 
             button.$set({ report: undefined })
 
+            let mailContent = mail.innerHTML
+            if (!get(isOpenpgpEnabled))
+              mailContent = convert(mailContent, { wordwrap: 130 })
+
             // Encrypt and replace
             let encryptedString = await this.encryptString(
               // Use value of textarea
-              mail.innerHTML,
+              mailContent,
               (report: Report) => {
                 button.$set({ report })
               },
