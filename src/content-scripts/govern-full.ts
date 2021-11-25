@@ -123,8 +123,8 @@ class GovernFull extends Webmail {
       if (get(isOpenpgpEnabled))
         this.addDecryptButton(workspace, mailStringInnerText)
       else this.addDecryptButton(workspace, encryptedString)
-
-      this.addQRDecryptButton(workspace, encryptedString)
+      if (!get(isOpenpgpEnabled))
+        this.addQRDecryptButton(workspace, encryptedString)
     }
   }
 
