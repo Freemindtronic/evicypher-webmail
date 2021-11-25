@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.0...v1.11.1) (2021-11-25)
+
+### Bug Fixes
+
+- legacy is the default mode of encryption ([6984775](https://github.com/Freemindtronic/evicypher-webmail/commit/6984775922c8d7422ec495b967f933c3204ee35e))
+- remove svg for better inter compatibility ([69c13c9](https://github.com/Freemindtronic/evicypher-webmail/commit/69c13c9055d73e8ad35423e287f125c34af66596)), closes [#59](https://github.com/Freemindtronic/evicypher-webmail/issues/59)
+
 ## [1.11.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.10.0...v1.11.0) (2021-11-25)
 
 ### Features
