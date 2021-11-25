@@ -12,5 +12,5 @@ import { BrowserStore } from '$/browser-store'
 /** Store either to use OpenPGP or Legacy encryption */
 export const isOpenpgpEnabled: BrowserStore<boolean> = new BrowserStore(
   'openpgpEnabled',
-  writable(true)
+  writable(false)
 )
