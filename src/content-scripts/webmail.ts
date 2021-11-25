@@ -184,6 +184,7 @@ export class Webmail {
   }
 
   /** Adds a button to a given element to decrypt all encrypted parts found. */
+  // eslint-disable-next-line complexity
   protected handleMailElement = (mailElement: HTMLElement): void => {
     // Mark the element
     if (FLAG in mailElement.dataset) return
@@ -215,7 +216,8 @@ export class Webmail {
       )
       const workspace = this.initInjectionTarget(node as Text)
       this.addDecryptButton(workspace, encryptedString)
-      this.addQRDecryptButton(workspace, encryptedString)
+      if (!get(isOpenpgpEnabled))
+        this.addQRDecryptButton(workspace, encryptedString)
     }
   }
 
