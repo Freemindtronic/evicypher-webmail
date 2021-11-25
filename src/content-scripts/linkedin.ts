@@ -10,11 +10,15 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { convert } from 'html-to-text'
+import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { _ } from '$/i18n'
 import { ErrorMessage, ExtensionError } from '~src/error'
+import { isOpenpgpEnabled } from '~src/options'
 import EncryptButton from './EncryptButton.svelte'
 import { Design } from './design'
+import { Mail } from './mail'
 import { Webmail, FLAG, Selectors } from './webmail'
 
 /** HTMLElements from all the parts of a certain window */
@@ -133,6 +137,8 @@ export class Linkedin extends Webmail {
     )
       return
 
+    const mail = new Mail(mailElements.editorContent)
+
     if (FLAG in mailElements.toolbar.dataset) return
     mailElements.toolbar.dataset[FLAG] = '1'
 
@@ -157,16 +163,20 @@ export class Linkedin extends Webmail {
       button,
       async (promise, resolved, rejected, signal) => {
         if (promise && !resolved && !rejected) return promise
-        if (mailElements.editorContent === undefined) return
-        if (mailElements.editorContent?.textContent === '')
+
+        if (mail.getContent() === '<p>&nbsp;<br></p>')
           throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
         button.$set({ report: undefined })
-        if (mailElements.editorContent === null) return
+        let mailContent = mail.getContent()
+
+        if (!get(isOpenpgpEnabled))
+          mailContent = convert(mailContent, { wordwrap: 130 })
+
         // Encrypt and replace
         let encryptedString = await this.encryptString(
           // Use innerHTML instead of textContent to support rich text
-          mailElements.editorContent.innerHTML,
+          mailContent,
           (report: Report) => {
             button.$set({ report })
           },
@@ -175,19 +185,18 @@ export class Linkedin extends Webmail {
 
         encryptedString += '\r'
 
-        mailElements.editorContent.innerHTML = ''
         // For some reason linkedin messages needs to be in the following format to be able to detect
         // injected text like our encrypted string
         // <p> message <br></p>
+        mail.selector.innerHTML = ''
         const p = document.createElement('p')
         const br = document.createElement('br')
         p.append(encryptedString)
         p.append(br)
-        mailElements.editorContent.append(p)
+        mail.selector.append(p)
 
         const event = new InputEvent('input', { bubbles: true })
-
-        mailElements.editorContent.dispatchEvent(event)
+        mail.selector.dispatchEvent(event)
 
         tooltip.destroy()
       }
