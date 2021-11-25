@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.10.0...v1.11.0) (2021-11-25)
+
+### Features
+
+- added legacy functionalities & fix qrcode read format ([8848c67](https://github.com/Freemindtronic/evicypher-webmail/commit/8848c675c80c6368d8eaa6c7a1ef654b2df7497a))
+- added support for yandex ([4fb1f78](https://github.com/Freemindtronic/evicypher-webmail/commit/4fb1f7825f98a1241ebaa80a4e73b7f056b91fc9))
+
+### Bug Fixes
+
+- hide qrcode button in openPGP ([4340daf](https://github.com/Freemindtronic/evicypher-webmail/commit/4340dafb14f473327b475a14abce3d0f9b190aec))
+- linkedin now detects if mail is empty to encrypt ([5db0a5e](https://github.com/Freemindtronic/evicypher-webmail/commit/5db0a5e739ca4c095ce02705926699f53b947157))
+- qr code message & line break govern and proton ([46fe76c](https://github.com/Freemindtronic/evicypher-webmail/commit/46fe76c22226704b9391f073bcdf2534c20153c6))
+- send button class ([2fa4997](https://github.com/Freemindtronic/evicypher-webmail/commit/2fa49978ace782b73abe7024f3862d38987eb1aa))
+- zeroconf service no longer crash on sendNativeMessage ([b27cb6b](https://github.com/Freemindtronic/evicypher-webmail/commit/b27cb6b554d2496b3b452c434a1481d9a1d21acf))
+
 ## [1.10.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.9.0...v1.10.0) (2021-11-17)
 
 ### Features
