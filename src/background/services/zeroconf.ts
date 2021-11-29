@@ -101,14 +101,24 @@ export const startZeroconfService = async (
     const start = performance.now()
 
     // A promise to a list of connected devices
-    const response = (await browser.runtime.sendNativeMessage(APPLICATION_ID, {
-      cmd: 'Lookup',
-      type: '_evitoken._tcp.',
-    })) as ZeroconfResponse | undefined
+    const promiseResponse = browser.runtime
+      .sendNativeMessage(APPLICATION_ID, {
+        cmd: 'Lookup',
+        type: '_evitoken._tcp.',
+      })
+      .catch((error) => {
+        log('%o', error)
+        context.zeroconfRunning = false
+      })
+
+    const response = (await promiseResponse) as ZeroconfResponse | undefined
 
     log('Scan results: %o', response?.result)
 
-    if (response) await handleResponse(context, response)
+    if (response) {
+      context.zeroconfRunning = true
+      await handleResponse(context, response)
+    }
 
     // Prune devices that haven't been seen for a while
     pruneOldDevices(context)

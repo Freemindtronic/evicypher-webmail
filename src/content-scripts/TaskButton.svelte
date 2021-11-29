@@ -507,6 +507,39 @@
 
     &.encrypt {
       margin-left: 8px;
+
+  .button.yandex {
+    position: relative;
+    margin-left: 5px;
+    padding: 0px 12px;
+    color: var(--liza-theme-accent-text-color);
+    font-weight: 900;
+    font-size: 14px;
+    font-family: 'YS Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 2;
+    background-color: var(--liza-theme-accent-color);
+    border: 0px;
+    border-radius: 100px;
+
+    &:hover,
+    &:focus {
+      background-color: var(--liza-theme-accent-color-hover);
+    }
+
+    &:active {
+      background-color: var(--liza-theme-accent-color-active);
+    }
+
+    &.decrypt {
+      margin: 8px 0;
+    }
+
+    &.encrypt {
+      margin-inline-end: 0px;
+    }
+    > :global(svg) {
+      display: inline !important;
+      vertical-align: middle;
     }
   }
 

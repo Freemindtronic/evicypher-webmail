@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type { Design } from './design'
 import type { Report, Reporter } from '~src/report'
 import * as base85 from 'base85'
@@ -189,6 +190,7 @@ export class Webmail {
   }
 
   /** Adds a button to a given element to decrypt all encrypted parts found. */
+  // eslint-disable-next-line complexity
   protected handleMailElement = (mailElement: HTMLElement): void => {
     // Mark the element
     if (FLAG in mailElement.dataset) return
@@ -220,7 +222,8 @@ export class Webmail {
       )
       const workspace = this.initInjectionTarget(node as Text)
       this.addDecryptButton(workspace, encryptedString)
-      this.addQRDecryptButton(workspace, encryptedString)
+      if (!get(isOpenpgpEnabled))
+        this.addQRDecryptButton(workspace, encryptedString)
     }
   }
 
@@ -366,6 +369,7 @@ export class Webmail {
   }
 
   /** Adds an encryption button in the toolbar. */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = toolbar.closest(this.selectors.editor)
 
@@ -397,6 +401,10 @@ export class Webmail {
 
         if (mail.isEmpty())
           throw new ExtensionError(ErrorMessage.MailContentUndefined)
+
+        // Error message is shown if the mail is already encrypted
+        if (this.containsEncryptedText(mail.getContent()))
+          throw new ExtensionError(ErrorMessage.MailAlreadyEncrypted)
 
         button.$set({ report: undefined })
         let mailContent = mail.getContent()
@@ -443,8 +451,12 @@ export class Webmail {
         throw new Error('Cannot change frame content.')
       // We are injecting raw HTML in a sandboxed environnement,
       // no need to sanitize it
+
       // eslint-disable-next-line no-unsanitized/property
-      frame.contentDocument.body.innerHTML = decryptedString
+      frame.contentDocument.body.innerHTML = get(isOpenpgpEnabled)
+        ? decryptedString
+        : '<pre>' + decryptedString + '</pre>'
+
       // Make the frame as tall as its content
       frame.height = '1'
       frame.height = `${frame.contentDocument.body.scrollHeight + 20}`

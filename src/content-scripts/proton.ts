@@ -6,35 +6,34 @@
 
 import type { Report } from '$/report'
 import { debug } from 'debug'
+import { convert } from 'html-to-text'
+import { get } from 'svelte/store'
 import tippy from 'tippy.js'
 import { ErrorMessage, ExtensionError } from '$/error'
 import { _ } from '$/i18n'
-import EncryptButton from './EncryptButton.svelte'
+import { isOpenpgpEnabled } from '~src/options'
 import { Design } from './design'
+import { Mail } from './mail'
 import { FLAG, Selectors, Webmail } from './webmail'
 
 class Proton extends Webmail {
   /** Adds an encryption button in the toolbar. */
+
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = document.querySelector('iframe')
-    const mail = editor?.contentDocument?.querySelector(selectors.editorContent)
+    const mailSelector = editor?.contentDocument?.querySelector(
+      selectors.editorContent
+    )
     const footer = document.querySelector('footer')
     const sendButton = footer?.querySelector('button')
     const node = this.encryptButtonSibling(selectors, toolbar, editor)
 
-    if (!editor || !mail || !sendButton || !node) return
+    if (!editor || !mailSelector || !sendButton || !node) return
+
+    const mail = new Mail(mailSelector)
 
     if (FLAG in toolbar.dataset) return
     toolbar.dataset[FLAG] = '1'
-
-    const { design } = this
-    const target = document.createElement('span')
-    target.style.display = 'contents'
-    const button = new EncryptButton({
-      target,
-      props: { design },
-    })
-    node.after(target)
 
     const tooltip = tippy(sendButton, {
       theme: 'light-border',
@@ -43,28 +42,34 @@ class Proton extends Webmail {
       tooltip.setContent($_('this-mail-is-not-encrypted'))
     })
 
+    const button = this.addEncryptButton(node)
+
     this.addClickListener(
       button,
       async (promise, resolved, rejected, signal) => {
         if (promise && !resolved && !rejected) return promise
 
-        if (!mail.textContent)
+        if (mail.isEmpty())
           throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
         button.$set({ report: undefined })
+        let mailContent = mail.getContent()
+
+        if (!get(isOpenpgpEnabled))
+          mailContent = convert(mailContent, { wordwrap: 130 })
 
         // Encrypt and replace
-        return this.encryptString(
-          // Use innerHTML instead of textContent to support rich text
-          mail.innerHTML,
+        let encryptedString = await this.encryptString(
+          mailContent,
           (report: Report) => {
             button.$set({ report })
           },
           signal
-        ).then((encryptedString) => {
-          mail.textContent = encryptedString
-          tooltip.destroy()
-        })
+        )
+        // Adding \r at the end solves the multiple responses problem
+        encryptedString += '\r'
+        mail.setContent(encryptedString)
+        tooltip.destroy()
       }
     )
   }

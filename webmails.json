@@ -12,5 +12,6 @@
   "roundcube": ["https://mail.ovh.net/owa/*"],
   "telegram": ["https://web.telegram.org/k/*"],
   "whatsapp": ["https://web.whatsapp.com/*"],
-  "yahoo": ["https://mail.yahoo.com/*"]
+  "yahoo": ["https://mail.yahoo.com/*"],
+  "yandex": ["https://mail.yandex.com/*"]
 }

@@ -30,7 +30,6 @@ export const manifest = {
   version: process.env.npm_package_version,
   icons: {
     48: '~/assets/favicon.png',
-    96: '~/assets/icon.svg',
   },
   permissions: ['storage', 'nativeMessaging'],
   background: {

@@ -2,10 +2,10 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 
 /**
- * Linkedin functions for content scripts.
+ * Yandex functions for content scripts.
  *
  * @module
- * @see {@link Linkedin}
+ * @see {@link Yandex}
  */
 
 import type { Report } from '$/report'
@@ -18,7 +18,6 @@ import { ErrorMessage, ExtensionError } from '~src/error'
 import { isOpenpgpEnabled } from '~src/options'
 import EncryptButton from './EncryptButton.svelte'
 import { Design } from './design'
-import { Mail } from './mail'
 import { Webmail, FLAG, Selectors } from './webmail'
 
 /** HTMLElements from all the parts of a certain window */
@@ -30,14 +29,16 @@ export interface MailElements {
 }
 
 /**
- * Linkedin has two different window editors that can pop up at the same time,
- * so we always have to keep track of the elements that corresponds to each
- * window editor, to handle the double editor, every time we call the
- * {@link handleToolbar} we send the entire interface of each window editors so
- * every one knows where its elements are and don't interfere with the other
- * window editor
+ * Yandex has two different window editors that can pop up at the same time, one
+ * is from the response of a mail, and the other one is from the one that
+ * appears when you want to create a new mail, so we always have to keep track
+ * of the elements that corresponds to each window editor, to handle the double
+ * editor, every time we call the {@link handleToolbar} we send the entire
+ * interface of each window editors so every one knows where its elements are
+ * and don't interfere with the other window editor
  */
-export class Linkedin extends Webmail {
+
+export class Yandex extends Webmail {
   /**
    * Handles mutations observed by the `MutationObserver` below, i.e.
    * notifications of elements added or removed from the page.
@@ -48,14 +49,12 @@ export class Linkedin extends Webmail {
     )
     for (const mail of mails) this.handleMailElement(mail)
 
-    // First window of linkedin editor
+    // First window of yandex editor
     const firstWindow = document.querySelector(
-      '.scaffold-layout__list-detail-inner'
+      '.ns-view-quick-reply-form-wrap.mail-QuickReply-FormWrap'
     )
-    // Second window of linkedin editor
-    const secondWindow = document.querySelector(
-      '.msg-convo-wrapper.msg-overlay-conversation-bubble'
-    )
+    // Second window of yandex editor
+    const secondWindow = document.querySelector('.ComposePopup-Content')
 
     if (!firstWindow && !secondWindow) return
 
@@ -64,37 +63,23 @@ export class Linkedin extends Webmail {
 
     /** If both windows are shown */
     if (firstWindow && secondWindow) {
-      /**
-       * Array of Elements to iterate over all elements for both windows editors
-       * in linkedin
-       */
+      /** Array of Elements to iterate over all elements for both windows editors in Yandex */
       const windows: Element[] = [firstWindow, secondWindow]
 
-      /**
-       * I loop for every window editor and then call the handleToolbarLinkedin
-       * so inside the function know that a certain editor belongs in the window
-       * and not from the other one, so when you click in encrypt he knows that
-       * he has to put the content encrypted in the editorContent of his window.
-       */
-      for (const window of windows) {
-        /**
-         * Because both windows has the same class I can do a querySelector to
-         * obtain the toolbar, ... from the certain window and the call the
-         * handleToolbarLinkedin function
-         */
-        mailElement.toolbar = window.querySelector<HTMLElement>(
+      for (const window_ of windows) {
+        mailElement.toolbar = window_.querySelector<HTMLElement>(
           this.selectors.toolbar
         )
-        mailElement.editor = window.querySelector<HTMLElement>(
+        mailElement.editor = window_.querySelector<HTMLElement>(
           this.selectors.editor
         )
-        mailElement.editorContent = window.querySelector<HTMLElement>(
+        mailElement.editorContent = window_.querySelector<HTMLElement>(
           this.selectors.editorContent
         )
-        mailElement.send = window.querySelector<HTMLElement>(
+        mailElement.send = window_.querySelector<HTMLElement>(
           this.selectors.send
         )
-        this.handleToolbarLinkedin(mailElement)
+        this.handleToolbarYandex(mailElement)
       }
     } else {
       /**
@@ -118,16 +103,16 @@ export class Linkedin extends Webmail {
       mailElement.send = generalWindow?.querySelector<HTMLElement>(
         this.selectors.send
       )
-      this.handleToolbarLinkedin(mailElement)
+      this.handleToolbarYandex(mailElement)
     }
   }
 
   /** Adds an encryption button in the toolbar. */
-  protected handleToolbarLinkedin = (mailElements: MailElements): void => {
+  protected handleToolbarYandex = (mailElements: MailElements): void => {
     if (mailElements.toolbar === null || mailElements.toolbar === undefined)
       return
 
-    const node = mailElements.toolbar.firstElementChild?.children[3]
+    const node = mailElements.toolbar.firstElementChild
 
     if (
       !mailElements.editor ||
@@ -136,8 +121,6 @@ export class Linkedin extends Webmail {
       !node
     )
       return
-
-    const mail = new Mail(mailElements.editorContent)
 
     if (FLAG in mailElements.toolbar.dataset) return
     mailElements.toolbar.dataset[FLAG] = '1'
@@ -163,13 +146,14 @@ export class Linkedin extends Webmail {
       button,
       async (promise, resolved, rejected, signal) => {
         if (promise && !resolved && !rejected) return promise
-
-        if (mail.getContent() === '<p>&nbsp;<br></p>')
+        if (mailElements.editorContent === undefined) return
+        if (mailElements.editorContent?.textContent === '')
           throw new ExtensionError(ErrorMessage.MailContentUndefined)
 
         button.$set({ report: undefined })
-        let mailContent = mail.getContent()
+        if (mailElements.editorContent === null) return
 
+        let mailContent = mailElements.editorContent.innerHTML
         if (!get(isOpenpgpEnabled))
           mailContent = convert(mailContent, { wordwrap: 130 })
 
@@ -185,80 +169,71 @@ export class Linkedin extends Webmail {
 
         encryptedString += '\r'
 
-        // For some reason linkedin messages needs to be in the following format to be able to detect
-        // injected text like our encrypted string
-        // <p> message <br></p>
-        mail.selector.innerHTML = ''
-        const p = document.createElement('p')
-        const br = document.createElement('br')
-        p.append(encryptedString)
-        p.append(br)
-        mail.selector.append(p)
+        mailElements.editorContent.innerHTML = ''
+        const pre = document.createElement('pre')
+        if (encryptedString.startsWith('AAAAF')) {
+          pre.append(encryptedString)
+        } else {
+          // For some reason yandex messages needs to be in the following format to be able to detect
+          // injected text like our encrypted string
+          // part message 1<br>
+          // part message 2<br> etc...
+          let position: number
+          let aux = encryptedString
 
+          /**
+           * The way I do it it always remains one \n at the end to the final
+           * length is going to be 1
+           */
+          while (encryptedString.length !== 1) {
+            position = encryptedString.indexOf('\n')
+            aux = encryptedString.slice(0, position)
+            encryptedString = encryptedString.slice(
+              position + 1,
+              encryptedString.length
+            )
+
+            const br = document.createElement('br')
+            pre.append(aux)
+            pre.append(br)
+          }
+        }
+
+        mailElements.editorContent.append(pre)
         const event = new InputEvent('input', { bubbles: true })
-        mail.selector.dispatchEvent(event)
+        mailElements.editorContent.dispatchEvent(event)
 
         tooltip.destroy()
       }
     )
   }
-
-  /** Adds a button to a given element to decrypt all encrypted parts found. */
-  protected handleMailElement = (mailElement: HTMLElement): void => {
-    // Mark the element
-    if (FLAG in mailElement.dataset) return
-    mailElement.dataset[FLAG] = '1'
-
-    // If it's not an encrypted mail, ignore it
-    if (mailElement === null) return
-
-    const mailString = mailElement?.querySelector(
-      '.msg-s-event-listitem__body'
-    )?.textContent
-
-    if (!mailString || !this.containsEncryptedText(mailString)) return
-
-    // Find all encrypted parts
-    const treeWalker = document.createTreeWalker(
-      mailElement,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: (textNode: Text) =>
-          this.isEncryptedText(textNode.data)
-            ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_SKIP,
-      }
-    )
-
-    let node: Node | null
-    while ((node = treeWalker.nextNode())) {
-      // Add a "Decrypt" button next to the node
-      if (!node.parentNode?.textContent) continue
-      const encryptedString = this.extractEncryptedString(
-        node.parentNode.textContent
-      )
-
-      const workspace = this.initInjectionTarget(node as Text)
-      this.addDecryptButton(workspace, encryptedString)
-      this.addQRDecryptButton(workspace, encryptedString)
-    }
-  }
 }
 
-/** Selectors for interesting HTML Elements of Linkedin. */
-/** Both windows from linkedin shares the same class selectors */
+/** Selectors for interesting HTML Elements of Yandex. */
+/** Both windows from yandex shares the same class selectors */
 const selectors: Selectors = {
-  mail: '.msg-s-event__content',
-  toolbar: '.msg-form__footer',
-  editor: '.msg-form',
-  editorContent: '.msg-form__contenteditable',
-  send: '.msg-form__send-button',
+  /** The mail selectors */
+  mail: '.js-message-body-content.mail-Message-Body-Content',
+  /**
+   * First selector is from the window of the new mail and second selector is
+   * from the second window
+   */
+  toolbar:
+    'div.ComposeControlPanel-Part:nth-child(1), .mail-Compose-Field-Actions_left',
+  /** For editor and editorContent both window editors share the same selectors */
+  editor: '.cke_inner.cke_reset',
+  editorContent: '.cke_editable.cke_editable_themed',
+  /**
+   * First selector is from the window of the new mail and second selector is
+   * from the second window
+   */
+  send: '.ComposeControlPanel-SendButton, .mail-Compose-From-SendButton',
 }
 
 // Enable logging in the page console (not the extension console)
 if (process.env.NODE_ENV !== 'production') debug.enable('*')
 
 setTimeout(() => {
-  const webmail = new Linkedin(selectors, Design.Linkedin)
+  const webmail = new Yandex(selectors, Design.Yandex)
   webmail.observe()
 }, 2000)
