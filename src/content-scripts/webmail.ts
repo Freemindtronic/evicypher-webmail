@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type { Design } from './design'
 import type { Report, Reporter } from '~src/report'
 import * as base85 from 'base85'
@@ -361,6 +362,7 @@ export class Webmail {
   }
 
   /** Adds an encryption button in the toolbar. */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected handleToolbar(toolbar: HTMLElement): void {
     const editor = toolbar.closest(this.selectors.editor)
 
@@ -392,6 +394,10 @@ export class Webmail {
 
         if (mail.isEmpty())
           throw new ExtensionError(ErrorMessage.MailContentUndefined)
+
+        // Error message is shown if the mail is already encrypted
+        if (this.containsEncryptedText(mail.getContent()))
+          throw new ExtensionError(ErrorMessage.MailAlreadyEncrypted)
 
         button.$set({ report: undefined })
         let mailContent = mail.getContent()

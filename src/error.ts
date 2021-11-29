@@ -23,7 +23,8 @@ export enum ErrorMessage {
   UnknownError = 'Unknown error.',
   UnknownPhoneError = 'Unknown phone error.',
   WrongKey = 'Wrong key.',
-  CharacterLimit = 'Character Limit',
+  CharacterLimit = 'Character Limit.',
+  MailAlreadyEncrypted = 'Mail Already Encrypted.',
 }
 
 /**

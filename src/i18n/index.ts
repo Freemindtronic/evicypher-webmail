@@ -81,6 +81,10 @@ export const translateError = derived(_, ($_) => (error: ErrorMessage) => {
 
     case ErrorMessage.CharacterLimit:
       return $_('character-limit-exceeded')
+
+    case ErrorMessage.MailAlreadyEncrypted:
+      return $_('mail-already-encrypted')
+
     // This switch statement is exhaustive
     // No default
   }
