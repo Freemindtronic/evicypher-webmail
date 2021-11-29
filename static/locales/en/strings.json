@@ -62,5 +62,6 @@
   "character-limit-exceeded": "Character limit exceeded (2231)",
   "pairing-with-phone-name": "Pairing with {phoneName}",
   "click-to-autofill": "Click to autofill",
-  "autofill-successful": "Autofill successful"
+  "autofill-successful": "Autofill successful",
+  "mail-already-encrypted": "Mail already encrypted"
 }
