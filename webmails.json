@@ -3,6 +3,7 @@
   "gmail": ["https://mail.google.com/mail/*"],
   "govern-full": ["https://missatgeria.govern.ad/*"],
   "govern-light": ["https://missatgeria.govern.ad/*"],
+  "horde": ["https://webmail.namebay.com/*"],
   "icloud": ["https://www-mail.icloud-sandbox.com/*"],
   "linkedin": ["https://www.linkedin.com/*"],
   "outlook": ["https://outlook.live.com/mail/*"],

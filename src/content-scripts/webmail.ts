@@ -60,10 +60,14 @@ export class Webmail {
   /** Observes the DOM for changes. Should work for most webmails. */
   public observe = (): void => {
     // Run the listener on page load
-    this.handleMutations()
+    setTimeout(() => {
+      this.handleMutations()
+    }, 100)
     // Start observing the DOM for changes
     new MutationObserver(() => {
-      this.handleMutations()
+      setTimeout(() => {
+        this.handleMutations()
+      }, 100)
     }).observe(document.body, {
       subtree: true,
       childList: true,
@@ -185,7 +189,6 @@ export class Webmail {
   }
 
   /** Adds a button to a given element to decrypt all encrypted parts found. */
-  // eslint-disable-next-line complexity
   protected handleMailElement = (mailElement: HTMLElement): void => {
     // Mark the element
     if (FLAG in mailElement.dataset) return
