@@ -25,7 +25,7 @@ const contentScript = [
 /** A dynamically generated manifest, to keep the version number consistent. */
 export const manifest = {
   manifest_version: 2,
-  name: 'EviCypher Webmail',
+  name: 'EviCypher Webmail Encryption',
   // The extension version is the same as the package.json version
   version: process.env.npm_package_version,
   icons: {
