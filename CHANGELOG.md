@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.1...v1.11.2) (2021-12-01)
+
+### Bug Fixes
+
+- can't encrypt encrypted mails ([eca5d4f](https://github.com/Freemindtronic/evicypher-webmail/commit/eca5d4f23ba9376f16a94b09709d0b128322bb71))
+- icloud iframes of qrcode and decrypt showed correctly ([2946bf1](https://github.com/Freemindtronic/evicypher-webmail/commit/2946bf1a1063577ed8f43f61a7f31d6650b87030))
+
 ### [1.11.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.0...v1.11.1) (2021-11-25)
 
 ### Bug Fixes
