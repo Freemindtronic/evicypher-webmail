@@ -26,6 +26,8 @@ const contentScript = [
 export const manifest = {
   manifest_version: 2,
   name: 'EviCypher Webmail Encryption',
+  description:
+    "Contactless encryption of instant messaging, email and social networks via Freemindtronic's EviCypher NFC device technology",
   // The extension version is the same as the package.json version
   version: process.env.npm_package_version,
   icons: {
