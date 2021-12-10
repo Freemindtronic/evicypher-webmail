@@ -1,14 +1,23 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import { browser } from 'webextension-polyfill-ts'
   import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
   import Select from '$/components/Select.svelte'
   import { locale, isLoading, _ } from '$/i18n'
   import locales from '~/locales.json'
   import Logo from '../assets/logo.svg'
+  import Menu from './Menu.svelte'
   import Options from './Options.svelte'
   import Phones from './Phones.svelte'
 
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
+
+  let tab = 'phones'
+
+  $: if (tab === 'evifile') {
+    window.open(browser.runtime.getURL('./evifile.html'))
+    window.close()
+  }
 </script>
 
 <h1>
@@ -24,9 +33,13 @@
 {#if !$isLoading}
   <main in:fade={{ duration: 75 }}>
     <IsZeroconfRunning />
-    <Phones />
-    <Options />
+    {#if tab === 'phones'}
+      <Phones />
+    {:else if tab === 'parameters'}
+      <Options />
+    {/if}
   </main>
+  <Menu bind:tab />
 {/if}
 
 <style lang="scss">

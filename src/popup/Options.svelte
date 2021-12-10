@@ -1,7 +1,10 @@
 <script lang="ts">
   import Switch from '$/components/Switch.svelte'
+  import { _ } from '$/i18n'
   import { isOpenpgpEnabled } from '$/options'
 </script>
+
+<h2>{$_('parameters')}</h2>
 
 <div id="flex-container">
   <div class="flex-item" id="Legacy">Legacy</div>

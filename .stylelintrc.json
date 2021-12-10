@@ -8,5 +8,5 @@
     "no-invalid-position-at-import-rule": null,
     "at-rule-no-unknown": null
   },
-  "ignoreFiles": ["**/*.njk"]
+  "ignoreFiles": ["**/*.njk", "static/css/*"]
 }
