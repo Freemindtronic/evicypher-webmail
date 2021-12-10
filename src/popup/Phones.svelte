@@ -1,6 +1,5 @@
 <script lang="ts">
   import { get } from 'svelte/store'
-  import { browser } from 'webextension-polyfill-ts'
   import Button from '$/components/Button.svelte'
   import HR from '$/components/HR.svelte'
   import TextInput from '$/components/TextInput.svelte'
@@ -77,12 +76,6 @@
       <p class="error">{$_('a-phone-with-this-name-is-already-registered')}</p>
     {/if}
   </form>
-  <HR />
-  <p style="text-align: center">
-    <a href={browser.runtime.getURL('/evifile.html')} target="_evifile">
-      {$_('evifile')}
-    </a>
-  </p>
   <HR />
 {/if}
 

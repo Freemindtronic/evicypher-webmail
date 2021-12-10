@@ -63,5 +63,7 @@
   "pairing-with-phone-name": "Pairing with {phoneName}",
   "click-to-autofill": "Click to autofill",
   "autofill-successful": "Autofill successful",
-  "mail-already-encrypted": "Mail already encrypted"
+  "mail-already-encrypted": "Mail already encrypted",
+  "parameters": "Parameters",
+  "post-it": "Post-it"
 }
