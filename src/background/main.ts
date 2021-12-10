@@ -25,7 +25,7 @@ import { decrypt, decryptFiles } from './tasks/decrypt'
 import { encrypt, encryptFiles } from './tasks/encrypt'
 import { login } from './tasks/login'
 import { pair } from './tasks/pair'
-import { isZeroconfRunning } from './tasks/zeroconf'
+import { isZeroconfRunning, resetZeroconf } from './tasks/zeroconf'
 
 /** The background context, used to share information between tasks and services. */
 const context: TaskContext = {
@@ -144,6 +144,7 @@ browser.runtime.onConnect.addListener(async (port) => {
     [Task.Decrypt]: decrypt,
     [Task.DecryptFiles]: decryptFiles,
     [Task.IsZeroconfRunning]: isZeroconfRunning,
+    [Task.ResetZeroconf]: resetZeroconf,
   }
 
   const task = taskMap[port.name as Task]

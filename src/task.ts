@@ -124,7 +124,10 @@ import type { PingResponse } from '$/background/protocol'
 import type { decrypt, decryptFiles } from '$/background/tasks/decrypt'
 import type { encrypt, encryptFiles } from '$/background/tasks/encrypt'
 import type { pair } from '$/background/tasks/pair'
-import type { isZeroconfRunning } from '$/background/tasks/zeroconf'
+import type {
+  isZeroconfRunning,
+  resetZeroconf,
+} from '$/background/tasks/zeroconf'
 import type { Observable } from '$/observable'
 import type { Phone } from '$/phones'
 import type { Report, Reporter } from '$/report'
@@ -150,6 +153,8 @@ export enum Task {
   Login = 'login',
   /** See {@link isZeroconfRunning}. */
   IsZeroconfRunning = 'is-zeroconf-running',
+  /** See {@link resetZeroconf}. */
+  ResetZeroconf = 'reset-zeroconf',
 }
 
 /** Maps a task to the type of its background generator. */
@@ -161,6 +166,7 @@ export type TaskMap = {
   [Task.Decrypt]: typeof decrypt
   [Task.DecryptFiles]: typeof decryptFiles
   [Task.IsZeroconfRunning]: typeof isZeroconfRunning
+  [Task.ResetZeroconf]: typeof resetZeroconf
 }
 
 /**
