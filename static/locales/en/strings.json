@@ -65,5 +65,6 @@
   "autofill-successful": "Autofill successful",
   "mail-already-encrypted": "Mail already encrypted",
   "parameters": "Parameters",
-  "post-it": "Post-it"
+  "post-it": "Post-it",
+  "refresh": "Refresh"
 }
