@@ -5,7 +5,7 @@
 
   const menu = [
     { class: 'phones', icon: 'fa-mobile-button' },
-    { class: 'post-it', icon: 'fa-note-sticky' },
+    { class: 'evilabel', icon: 'fa-note-sticky' },
     { class: 'evifile', icon: 'fa-file-alt' },
     { class: 'parameters', icon: 'fa-cog' },
   ]
@@ -77,7 +77,7 @@
   }
 
   .col:hover {
-    color: #ffc26e;
+    color: $light-gold;
     cursor: pointer;
   }
 </style>

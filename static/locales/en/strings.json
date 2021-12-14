@@ -66,5 +66,15 @@
   "mail-already-encrypted": "Mail already encrypted",
   "parameters": "Parameters",
   "post-it": "Post-it",
-  "refresh": "Refresh"
+  "refresh": "Refresh",
+  "password": "Password",
+  "login": "Login",
+  "id": "Id",
+  "cloud-key": "Cloud Key",
+  "click-to-fetch": "Click to fetch",
+  "fetch-successful": "Fetch successful",
+  "login-credential": "Login Credential",
+  "fetch": "Fetch",
+  "successful-data-retrieval": "Successful data retrieval",
+  "get-a-label": "Get a Label"
 }

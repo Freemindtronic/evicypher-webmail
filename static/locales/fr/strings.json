@@ -59,5 +59,15 @@
   "click-to-close-the-qr-code": "Cliquez pour fermer le code QR.",
   "the-message-exceeds-the-maximum-number-of-characters-allowed": "Le message dépasse le nombre maximal de caractères autorisé.",
   "qr-code": "QR Code",
-  "pairing-with-phone-name": "Appairage avec {phoneName}"
+  "pairing-with-phone-name": "Appairage avec {phoneName}",
+  "click-to-fetch": "Cliquez pour récupérer",
+  "fetch": "Récupérer",
+  "login": "Identifiant",
+  "login-credential": "Identifiant de connexion",
+  "parameters": "Paramètres",
+  "cloud-key": "Clé Cloud",
+  "password": "Mot de passe",
+  "fetch-successful": "Récupération réussie",
+  "refresh": "Rafraichir",
+  "get-a-label": "Récuperer un label"
 }
