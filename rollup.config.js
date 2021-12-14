@@ -69,6 +69,13 @@ export default [
     plugins: [svelte(config(production)), css({ output: 'evifile.css' })],
   },
   {
+    input: 'src/evilabel/main.ts',
+    output: {
+      file: 'build/evilabel.js',
+    },
+    plugins: [svelte(config(production)), css({ output: 'evilabel.css' })],
+  },
+  {
     input: 'src/content-scripts/autofill.ts',
     output: {
       file: 'build/content-script-autofill.js',

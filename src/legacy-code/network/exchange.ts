@@ -62,6 +62,7 @@ const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
 export const defaultTimeouts: Record<Request, number> = {
   [Request.Ping]: 20_000,
   [Request.Credential]: 180_000,
+  [Request.CloudKey]: 180_000,
   [Request.CipherKey]: 180_000,
   [Request.End]: 3000,
   [Request.EndOk]: 3000,
@@ -428,6 +429,41 @@ export const fetchAndSaveCredentials = async (
     $phone,
     getCredentialRequestData,
     Request.Credential,
+    {
+      toGet,
+      context,
+      reporter,
+      signal,
+    }
+  )
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+  return keys
+}
+
+/**
+ * Ask the phone for a cloud key pair (id/password).
+ *
+ * @returns A pair containing a cloud key
+ */
+export const fetchAndSaveCloudKey = async (
+  context: TaskContext,
+  phone: Writable<Phone>,
+  {
+    reporter,
+    signal,
+  }: {
+    reporter: Reporter
+    signal: AbortSignal
+  }
+): Promise<KeyPair> => {
+  const $phone = get(phone)
+  // Sending '#' as data tells the phone to let the user choose the label
+  const toGet = stringToUint8Array('#')
+  const { keys, newCertificate } = await fetchRequest(
+    $phone,
+    getCredentialRequestData,
+    Request.CloudKey,
     {
       toGet,
       context,

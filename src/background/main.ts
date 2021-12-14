@@ -21,6 +21,7 @@ import {
   isZeroconfServiceInstalled,
   startZeroconfService,
 } from './services/zeroconf'
+import { cloud } from './tasks/cloud'
 import { decrypt, decryptFiles } from './tasks/decrypt'
 import { encrypt, encryptFiles } from './tasks/encrypt'
 import { login } from './tasks/login'
@@ -139,6 +140,7 @@ browser.runtime.onConnect.addListener(async (port) => {
   const taskMap: Record<Task, BackgroundTask<unknown, unknown, unknown>> = {
     [Task.Pair]: pair,
     [Task.Login]: login,
+    [Task.Cloud]: cloud,
     [Task.Encrypt]: encrypt,
     [Task.EncryptFiles]: encryptFiles,
     [Task.Decrypt]: decrypt,

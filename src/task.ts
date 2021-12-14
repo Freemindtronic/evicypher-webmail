@@ -121,6 +121,7 @@
  */
 
 import type { PingResponse } from '$/background/protocol'
+import type { cloud } from '$/background/tasks/cloud'
 import type { decrypt, decryptFiles } from '$/background/tasks/decrypt'
 import type { encrypt, encryptFiles } from '$/background/tasks/encrypt'
 import type { pair } from '$/background/tasks/pair'
@@ -151,6 +152,8 @@ export enum Task {
   Pair = 'pair',
   /** See {@link login}. */
   Login = 'login',
+  /** See {@link cloud} */
+  Cloud = 'cloud',
   /** See {@link isZeroconfRunning}. */
   IsZeroconfRunning = 'is-zeroconf-running',
   /** See {@link resetZeroconf}. */
@@ -161,6 +164,7 @@ export enum Task {
 export type TaskMap = {
   [Task.Pair]: typeof pair
   [Task.Login]: typeof login
+  [Task.Cloud]: typeof cloud
   [Task.Encrypt]: typeof encrypt
   [Task.EncryptFiles]: typeof encryptFiles
   [Task.Decrypt]: typeof decrypt

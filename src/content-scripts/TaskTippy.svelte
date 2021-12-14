@@ -30,7 +30,7 @@
   export let enable: Writable<boolean> | undefined = undefined
 
   /** Element tooltip have to attach to */
-  export let element: HTMLElement
+  export let element: Element
 
   let tippyElement: HTMLElement
   let tippyInstance: Instance | undefined
