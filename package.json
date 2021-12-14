@@ -137,7 +137,7 @@
     "build:static": "mkdir -p build extension && cp -r static/* extension && node manifest.js &",
     "check": "tsc --noEmit & eslint --fix 'src/**/*.{ts,js,svelte}' & stylelint --fix 'src/**/*' & svelte-check --tsconfig ./tsconfig.json & cspell --gitignore --no-progress '**' &",
     "check:ci": "tsc --noEmit && eslint --fix 'src/**/*.{ts,js,svelte}' && stylelint --fix 'src/**/*' && svelte-check --tsconfig ./tsconfig.json && cspell --gitignore --no-progress '**'",
-    "clean": "rm -rf build extension",
+    "clean": "rm -rf build extension .parcel-cache",
     "doc": "typedoc src --sort source-order --listInvalidSymbolLinks",
     "postinstall": "husky install",
     "release": "standard-version",
