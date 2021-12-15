@@ -5,7 +5,7 @@
 
   const menu = [
     { class: 'phones', icon: 'fa-mobile-button' },
-    { class: 'evilabel', icon: 'fa-note-sticky' },
+    { class: 'get-a-label', icon: 'fa-note-sticky' },
     { class: 'evifile', icon: 'fa-file-alt' },
     { class: 'parameters', icon: 'fa-cog' },
   ]

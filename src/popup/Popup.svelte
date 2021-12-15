@@ -17,7 +17,7 @@
   $: if (tab === 'evifile') {
     window.open(browser.runtime.getURL('./evifile.html'))
     window.close()
-  } else if (tab === 'evilabel') {
+  } else if (tab === 'get-a-label') {
     window.open(browser.runtime.getURL('./evilabel.html'))
     window.close()
   }
