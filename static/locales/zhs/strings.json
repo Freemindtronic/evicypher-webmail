@@ -34,7 +34,6 @@
   "no": "不",
   "online": "在线的",
   "offline": "离线",
-  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "确保您的手机和计算机在同一网络上。",
   "scan-the-qr-code-with-the-application": "使用应用程序扫描二维码。",
   "last-seen-timeago": "最后一次看到 {日期}。",
   "conflict": "手机同时收到多个请求并拒绝了此操作。\n请完成之前的所有操作并重试。",

@@ -34,7 +34,6 @@
   "no": "番号",
   "online": "オンライン",
   "offline": "オフライン",
-  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "電話とコンピューターが同じネットワーク上にあることを確認してください。",
   "scan-the-qr-code-with-the-application": "アプリケーションでQRコードをスキャンします。",
   "last-seen-timeago": "最後に見た{日付}。",
   "conflict": "電話機は一度に複数の要求を受信し、この操作を拒否しました。以前のすべての操作を完了して、再試行してください。",

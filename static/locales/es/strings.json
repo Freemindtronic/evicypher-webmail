@@ -34,7 +34,6 @@
   "no": "No",
   "online": "en línea",
   "offline": "desconectado",
-  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Asegúrese de que su teléfono y su computadora estén en la misma red.",
   "scan-the-qr-code-with-the-application": "Escanea el código QR con la aplicación.",
   "last-seen-timeago": "Visto por última vez el {fecha}.",
   "conflict": "El teléfono recibió varias solicitudes a la vez y rechazó esta operación. \nComplete todas las operaciones anteriores y vuelva a intentarlo.",

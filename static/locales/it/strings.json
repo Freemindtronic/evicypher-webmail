@@ -34,7 +34,6 @@
   "no": "No",
   "online": "in linea",
   "offline": "disconnesso",
-  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assicurati che il tuo telefono e il tuo computer siano sulla stessa rete.",
   "scan-the-qr-code-with-the-application": "Scansiona il codice QR con l'applicazione.",
   "last-seen-timeago": "Ultimo accesso {data}.",
   "conflict": "Il telefono ha ricevuto più richieste in una e ha rifiutato questa operazione. \nCompleta tutte le operazioni precedenti e riprova.",

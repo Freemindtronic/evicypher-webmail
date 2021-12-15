@@ -34,7 +34,6 @@
   "no": "No",
   "online": "en línia",
   "offline": "fora de línia",
-  "make-sure-your-phone-and-your-computer-are-on-the-same-network": "Assegureu-vos que el telèfon i l'ordinador estiguin a la mateixa xarxa.",
   "scan-the-qr-code-with-the-application": "Escaneja el codi QR amb l'aplicació.",
   "last-seen-timeago": "Vista per darrera vegada {date}.",
   "conflict": "El telèfon va rebre diverses sol·licituds alhora i va rebutjar aquesta operació. \nCompleteu totes les operacions anteriors i torneu-ho a provar.",

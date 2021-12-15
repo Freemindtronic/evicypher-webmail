@@ -67,7 +67,7 @@
     if (report.state === State.Scanning) {
       tip =
         report.found === 0
-          ? $_('make-sure-your-phone-and-your-computer-are-on-the-same-network')
+          ? $_('waiting-for-phone')
           : $_('scan-the-qr-code-with-the-application')
     }
   }
