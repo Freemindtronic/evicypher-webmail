@@ -60,10 +60,14 @@ export class Webmail {
   /** Observes the DOM for changes. Should work for most webmails. */
   public observe = (): void => {
     // Run the listener on page load
-    this.handleMutations()
+    setTimeout(() => {
+      this.handleMutations()
+    }, 200)
     // Start observing the DOM for changes
     new MutationObserver(() => {
-      this.handleMutations()
+      setTimeout(() => {
+        this.handleMutations()
+      }, 200)
     }).observe(document.body, {
       subtree: true,
       childList: true,
