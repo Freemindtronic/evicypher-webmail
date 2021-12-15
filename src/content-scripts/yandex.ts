@@ -213,7 +213,7 @@ export class Yandex extends Webmail {
 /** Both windows from yandex shares the same class selectors */
 const selectors: Selectors = {
   /** The mail selectors */
-  mail: '.js-message-body-content.mail-Message-Body-Content',
+  mail: '.js-message-body',
   /**
    * First selector is from the window of the new mail and second selector is
    * from the second window
