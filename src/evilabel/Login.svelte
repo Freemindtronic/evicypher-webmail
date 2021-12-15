@@ -107,6 +107,10 @@
 {#if !$isLoading}
   <h3>{$_('login-credential')}</h3>
   <div bind:this={divElement}>
+    {#if state === State.Display}
+      <SecretInput name="login" bind:value={login} />
+      <SecretInput name="password" bind:value={password} />
+    {/if}
     <Button id="login_btn" on:click={clickHandler}>
       {#if promise === undefined}
         <i class="fas fa-download" />
@@ -137,11 +141,5 @@
         element={fetchButton}
       />
     {/await}
-    {#if state === State.Display}
-      <br />
-      <SecretInput name="login" bind:value={login} />
-      <br />
-      <SecretInput name="password" bind:value={password} />
-    {/if}
   </div>
 {/if}

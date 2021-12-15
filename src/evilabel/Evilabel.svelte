@@ -65,30 +65,32 @@
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
 </script>
 
-{#if !$isLoading}
-  <div class="box">
-    <div class="row header">
-      <h1>{$_('get-a-label')}</h1>
-      <Brand />
-    </div>
-    <div class="row content">
-      <div bind:this={rowElement} class="menu">
-        {#each labelList as label}
-          <span class="icon {label.name}" on:click={handleClick(label.name)}
-            ><i class="fa-solid {label.icon}" /></span
-          >
-        {/each}
+<div class="background">
+  {#if !$isLoading}
+    <div class="box">
+      <div class="row header">
+        <h1>{$_('get-a-label')}</h1>
+        <Brand />
       </div>
-      <div class="label content">
-        {#if state === State.Cloud}
-          <Cloud />
-        {:else if state === State.Login}
-          <Login />
-        {/if}
+      <div class="row content">
+        <div bind:this={rowElement} class="menu">
+          {#each labelList as label}
+            <span class="icon {label.name}" on:click={handleClick(label.name)}
+              ><i class="fa-solid {label.icon}" /></span
+            >
+          {/each}
+        </div>
+        <div class="label content">
+          {#if state === State.Cloud}
+            <Cloud />
+          {:else if state === State.Login}
+            <Login />
+          {/if}
+        </div>
       </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
 
 <style lang="scss">
   :global {
@@ -109,10 +111,21 @@
     }
   }
 
+  .background {
+    height: 100%;
+    background-color: $dark;
+  }
+
   .box {
+    position: relative;
+    top: calc(50% - #{$box-height} / 2);
+    left: calc(50% - #{$box-width} / 2);
     display: flex;
     flex-flow: column;
-    height: 100%;
+    width: $box-width;
+    height: $box-height;
+    background-color: $background-color;
+    border: 2px solid $background-color;
   }
 
   .box .row.header {

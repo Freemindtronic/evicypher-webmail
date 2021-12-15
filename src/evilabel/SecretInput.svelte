@@ -21,14 +21,22 @@
   }
 </script>
 
-{#if !$isLoading}
-  <span on:mouseenter={enter} on:mouseleave={leave}>
-    <TextInput bind:this={input} type="password" bind:value readonly
-      >{$_(name)}:</TextInput
-    >
-  </span>
+<div class="secret-input">
+  {#if !$isLoading}
+    <span on:mouseenter={enter} on:mouseleave={leave}>
+      <TextInput bind:this={input} type="password" bind:value readonly
+        >{$_(name)}:</TextInput
+      >
+    </span>
 
-  <Button id="refresh" on:click={copyToClipboard}
-    ><i class="fas fa-clipboard" /></Button
-  >
-{/if}
+    <Button id="refresh" on:click={copyToClipboard}
+      ><i class="fas fa-clipboard" /></Button
+    >
+  {/if}
+</div>
+
+<style lang="scss">
+  .secret-input {
+    margin: 1rem;
+  }
+</style>

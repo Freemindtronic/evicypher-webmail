@@ -102,6 +102,10 @@
 {#if !$isLoading}
   <h3>{$_('cloud-key')}</h3>
   <div bind:this={divElement}>
+    {#if state === State.Display}
+      <SecretInput name="id" bind:value={id} />
+      <SecretInput name="password" bind:value={password} />
+    {/if}
     <Button id="login_btn" on:click={clickHandler}>
       {#if promise === undefined}
         <i class="fas fa-download" />
@@ -132,11 +136,5 @@
         element={fetchButton}
       />
     {/await}
-    {#if state === State.Display}
-      <br />
-      <SecretInput name="id" bind:value={id} />
-      <br />
-      <SecretInput name="password" bind:value={password} />
-    {/if}
   </div>
 {/if}
