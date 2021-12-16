@@ -112,14 +112,15 @@
   }
 
   .background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100%;
     background-color: $dark;
   }
 
   .box {
     position: relative;
-    top: calc(50% - #{$box-height} / 2);
-    left: calc(50% - #{$box-width} / 2);
     display: flex;
     flex-flow: column;
     width: $box-width;
@@ -146,10 +147,11 @@
   .box .row.content {
     display: flex;
     flex: 1 1 auto;
-  }
 
-  .box .label.content {
-    padding: 0 1rem;
+    > .label.content {
+      flex-grow: 1;
+      text-align: center;
+    }
   }
 
   h1 {
