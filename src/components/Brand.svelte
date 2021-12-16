@@ -11,6 +11,7 @@
 <style lang="scss">
   .brand {
     display: flex;
+    flex: 1;
     gap: 0.5rem;
     align-items: center;
     font-weight: 400;

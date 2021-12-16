@@ -137,6 +137,10 @@
     color: $background-color;
     text-align: center;
     background-color: $dark;
+
+    > :global(span) {
+      justify-content: flex-end;
+    }
   }
 
   .box .row.content {
