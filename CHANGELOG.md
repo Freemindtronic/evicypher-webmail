@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.0...v1.12.1) (2021-12-16)
+
+### Bug Fixes
+
+- flex logo wrap on chrome instead of growing ([706fb7b](https://github.com/Freemindtronic/evicypher-webmail/commit/706fb7b9ae9e1d6cc7333e04c5a45ae2c55e1ca0))
+
 ## [1.12.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.2...v1.12.0) (2021-12-15)
 
 ### Features
