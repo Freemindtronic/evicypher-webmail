@@ -23,3 +23,5 @@ $gold-number: 1.61803398875;
 $px: math.div(1em, 16);
 $box-width: 40rem;
 $box-height: math.div($box-width, $gold-number);
+$evifile-width: 60rem;
+$evifile-height: math.div($evifile-width, $gold-number);
