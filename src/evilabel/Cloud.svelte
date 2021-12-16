@@ -102,10 +102,13 @@
 {#if !$isLoading}
   <h3>{$_('cloud-key')}</h3>
   <div bind:this={divElement}>
-    {#if state === State.Display}
-      <SecretInput name="id" bind:value={id} />
-      <SecretInput name="password" bind:value={password} />
-    {/if}
+    <div class="secrets">
+      {#if state === State.Display}
+        <SecretInput name="id" bind:value={id} />
+        <SecretInput name="password" bind:value={password} />
+      {/if}
+    </div>
+
     <Button id="login_btn" on:click={clickHandler}>
       {#if promise === undefined}
         <i class="fas fa-download" />
@@ -130,7 +133,7 @@
         bind:this={tippyElement}
         bind:report
         bind:promise
-        tooltipPlacement="top"
+        tooltipPlacement="bottom"
         idleTooltip={$_('click-to-fetch')}
         doneTooltip={$_('successful-data-retrieval')}
         element={fetchButton}
@@ -138,3 +141,16 @@
     {/await}
   </div>
 {/if}
+
+<style lang="scss">
+  .secrets {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 71% auto;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    text-align: end;
+    column-gap: 1rem;
+    row-gap: 1rem;
+  }
+</style>
