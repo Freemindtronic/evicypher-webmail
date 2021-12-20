@@ -21,7 +21,7 @@
   bind:promise
   {design}
   tooltipPlacement="top"
-  IdleIcon={EncryptIdle}
+  idleIcon={EncryptIdle}
   idleTooltip={$_('click-to-encrypt-this-message')}
   doneTooltip={$_('mail-encrypted-successfully-click-to-encrypt-once-again')}
   task="encrypt"

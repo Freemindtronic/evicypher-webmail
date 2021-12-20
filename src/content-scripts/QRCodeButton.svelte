@@ -21,7 +21,7 @@
   bind:promise
   {design}
   tooltipPlacement="top-start"
-  IdleIcon={QRIdle}
+  idleIcon={QRIdle}
   idleTooltip={$_('scan-the-qr-code-with-the-application')}
   doneTooltip={$_('click-to-close-the-qr-code')}
   task="qr-code"

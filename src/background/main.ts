@@ -81,14 +81,14 @@ const startTask = async <TSent, TReceived, TReturn>(
  * Runs one step of the generator (i.e. the code of a background task between
  * two `yield`s), and returns the result.
  */
-const nextStep = async <TSent, TReceived, TReturn>(
-  generator: AsyncGenerator<TSent, TReturn, TReceived>,
-  result: IteratorResult<TSent, TReturn>,
+const nextStep = async <TypeSent, TypeReceived, TypeReturn>(
+  generator: AsyncGenerator<TypeSent, TypeReturn, TypeReceived>,
+  result: IteratorResult<TypeSent, TypeReturn>,
   port: Runtime.Port,
   log: Debugger
-): Promise<IteratorResult<TSent, TReturn>> => {
+): Promise<IteratorResult<TypeSent, TypeReturn>> => {
   // Shorthand for the generator's type
-  type BgTask = BackgroundTask<TSent, TReceived, TReturn>
+  type BgTask = BackgroundTask<TypeSent, TypeReceived, TypeReturn>
 
   // Send a request
   port.postMessage({ type: 'request', request: result.value })

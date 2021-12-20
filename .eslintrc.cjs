@@ -70,6 +70,31 @@ module.exports = {
       files: ['*.js'],
       rules: { '@typescript-eslint/explicit-module-boundary-types': 'off' },
     },
+    {
+      files: ['*.{ts,svelte}'],
+      rules: {
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'variableLike',
+            format: ['camelCase'],
+            leadingUnderscore: 'allow',
+          },
+        ],
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'parameter',
+            format: null,
+            types: ['function'],
+            filter: {
+              regex: '._',
+              match: true,
+            },
+          },
+        ],
+      },
+    },
   ],
   settings: {
     'svelte3/typescript': true,

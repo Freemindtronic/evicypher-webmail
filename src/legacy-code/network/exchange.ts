@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import type { Phone } from '$/phones'
 import type { TaskContext } from '$/task'
 import axlsign from 'axlsign'
@@ -17,10 +18,10 @@ import {
 } from '$/background/protocol'
 import { Certificate } from '$/certificate'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { AesUtil } from '$/legacy-code/cryptography/AesUtil'
 import { removeJamming } from '$/legacy-code/cryptography/jamming'
 import { random, sha512, xor, stringToUint8Array } from '$/legacy-code/utils'
 import { Reporter, State } from '$/report'
+import { AesUtil } from '~src/legacy-code/cryptography/aes-util'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -338,8 +339,8 @@ const getKeyRequestData = (
   const ivd = random(16)
   const saltd = random(16)
   const keyd = xor(sharedKey, sKey)
-  const AES = new AesUtil(256, 1000)
-  const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
+  const aes = new AesUtil(256, 1000)
+  const encd = aes.encryptCTR(ivd, saltd, keyd, keyToGet)
   return {
     ...request,
     ih: ivd,
@@ -361,8 +362,8 @@ const getCredentialRequestData = (
   const ivd = random(16)
   const saltd = random(16)
   const keyd = xor(sharedKey, sKey)
-  const AES = new AesUtil(256, 1000)
-  const encd = AES.encryptCBC(ivd, saltd, keyd, websiteUrl)
+  const aes = new AesUtil(256, 1000)
+  const encd = aes.encryptCBC(ivd, saltd, keyd, websiteUrl)
   return {
     ...request,
     id: ivd,
@@ -488,13 +489,13 @@ const encryptKey = (
   salt: Uint8Array
   encryptedKey: Uint8Array
 } => {
-  const AES = new AesUtil(256, 1000)
-  const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
+  const aes = new AesUtil(256, 1000)
+  const ecc = aes.decryptCTR(iv, salt, passPhrase, cipherText)
   const k = axlsign.generateKeyPair(random(32))
   const sharedKey = axlsign.sharedKey(k.private, ecc)
   const newIv = random(16)
   const newSalt = random(16)
-  const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
+  const enc = aes.encryptCTR(newIv, newSalt, passPhrase, k.public)
   return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
 }
 
@@ -516,7 +517,7 @@ const unjamKeys = async (
     d2: lowDataJam,
   }: BasicLabelResponse
 ): Promise<{ high: Uint8Array; low: Uint8Array }> => {
-  const AES = new AesUtil(256, 1000)
+  const aes = new AesUtil(256, 1000)
 
   const highHashPromise = sha512(
     new Uint8Array([...certificate.jamming, ...keysExchange[1].sharedKey])
@@ -541,7 +542,7 @@ const unjamKeys = async (
     highJammingPosition,
     highJammingShift
   )
-  const high = AES.decryptCTR(
+  const high = aes.decryptCTR(
     highInitializationVector,
     highSalt,
     highKey,
@@ -564,7 +565,7 @@ const unjamKeys = async (
     lowPositionJamming,
     lowJammingShift
   )
-  const low = AES.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
+  const low = aes.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
 
   // The two keys we asked for
   return { high, low }
@@ -582,18 +583,18 @@ const createNewCertificate = (
   newKey: EndResponse,
   certificate: Certificate
 ): { acknowledgement: EndOkRequest; newCertificate: Certificate } => {
-  const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
-  const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
-  const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
-  const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
-  const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+  const sKid = axlsign.sharedKey(newShare.id.private, newKey.id)
+  const sK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
+  const sK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
+  const sK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
+  const sK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
 
   const newCertificate = new Certificate({
-    id: xor(SKid, certificate.id),
-    fKey: xor(SK1, certificate.fKey),
-    sKey: xor(SK2, certificate.sKey),
-    tKey: xor(SK3, certificate.tKey),
-    jamming: xor(SK4, certificate.jamming),
+    id: xor(sKid, certificate.id),
+    fKey: xor(sK1, certificate.fKey),
+    sKey: xor(sK2, certificate.sKey),
+    tKey: xor(sK3, certificate.tKey),
+    jamming: xor(sK4, certificate.jamming),
   })
 
   const acknowledgement = {

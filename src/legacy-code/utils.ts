@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import CryptoJS from 'crypto-js'
 
 /**
@@ -22,7 +23,7 @@ export const sha256 = async (data: Uint8Array): Promise<Uint8Array> => {
   // Because the previous developers had no idea that one cannot convert a
   // `Uint8Array` to a string without messing with encodings, we now need
   // this stupid workaround:
-  data = new TextEncoder().encode(String.fromCharCode(...data))
+  data = new TextEncoder().encode(String.fromCodePoint(...data))
   // For instance, 200 is the ASCII code for È, thus `String.fromCharCode(200)`
   // produces `"È"`. However, JS strings are not ASCII but UCS-2.
   // (see https://mathiasbynens.be/notes/javascript-encoding)
@@ -44,7 +45,7 @@ export const sha512 = async (data: Uint8Array): Promise<Uint8Array> =>
   new Uint8Array(
     await crypto.subtle.digest(
       'SHA-512',
-      new TextEncoder().encode(String.fromCharCode(...data))
+      new TextEncoder().encode(String.fromCodePoint(...data))
     )
   )
 
@@ -75,11 +76,11 @@ export function wordArrayToUint8Array(
 
 function wordToByteArray(word: number, length: number): number[] {
   const ba = []
-  const xFF = 0xff
+  const xff = 0xff
   if (length > 0) ba.push(word >>> 24)
-  if (length > 1) ba.push((word >>> 16) & xFF)
-  if (length > 2) ba.push((word >>> 8) & xFF)
-  if (length > 3) ba.push(word & xFF)
+  if (length > 1) ba.push((word >>> 16) & xff)
+  if (length > 2) ba.push((word >>> 8) & xff)
+  if (length > 3) ba.push(word & xff)
   return ba
 }
 

@@ -97,6 +97,7 @@ export const startZeroconfService = async (
   // Mark the service as started
   context.zeroconfRunning = true
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const start = performance.now()
 

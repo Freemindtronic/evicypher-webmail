@@ -22,7 +22,7 @@
     bind:promise
     {design}
     tooltipPlacement="top-start"
-    IdleIcon={DecryptIdle}
+    idleIcon={DecryptIdle}
     idleTooltip={$_('click-to-decrypt-this-message')}
     doneTooltip={$_('click-to-close-the-decrypted-mail')}
     task="decrypt"
