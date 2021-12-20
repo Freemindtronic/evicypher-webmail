@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.1...v1.12.2) (2021-12-20)
+
+### Bug Fixes
+
+- fetch label without an username ([d694239](https://github.com/Freemindtronic/evicypher-webmail/commit/d694239121e2d6714b4d9d1cecc3935b8c37415c))
+- make translations visible by extension stores ([e4a656b](https://github.com/Freemindtronic/evicypher-webmail/commit/e4a656b0b60d774c08f56e408b4174b4e9a77a8b))
+
 ### [1.12.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.0...v1.12.1) (2021-12-16)
 
 ### Bug Fixes
