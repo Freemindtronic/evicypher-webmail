@@ -161,9 +161,9 @@ export interface BasicLabelResponse {
   i: Uint8Array
   s: Uint8Array
   d: Uint8Array
-  i2: Uint8Array
-  s2: Uint8Array
-  d2: Uint8Array
+  i2?: Uint8Array
+  s2?: Uint8Array
+  d2?: Uint8Array
 }
 
 export type CredentialRequestWithoutUrl = BasicLabelRequest

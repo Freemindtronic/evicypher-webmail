@@ -174,9 +174,16 @@ export const throwOnHttpErrors = (response: Response): void => {
   }
 }
 
+/** A key pair containing data from the phone */
 interface KeyPair {
   high: Uint8Array
   low: Uint8Array
+}
+
+/** A key pair or singloton depending of the amount of data */
+interface PartialKeyPair {
+  high: Uint8Array
+  low: Uint8Array | undefined
 }
 
 /**
@@ -205,7 +212,7 @@ const fetchRequest = async (
     reporter: Reporter
     signal: AbortSignal
   }
-): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
+): Promise<{ keys: PartialKeyPair; newCertificate: Certificate }> => {
   reporter({ state: State.WaitingForPhone })
   let { certificate } = phone
 
@@ -281,6 +288,7 @@ const fetchRequest = async (
     signal,
   })) as BasicLabelResponse
 
+  console.log(keysExchange, certificate, labelResponse)
   const keys = await unjamKeys(keysExchange, certificate, labelResponse)
 
   // To ensure forward secrecy, we share a new secret
@@ -403,7 +411,8 @@ export const fetchAndSaveKeys = async (
   )
   $phone.certificate = newCertificate
   phone.update(($phone) => $phone)
-  return keys
+  if (keys.low === undefined) throw new Error(ErrorMessage.UnknownPhoneError)
+  return keys as KeyPair
 }
 
 /**
@@ -423,7 +432,7 @@ export const fetchAndSaveCredentials = async (
     reporter: Reporter
     signal: AbortSignal
   }
-): Promise<KeyPair> => {
+): Promise<PartialKeyPair> => {
   const $phone = get(phone)
   const toGet = websiteUrl ? stringToUint8Array(websiteUrl) : undefined
   const { keys, newCertificate } = await fetchRequest(
@@ -457,7 +466,7 @@ export const fetchAndSaveCloudKey = async (
     reporter: Reporter
     signal: AbortSignal
   }
-): Promise<KeyPair> => {
+): Promise<PartialKeyPair> => {
   const $phone = get(phone)
   // Sending '#' as data tells the phone to let the user choose the label
   const toGet = stringToUint8Array('#')
@@ -516,7 +525,7 @@ const unjamKeys = async (
     s2: lowSalt,
     d2: lowDataJam,
   }: BasicLabelResponse
-): Promise<{ high: Uint8Array; low: Uint8Array }> => {
+): Promise<PartialKeyPair> => {
   const aes = new AesUtil(256, 1000)
 
   const highHashPromise = sha512(
@@ -548,6 +557,13 @@ const unjamKeys = async (
     highKey,
     highUnjam
   )
+
+  if (
+    lowInitializationVector === undefined ||
+    lowDataJam === undefined ||
+    lowSalt === undefined
+  )
+    return { high, low: undefined }
 
   const lowKey = xor(keysExchange[1].sharedKey, certificate.fKey)
   const lowJamming = await lowHashPromise

@@ -47,8 +47,9 @@ export const login: BackgroundTask<undefined, string, Credential> =
       signal,
     })
 
+    const login = keys.low === undefined ? '' : uint8ArrayToString(keys.low)
     return {
-      login: uint8ArrayToString(keys.low),
+      login,
       password: uint8ArrayToString(keys.high),
     }
   }

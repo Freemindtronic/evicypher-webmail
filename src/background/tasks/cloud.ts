@@ -45,8 +45,9 @@ export const cloud: BackgroundTask<undefined, undefined, CloudKey> =
       signal,
     })
 
+    const id = keys.low === undefined ? '' : uint8ArrayToString(keys.low)
     return {
-      id: uint8ArrayToString(keys.low),
+      id,
       password: uint8ArrayToString(keys.high),
     }
   }
