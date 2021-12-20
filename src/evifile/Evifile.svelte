@@ -110,7 +110,7 @@
       // Do not upload files
       autoProcessQueue: false,
       addRemoveLinks: true,
-      maxFilesize: 1024 * 1024 * 1024 * 1,
+      maxFilesize: 1024 ** 3, // ~1Go
     })
 
     // When files are added, process them all at once
