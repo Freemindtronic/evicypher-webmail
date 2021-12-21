@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.3](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.2...v1.12.3) (2021-12-21)
+
+### Bug Fixes
+
+- add-on store require appName to be filled ([29a3bc3](https://github.com/Freemindtronic/evicypher-webmail/commit/29a3bc3ae773fec0c8a0d1b336f43addd6d2f9b4))
+
 ### [1.12.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.1...v1.12.2) (2021-12-20)
 
 ### Bug Fixes
