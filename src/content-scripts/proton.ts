@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /**
  * Proton content script.
  *
@@ -17,13 +18,58 @@ import { Mail } from './mail'
 import { FLAG, Selectors, Webmail } from './webmail'
 
 class Proton extends Webmail {
-  /** Adds an encryption button in the toolbar. */
+  /** Adds a button to a given element to decrypt all encrypted parts found. */
+  protected handleMailElement = (mailElement: HTMLElement): void => {
+    // Mark the element
+    if (FLAG in mailElement.dataset) return
+    mailElement.dataset[FLAG] = '1'
 
+    // If it's not an encrypted mail, ignore it
+    const mailString = mailElement.textContent
+
+    if (!mailString || !this.containsEncryptedText(mailString)) return
+
+    // Find all encrypted parts
+    const treeWalker = document.createTreeWalker(
+      mailElement,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (textNode: Text) =>
+          this.isEncryptedText(textNode.data)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_SKIP,
+      }
+    )
+
+    let node: Node | null
+    while ((node = treeWalker.nextNode())) {
+      // Add a "Decrypt" button next to the node
+      if (!node.parentNode?.textContent) continue
+      const encryptedString = this.extractEncryptedString(
+        node.parentNode.textContent
+      )
+      const workspace = this.initInjectionTarget(node as Text)
+      this.addDecryptButton(workspace, encryptedString)
+      if (!get(isOpenpgpEnabled))
+        this.addQRDecryptButton(workspace, encryptedString)
+    }
+  }
+
+  /** Adds an encryption button in the toolbar. */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected handleToolbar(toolbar: HTMLElement): void {
-    const editor = document.querySelector('iframe')
+    // The thing is that if we have an email opened that has an iframe we should get the second iframe, otherwise the mailSelector
+    // coming next will be null
+    // and if only exist one iframe, just takes the only one, from the contentEditor of the mail
+    const editor =
+      document.querySelectorAll('iframe').length > 1
+        ? document.querySelectorAll('iframe')[1]
+        : document.querySelectorAll('iframe')[0]
+
     const mailSelector = editor?.contentDocument?.querySelector(
       selectors.editorContent
     )
+
     const footer = document.querySelector('footer')
     const sendButton = footer?.querySelector('button')
     const node = this.encryptButtonSibling(selectors, toolbar, editor)
@@ -73,16 +119,44 @@ class Proton extends Webmail {
       }
     )
   }
+
+  /**
+   * Handles mutations observed by the `MutationObserver` below, i.e.
+   * notifications of elements added or removed from the page.
+   */
+  protected handleMutations = (): void => {
+    // The user opens a mail
+
+    // The selector is different depending if it is Legacy or PGP
+    this.selectors.mail = get(isOpenpgpEnabled)
+      ? '.message-content > :first-child'
+      : '#proton-root'
+
+    const pre = document.querySelector('pre.m0')
+    if (!pre) this.selectors.mail = '#proton-root'
+
+    const mails = document.body.querySelectorAll<HTMLElement>(
+      this.selectors.mail
+    )
+    for (const mail of mails) this.handleMailElement(mail)
+
+    // The user starts writing a mail
+    const toolbars = document.body.querySelectorAll<HTMLElement>(
+      this.selectors.toolbar
+    )
+    for (const toolbar of toolbars) this.handleToolbar(toolbar)
+  }
 }
 
 /** Selectors for interesting HTML Elements of Proton. */
 const selectors: Selectors = {
-  mail: '.message-content > :first-child',
+  // The selector is different depending if it is Legacy or PGP
+  mail: '.m0',
   toolbar: '.composer-actions',
   // Selectors below are not used because CSS selectors cannot get through iframe
-  editor: '',
+  editor: '.',
   editorContent: '[contenteditable]',
-  send: '',
+  send: '.',
 }
 
 // Enable logging in the page console (not the extension console)
