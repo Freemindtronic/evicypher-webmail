@@ -606,4 +606,37 @@
       vertical-align: middle;
     }
   }
+
+  .button.zoho {
+    padding: 7px;
+    color: var(--actionColor);
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-family: 'Lato 2', sans-serif;
+    line-height: 1;
+    background-color: #fff;
+    border: 1px solid var(--actionColor);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #f2f2f2;
+    }
+
+    &:active {
+      background-color: #f2f2f2;
+    }
+
+    &.decrypt {
+      margin: 8px 3px;
+    }
+
+    &.encrypt {
+      margin: 1px;
+    }
+
+    // Enable animations if the user have not disabled them
+    @media (prefers-reduced-motion: no-preference) {
+      transition: box-shadow 0.5s;
+    }
+  }
 </style>
