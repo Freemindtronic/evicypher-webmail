@@ -12,4 +12,5 @@ export enum Design {
   Yahoo = 'yahoo',
   Yandex = 'yandex',
   iCloud = 'icloud',
+  Zoho = 'zoho',
 }

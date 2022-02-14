@@ -15,5 +15,6 @@
   "telegram": ["https://web.telegram.org/k/*"],
   "whatsapp": ["https://web.whatsapp.com/*"],
   "yahoo": ["https://mail.yahoo.com/*"],
-  "yandex": ["https://mail.yandex.com/*"]
+  "yandex": ["https://mail.yandex.com/*"],
+  "zoho": ["https://mail.zoho.eu/zm/*"]
 }
