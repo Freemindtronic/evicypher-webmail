@@ -24,7 +24,7 @@
   export let tooltipPlacement: Placement = tippy.defaultProps.placement
 
   /** Default icon, when the button is in idle state. */
-  export let IdleIcon: new (...args: never[]) => SvelteComponent
+  export let idleIcon: new (...args: never[]) => SvelteComponent
 
   /** Default tooltip content, when the button is in idle state. */
   export let idleTooltip: string
@@ -58,7 +58,7 @@
     dir={$_('ltr')}
   >
     {#if promise === undefined}
-      <svelte:component this={IdleIcon} width="16" height="16" />
+      <svelte:component this={idleIcon} width="16" height="16" />
     {:else}
       {#await promise}
         <img

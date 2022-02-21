@@ -117,8 +117,12 @@ export const translateReport = derived(_, ($_) => (report: Report) => {
 })
 
 /** Loads a locale. */
-const loader = (locale: string) => async () =>
-  (await fetch(browser.runtime.getURL(`locales/${locale}/strings.json`))).json()
+const loader = (locale: string) => async () => {
+  const response = await fetch(
+    browser.runtime.getURL(`locales/${locale}/strings.json`)
+  )
+  return response.json()
+}
 
 // Register languages
 const localeList = [

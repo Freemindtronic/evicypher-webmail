@@ -19,6 +19,21 @@ import { Certificate } from '$/certificate'
 
 /** Represents a phone, with a unique identifier and a name. */
 export class Phone {
+  /** Transform an object coming from JSON.parse into a Phone object. */
+  static fromJSON({
+    id,
+    name,
+    lastSeen,
+    certificate,
+  }: {
+    id: number
+    name: string
+    lastSeen: number
+    certificate: ReturnType<Certificate['toJSON']>
+  }): Phone {
+    return new Phone(id, name, Certificate.fromJSON(certificate), lastSeen)
+  }
+
   /** Unique identifier. */
   id: number
 
@@ -42,21 +57,6 @@ export class Phone {
     this.name = name
     this.lastSeen = lastSeen ?? Date.now()
     this.certificate = certificate
-  }
-
-  /** Transform an object coming from JSON.parse into a Phone object. */
-  static fromJSON({
-    id,
-    name,
-    lastSeen,
-    certificate,
-  }: {
-    id: number
-    name: string
-    lastSeen: number
-    certificate: ReturnType<Certificate['toJSON']>
-  }): Phone {
-    return new Phone(id, name, Certificate.fromJSON(certificate), lastSeen)
   }
 
   /** Produces a JSON-serializable object. */
@@ -115,8 +115,9 @@ phones.subscribe(($phones) => {
 
 /** Produce an auto-incremented integer. */
 export const nextPhoneId = async (): Promise<number> => {
-  const currentValue = (await browser.storage.local.get({ nextPhoneId: 1 }))
-    .nextPhoneId as number
+  const { nextPhoneId: currentValue } = (await browser.storage.local.get({
+    nextPhoneId: 1,
+  })) as { nextPhoneId: number }
   await browser.storage.local.set({ nextPhoneId: currentValue + 1 })
   return currentValue
 }

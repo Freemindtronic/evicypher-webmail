@@ -10,6 +10,34 @@ const KEY_SIZE = 16
 
 /** A class to produce new certificates and to serialize them. */
 export class Certificate {
+  /** Produces a new certificate, with random keys. */
+  static generate(): Certificate {
+    return new Certificate({
+      id: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      fKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      sKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      tKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+      jamming: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
+    })
+  }
+
+  /** Unserialize the certificate. */
+  static fromJSON({
+    id,
+    fKey,
+    sKey,
+    tKey,
+    jamming,
+  }: ReturnType<Certificate['toJSON']>): Certificate {
+    return new Certificate({
+      id: toUint8Array(id),
+      fKey: toUint8Array(fKey),
+      sKey: toUint8Array(sKey),
+      tKey: toUint8Array(tKey),
+      jamming: toUint8Array(jamming),
+    })
+  }
+
   /** Unique identifier. */
   readonly id: Uint8Array
   /** First key. */
@@ -45,34 +73,6 @@ export class Certificate {
     this.sKey = sKey
     this.tKey = tKey
     this.jamming = jamming
-  }
-
-  /** Produces a new certificate, with random keys. */
-  static generate(): Certificate {
-    return new Certificate({
-      id: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
-      fKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
-      sKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
-      tKey: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
-      jamming: crypto.getRandomValues(new Uint8Array(KEY_SIZE)),
-    })
-  }
-
-  /** Unserialize the certificate. */
-  static fromJSON({
-    id,
-    fKey,
-    sKey,
-    tKey,
-    jamming,
-  }: ReturnType<Certificate['toJSON']>): Certificate {
-    return new Certificate({
-      id: toUint8Array(id),
-      fKey: toUint8Array(fKey),
-      sKey: toUint8Array(sKey),
-      tKey: toUint8Array(tKey),
-      jamming: toUint8Array(jamming),
-    })
   }
 
   /** Produces a JSON-serializable object. */

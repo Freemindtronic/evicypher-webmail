@@ -1,6 +1,7 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable max-params */
 import { xor } from '../utils'
-import { shiftLeft, shiftRight } from './AesUtil'
+import { shiftLeft, shiftRight } from './aes-util'
 
 export function addJammingSimpleText(
   data: Uint8Array,

@@ -4,7 +4,10 @@
   "govern-full": ["https://missatgeria.govern.ad/*"],
   "govern-light": ["https://missatgeria.govern.ad/*"],
   "horde": ["https://webmail.namebay.com/*"],
-  "icloud": ["https://www-mail.icloud-sandbox.com/*"],
+  "icloud": [
+    "https://www-mail.icloud-sandbox.com/*",
+    "https://www.icloud.com/*"
+  ],
   "linkedin": ["https://www.linkedin.com/*"],
   "outlook": ["https://outlook.live.com/mail/*"],
   "outlook-old": ["https://webmail.mail.ovh.net/owa/*"],

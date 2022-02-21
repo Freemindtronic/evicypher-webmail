@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import type { Phone } from '$/phones'
 import type { TaskContext } from '$/task'
 import axlsign from 'axlsign'
@@ -17,10 +18,10 @@ import {
 } from '$/background/protocol'
 import { Certificate } from '$/certificate'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { AesUtil } from '$/legacy-code/cryptography/AesUtil'
 import { removeJamming } from '$/legacy-code/cryptography/jamming'
 import { random, sha512, xor, stringToUint8Array } from '$/legacy-code/utils'
 import { Reporter, State } from '$/report'
+import { AesUtil } from '~src/legacy-code/cryptography/aes-util'
 
 /** @returns An HTTP address created from `ip`, `port` and `type` */
 const formatURL = (ip: string, port: number, type = ''): string =>
@@ -62,6 +63,7 @@ const fromJSON = <T extends object>(obj: JSONResponse<T>): T =>
 export const defaultTimeouts: Record<Request, number> = {
   [Request.Ping]: 20_000,
   [Request.Credential]: 180_000,
+  [Request.CloudKey]: 180_000,
   [Request.CipherKey]: 180_000,
   [Request.End]: 3000,
   [Request.EndOk]: 3000,
@@ -172,9 +174,16 @@ export const throwOnHttpErrors = (response: Response): void => {
   }
 }
 
+/** A key pair containing data from the phone */
 interface KeyPair {
   high: Uint8Array
   low: Uint8Array
+}
+
+/** A key pair or singloton depending of the amount of data */
+interface PartialKeyPair {
+  high: Uint8Array
+  low: Uint8Array | undefined
 }
 
 /**
@@ -203,7 +212,7 @@ const fetchRequest = async (
     reporter: Reporter
     signal: AbortSignal
   }
-): Promise<{ keys: KeyPair; newCertificate: Certificate }> => {
+): Promise<{ keys: PartialKeyPair; newCertificate: Certificate }> => {
   reporter({ state: State.WaitingForPhone })
   let { certificate } = phone
 
@@ -279,6 +288,7 @@ const fetchRequest = async (
     signal,
   })) as BasicLabelResponse
 
+  console.log(keysExchange, certificate, labelResponse)
   const keys = await unjamKeys(keysExchange, certificate, labelResponse)
 
   // To ensure forward secrecy, we share a new secret
@@ -337,8 +347,8 @@ const getKeyRequestData = (
   const ivd = random(16)
   const saltd = random(16)
   const keyd = xor(sharedKey, sKey)
-  const AES = new AesUtil(256, 1000)
-  const encd = AES.encryptCTR(ivd, saltd, keyd, keyToGet)
+  const aes = new AesUtil(256, 1000)
+  const encd = aes.encryptCTR(ivd, saltd, keyd, keyToGet)
   return {
     ...request,
     ih: ivd,
@@ -360,8 +370,8 @@ const getCredentialRequestData = (
   const ivd = random(16)
   const saltd = random(16)
   const keyd = xor(sharedKey, sKey)
-  const AES = new AesUtil(256, 1000)
-  const encd = AES.encryptCBC(ivd, saltd, keyd, websiteUrl)
+  const aes = new AesUtil(256, 1000)
+  const encd = aes.encryptCBC(ivd, saltd, keyd, websiteUrl)
   return {
     ...request,
     id: ivd,
@@ -401,7 +411,8 @@ export const fetchAndSaveKeys = async (
   )
   $phone.certificate = newCertificate
   phone.update(($phone) => $phone)
-  return keys
+  if (keys.low === undefined) throw new Error(ErrorMessage.UnknownPhoneError)
+  return keys as KeyPair
 }
 
 /**
@@ -421,13 +432,48 @@ export const fetchAndSaveCredentials = async (
     reporter: Reporter
     signal: AbortSignal
   }
-): Promise<KeyPair> => {
+): Promise<PartialKeyPair> => {
   const $phone = get(phone)
   const toGet = websiteUrl ? stringToUint8Array(websiteUrl) : undefined
   const { keys, newCertificate } = await fetchRequest(
     $phone,
     getCredentialRequestData,
     Request.Credential,
+    {
+      toGet,
+      context,
+      reporter,
+      signal,
+    }
+  )
+  $phone.certificate = newCertificate
+  phone.update(($phone) => $phone)
+  return keys
+}
+
+/**
+ * Ask the phone for a cloud key pair (id/password).
+ *
+ * @returns A pair containing a cloud key
+ */
+export const fetchAndSaveCloudKey = async (
+  context: TaskContext,
+  phone: Writable<Phone>,
+  {
+    reporter,
+    signal,
+  }: {
+    reporter: Reporter
+    signal: AbortSignal
+  }
+): Promise<PartialKeyPair> => {
+  const $phone = get(phone)
+  // Sending '#' as data tells the phone to let the user choose the label
+  const toGet = stringToUint8Array('#')
+  const { keys, newCertificate } = await fetchRequest(
+    $phone,
+    getCredentialRequestData,
+    Request.CloudKey,
     {
       toGet,
       context,
@@ -452,13 +498,13 @@ const encryptKey = (
   salt: Uint8Array
   encryptedKey: Uint8Array
 } => {
-  const AES = new AesUtil(256, 1000)
-  const ecc = AES.decryptCTR(iv, salt, passPhrase, cipherText)
+  const aes = new AesUtil(256, 1000)
+  const ecc = aes.decryptCTR(iv, salt, passPhrase, cipherText)
   const k = axlsign.generateKeyPair(random(32))
   const sharedKey = axlsign.sharedKey(k.private, ecc)
   const newIv = random(16)
   const newSalt = random(16)
-  const enc = AES.encryptCTR(newIv, newSalt, passPhrase, k.public)
+  const enc = aes.encryptCTR(newIv, newSalt, passPhrase, k.public)
   return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc }
 }
 
@@ -479,8 +525,8 @@ const unjamKeys = async (
     s2: lowSalt,
     d2: lowDataJam,
   }: BasicLabelResponse
-): Promise<{ high: Uint8Array; low: Uint8Array }> => {
-  const AES = new AesUtil(256, 1000)
+): Promise<PartialKeyPair> => {
+  const aes = new AesUtil(256, 1000)
 
   const highHashPromise = sha512(
     new Uint8Array([...certificate.jamming, ...keysExchange[1].sharedKey])
@@ -505,12 +551,19 @@ const unjamKeys = async (
     highJammingPosition,
     highJammingShift
   )
-  const high = AES.decryptCTR(
+  const high = aes.decryptCTR(
     highInitializationVector,
     highSalt,
     highKey,
     highUnjam
   )
+
+  if (
+    lowInitializationVector === undefined ||
+    lowDataJam === undefined ||
+    lowSalt === undefined
+  )
+    return { high, low: undefined }
 
   const lowKey = xor(keysExchange[1].sharedKey, certificate.fKey)
   const lowJamming = await lowHashPromise
@@ -528,7 +581,7 @@ const unjamKeys = async (
     lowPositionJamming,
     lowJammingShift
   )
-  const low = AES.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
+  const low = aes.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam)
 
   // The two keys we asked for
   return { high, low }
@@ -546,18 +599,18 @@ const createNewCertificate = (
   newKey: EndResponse,
   certificate: Certificate
 ): { acknowledgement: EndOkRequest; newCertificate: Certificate } => {
-  const SKid = axlsign.sharedKey(newShare.id.private, newKey.id)
-  const SK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
-  const SK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
-  const SK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
-  const SK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
+  const sKid = axlsign.sharedKey(newShare.id.private, newKey.id)
+  const sK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1)
+  const sK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2)
+  const sK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3)
+  const sK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4)
 
   const newCertificate = new Certificate({
-    id: xor(SKid, certificate.id),
-    fKey: xor(SK1, certificate.fKey),
-    sKey: xor(SK2, certificate.sKey),
-    tKey: xor(SK3, certificate.tKey),
-    jamming: xor(SK4, certificate.jamming),
+    id: xor(sKid, certificate.id),
+    fKey: xor(sK1, certificate.fKey),
+    sKey: xor(sK2, certificate.sKey),
+    tKey: xor(sK3, certificate.tKey),
+    jamming: xor(sK4, certificate.jamming),
   })
 
   const acknowledgement = {

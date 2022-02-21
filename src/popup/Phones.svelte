@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { get } from 'svelte/store'
-  import { browser } from 'webextension-polyfill-ts'
   import Button from '$/components/Button.svelte'
   import HR from '$/components/HR.svelte'
   import TextInput from '$/components/TextInput.svelte'
   import { _ } from '$/i18n'
   import { Phone, phones } from '$/phones'
+  import { startBackgroundTask, Task } from '$/task'
   import Pairing from './Pairing.svelte'
   import PhoneItem from './Phone.svelte'
 
@@ -33,6 +34,45 @@
   const removePhone = ({ detail: phone }: CustomEvent<Phone>) => {
     $phones = $phones.filter((p) => get(p).id !== phone.id)
   }
+
+  // Link to refresh icon html element
+  let refreshIcon: HTMLElement
+
+  // Function executed on click on refresh button
+  function handleRefreshClick() {
+    // Start background task
+    resetZeroconf()
+
+    // Start animation
+    refreshIcon.classList.remove('anim-spin')
+    setTimeout(() => {
+      refreshIcon.classList.add('anim-spin')
+    }, 50)
+  }
+
+  /**
+   * I don't know much about the animation on JS but it seems that the class
+   * that does the animation needs to be in the HTML first. But be don't want
+   * the icon to move on mount so we remove the class.
+   */
+  onMount(() => {
+    refreshIcon.classList.remove('anim-spin')
+  })
+
+  // Function that reset Zeroconf
+  const resetZeroconf = () => {
+    void startBackgroundTask(
+      Task.ResetZeroconf,
+      async function* () {
+        yield
+      },
+      {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        reporter: () => {},
+        signal: new AbortController().signal,
+      }
+    )
+  }
 </script>
 
 {#if pairingInProgress}
@@ -48,7 +88,14 @@
   />
 {:else}
   <section>
-    <h2>{$_('phones')}</h2>
+    <div class="title">
+      <h2>{$_('phones')}</h2>
+      <Button id="refresh" on:click={handleRefreshClick}
+        ><i bind:this={refreshIcon} class="fa-solid fa-rotate anim-spin" />
+        {$_('refresh')}</Button
+      >
+    </div>
+
     {#if $phones.length === 0}
       <p><em>{$_('register-a-phone-with-the-form-below')}</em></p>
     {:else}
@@ -78,15 +125,13 @@
     {/if}
   </form>
   <HR />
-  <p style="text-align: center">
-    <a href={browser.runtime.getURL('/evifile.html')} target="_evifile">
-      {$_('evifile')}
-    </a>
-  </p>
-  <HR />
 {/if}
 
 <style lang="scss">
+  :global {
+    @import '../assets/tippy';
+  }
+
   h2,
   h3 {
     margin-block-end: 0.5rem;
@@ -115,6 +160,23 @@
     grid-template-columns: auto 1fr auto;
     gap: 0.5em;
     align-items: center;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .anim-spin {
+    animation: spin 1s linear 1;
+  }
+
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
+    }
   }
 
   .error {

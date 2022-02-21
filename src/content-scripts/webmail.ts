@@ -62,12 +62,12 @@ export class Webmail {
     // Run the listener on page load
     setTimeout(() => {
       this.handleMutations()
-    }, 100)
+    }, 200)
     // Start observing the DOM for changes
     new MutationObserver(() => {
       setTimeout(() => {
         this.handleMutations()
-      }, 100)
+      }, 200)
     }).observe(document.body, {
       subtree: true,
       childList: true,
@@ -508,7 +508,7 @@ export class Webmail {
         target.style.display = 'contents'
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const QR = new QRCode({
+        const qr = new QRCode({
           target,
           props: {
             data: encryptedString,
@@ -525,11 +525,11 @@ export class Webmail {
 
         if (height === undefined) return
 
-        const FrameHeightWidth = Number.parseInt(height, 10) + 20
+        const frameHeightWidth = Number.parseInt(height, 10) + 20
 
-        frame.style.height = FrameHeightWidth.toString() + 'px'
+        frame.style.height = frameHeightWidth.toString() + 'px'
 
-        frame.style.width = FrameHeightWidth.toString() + 'px'
+        frame.style.width = frameHeightWidth.toString() + 'px'
       }
 
       setQrCode()

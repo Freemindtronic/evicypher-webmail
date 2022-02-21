@@ -110,7 +110,7 @@
       // Do not upload files
       autoProcessQueue: false,
       addRemoveLinks: true,
-      maxFilesize: 1024 * 1024 * 1024 * 1,
+      maxFilesize: 1024 ** 3, // ~1Go
     })
 
     // When files are added, process them all at once
@@ -143,61 +143,85 @@
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
 </script>
 
-{#if !$isLoading}
-  <h1>{$_('evifile')}</h1>
+<div class="background">
+  <div class="box">
+    {#if !$isLoading}
+      <h1>{$_('evifile')}</h1>
 
-  <main>
-    <IsZeroconfRunning />
+      <main>
+        <IsZeroconfRunning />
 
-    {#if backgroundTask === undefined}
-      <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
-    {:else}
-      {#await backgroundTask}
-        <p>
-          <img
-            src={browser.runtime.getURL('/loading.gif')}
-            alt={$_('loading')}
-            width="16"
-            height="16"
-          />
-          {#if tip === undefined}
-            {$_('loading')}
-          {:else}
-            {$translateReport(tip)}
-          {/if}
-        </p>
-      {/await}
+        {#if backgroundTask === undefined}
+          <p>{$_('drop-a-file-in-one-of-the-two-zones-below')}</p>
+        {:else}
+          {#await backgroundTask}
+            <p>
+              <img
+                src={browser.runtime.getURL('/loading.gif')}
+                alt={$_('loading')}
+                width="16"
+                height="16"
+              />
+              {#if tip === undefined}
+                {$_('loading')}
+              {:else}
+                {$translateReport(tip)}
+              {/if}
+            </p>
+          {/await}
+        {/if}
+
+        <div class="grid">
+          <form class="dropzone" use:dropTask={Task.EncryptFiles}>
+            <h2 class="dz-message">
+              <button type="button">{$_('drop-files-here-to-encrypt')}</button>
+            </h2>
+          </form>
+
+          <form class="dropzone" use:dropTask={Task.DecryptFiles}>
+            <h2 class="dz-message">
+              <button type="button">{$_('drop-files-here-to-decrypt')}</button>
+            </h2>
+          </form>
+        </div>
+      </main>
     {/if}
-
-    <div class="grid">
-      <form class="dropzone" use:dropTask={Task.EncryptFiles}>
-        <h2 class="dz-message">
-          <button type="button">{$_('drop-files-here-to-encrypt')}</button>
-        </h2>
-      </form>
-
-      <form class="dropzone" use:dropTask={Task.DecryptFiles}>
-        <h2 class="dz-message">
-          <button type="button">{$_('drop-files-here-to-decrypt')}</button>
-        </h2>
-      </form>
-    </div>
-  </main>
-{/if}
+  </div>
+</div>
 
 <style lang="scss">
   :global {
     @import './assets/dropzone';
 
+    html {
+      height: 100%;
+    }
+
     body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      height: 100%;
     }
 
     p {
       margin: 0;
     }
+  }
+
+  .background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: $dark;
+  }
+
+  .box {
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    max-width: $evifile-width;
+    max-height: $evifile-height;
+    background-color: $background-color;
+    border: 2px solid $background-color;
   }
 
   h1 {

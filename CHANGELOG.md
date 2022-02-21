@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.3](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.2...v1.12.3) (2021-12-21)
+
+### Bug Fixes
+
+- add-on store require appName to be filled ([29a3bc3](https://github.com/Freemindtronic/evicypher-webmail/commit/29a3bc3ae773fec0c8a0d1b336f43addd6d2f9b4))
+
+### [1.12.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.1...v1.12.2) (2021-12-20)
+
+### Bug Fixes
+
+- fetch label without an username ([d694239](https://github.com/Freemindtronic/evicypher-webmail/commit/d694239121e2d6714b4d9d1cecc3935b8c37415c))
+- make translations visible by extension stores ([e4a656b](https://github.com/Freemindtronic/evicypher-webmail/commit/e4a656b0b60d774c08f56e408b4174b4e9a77a8b))
+
+### [1.12.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.0...v1.12.1) (2021-12-16)
+
+### Bug Fixes
+
+- flex logo wrap on chrome instead of growing ([706fb7b](https://github.com/Freemindtronic/evicypher-webmail/commit/706fb7b9ae9e1d6cc7333e04c5a45ae2c55e1ca0))
+
+## [1.12.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.2...v1.12.0) (2021-12-15)
+
+### Features
+
+- add evilabel ([d8c03a8](https://github.com/Freemindtronic/evicypher-webmail/commit/d8c03a868fa45a917ed99b76d7c8cedf406bf27b))
+- add navigation button to popup ([97c6b7d](https://github.com/Freemindtronic/evicypher-webmail/commit/97c6b7dd9017f7ae564ed9e00fbc9e1c5022636b))
+- add phone refresh button ([daed01e](https://github.com/Freemindtronic/evicypher-webmail/commit/daed01e40ae9d105c8e695d4a3f28e94796b671c))
+- better ui for evilabel page ([abdd108](https://github.com/Freemindtronic/evicypher-webmail/commit/abdd1085a041e8b7f047e53f617214a6d2d54e1a))
+
+### Bug Fixes
+
+- yandex decrypt always appears ([3261559](https://github.com/Freemindtronic/evicypher-webmail/commit/3261559d904356d46b0bf04cc2fd7681733c225f)), closes [#66](https://github.com/Freemindtronic/evicypher-webmail/issues/66)
+- yandex decrypt button no appearing ([d8883cf](https://github.com/Freemindtronic/evicypher-webmail/commit/d8883cfaa4824fd4d9add3f9a8bd93dd1dae0ceb))
+
+### [1.11.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.1...v1.11.2) (2021-12-01)
+
+### Bug Fixes
+
+- can't encrypt encrypted mails ([eca5d4f](https://github.com/Freemindtronic/evicypher-webmail/commit/eca5d4f23ba9376f16a94b09709d0b128322bb71))
+- icloud iframes of qrcode and decrypt showed correctly ([2946bf1](https://github.com/Freemindtronic/evicypher-webmail/commit/2946bf1a1063577ed8f43f61a7f31d6650b87030))
+
 ### [1.11.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.11.0...v1.11.1) (2021-11-25)
 
 ### Bug Fixes

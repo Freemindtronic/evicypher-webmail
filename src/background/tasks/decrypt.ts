@@ -15,7 +15,7 @@ import { readMessage, decrypt as pgpDecrypt } from 'openpgp'
 import { get } from 'svelte/store'
 import { BrowserStore } from '$/browser-store'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { EviCrypt, keyUsed } from '$/legacy-code/cryptography/EviCrypt'
+import { EviCrypt, keyUsed } from '$/legacy-code/cryptography/evicrypt'
 import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
@@ -136,7 +136,8 @@ export const decryptFiles: BackgroundTask<
   const firstFile = files.pop()
   if (!firstFile) throw new Error('Array of files cannot be empty.')
 
-  const blob = await (await fetch(firstFile.url)).blob()
+  const response = await fetch(firstFile.url)
+  const blob = await response.blob()
   const file = new Blob([blob])
   URL.revokeObjectURL(firstFile.url)
 
@@ -160,7 +161,8 @@ export const decryptFiles: BackgroundTask<
       // Download all the files from `blob:` URLs
       Promise.resolve({ url: firstFile.url, buffer }),
       ...files.map(async ({ name, url }) => {
-        const blob = await (await fetch(url)).blob()
+        const response = await fetch(url)
+        const blob = await response.blob()
         const file = new File([blob], name)
         URL.revokeObjectURL(firstFile.url)
         return { url, buffer: await readAsArrayBuffer(file) }

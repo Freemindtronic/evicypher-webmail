@@ -66,17 +66,17 @@ export class Yandex extends Webmail {
       /** Array of Elements to iterate over all elements for both windows editors in Yandex */
       const windows: Element[] = [firstWindow, secondWindow]
 
-      for (const window_ of windows) {
-        mailElement.toolbar = window_.querySelector<HTMLElement>(
+      for (const window of windows) {
+        mailElement.toolbar = window.querySelector<HTMLElement>(
           this.selectors.toolbar
         )
-        mailElement.editor = window_.querySelector<HTMLElement>(
+        mailElement.editor = window.querySelector<HTMLElement>(
           this.selectors.editor
         )
-        mailElement.editorContent = window_.querySelector<HTMLElement>(
+        mailElement.editorContent = window.querySelector<HTMLElement>(
           this.selectors.editorContent
         )
-        mailElement.send = window_.querySelector<HTMLElement>(
+        mailElement.send = window.querySelector<HTMLElement>(
           this.selectors.send
         )
         this.handleToolbarYandex(mailElement)
@@ -213,7 +213,7 @@ export class Yandex extends Webmail {
 /** Both windows from yandex shares the same class selectors */
 const selectors: Selectors = {
   /** The mail selectors */
-  mail: '.js-message-body-content.mail-Message-Body-Content',
+  mail: '.js-message-body',
   /**
    * First selector is from the window of the new mail and second selector is
    * from the second window

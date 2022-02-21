@@ -53,6 +53,8 @@ export enum Request {
   Ping = '/P',
   /** A request to get credential information to login a website */
   Credential = '/C',
+  /** A request to get cloud key data */
+  CloudKey = '/CD',
   /** A request to get encryption keys. */
   CipherKey = '/CK',
   /** End of an exchange, request for a new certificate. */
@@ -82,6 +84,7 @@ export enum Request {
 export interface RequestMap {
   [Request.Ping]: PingRequest
   [Request.Credential]: CredentialRequest
+  [Request.CloudKey]: CredentialRequest
   [Request.CipherKey]: CipherKeyRequest
   [Request.End]: EndRequest
   [Request.EndOk]: EndOkRequest
@@ -99,6 +102,7 @@ export interface RequestMap {
 export interface ResponseMap {
   [Request.Ping]: PingResponse
   [Request.Credential]: CredentialResponse
+  [Request.CloudKey]: CredentialResponse
   [Request.CipherKey]: CipherKeyResponse
   [Request.End]: EndResponse
   [Request.EndOk]: Record<string, never>
@@ -157,9 +161,9 @@ export interface BasicLabelResponse {
   i: Uint8Array
   s: Uint8Array
   d: Uint8Array
-  i2: Uint8Array
-  s2: Uint8Array
-  d2: Uint8Array
+  i2?: Uint8Array
+  s2?: Uint8Array
+  d2?: Uint8Array
 }
 
 export type CredentialRequestWithoutUrl = BasicLabelRequest

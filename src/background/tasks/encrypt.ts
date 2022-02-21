@@ -18,7 +18,7 @@ import {
 import { get } from 'svelte/store'
 import { BrowserStore } from '$/browser-store'
 import { ErrorMessage, ExtensionError } from '$/error'
-import { EviCrypt } from '$/legacy-code/cryptography/EviCrypt'
+import { EviCrypt } from '$/legacy-code/cryptography/evicrypt'
 import { fetchAndSaveKeys } from '$/legacy-code/network/exchange'
 import { favoritePhone } from '$/phones'
 import { State } from '$/report'
@@ -110,7 +110,8 @@ export const encryptFiles: BackgroundTask<
   await Promise.allSettled(
     files.map(async ({ name, url }) => {
       // Download the file
-      const blob = await (await fetch(url)).blob()
+      const response = await fetch(url)
+      const blob = await response.blob()
       const file = new File([blob], name)
 
       // Free the file
@@ -120,7 +121,7 @@ export const encryptFiles: BackgroundTask<
         // Random 8-letter string
         const encryptedName =
           [...crypto.getRandomValues(new Uint8Array(8))]
-            .map((n) => String.fromCharCode(97 + (n % 26)))
+            .map((n) => String.fromCodePoint(97 + (n % 26)))
             .join('') + '.Evi'
 
         // Encrypt the file

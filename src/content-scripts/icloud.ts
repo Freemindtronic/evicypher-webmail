@@ -39,3 +39,10 @@ setTimeout(() => {
   const webmail = new Webmail(selectors, Design.iCloud)
   webmail.observe()
 }, 1000)
+
+/** For some reason with setInterval icloud does update the web with the height atributtes */
+setInterval(() => {
+  const iframe = document.querySelector('iframe') as HTMLElement
+  // Change the height of the iframe so we can see the encrypted message or the qrcode
+  iframe.setAttribute('height', '100%')
+}, 2000)

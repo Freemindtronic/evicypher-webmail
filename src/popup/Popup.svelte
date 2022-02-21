@@ -1,22 +1,30 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+  import { browser } from 'webextension-polyfill-ts'
+  import Brand from '$/components/Brand.svelte'
   import IsZeroconfRunning from '$/components/IsZeroconfRunning.svelte'
   import Select from '$/components/Select.svelte'
   import { locale, isLoading, _ } from '$/i18n'
   import locales from '~/locales.json'
-  import Logo from '../assets/logo.svg'
+  import Menu from './Menu.svelte'
   import Options from './Options.svelte'
   import Phones from './Phones.svelte'
 
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
+
+  let tab = 'phones'
+
+  $: if (tab === 'evifile') {
+    window.open(browser.runtime.getURL('./evifile.html'))
+    window.close()
+  } else if (tab === 'get-a-label') {
+    window.open(browser.runtime.getURL('./evilabel.html'))
+    window.close()
+  }
 </script>
 
 <h1>
-  <span class="brand">
-    <Logo />
-    <strong>EviCypher</strong>
-    Webmail
-  </span>
+  <Brand />
   {#if !$isLoading}
     <Select bind:value={$locale} options={locales} />
   {/if}
@@ -24,9 +32,13 @@
 {#if !$isLoading}
   <main in:fade={{ duration: 75 }}>
     <IsZeroconfRunning />
-    <Phones />
-    <Options />
+    {#if tab === 'phones'}
+      <Phones />
+    {:else if tab === 'parameters'}
+      <Options />
+    {/if}
   </main>
+  <Menu bind:tab />
 {/if}
 
 <style lang="scss">
@@ -47,28 +59,6 @@
       font-weight: normal;
       font-size: 0.75rem;
       line-height: 1.5;
-    }
-
-    > .brand {
-      display: flex;
-      flex: 1;
-      gap: 0.5rem;
-      align-items: center;
-      font-weight: 400;
-      font-size: 1.5rem;
-      font-family: $title-font;
-
-      > :global(svg) {
-        max-height: 1em;
-        font-size: 2rem;
-        vertical-align: middle;
-        fill: $logo-color;
-        margin-inline-end: 0.25rem;
-      }
-
-      > strong {
-        font-weight: 700;
-      }
     }
   }
 
