@@ -74,5 +74,6 @@
   "login-credential": "Login Credential",
   "fetch": "Fetch",
   "successful-data-retrieval": "Data successfully fetched",
-  "get-a-label": "Fetch a Label"
+  "get-a-label": "Fetch a Label",
+  "close-encrypted": "Close Decrypted"
 }

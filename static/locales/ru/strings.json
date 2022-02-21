@@ -74,5 +74,6 @@
   "login-credential": "Учетные данные для входа\n",
   "fetch": "Принести",
   "successful-data-retrieval": "Данные успешно получены",
-  "get-a-label": "Получить этикетку"
+  "get-a-label": "Получить этикетку",
+  "close-encrypted": "Закрыть Расшифровано"
 }

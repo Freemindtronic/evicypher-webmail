@@ -74,5 +74,6 @@
   "login-credential": "Credencial d’inici de sessió",
   "fetch": "Recuperar",
   "successful-data-retrieval": "Les dades s'han obtingut correctament",
-  "get-a-label": "Recuperar una etiqueta"
+  "get-a-label": "Recuperar una etiqueta",
+  "close-encrypted": "Tancar Desxifrat"
 }

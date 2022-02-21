@@ -74,5 +74,6 @@
   "login-credential": "Acreditare de conectare",
   "fetch": "Preluare",
   "successful-data-retrieval": "Datele au fost preluate cu succes",
-  "get-a-label": "Obțineți o etichetă"
+  "get-a-label": "Obțineți o etichetă",
+  "close-encrypted": "Închide Decriptat"
 }
