@@ -26,7 +26,6 @@ class Proton extends Webmail {
 
     // If it's not an encrypted mail, ignore it
     const mailString = mailElement.textContent
-
     if (!mailString || !this.containsEncryptedText(mailString)) return
 
     // Find all encrypted parts
@@ -43,8 +42,9 @@ class Proton extends Webmail {
 
     let node: Node | null
     while ((node = treeWalker.nextNode())) {
-      // Add a "Decrypt" button next to the node
       if (!node.parentNode?.textContent) continue
+
+      // Add a "Decrypt" button next to the node
       const encryptedString = this.extractEncryptedString(
         node.parentNode.textContent
       )
@@ -58,9 +58,8 @@ class Proton extends Webmail {
   /** Adds an encryption button in the toolbar. */
   // eslint-disable-next-line sonarjs/cognitive-complexity
   protected handleToolbar(toolbar: HTMLElement): void {
-    // The thing is that if we have an email opened that has an iframe we should get the second iframe, otherwise the mailSelector
-    // coming next will be null
-    // and if only exist one iframe, just takes the only one, from the contentEditor of the mail
+    // Proton mail has 2 different decrypt panels, one with an iframe and the other one doesn't have an iframe
+    // so it checks if it has more than 1 iframe, if it does then the encrypted mail is in the iframe if not it is not.
     const editor =
       document.querySelectorAll('iframe').length > 1
         ? document.querySelectorAll('iframe')[1]
