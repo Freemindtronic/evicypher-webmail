@@ -3,6 +3,13 @@
 /**
  * Zoho interface functions for content scripts.
  *
+ * Zoho encrypt has different frames that can be opened at the same time, so
+ * when 2 different frames for encryption are opened, we select them with an
+ * specific class that consist of two of these frames plus the main window, but
+ * the main windows is not inside an iframe, so we have to treat every frame an
+ * its components like an object to always keep track of him corresponding
+ * components like the toolbar, mail, etc...
+ *
  * @module
  */
 
@@ -133,7 +140,7 @@ export class Zoho extends Webmail {
         if (encryptedString.startsWith('AAAAF')) {
           pre.append(encryptedString)
         } else {
-          // For some reason yandex messages needs to be in the following format to be able to detect
+          // For some reason zoho messages needs to be in the following format to be able to detect
           // injected text like our encrypted string
           // part message 1<br>
           // part message 2<br> etc...
