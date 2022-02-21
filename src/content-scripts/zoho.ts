@@ -6,8 +6,8 @@
  * Zoho encrypt has different frames that can be opened at the same time, so
  * when 2 different frames for encryption are opened, we select them with an
  * specific class that consist of two of these frames plus the main window, but
- * the main windows is not inside an iframe, so we have to treat every frame an
- * its components like an object to always keep track of him corresponding
+ * the main windows is not inside an iframe, so we have to treat every frame and
+ * its components like an object to always keep track of the corresponding
  * components like the toolbar, mail, etc...
  *
  * @module
