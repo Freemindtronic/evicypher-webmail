@@ -74,5 +74,6 @@
   "login-credential": "Anmeldedaten",
   "fetch": "Bringen",
   "successful-data-retrieval": "Daten erfolgreich abgerufen",
-  "get-a-label": "Holen Sie sich ein Etikett"
+  "get-a-label": "Holen Sie sich ein Etikett",
+  "close-encrypted": "Entschlüsselte Schließen"
 }

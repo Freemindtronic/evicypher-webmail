@@ -74,5 +74,6 @@
   "login-credential": "Credenziali di accesso",
   "fetch": "Andare a prendere",
   "successful-data-retrieval": "Dati recuperati con successo",
-  "get-a-label": "Ottieni un'etichetta"
+  "get-a-label": "Ottieni un'etichetta",
+  "close-encrypted": "Chiudere Decriptata"
 }

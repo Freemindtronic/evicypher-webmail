@@ -74,5 +74,6 @@
   "login-credential": "بيانات اعتماد تسجيل الدخول",
   "fetch": "أحضر",
   "successful-data-retrieval": "تم جلب البيانات بنجاح",
-  "get-a-label": "احصل على ملصق"
+  "get-a-label": "احصل على ملصق",
+  "close-encrypted": "إغلاق فك تشفير"
 }

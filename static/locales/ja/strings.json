@@ -74,5 +74,6 @@
   "login-credential": "ログイン資格情報",
   "fetch": "フェッチ",
   "successful-data-retrieval": "データが正常にフェッチされました",
-  "get-a-label": "ラベルを取得する"
+  "get-a-label": "ラベルを取得する",
+  "close-encrypted": "閉じる 復号"
 }

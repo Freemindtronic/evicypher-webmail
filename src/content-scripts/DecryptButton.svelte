@@ -29,6 +29,14 @@
     on:click
     on:abort
   >
-    {$_('decrypt')}
+    {#if promise === undefined}
+      {$_('decrypt')}
+    {:else}
+      {#await promise}
+        {$_('decrypt')}
+      {:then}
+        {$_('close-encrypted')}
+      {/await}
+    {/if}
   </Button>
 {/if}
