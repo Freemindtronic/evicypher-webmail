@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.3...v1.13.0) (2022-02-22)
+
+### Features
+
+- added support for Zoho Webmail ([d01b4d7](https://github.com/Freemindtronic/evicypher-webmail/commit/d01b4d70f331c626ad96c7118773d7ce035f22bd))
+- new message to close decrypted box ([aaf68ab](https://github.com/Freemindtronic/evicypher-webmail/commit/aaf68abfb04c30b5b8a0003e9b24a0e161563b6d))
+
+### Bug Fixes
+
+- better comments ([031e96f](https://github.com/Freemindtronic/evicypher-webmail/commit/031e96f891257254efcba17131dd67afb850bf1c))
+- change comments ([aa7eb91](https://github.com/Freemindtronic/evicypher-webmail/commit/aa7eb917e2f489e0a325e66b466bf570d0a77c36))
+- proton encrypt button appears always and decrepy works with all webmails ([bdee127](https://github.com/Freemindtronic/evicypher-webmail/commit/bdee1270c3b496cbc745a1df940deb0369b11fe8))
+
 ### [1.12.3](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.2...v1.12.3) (2021-12-21)
 
 ### Bug Fixes
