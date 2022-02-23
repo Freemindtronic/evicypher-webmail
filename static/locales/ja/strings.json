@@ -75,5 +75,5 @@
   "fetch": "フェッチ",
   "successful-data-retrieval": "データが正常にフェッチされました",
   "get-a-label": "ラベルを取得する",
-  "close-encrypted": "閉じる 復号"
+  "close": "閉じる"
 }
