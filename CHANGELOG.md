@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.0...v1.13.1) (2022-02-23)
+
+### Bug Fixes
+
+- close button decrypt translation ([ed4bbff](https://github.com/Freemindtronic/evicypher-webmail/commit/ed4bbff77762ee30ee021c4bf5e5f3b8922c8ee6))
+
 ## [1.13.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.12.3...v1.13.0) (2022-02-22)
 
 ### Features
