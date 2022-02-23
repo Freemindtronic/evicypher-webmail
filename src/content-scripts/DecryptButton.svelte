@@ -35,7 +35,9 @@
       {#await promise}
         {$_('decrypt')}
       {:then}
-        {$_('close-encrypted')}
+        {$_('close')}
+      {:catch error}
+        {$_('decrypt')}
       {/await}
     {/if}
   </Button>
