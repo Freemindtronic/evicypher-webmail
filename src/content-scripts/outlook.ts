@@ -10,9 +10,9 @@ import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Outlook. */
 const selectors: Selectors = {
-  mail: '.QMubUjbS-BOly_BTHEZj7',
-  toolbar: '._2ELnTBajF7jzj_m_hoj3Xt',
-  editor: '._17WvdmDfhREFqBNvlLv75X',
+  mail: '.fEEQbbifEC8quzJXH0sd.BeMjeoOEu2wdPEQukh37.TiApUvaZOn0aLkSUHRf7.allowTextSelection',
+  toolbar: '.YpZyYK8i3DgEDF41WBg9',
+  editor: '#ReadingPaneContainerId',
   editorContent: '[contenteditable]',
   send: '.ms-Button--primary',
 }
