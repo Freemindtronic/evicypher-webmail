@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.1...v1.13.2) (2022-05-12)
+
+### Bug Fixes
+
+- yahoo and outlook ([45d1b45](https://github.com/Freemindtronic/evicypher-webmail/commit/45d1b45d71634f609feba237a4ed5a9eb0d382ed))
+
 ### [1.13.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.0...v1.13.1) (2022-02-23)
 
 ### Bug Fixes
