@@ -10,11 +10,12 @@ import { Webmail, Selectors } from './webmail'
 
 /** Selectors for interesting HTML Elements of Outlook. */
 const selectors: Selectors = {
-  mail: '.fEEQbbifEC8quzJXH0sd.BeMjeoOEu2wdPEQukh37.TiApUvaZOn0aLkSUHRf7.allowTextSelection',
-  toolbar: '.YpZyYK8i3DgEDF41WBg9',
+  mail: '.fEEQb',
+  toolbar: '.YpZyY',
   editor: '#ReadingPaneContainerId',
   editorContent: '[contenteditable]',
   send: '.ms-Button--primary',
+  encryptButtonSibling: '.ms-Button--default',
 }
 
 // Enable logging in the page console (not the extension console)
