@@ -10,7 +10,7 @@
   "linkedin": ["https://www.linkedin.com/*"],
   "outlook": ["https://outlook.live.com/mail/*"],
   "outlook-old": ["https://webmail.mail.ovh.net/owa/*"],
-  "proton": ["https://mail.protonmail.com/*"],
+  "proton": ["https://mail.proton.me/*"],
   "roundcube": ["https://mail.ovh.net/owa/*"],
   "telegram": ["https://web.telegram.org/k/*"],
   "whatsapp": ["https://web.whatsapp.com/*"],
