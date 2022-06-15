@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.3](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.2...v1.13.3) (2022-06-15)
+
+### Bug Fixes
+
+- add buttons outlook ([cc07826](https://github.com/Freemindtronic/evicypher-webmail/commit/cc078265a415aea82b559e84adbfa1b1972369a7))
+
 ### [1.13.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.1...v1.13.2) (2022-05-12)
 
 ### Bug Fixes
