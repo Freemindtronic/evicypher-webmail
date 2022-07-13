@@ -3,6 +3,7 @@ export enum Design {
   AndorraTelecom = 'andorratelecom',
   Gmail = 'gmail',
   GovernAndorra = 'govern-andorra',
+  Horde = 'horde',
   Linkedin = 'linkedin',
   Outlook = 'outlook',
   OutlookOld = 'outlook-old',
