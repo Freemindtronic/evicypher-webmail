@@ -12,8 +12,8 @@ import { Webmail, Selectors } from './webmail'
 const selectors: Selectors = {
   mail: '.fEEQb',
   toolbar: '.YpZyY',
-  editor: '#ReadingPaneContainerId',
-  editorContent: '[contenteditable]',
+  editor: '.O4Jj0',
+  editorContent: '.dbf5I',
   send: '.ms-Button--primary',
   encryptButtonSibling: '.ms-Button--default',
 }
