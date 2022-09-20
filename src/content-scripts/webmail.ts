@@ -127,9 +127,9 @@ export class Webmail {
   /** @returns Whether the given string is encrypted */
   protected isEncryptedText = (string: string): boolean => {
     if (get(isOpenpgpEnabled))
-      return string.trimStart().startsWith('-----BEGIN PGP MESSAGE-----')
+      return string.includes('-----BEGIN PGP MESSAGE-----')
 
-    return string.trimStart().startsWith('AAAAF')
+    return string.includes('AAAAF')
   }
 
   /** @returns A trimmed encrypted message */
