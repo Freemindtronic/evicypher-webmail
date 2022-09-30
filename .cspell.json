@@ -26,7 +26,10 @@
     "webmail",
     "webmails",
     "whatsapp",
-    "zeroconf"
+    "zeroconf",
+    "iframes",
+    "elipses",
+    "Parageaph"
   ],
   "ignoreWords": ["AAAAF", "dropzone", "loginusername", "tgico", "timeago"],
   "ignorePaths": [
