@@ -116,7 +116,7 @@ function iframeFinder() {
             warningHeading.style.marginBottom = '15px'
             warningHeading.style.padding = '0px'
 
-            // Style Parageaph p
+            // Style Paragraph p
             warningText.style.fontFamily = 'Arial, Helvetica, sans-serif'
             warningText.style.color = 'white'
 
@@ -144,7 +144,7 @@ function iframeFinder() {
 
             urlElement.style.display = 'inline-block'
 
-            // Style Parageaph 2 p
+            // Style Paragraph 2 p
             warningText2.style.fontFamily = 'Arial, Helvetica, sans-serif'
             warningText2.style.color = 'white'
 
