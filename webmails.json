@@ -16,5 +16,6 @@
   "whatsapp": ["https://web.whatsapp.com/*"],
   "yahoo": ["https://mail.yahoo.com/*"],
   "yandex": ["https://mail.yandex.com/*"],
-  "zoho": ["https://mail.zoho.eu/zm/*"]
+  "zoho": ["https://mail.zoho.eu/zm/*"],
+  "bitb": ["<all_urls>"]
 }
