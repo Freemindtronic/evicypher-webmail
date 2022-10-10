@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.3...v1.14.0) (2022-10-10)
+
+### Features
+
+- add BITB protection ([9ecffb5](https://github.com/Freemindtronic/evicypher-webmail/commit/9ecffb51af0f81768fe8410a702663490b35a3f1))
+- add BITB protection ([a82bf50](https://github.com/Freemindtronic/evicypher-webmail/commit/a82bf50d9813c399a7499f2a8965b033fa81b28e))
+
+### Bug Fixes
+
+- editor selectors ([04526c5](https://github.com/Freemindtronic/evicypher-webmail/commit/04526c580a3d83a1beb54c28d48c605d9363d5e1))
+
 ### [1.13.4](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.13.3...v1.13.4) (2022-09-21)
 
 ### Bug Fixes
