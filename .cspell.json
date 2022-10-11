@@ -29,14 +29,14 @@
     "zeroconf",
     "iframes",
     "elipses",
-    "Parageaph"
+    "Parageaph",
+    "bitb"
   ],
   "ignoreWords": ["AAAAF", "dropzone", "loginusername", "tgico", "timeago"],
   "ignorePaths": [
     "CHANGELOG.md",
     "src/legacy-code/",
     "static/",
-
     "*.svg",
     "*.config.*",
     "*.json",

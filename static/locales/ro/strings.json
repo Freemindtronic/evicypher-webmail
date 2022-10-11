@@ -75,5 +75,10 @@
   "fetch": "Preluare",
   "successful-data-retrieval": "Datele au fost preluate cu succes",
   "get-a-label": "Obțineți o etichetă",
-  "close": "Închide"
+  "close": "Închide",
+  "warning-bitb-header": "Avertisment: Risc potențial de securitate în viitor",
+  "warning-bitb-url": "Un element iframe afișează conținut de la următoarea adresă URL: ",
+  "warning-bitb-message": "Asigurați-vă că aveți încredere în această adresă URL înainte de a introduce informații sensibile, cum ar fi parole, e-mailuri sau detalii ale cărții de credit.",
+  "warning-bitb-close": "ÎNCHIDE AVERTISMENT",
+  "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE"
 }
