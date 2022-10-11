@@ -75,5 +75,10 @@
   "fetch": "Bringen",
   "successful-data-retrieval": "Daten erfolgreich abgerufen",
   "get-a-label": "Holen Sie sich ein Etikett",
-  "close": "Schließen"
+  "close": "Schließen",
+  "warning-bitb-header": "Warnung: Potentielles Sicherheitsrisiko",
+  "warning-bitb-url": "Das iframe-Element zeigt Inhalte von der folgenden URL an: ",
+  "warning-bitb-message": "Stellen Sie sicher, dass Sie dieser URL vertrauen, bevor Sie vertrauliche Informationen wie Passwörter, E-Mails oder Kreditkartendaten eingeben.",
+  "warning-bitb-close": "Schließen Sie die Warnung",
+  "warning-bitb-trust": "ZEIGEN SIE NIEMALS WARNUNGEN AUF DIESER SEITE AN"
 }

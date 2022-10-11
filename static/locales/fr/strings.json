@@ -75,5 +75,10 @@
   "fetch": "Récupérer",
   "successful-data-retrieval": "Récupération des données réussie",
   "get-a-label": "Récuperer un label",
-  "close": "Fermer"
+  "close": "Fermer",
+  "warning-bitb-header": "Avertissement: risque de sécurité potentiel à venir",
+  "warning-bitb-url": "Un élément iframe affiche le contenu de l'URL suivante: ",
+  "warning-bitb-message": "Veuillez vous assurer que vous faites confiance à cette URL avant de saisir des informations sensibles telles que des mots de passe, des e-mails ou des détails de carte de crédit.",
+  "warning-bitb-close": "FERMER L'AVERTISSEMENT",
+  "warning-bitb-trust": "NE JAMAIS AFFICHER D'AVERTISSEMENTS SUR CE SITE"
 }

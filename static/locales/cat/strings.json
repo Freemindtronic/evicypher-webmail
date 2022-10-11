@@ -75,5 +75,10 @@
   "fetch": "Recuperar",
   "successful-data-retrieval": "Les dades s'han obtingut correctament",
   "get-a-label": "Recuperar una etiqueta",
-  "close": "Tancar"
+  "close": "Tancar",
+  "warning-bitb-header": "Avís: Rsic potencial de seguretat a la pàgina",
+  "warning-bitb-url": "Un element 'iframe' mostra contingut de l'URL següent: ",
+  "warning-bitb-message": "Assegureu-vos de confiar en aquest URL abans d'introduir qualsevol informació sensible, com ara contrasenyes, correus electrònics o dades de la targeta de crèdit.",
+  "warning-bitb-close": "TANCAR AVÍS",
+  "warning-bitb-trust": "NO TORNAR A MOSTRAR A AQUEST LLOC WEB"
 }

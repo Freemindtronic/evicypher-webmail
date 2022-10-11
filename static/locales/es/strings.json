@@ -75,5 +75,10 @@
   "fetch": "Importar",
   "successful-data-retrieval": "Datos recuperados correctamente",
   "get-a-label": "Obtener una etiqueta",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "warning-bitb-header": "Aviso: riesgo potencial de seguridad en la página",
+  "warning-bitb-url": "Un elemento 'iframe' muestra contenido de la siguiente URL: ",
+  "warning-bitb-message": "Asegúrese de confiar en esta URL antes de ingresar cualquier información confidencial, como contraseñas, correos electrónicos o detalles de la tarjeta de crédito.",
+  "warning-bitb-close": "CERRAR AVISO",
+  "warning-bitb-trust": "NO VOLVER A MOSTRAR EN ESTE SITIO WEB"
 }

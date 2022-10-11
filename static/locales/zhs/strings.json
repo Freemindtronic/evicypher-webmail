@@ -74,5 +74,10 @@
   "login-credential": "登录凭证",
   "fetch": "拿来",
   "successful-data-retrieval": "数据获取成功",
-  "get-a-label": "获取标签"
+  "get-a-label": "获取标签",
+  "warning-bitb-header": "潜在的安全风险",
+  "warning-bitb-url": "iframe 元素显示来自以下 URL 的内容： ",
+  "warning-bitb-message": "在输入任何敏感信息（例如密码、电子邮件或信用卡详细信息）之前，请确保您信任此 URL。",
+  "warning-bitb-close": "关闭警告",
+  "warning-bitb-trust": "切勿在本网站上显示警告"
 }
