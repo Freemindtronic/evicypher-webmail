@@ -16,6 +16,7 @@ import de from 'javascript-time-ago/locale/de'
 import en from 'javascript-time-ago/locale/en'
 import es from 'javascript-time-ago/locale/es'
 import fr from 'javascript-time-ago/locale/fr'
+import hi from 'javascript-time-ago/locale/hi'
 import it from 'javascript-time-ago/locale/it'
 import ja from 'javascript-time-ago/locale/ja'
 import pt from 'javascript-time-ago/locale/pt'
@@ -38,6 +39,7 @@ TimeAgo.addLocale(pt)
 TimeAgo.addLocale(ro)
 TimeAgo.addLocale(ru)
 TimeAgo.addLocale({ ...zhs, locale: 'zhs' })
+TimeAgo.addLocale({ ...hi, locale: 'hi' })
 
 // Some locale codes are overridden because not mapped correctly;
 // for instance, the correct locale code for Catalan is "cat" because
