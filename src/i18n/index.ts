@@ -132,6 +132,7 @@ const localeList = [
   'en',
   'es',
   'fr',
+  'hi',
   'it',
   'ja',
   'pt',
