@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.2](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.14.1...v1.14.2) (2022-11-03)
+
+### Features
+
+- add new language Hindi ([7f1d2a7](https://github.com/Freemindtronic/evicypher-webmail/commit/7f1d2a7d76ab0918ad1b8710290c7473851e0d16))
+- new language hindi ([d61f364](https://github.com/Freemindtronic/evicypher-webmail/commit/d61f36451849fd49edd81d56abb254e66a5127ea))
+
 ### [1.14.1](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.14.0...v1.14.1) (2022-10-11)
 
 ### Features
