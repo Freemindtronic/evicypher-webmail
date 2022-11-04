@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { _ } from 'svelte-i18n'
+// import { _ } from 'svelte-i18n'
 import { browser } from 'webextension-polyfill-ts'
 
 // Random Variable to Identify Script
@@ -94,13 +94,22 @@ function iframeFinder() {
 
             const warningAccept = document.createElement('button')
             const warningNever = document.createElement('button')
-            _.subscribe(($_) => {
-              warningHeading.textContent = $_('warning-bitb-header')
-              warningText.textContent = $_('warning-bitb-url')
-              warningText2.textContent = $_('warning-bitb-message')
-              warningAccept.textContent = $_('warning-bitb-close')
-              warningNever.textContent = $_('warning-bitb-trust')
-            })
+            // _.subscribe(($_) => {
+            //   warningHeading.textContent = $_('warning-bitb-header')
+            //   warningText.textContent = $_('warning-bitb-url')
+            //   warningText2.textContent = $_('warning-bitb-message')
+            //   warningAccept.textContent = $_('warning-bitb-close')
+            //   warningNever.textContent = $_('warning-bitb-trust')
+            // })
+
+            warningHeading.textContent =
+              'Warning: Potential Security Risk Ahead'
+            warningText.textContent =
+              'An iframe element is displaying content from the following URL: '
+            warningText2.textContent =
+              'Please ensure you trust this URL before entering any sensitive information such as passwords, emails, or credit card details.'
+            warningAccept.textContent = 'Close Warning'
+            warningNever.textContent = 'Never Show Warnings On This Site'
 
             warningNever.title = domain
 
