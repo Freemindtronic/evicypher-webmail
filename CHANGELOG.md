@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.14.3...v1.15.0) (2022-12-06)
+
+### Features
+
+- add new functionalities to bitb ([cfa46f1](https://github.com/Freemindtronic/evicypher-webmail/commit/cfa46f132b88461293b206db2f79c154464c0906))
+
+### Bug Fixes
+
+- wip fix bitb translation problem ([12290ab](https://github.com/Freemindtronic/evicypher-webmail/commit/12290abdd612cee92a27d45240e9bd90b1fe2fc8))
+
 ### [1.14.3](https://github.com/Freemindtronic/evicypher-webmail/compare/v1.14.2...v1.14.3) (2022-11-03)
 
 ### Bug Fixes
