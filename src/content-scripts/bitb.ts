@@ -7,8 +7,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-// import { _ } from 'svelte-i18n'
+import { get } from 'svelte/store'
 import { browser } from 'webextension-polyfill-ts'
+import { isBITBEnabled } from '~src/options'
 
 // Random Variable to Identify Script
 const r = (Math.random() + 1).toString(36).slice(2)
@@ -64,7 +65,7 @@ function iframeFinder() {
             warning.style.fontSize = '14px'
 
             warning.style.color = 'white'
-            warning.style.backgroundColor = 'rgb(206,53,40)'
+            warning.style.backgroundColor = '#092a35'
 
             warning.style.width = '100%'
             warning.style.padding = '20px'
@@ -82,6 +83,7 @@ function iframeFinder() {
             const warningHeading = document.createElement('h2')
             const warningText = document.createElement('p')
             const warningText2 = document.createElement('p')
+            const warningText3 = document.createElement('p')
 
             // Format URL (add elipses if too long)
             const warningURL =
@@ -94,13 +96,9 @@ function iframeFinder() {
 
             const warningAccept = document.createElement('button')
             const warningNever = document.createElement('button')
-            // _.subscribe(($_) => {
-            //   warningHeading.textContent = $_('warning-bitb-header')
-            //   warningText.textContent = $_('warning-bitb-url')
-            //   warningText2.textContent = $_('warning-bitb-message')
-            //   warningAccept.textContent = $_('warning-bitb-close')
-            //   warningNever.textContent = $_('warning-bitb-trust')
-            // })
+            const warningDestroy = document.createElement('button')
+            const warningClean = document.createElement('button')
+            const warningReadMore = document.createElement('button')
 
             warningHeading.textContent =
               'Warning: Potential Security Risk Ahead'
@@ -108,9 +106,13 @@ function iframeFinder() {
               'An iframe element is displaying content from the following URL: '
             warningText2.textContent =
               'Please ensure you trust this URL before entering any sensitive information such as passwords, emails, or credit card details.'
+            warningText3.textContent =
+              'There are attacks such as BITB (Browser in the browser) that use iframes to redirect you to fake pages.'
             warningAccept.textContent = 'Close Warning'
             warningNever.textContent = 'Never Show Warnings On This Site'
-
+            warningDestroy.textContent = 'Destroy'
+            warningClean.textContent = 'Clean Storage'
+            warningReadMore.textContent = 'Read More'
             warningNever.title = domain
 
             // Style Heading H2
@@ -128,7 +130,7 @@ function iframeFinder() {
             warningText.style.fontFamily = 'Arial, Helvetica, sans-serif'
             warningText.style.color = 'white'
 
-            warningText.style.fontSize = '14px'
+            warningText.style.fontSize = '15px'
             warningText.style.fontWeight = 'normal'
 
             warningText.style.margin = '0px'
@@ -156,12 +158,23 @@ function iframeFinder() {
             warningText2.style.fontFamily = 'Arial, Helvetica, sans-serif'
             warningText2.style.color = 'white'
 
-            warningText2.style.fontSize = '14px'
+            warningText2.style.fontSize = '15px'
             warningText2.style.fontWeight = 'normal'
 
             warningText2.style.margin = '0px'
             warningText2.style.marginBottom = '15px'
             warningText2.style.padding = '0px'
+
+            // Style Paragraph 3 p
+            warningText3.style.fontFamily = 'Arial, Helvetica, sans-serif'
+            warningText3.style.color = 'white'
+
+            warningText3.style.fontSize = '15px'
+            warningText3.style.fontWeight = 'normal'
+
+            warningText3.style.margin = '0px'
+            warningText3.style.marginBottom = '15px'
+            warningText3.style.padding = '0px'
 
             // Style Accept Button
             warningAccept.style.fontFamily = 'Arial, Helvetica, sans-serif'
@@ -198,14 +211,76 @@ function iframeFinder() {
             warningNever.style.display = 'inline-block'
             warningNever.style.cursor = 'pointer'
 
+            warningNever.style.marginRight = '10px'
+
+            // Style Destroy Button
+            warningDestroy.style.fontFamily = 'Arial, Helvetica, sans-serif'
+            warningDestroy.style.color = 'black'
+
+            warningDestroy.style.fontSize = '14px'
+            warningDestroy.style.fontWeight = 'normal'
+
+            warningDestroy.style.background = 'none'
+            warningDestroy.style.backgroundColor = 'white'
+            warningDestroy.style.border = 'none'
+            warningDestroy.style.borderRadius = '5px'
+
+            warningDestroy.style.marginTop = '2px'
+            warningDestroy.style.padding = '10px'
+            warningDestroy.style.display = 'inline-block'
+            warningDestroy.style.cursor = 'pointer'
+
+            warningDestroy.style.marginRight = '10px'
+
+            // Style Clean Button
+            warningClean.style.fontFamily = 'Arial, Helvetica, sans-serif'
+            warningClean.style.color = 'black'
+
+            warningClean.style.fontSize = '14px'
+            warningClean.style.fontWeight = 'normal'
+
+            warningClean.style.background = 'none'
+            warningClean.style.backgroundColor = 'white'
+            warningClean.style.border = 'none'
+            warningClean.style.borderRadius = '5px'
+
+            warningClean.style.marginTop = '2px'
+            warningClean.style.padding = '10px'
+            warningClean.style.display = 'inline-block'
+            warningClean.style.cursor = 'pointer'
+
+            warningClean.style.marginRight = '10px'
+
+            // Style Read More Button
+            warningReadMore.style.fontFamily = 'Arial, Helvetica, sans-serif'
+            warningReadMore.style.color = 'white'
+
+            warningReadMore.style.fontSize = '14px'
+            warningReadMore.style.fontWeight = 'normal'
+
+            warningReadMore.style.background = 'none'
+            warningReadMore.style.border = 'solid 1px white'
+            warningReadMore.style.borderRadius = '5px'
+
+            warningReadMore.style.marginTop = '2px'
+            warningReadMore.style.padding = '10px'
+            warningReadMore.style.display = 'inline-block'
+            warningReadMore.style.cursor = 'pointer'
+
+            warningReadMore.style.marginRight = '10px'
+
             // Append Heading and Paragraph to warning element
             warning.append(warningHeading)
             warning.append(warningText)
             warning.append(urlElement)
             warning.append(warningText2)
+            warning.append(warningText3)
 
             warning.append(warningAccept)
             warning.append(warningNever)
+            warning.append(warningDestroy)
+            warning.append(warningClean)
+            warning.append(warningReadMore)
 
             // Append warning to document
             document.body.append(warning)
@@ -262,6 +337,29 @@ function iframeFinder() {
                 browser.storage.local.set({ domainAllow: domainAllowArray })
               }
             })
+
+            // Event listener for Destroy Warning button
+            warningDestroy.addEventListener('click', (e) => {
+              e.preventDefault()
+              frame.remove()
+              warning.remove()
+            })
+
+            // Event listener for Clean Warning button
+            warningClean.addEventListener('click', (e) => {
+              e.preventDefault()
+              browser.storage.local.clear()
+              warning.remove()
+            })
+
+            // Event listener for Read More Warning button
+            warningReadMore.addEventListener('click', (e) => {
+              e.preventDefault()
+              window.open(
+                'https://freemindtronic.com/bitb-browser-in-the-browser-evicypher-security-extension-for-web-browser',
+                '_blank' // <- This is what makes it open in a new window.
+              )
+            })
           }
         } // End of forEach frame
       }) // End of srcAllow
@@ -279,7 +377,7 @@ export { iframeFinder }
 MutationObserver = window.MutationObserver ?? window.MutationObserver
 
 const observer = new MutationObserver((_mutations, _observer) => {
-  iframeFinder()
+  if (get(isBITBEnabled)) iframeFinder()
 })
 
 // Define what element should be observed by the observer

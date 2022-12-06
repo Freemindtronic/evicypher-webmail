@@ -14,3 +14,9 @@ export const isOpenpgpEnabled: BrowserStore<boolean> = new BrowserStore(
   'openpgpEnabled',
   writable(false)
 )
+
+/** Store either to use BITB or not */
+export const isBITBEnabled: BrowserStore<boolean> = new BrowserStore(
+  'bitbEnabled',
+  writable(true)
+)
