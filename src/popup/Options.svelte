@@ -1,7 +1,7 @@
 <script lang="ts">
   import Switch from '$/components/Switch.svelte'
   import { _ } from '$/i18n'
-  import { isOpenpgpEnabled } from '$/options'
+  import { isOpenpgpEnabled, isBITBEnabled } from '$/options'
 </script>
 
 <h2>{$_('parameters')}</h2>
@@ -12,6 +12,14 @@
     <Switch bind:checked={$isOpenpgpEnabled} />
   </div>
   <div class="flex-item" id="OpenPGP">OpenPGP</div>
+</div>
+
+<div id="flex-container">
+  <div class="flex-item" id="Enable">BITB</div>
+  <div class="flex-switch">
+    <Switch bind:checked={$isBITBEnabled} />
+  </div>
+  <div class="flex-item" id="Disable" />
 </div>
 
 <style lang="scss">
@@ -31,6 +39,12 @@
     text-align: end;
   }
   #OpenPGP {
+    text-align: start;
+  }
+  #Enable {
+    text-align: end;
+  }
+  #Disable {
     text-align: start;
   }
 </style>
