@@ -80,5 +80,7 @@
   "warning-bitb-url": "Un element iframe afișează conținut de la următoarea adresă URL: ",
   "warning-bitb-message": "Asigurați-vă că aveți încredere în această adresă URL înainte de a introduce informații sensibile, cum ar fi parole, e-mailuri sau detalii ale cărții de credit.",
   "warning-bitb-close": "ÎNCHIDE AVERTISMENT",
-  "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE"
+  "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE",
+  "password-pwned": "Această parolă a apărut anterior într-o încălcare a datelor",
+  "password-no-pwned": "Această parolă nu a apărut anterior într-o încălcare a datelor"
 }

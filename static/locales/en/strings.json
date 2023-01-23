@@ -80,5 +80,7 @@
   "warning-bitb-url": "An iframe element is displaying content from the following URL: ",
   "warning-bitb-message": "Please ensure you trust this URL before entering any sensitive information such as passwords, emails, or credit card details.",
   "warning-bitb-close": "Close Warning",
-  "warning-bitb-trust": "Never Show Warnings On This Site"
+  "warning-bitb-trust": "Never Show Warnings On This Site",
+  "password-pwned": "This password has previously appeared in a data breach",
+  "password-no-pwned": "This password hasn't previously appeared in a data breach"
 }
