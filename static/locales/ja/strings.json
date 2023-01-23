@@ -80,5 +80,7 @@
   "warning-bitb-url": "iframe 要素は、次の URL のコンテンツを表示します。",
   "warning-bitb-message": "パスワード、電子メール、クレジット カードの詳細などの機密情報を入力する前に、この URL が信頼できることを確認してください。",
   "warning-bitb-close": "警告を閉じる",
-  "warning-bitb-trust": "このサイトで警告を表示しないでください"
+  "warning-bitb-trust": "このサイトで警告を表示しないでください",
+  "password-pwned": "このパスワードは、以前にデータ侵害で表示されました",
+  "password-no-pwned": "このパスワードは、以前にデータ侵害に現れたことはありません"
 }

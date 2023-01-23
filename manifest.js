@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable camelcase */
 import { readFileSync, writeFileSync } from 'fs'
@@ -33,7 +33,11 @@ export const manifest = {
   icons: {
     48: '~/assets/favicon.png',
   },
-  permissions: ['storage', 'nativeMessaging'],
+  permissions: [
+    'storage',
+    'nativeMessaging',
+    'https://api.pwnedpasswords.com/',
+  ],
   background: {
     scripts: ['~/src/background/main.ts'],
     persistent: true,

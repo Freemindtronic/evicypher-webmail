@@ -80,5 +80,7 @@
   "warning-bitb-url": "Un élément iframe affiche le contenu de l'URL suivante: ",
   "warning-bitb-message": "Veuillez vous assurer que vous faites confiance à cette URL avant de saisir des informations sensibles telles que des mots de passe, des e-mails ou des détails de carte de crédit.",
   "warning-bitb-close": "FERMER L'AVERTISSEMENT",
-  "warning-bitb-trust": "NE JAMAIS AFFICHER D'AVERTISSEMENTS SUR CE SITE"
+  "warning-bitb-trust": "NE JAMAIS AFFICHER D'AVERTISSEMENTS SUR CE SITE",
+  "password-pwned": "Ce mot de passe est déjà apparu dans une violation de données",
+  "password-no-pwned": "Ce mot de passe n'est jamais apparu dans une violation de données"
 }

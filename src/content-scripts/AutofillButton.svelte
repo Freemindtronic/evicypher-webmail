@@ -5,8 +5,8 @@
   import TaskTippy from './TaskTippy.svelte'
 
   export let element: HTMLElement
-
   export let enable: Writable<boolean>
+  export let isSafe = false
 
   /** Tooltip content. */
   export let report: Report | undefined = undefined
@@ -27,7 +27,7 @@
     {tooltipArrow}
     tooltipPlacement="top-end"
     idleTooltip={$_('click-to-autofill')}
-    doneTooltip={$_('autofill-successful')}
+    doneTooltip={isSafe ? $_('password-no-pwned') : $_('password-pwned')}
     on:abort
   />
 {/if}

@@ -21,6 +21,8 @@ import type { Report } from '~src/report'
 import { writable } from 'svelte/store'
 import { ForegroundTask, startBackgroundTask, Task } from '~src/task'
 import AutofillButton from './AutofillButton.svelte'
+import { checkPassword, setImage } from './pwned-pasword'
+export let isSafe: boolean | undefined = false
 
 /** Keeps track of which password fields have been processed. */
 const processed = new Set()
@@ -227,20 +229,26 @@ function addButton(input: HTMLInputElement) {
     })
 
     /** List of all login field detected */
-    const loginFields: NodeListOf<HTMLInputElement> =
-      document.querySelectorAll('[data-autofill-prototype-input=login]') ??
-      undefined
+    const loginFields: NodeListOf<HTMLInputElement> = document.querySelectorAll(
+      '[data-autofill-prototype-input=login]'
+    )
 
     /** List of all password field detected */
     const passwordFields: NodeListOf<HTMLInputElement> =
-      document.querySelectorAll('[data-autofill-prototype-input=password]') ??
-      undefined
+      document.querySelectorAll('[data-autofill-prototype-input=password]')
 
-    for (const field of loginFields) fillField(field, credential.login)
+    for (const fieldLogin of loginFields)
+      fillField(fieldLogin, credential.login)
 
     for (const field of passwordFields) fillField(field, credential.password)
 
-    // Reset tooltip
+    isSafe = await checkPassword(credential.password)
+
+    const allFields = [...loginFields, ...passwordFields]
+
+    for (const element of allFields) setImage(element, icon, isSafe)
+
+    tooltip.$set({ isSafe })
     tooltip.$set({ promise: Promise.resolve() })
   }
 
