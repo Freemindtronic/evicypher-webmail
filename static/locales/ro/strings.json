@@ -82,5 +82,8 @@
   "warning-bitb-close": "ÎNCHIDE AVERTISMENT",
   "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE",
   "password-pwned": "Această parolă a apărut anterior într-o încălcare a datelor",
-  "password-no-pwned": "Această parolă nu a apărut anterior într-o încălcare a datelor"
+  "password-no-pwned": "Această parolă nu a apărut anterior într-o încălcare a datelor",
+  "password-pwned-title": "Verificați dacă parola dvs. a apărut anterior într-o încălcare a datelor",
+  "password-not-inserted": "Parola nu a fost introdusă",
+  "verify": "Verifica"
 }

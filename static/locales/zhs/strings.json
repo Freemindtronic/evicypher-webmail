@@ -81,5 +81,8 @@
   "warning-bitb-close": "关闭警告",
   "warning-bitb-trust": "切勿在本网站上显示警告",
   "password-pwned": "此密码之前曾出现在数据泄露事件中",
-  "password-no-pwned": "此密码之前未出现在数据泄露事件中"
+  "password-no-pwned": "此密码之前未出现在数据泄露事件中",
+  "password-pwned-title": "检查您的密码是否曾出现在数据泄露事件中",
+  "password-not-inserted": "未输入密码",
+  "verify": "核实"
 }

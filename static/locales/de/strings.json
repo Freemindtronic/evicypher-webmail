@@ -82,5 +82,8 @@
   "warning-bitb-close": "Schließen Sie die Warnung",
   "warning-bitb-trust": "ZEIGEN SIE NIEMALS WARNUNGEN AUF DIESER SEITE AN",
   "password-pwned": "Dieses Passwort ist zuvor bei einer Datenschutzverletzung aufgetaucht",
-  "password-no-pwned": "Dieses Passwort ist noch nie bei einer Datenschutzverletzung aufgetaucht"
+  "password-no-pwned": "Dieses Passwort ist noch nie bei einer Datenschutzverletzung aufgetaucht",
+  "password-pwned-title": "Überprüfen Sie, ob Ihr Passwort bereits bei einer Datenpanne aufgetaucht ist",
+  "password-not-inserted": "Passwort nicht eingefügt",
+  "verify": "Verifizieren"
 }

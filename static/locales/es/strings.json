@@ -82,5 +82,8 @@
   "warning-bitb-close": "CERRAR AVISO",
   "warning-bitb-trust": "NO VOLVER A MOSTRAR EN ESTE SITIO WEB",
   "password-pwned": "Esta contraseña apareció anteriormente en una violación de datos",
-  "password-no-pwned": "Esta contraseña no apareció anteriormente en una violación de datos"
+  "password-no-pwned": "Esta contraseña no apareció anteriormente en una violación de datos",
+  "password-pwned-title": "Compruebe si su contraseña ha aparecido anteriormente en una violación de datos",
+  "password-not-inserted": "Contraseña no insertada",
+  "verify": "Verificar"
 }

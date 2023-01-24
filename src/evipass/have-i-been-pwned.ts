@@ -7,7 +7,7 @@ import {
   corruptedIconFocus,
   noCorruptedIcon,
   noCorruptedIconFocus,
-} from './assets/base64/autofill-icons'
+} from '../content-scripts/assets/base64/autofill-icons'
 
 /**
  * The images object is an object literal that has two properties: safe and

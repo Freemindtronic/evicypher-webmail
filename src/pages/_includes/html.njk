@@ -12,7 +12,7 @@
   <body>
     {{ content | safe }}
     {% for script in scripts %}
-      <script src="{{ scripts }}"></script>
+      <script type="module" src="{{ scripts }}"></script>
     {% endfor %}
   </body>
 </html>

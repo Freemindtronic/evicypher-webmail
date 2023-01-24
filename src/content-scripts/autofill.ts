@@ -20,8 +20,8 @@ import type { login as loginTask } from '$/background/tasks/login'
 import type { Report } from '~src/report'
 import { writable } from 'svelte/store'
 import { ForegroundTask, startBackgroundTask, Task } from '~src/task'
+import { checkPassword, setImage } from '../evipass/have-i-been-pwned'
 import AutofillButton from './AutofillButton.svelte'
-import { checkPassword, setImage } from './pwned-pasword'
 export let isSafe: boolean | undefined = false
 
 /** Keeps track of which password fields have been processed. */

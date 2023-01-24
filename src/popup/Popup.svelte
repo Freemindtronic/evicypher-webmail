@@ -14,12 +14,32 @@
 
   let tab = 'phones'
 
-  $: if (tab === 'evifile') {
-    window.open(browser.runtime.getURL('./evifile.html'))
-    window.close()
-  } else if (tab === 'get-a-label') {
-    window.open(browser.runtime.getURL('./evilabel.html'))
-    window.close()
+  $: switch (tab) {
+    case 'evifile': {
+      window.open(browser.runtime.getURL('./evifile.html'))
+      window.close()
+
+      break
+    }
+
+    case 'get-a-label': {
+      window.open(browser.runtime.getURL('./evilabel.html'))
+      window.close()
+
+      break
+    }
+
+    case 'EviPass': {
+      window.open(browser.runtime.getURL('./evipass.html'))
+      window.close()
+
+      break
+    }
+
+    default: {
+      console.log('no match case')
+      break
+    }
   }
 </script>
 

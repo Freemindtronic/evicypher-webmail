@@ -7,6 +7,7 @@
     { class: 'phones', icon: 'fa-mobile-button' },
     { class: 'get-a-label', icon: 'fa-note-sticky' },
     { class: 'evifile', icon: 'fa-file-alt' },
+    { class: 'EviPass', icon: 'fa-user-lock' },
     { class: 'parameters', icon: 'fa-cog' },
   ]
 
@@ -70,7 +71,7 @@
 
   .col {
     float: left;
-    width: 25%;
+    width: 20%;
     text-align: center;
     border-right: 1px solid white;
     border-left: 1px solid white;

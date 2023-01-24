@@ -82,5 +82,8 @@
   "warning-bitb-close": "警告を閉じる",
   "warning-bitb-trust": "このサイトで警告を表示しないでください",
   "password-pwned": "このパスワードは、以前にデータ侵害で表示されました",
-  "password-no-pwned": "このパスワードは、以前にデータ侵害に現れたことはありません"
+  "password-no-pwned": "このパスワードは、以前にデータ侵害に現れたことはありません",
+  "password-pwned-title": "パスワードが以前にデータ侵害に登場したかどうかを確認する",
+  "password-not-inserted": "パスワードが挿入されていません",
+  "verify": "確認"
 }

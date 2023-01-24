@@ -82,5 +82,8 @@
   "warning-bitb-close": "TANCAR AVÍS",
   "warning-bitb-trust": "NO TORNAR A MOSTRAR A AQUEST LLOC WEB",
   "password-no-pwned": "Aquesta contrasenya no ha aparegut anteriorment en una violació de dades",
-  "password-pwned": "Aquesta contrasenya ha aparegut anteriorment en una violació de dades"
+  "password-pwned": "Aquesta contrasenya ha aparegut anteriorment en una violació de dades",
+  "password-pwned-title": "Comproveu si la vostra contrasenya ha aparegut anteriorment en una violació de dades",
+  "password-not-inserted": "La contrasenya no s'ha inserit",
+  "verify": "Verificar"
 }

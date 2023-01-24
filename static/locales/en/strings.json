@@ -82,5 +82,8 @@
   "warning-bitb-close": "Close Warning",
   "warning-bitb-trust": "Never Show Warnings On This Site",
   "password-pwned": "This password has previously appeared in a data breach",
-  "password-no-pwned": "This password hasn't previously appeared in a data breach"
+  "password-no-pwned": "This password hasn't previously appeared in a data breach",
+  "password-not-inserted": "Password not inserted",
+  "password-pwned-title": "Check if your password has previously appeared in a data breach",
+  "verify": "Verify"
 }
