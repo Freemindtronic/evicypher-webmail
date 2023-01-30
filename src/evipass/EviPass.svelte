@@ -1,24 +1,28 @@
 <script lang="ts">
   import Brand from '$/components/Brand.svelte'
   import { isLoading, _ } from '$/i18n'
+  import PasswordGenerator from './PasswordGenerator.svelte'
   import PwnedPassword from './PwnedPassword.svelte'
 
   /** State of the current component */
   enum State {
     PWNED,
+    GENERATOR,
   }
 
   /** Store current state */
   let state = State.PWNED
 
-  const labelList = [{ icon: 'fa-user-lock', name: 'pwned' }]
+  const labelList = [
+    { icon: 'fa-user-check', name: 'pwned' },
+    { icon: 'fa-key', name: 'generator' },
+  ]
 
   let rowElement: HTMLElement
 
-  function handleClick(id: string) {
-    return () => {
-      if (id === 'pwned') state = State.PWNED
-    }
+  const handleClick = (id: string) => () => {
+    if (id === 'pwned') state = State.PWNED
+    else if (id === 'generator') state = State.GENERATOR
   }
 
   $: if (!$isLoading) document.documentElement.setAttribute('dir', $_('ltr'))
@@ -42,6 +46,8 @@
         <div class="label content">
           {#if state === State.PWNED}
             <PwnedPassword />
+          {/if}{#if state === State.GENERATOR}
+            <PasswordGenerator />
           {/if}
         </div>
       </div>
@@ -81,7 +87,7 @@
     display: flex;
     flex-flow: column;
     width: $box-width;
-    height: $box-height;
+    height: 60%;
     background-color: $background-color;
     border: 2px solid $background-color;
   }

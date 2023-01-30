@@ -20,7 +20,7 @@
 </script>
 
 {#if !$isLoading}
-  <h3 style="margin: 2%;">{$_('password-pwned-title')}</h3>
+  <h3 class="header">{$_('password-pwned-title')}</h3>
   <div class="flex" bind:this={divElement}>
     <label style="margin: 3%;" for="password">{$_('password')}:</label>
     <input class="input" type="password" id="password" bind:value={password} />
@@ -48,5 +48,10 @@
   }
   .danger {
     color: red;
+  }
+
+  .header {
+    margin: 2%;
+    border-bottom: 2px solid #f0f2f5;
   }
 </style>

@@ -85,5 +85,12 @@
   "password-pwned": "Aquesta contrasenya ha aparegut anteriorment en una violació de dades",
   "password-pwned-title": "Comproveu si la vostra contrasenya ha aparegut anteriorment en una violació de dades",
   "password-not-inserted": "La contrasenya no s'ha inserit",
-  "verify": "Verificar"
+  "verify": "Verificar",
+  "copied": "Copiat",
+  "generate-password": "Genera la teva contrasenya personalitzada",
+  "length": "Llargada:",
+  "upper-case": "Majúscules:",
+  "numbers": "Números:",
+  "lower-case": "Minúscula:",
+  "special-characters": "Caràcters especials:"
 }

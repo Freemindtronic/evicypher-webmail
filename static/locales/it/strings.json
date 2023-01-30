@@ -85,5 +85,12 @@
   "password-no-pwned": "Questa password non è mai apparsa in precedenza in una violazione dei dati",
   "password-pwned-title": "Controlla se la tua password è già apparsa in una violazione dei dati",
   "password-not-inserted": "Password non inserita",
-  "verify": "Verificare"
+  "verify": "Verificare",
+  "copied": "Copiato",
+  "generate-password": "Genera la tua password personalizzata",
+  "length": "Lunghezza:",
+  "upper-case": "Maiuscolo",
+  "numbers": "Numeri:",
+  "lower-case": "Minuscolo:",
+  "special-characters": "Personaggi speciali:"
 }

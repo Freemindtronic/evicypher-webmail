@@ -85,5 +85,12 @@
   "password-no-pwned": "لم تظهر كلمة المرور هذه من قبل في خرق البيانات",
   "password-pwned-title": "تحقق مما إذا كانت كلمة مرورك قد ظهرت مسبقًا في عملية اختراق للبيانات",
   "password-not-inserted": "لم يتم إدخال كلمة المرور",
-  "verify": "تحقق"
+  "verify": "تحقق",
+  "copied": "نسخ",
+  "generate-password": "أنشئ كلمة مرورك الشخصية",
+  "length": "طول:",
+  "upper-case": "الحروف الكبيرة:",
+  "numbers": "أعداد:",
+  "lower-case": ":أحرف صغيرة",
+  "special-characters": "الشخصيات الخاصة:"
 }

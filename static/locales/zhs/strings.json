@@ -84,5 +84,12 @@
   "password-no-pwned": "此密码之前未出现在数据泄露事件中",
   "password-pwned-title": "检查您的密码是否曾出现在数据泄露事件中",
   "password-not-inserted": "未输入密码",
-  "verify": "核实"
+  "verify": "核实",
+  "copied": "Copied",
+  "generate-password": "生成您的个性化密码",
+  "length": "长度:",
+  "upper-case": "大写字母：",
+  "numbers": "数字：",
+  "lower-case": "小写：",
+  "special-characters": "特殊的角色"
 }

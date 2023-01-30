@@ -85,5 +85,12 @@
   "password-no-pwned": "This password hasn't previously appeared in a data breach",
   "password-not-inserted": "Password not inserted",
   "password-pwned-title": "Check if your password has previously appeared in a data breach",
-  "verify": "Verify"
+  "verify": "Verify",
+  "length": "Length:",
+  "upper-case": "Upper case:",
+  "numbers": "Numbers:",
+  "lower-case": "Lower case:",
+  "special-characters": "Special characters:",
+  "copied": "Copied",
+  "generate-password": "Generate your personalized password"
 }

@@ -31,7 +31,9 @@
     "iframes",
     "elipses",
     "Parageaph",
-    "bitb"
+    "bitb",
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "abcdefghijklmnopqrstuvwxyz"
   ],
   "ignoreWords": ["AAAAF", "dropzone", "loginusername", "tgico", "timeago"],
   "ignorePaths": [

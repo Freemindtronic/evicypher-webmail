@@ -85,5 +85,7 @@
   "password-no-pwned": "Această parolă nu a apărut anterior într-o încălcare a datelor",
   "password-pwned-title": "Verificați dacă parola dvs. a apărut anterior într-o încălcare a datelor",
   "password-not-inserted": "Parola nu a fost introdusă",
-  "verify": "Verifica"
+  "verify": "Verifica",
+  "copied": "Copiat",
+  "generate-password": "Generați-vă parola personalizată"
 }

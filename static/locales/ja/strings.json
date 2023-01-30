@@ -85,5 +85,12 @@
   "password-no-pwned": "このパスワードは、以前にデータ侵害に現れたことはありません",
   "password-pwned-title": "パスワードが以前にデータ侵害に登場したかどうかを確認する",
   "password-not-inserted": "パスワードが挿入されていません",
-  "verify": "確認"
+  "verify": "確認",
+  "copied": "コピーしました",
+  "generate-password": "パーソナライズされたパスワードを生成する",
+  "length": "長さ：",
+  "upper-case": "大文字",
+  "numbers": "数字:",
+  "lower-case": "小文字：",
+  "special-characters": "特殊文字:"
 }

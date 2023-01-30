@@ -85,5 +85,12 @@
   "password-no-pwned": "Ce mot de passe n'est jamais apparu dans une violation de données",
   "password-pwned-title": "Vérifiez si votre mot de passe est déjà apparu dans une violation de données",
   "password-not-inserted": "Mot de passe non inséré",
-  "verify": "Vérifier"
+  "verify": "Vérifier",
+  "upper-case": "Majuscules:",
+  "numbers": "Numéros:",
+  "lower-case": "Minuscule:",
+  "special-characters": "Caractères spéciaux:",
+  "copied": "Copié",
+  "generate-password": "Générez votre mot de passe personnalisé",
+  "length": "Longueur:"
 }
