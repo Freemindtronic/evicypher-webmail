@@ -80,5 +80,15 @@
   "warning-bitb-url": "Un element iframe afișează conținut de la următoarea adresă URL: ",
   "warning-bitb-message": "Asigurați-vă că aveți încredere în această adresă URL înainte de a introduce informații sensibile, cum ar fi parole, e-mailuri sau detalii ale cărții de credit.",
   "warning-bitb-close": "ÎNCHIDE AVERTISMENT",
-  "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE"
+  "warning-bitb-trust": "NU AFIȘAȚI NICIODATĂ AVERTIZĂRI PE ACEST SITE",
+  "bitb-heading": "Avertisment: Risc potențial de securitate",
+  "bitb-warning": "Un element iframe afișează conținut de la următoarea adresă URL:",
+  "bitb-advice": "Asigurați-vă că aveți încredere în această adresă URL înainte de a introduce informații sensibile, cum ar fi parole, e-mailuri sau detalii ale cărții de credit.",
+  "bitb-info": "Există atacuri precum BITB (Browser in the browser) care folosesc iframe pentru a vă redirecționa către pagini false.",
+  "bitb-close-warning": "Închideți avertismentul",
+  "bitb-never-show": "Nu afișa niciodată avertismente pe acest site",
+  "bitb-destroy": "Distruge",
+  "bitb-destroy-all": "Distruge totul",
+  "bitb-clean-storage": "Goliți depozitul",
+  "bitb-read-more": "Citeşte mai mult"
 }

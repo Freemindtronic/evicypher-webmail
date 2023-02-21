@@ -80,5 +80,15 @@
   "warning-bitb-url": "iframe 要素は、次の URL のコンテンツを表示します。",
   "warning-bitb-message": "パスワード、電子メール、クレジット カードの詳細などの機密情報を入力する前に、この URL が信頼できることを確認してください。",
   "warning-bitb-close": "警告を閉じる",
-  "warning-bitb-trust": "このサイトで警告を表示しないでください"
+  "warning-bitb-trust": "このサイトで警告を表示しないでください",
+  "bitb-heading": "警告: 潜在的なセキュリティ リスク",
+  "bitb-warning": "iframe 要素は、次の URL のコンテンツを表示しています:",
+  "bitb-advice": "パスワード、電子メール、クレジット カードの詳細などの機密情報を入力する前に、この URL が信頼できることを確認してください。",
+  "bitb-info": "iframe を使用して偽のページにリダイレクトする BITB (ブラウザ内のブラウザ) などの攻撃があります。",
+  "bitb-close-warning": "警告を閉じる",
+  "bitb-never-show": "このサイトで警告を表示しない",
+  "bitb-destroy": "破壊",
+  "bitb-destroy-all": "すべてを破壊する",
+  "bitb-clean-storage": "ストレージを空にする",
+  "bitb-read-more": "続きを読む"
 }

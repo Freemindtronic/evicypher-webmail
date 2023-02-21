@@ -80,5 +80,15 @@
   "warning-bitb-url": "Das iframe-Element zeigt Inhalte von der folgenden URL an: ",
   "warning-bitb-message": "Stellen Sie sicher, dass Sie dieser URL vertrauen, bevor Sie vertrauliche Informationen wie Passwörter, E-Mails oder Kreditkartendaten eingeben.",
   "warning-bitb-close": "Schließen Sie die Warnung",
-  "warning-bitb-trust": "ZEIGEN SIE NIEMALS WARNUNGEN AUF DIESER SEITE AN"
+  "warning-bitb-trust": "ZEIGEN SIE NIEMALS WARNUNGEN AUF DIESER SEITE AN",
+  "bitb-heading": "Warnung: Potentielles Sicherheitsrisiko",
+  "bitb-warning": "Ein Iframe-Element zeigt Inhalte von der folgenden URL an:",
+  "bitb-advice": "Bitte vergewissern Sie sich, dass Sie dieser URL vertrauen, bevor Sie vertrauliche Informationen wie Passwörter, E-Mails oder Kreditkartendaten eingeben.",
+  "bitb-info": "Es gibt Angriffe wie BITB (Browser im Browser), die Iframes verwenden, um Sie auf gefälschte Seiten umzuleiten.",
+  "bitb-close-warning": "Schließen Sie die Warnung",
+  "bitb-never-show": "Niemals Warnungen auf dieser Seite anzeigen",
+  "bitb-destroy": "Zerstören",
+  "bitb-destroy-all": "Zerstöre alle",
+  "bitb-clean-storage": "Leeren Sie den Speicher",
+  "bitb-read-more": "Weiterlesen"
 }

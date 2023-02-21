@@ -80,5 +80,15 @@
   "warning-bitb-url": "Un element 'iframe' mostra contingut de l'URL següent: ",
   "warning-bitb-message": "Assegureu-vos de confiar en aquest URL abans d'introduir qualsevol informació sensible, com ara contrasenyes, correus electrònics o dades de la targeta de crèdit.",
   "warning-bitb-close": "TANCAR AVÍS",
-  "warning-bitb-trust": "NO TORNAR A MOSTRAR A AQUEST LLOC WEB"
+  "warning-bitb-trust": "NO TORNAR A MOSTRAR A AQUEST LLOC WEB",
+  "bitb-heading": "Avís: Risc potencial de seguretat",
+  "bitb-warning": "Un element iframe mostra contingut de l'URL següent:",
+  "bitb-advice": "Assegureu-vos de confiar en aquest URL abans d'introduir qualsevol informació sensible, com ara contrasenyes, correus electrònics o dades de la targeta de crèdit.",
+  "bitb-info": "Hi ha atacs com el BITB (Navegador al navegador) que utilitzen iframes per redirigir-te a pàgines falses.",
+  "bitb-close-warning": "Tanqueu l'avís",
+  "bitb-never-show": "No mostris mai avisos en aquest lloc",
+  "bitb-destroy": "Destrueix",
+  "bitb-destroy-all": "Destrueix-ho tot",
+  "bitb-clean-storage": "Buida l'emmagatzematge",
+  "bitb-read-more": "Llegeix més"
 }

@@ -80,5 +80,15 @@
   "warning-bitb-url": "Um elemento iframe está a exibir conteúdo a partir do seguinte URL: ",
   "warning-bitb-message": "Certifique-se de que confia neste URL antes de introduzir qualquer informação sensível, como senhas, e-mails, ou detalhes de cartões de crédito.",
   "warning-bitb-close": "Fechar Aviso",
-  "warning-bitb-trust": "Nunca mostrar avisos neste site"
+  "warning-bitb-trust": "Nunca mostrar avisos neste site",
+  "bitb-heading": "Aviso: risco potencial de segurança",
+  "bitb-warning": "Um elemento iframe está exibindo conteúdo do seguinte URL:",
+  "bitb-advice": "Certifique-se de confiar neste URL antes de inserir informações confidenciais, como senhas, e-mails ou detalhes de cartão de crédito.",
+  "bitb-info": "Existem ataques como o BITB (Browser in the browser) que usam iframes para te redirecionar para páginas falsas.",
+  "bitb-close-warning": "Fechar aviso",
+  "bitb-never-show": "Nunca mostrar avisos neste site",
+  "bitb-destroy": "Destruir",
+  "bitb-destroy-all": "Destruir tudo",
+  "bitb-clean-storage": "Esvazie o armazenamento",
+  "bitb-read-more": "Consulte Mais informação"
 }
