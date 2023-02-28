@@ -1,23 +1,25 @@
 <script lang="ts">
   import Brand from '$/components/Brand.svelte'
   import { isLoading, _ } from '$/i18n'
+  import PasswordGenerator from './PasswordGenerator.svelte'
   import PwnedPassword from './PwnedPassword.svelte'
-
   /** State of the current component */
   enum State {
     PWNED,
+    PASSGENERATOR,
   }
 
   /** Store current state */
   let state = State.PWNED
 
   const labelList = [{ icon: 'fa-user-lock', name: 'pwned' }]
+  const passGen = [{ icon: 'fa-shuffle', name: 'pass' }]
 
   let rowElement: HTMLElement
 
   function handleClick(id: string) {
     return () => {
-      if (id === 'pwned') state = State.PWNED
+      state = id === 'pwned' ? State.PWNED : State.PASSGENERATOR
     }
   }
 
@@ -38,10 +40,17 @@
               ><i class="fa-solid {label.icon}" /></span
             >
           {/each}
+          {#each passGen as label}
+            <span class="icon {label.name}" on:click={handleClick(label.name)}
+              ><i class="fa-solid {label.icon}" /></span
+            >
+          {/each}
         </div>
         <div class="label content">
           {#if state === State.PWNED}
             <PwnedPassword />
+          {:else if state === State.PASSGENERATOR}
+            <PasswordGenerator />
           {/if}
         </div>
       </div>

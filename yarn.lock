@@ -6093,6 +6093,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/zxcvbn@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "@types/zxcvbn@npm:4.4.1"
+  checksum: 71c484f1aa049921997ee6471604725a7fb00b9899e7753c6e94275a2b135e1088ed3f2f2ba77d189715d1ec61bed65b06899ba03e061b07ffc32c2a9296501b
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:^5.7.0":
   version: 5.7.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.7.0"
@@ -11761,6 +11768,7 @@ __metadata:
     "@types/node": ^16.11.14
     "@types/qrcode": ^1.4.2
     "@types/rollup-plugin-svelte-svg": ^1.0.0
+    "@types/zxcvbn": ^4.4.1
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.7.0
     axlsign: "git+ssh://git@github.com:Freemindtronic/lib_axlsign"
@@ -11792,11 +11800,13 @@ __metadata:
     lint-staged: ^11.2.6
     openpgp: ^5.0.1
     parcel: ^2.0.1
+    password-strength: ^0.0.1
     playwright: ^1.17.1
     postcss: ^8.4.5
     prettier: ^2.5.1
     prettier-plugin-jsdoc: ^0.3.30
     prettier-plugin-svelte: ^2.5.1
+    pw-strength: ^1.0.3
     qrcode: ^1.5.0
     rollup: ^2.61.1
     rollup-plugin-css-only: ^3.1.0
@@ -11819,6 +11829,7 @@ __metadata:
     typedoc: ^0.22.10
     typescript: ^4.5.4
     webextension-polyfill-ts: ^0.26.0
+    zxcvbn: ^4.4.2
   languageName: unknown
   linkType: soft
 
@@ -18291,6 +18302,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"password-strength@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "password-strength@npm:0.0.1"
+  checksum: 8af88e9b86ebfff6a4a28a36c982cb6bcc0de401d7532a813ebac7794abb6e258442c5ebca22a8557470533f487f341413270f7075c3a0906f603f6d96bf4556
+  languageName: node
+  linkType: hard
+
 "path-browserify@npm:0.0.1":
   version: 0.0.1
   resolution: "path-browserify@npm:0.0.1"
@@ -19997,6 +20015,13 @@ fsevents@^1.2.7:
   bin:
     purgecss: bin/purgecss.js
   checksum: 232bfc898f87087678780e5d59cccd23f4b6e6e7a00addc49fa76e06075790dccf9fa52f5283d3285c3a932cd6e4111b7096f25e34886b422d8a6f12389e9516
+  languageName: node
+  linkType: hard
+
+"pw-strength@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "pw-strength@npm:1.0.3"
+  checksum: da17392f9e10dce9619a0525c14b185f9a33a31f8a9a6df7786efd39612ba3a028dbd3e3aa18bb57ba35bf972c918d6b5cef4883af3824c6037909f596c71c97
   languageName: node
   linkType: hard
 
@@ -25425,5 +25450,12 @@ typescript@*:
   version: 1.0.5
   resolution: "zwitch@npm:1.0.5"
   checksum: 28a1bebacab3bc60150b6b0a2ba1db2ad033f068e81f05e4892ec0ea13ae63f5d140a1d692062ac0657840c8da076f35b94433b5f1c329d7803b247de80f064a
+  languageName: node
+  linkType: hard
+
+"zxcvbn@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "zxcvbn@npm:4.4.2"
+  checksum: 76ab32c066082ac73491b7cd7f93ad0595c59b6d45ae80a0745e9e1661237388beb2f0c2ba0ae3dc330ca3ecdb87edcb7a21e0c09137ab81d5b32e584cda1e5d
   languageName: node
   linkType: hard

@@ -15,8 +15,8 @@
       "~*": ["./*"],
       "$*": ["src/*"]
     },
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
-    "types": ["svelte", "cypress"]
+    "lib": ["ES2021", "DOM", "DOM.Iterable", "es6"],
+    "types": ["svelte", "cypress", "webextension-polyfill-ts"]
   },
   "exclude": [
     "build/*",

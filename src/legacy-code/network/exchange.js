@@ -1,0 +1,385 @@
+import axlsign from 'axlsign';
+import { fromUint8Array, toUint8Array } from 'js-base64';
+import { get } from 'svelte/store';
+import { Request, } from '$/background/protocol';
+import { Certificate } from '$/certificate';
+import { ErrorMessage, ExtensionError } from '$/error';
+import { removeJamming } from '$/legacy-code/cryptography/jamming';
+import { random, sha512, xor, stringToUint8Array } from '$/legacy-code/utils';
+import { State } from '$/report';
+import { AesUtil } from '~src/legacy-code/cryptography/aes-util';
+/** @returns An HTTP address created from `ip`, `port` and `type` */
+const formatURL = (ip, port, type = '') => `http://${ip}:${port}${type}`;
+/**
+ * Converts a request object to an HTTP body object. For some unknown reasons,
+ * requests are URL-encoded, but responses are in JSON.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+const toURLSearchParams = (obj) => new URLSearchParams(Object.entries(obj).map(([key, value]) => [
+    key,
+    value instanceof Uint8Array
+        ? fromUint8Array(value)
+        : `${value}`,
+]));
+/**
+ * Converts a JSON-decoded response to a native JavaScript object. Strings are
+ * converted to `Uint8Array`.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+const fromJSON = (obj) => Object.fromEntries(Object.entries(obj).map(([key, value]) => [
+    key,
+    typeof value === 'string' ? toUint8Array(value) : value,
+]));
+/** Default timeout values, based on the request type. */
+export const defaultTimeouts = {
+    [Request.Ping]: 20000,
+    [Request.Credential]: 180000,
+    [Request.CloudKey]: 180000,
+    [Request.CipherKey]: 180000,
+    [Request.End]: 3000,
+    [Request.EndOk]: 3000,
+    [Request.PairingStart]: 20000,
+    [Request.PairingSalt]: 3000,
+    [Request.PairingName]: 3000,
+    [Request.IsAlive]: 180000,
+};
+/**
+ * Sends a request to a phone.
+ *
+ * @param ip - The IP of the phone
+ * @param port - The port of the phone
+ * @param type - The request type, see {@link Request}
+ * @param data - The request body, see {@link RequestMap}
+ * @param timeout - A time out, in milliseconds (-1 to disable timeout, see
+ *   {@link defaultTimeouts})
+ * @param signal - An abort signal
+ * @returns A promise that resolves to the response, see {@link ResponseMap}
+ */
+export const sendRequest = async ({ ip, port, type, data, timeout, signal, }) => {
+    // Create an AbortController to trigger a timeout
+    const controller = new AbortController();
+    timeout = timeout !== null && timeout !== void 0 ? timeout : defaultTimeouts[type];
+    if (timeout >= 0) {
+        setTimeout(() => {
+            controller.abort();
+        }, timeout);
+    }
+    if (signal === null || signal === void 0 ? void 0 : signal.aborted)
+        throw new ExtensionError(ErrorMessage.CanceledByUser);
+    signal === null || signal === void 0 ? void 0 : signal.addEventListener('abort', () => {
+        controller.abort();
+    });
+    // Send a POST request
+    const response = await fetch(formatURL(ip, port, type), {
+        method: 'POST',
+        body: toURLSearchParams(data),
+        signal: controller.signal,
+        mode: 'cors',
+    });
+    // If the phone responded with an HTTP error, throw
+    throwOnHttpErrors(response);
+    const responseData = (await response.json());
+    // @ts-expect-error For some mysterious reason, there is sometimes an
+    // `n` field in the response, that contains a boolean (meaning "new"
+    // or something), but stored as a string. Since it breaks unserialization
+    // and it is not properly documented (ahah), we remove it.
+    if (type !== Request.PairingSalt)
+        delete responseData.n;
+    return fromJSON(responseData);
+};
+/** Filters out responses containing an HTTP error code. */
+// eslint-disable-next-line complexity
+export const throwOnHttpErrors = (response) => {
+    // `204 No Content` is not properly used (who could have guessed?) and
+    // is sent when the user refuses the request on their phone.
+    if (response.status === 204)
+        throw new ExtensionError(ErrorMessage.RefuseOnPhone);
+    // `400 Bad Request` and `500 Internal Server Error` are generic errors,
+    // sent whenever something is wrong, but it is not clear what exactly is wrong.
+    if (response.status === 400 || response.status === 500)
+        throw new ExtensionError(ErrorMessage.UnknownPhoneError);
+    // When the user takes too long respond on their phone, the phone
+    // automatically declines the request.
+    if (response.status === 408)
+        throw new ExtensionError(ErrorMessage.RequestTimeout);
+    // When two or more requests are sent to the same phone, all but the last
+    // one will be ignored.
+    if (response.status === 409)
+        throw new ExtensionError(ErrorMessage.Conflict);
+    // When two or more requests are sent to the same phone, all but the last
+    // one will be ignored.
+    if (response.status === 500)
+        throw new ExtensionError(ErrorMessage.Conflict);
+    // Other error codes are not properly handled and translated yet, they will
+    // be replaced with a generic error message: `UNKNOWN_ERROR`.
+    // That is the main difference between `Error` and `ExtensionError`:
+    // `ErrorMessage` has a discrete set of possible errors.
+    if (response.status >= 300) {
+        throw new Error(`Unexpected HTTP response code: ${response.status} ${response.statusText}.`);
+    }
+};
+/**
+ * Ask the phone for a label
+ *
+ * @returns A pair containing the label asked, and a new certificate to save if
+ *   it was renewed during the exchange.
+ */
+const fetchRequest = async (phone, getDataRequest, requestType, { toGet, context, reporter, signal, }) => {
+    reporter({ state: State.WaitingForPhone });
+    let { certificate } = phone;
+    const { ip, port, keys: phoneKeys } = await getPhoneIp(context, signal, phone);
+    reporter({ state: State.WaitingForFirstResponse });
+    // If the keys expired, fetch a new certificate
+    // The keys come from the Zeroconf service: when a phone is found by the
+    // service, the service tries to idenfies it. Since the protocol was not
+    // designed for this feature, the service tries all known certificates by
+    // starting a key exchange with the phone. Because of another weird design
+    // choice, the phone does not allow to start two exchanges in less than
+    // 3 seconds. Therefore, the keys are stored in the context, and only
+    // regenerated if expired. (i.e. more than 3 seconds elapsed)
+    let pingResponse;
+    if (!phoneKeys || phoneKeys.date + 3000 < Date.now()) {
+        pingResponse = await sendRequest({
+            ip,
+            port,
+            type: Request.Ping,
+            data: { t: certificate.id },
+        });
+    }
+    else {
+        pingResponse = phoneKeys.pingResponse;
+        // Just check that the phone is online
+        await sendRequest({
+            ip,
+            port,
+            signal,
+            type: Request.IsAlive,
+            data: { oskour: 1 },
+        });
+    }
+    // Prepare the three shared secrets for the rest of the exchange
+    const keysExchange = [1, 2, 3].map((i) => encryptKey(pingResponse[`iv${i}`], pingResponse[`sa${i}`], certificate.tKey, pingResponse[`k${i}`]));
+    let dataRequest = {
+        i1: keysExchange[0].iv,
+        i2: keysExchange[1].iv,
+        i3: keysExchange[2].iv,
+        s1: keysExchange[0].salt,
+        s2: keysExchange[1].salt,
+        s3: keysExchange[2].salt,
+        d1: keysExchange[0].encryptedKey,
+        d2: keysExchange[1].encryptedKey,
+        d3: keysExchange[2].encryptedKey,
+    };
+    dataRequest = getDataRequest(toGet, keysExchange[1].sharedKey, certificate.sKey, dataRequest);
+    reporter({ state: State.NotificationSent });
+    // Ask the phone for some more random data
+    const labelResponse = (await sendRequest({
+        ip,
+        port,
+        type: requestType,
+        data: dataRequest,
+        signal,
+    }));
+    console.log(keysExchange, certificate, labelResponse);
+    const keys = await unjamKeys(keysExchange, certificate, labelResponse);
+    // To ensure forward secrecy, we share a new secret
+    const newShare = {
+        id: axlsign.generateKeyPair(random(32)),
+        k1: axlsign.generateKeyPair(random(32)),
+        k2: axlsign.generateKeyPair(random(32)),
+        k3: axlsign.generateKeyPair(random(32)),
+        k4: axlsign.generateKeyPair(random(32)),
+    };
+    // Send the new secret to the phone
+    const newKey = await sendRequest({
+        ip,
+        port,
+        type: Request.End,
+        data: {
+            id: newShare.id.public,
+            k1: newShare.k1.public,
+            k2: newShare.k2.public,
+            k3: newShare.k3.public,
+            k4: newShare.k4.public,
+        },
+        signal,
+    });
+    // Create a new certificate with the new secret
+    const { acknowledgement, newCertificate } = createNewCertificate(newShare, newKey, certificate);
+    certificate = newCertificate;
+    // Send an acknowledgement to the phone, to close the exchange
+    await sendRequest({
+        ip,
+        port,
+        type: Request.EndOk,
+        data: acknowledgement,
+        signal,
+    });
+    return { keys, newCertificate };
+};
+/** Return the key data request enrich with the key hash */
+const getKeyRequestData = (keyToGet, sharedKey, sKey, request) => {
+    if (keyToGet === undefined)
+        return request;
+    // If we want a specific key, add its signature to the payload
+    const ivd = random(16);
+    const saltd = random(16);
+    const keyd = xor(sharedKey, sKey);
+    const aes = new AesUtil(256, 1000);
+    const encd = aes.encryptCTR(ivd, saltd, keyd, keyToGet);
+    return Object.assign(Object.assign({}, request), { ih: ivd, sh: saltd, dh: encd });
+};
+/** Return the credential data request enrich with the website url */
+const getCredentialRequestData = (websiteUrl, sharedKey, sKey, request) => {
+    // If we want a specific key, add its signature to the payload
+    if (websiteUrl === undefined)
+        return request;
+    const ivd = random(16);
+    const saltd = random(16);
+    const keyd = xor(sharedKey, sKey);
+    const aes = new AesUtil(256, 1000);
+    const encd = aes.encryptCBC(ivd, saltd, keyd, websiteUrl);
+    return Object.assign(Object.assign({}, request), { id: ivd, sd: saltd, dd: encd });
+};
+/**
+ * Sends a key request to the phone, saves the new certificate, prepares the
+ * next exchange and returns the keys.
+ */
+export const fetchAndSaveKeys = async (context, phone, { keyToGet, reporter, signal, }) => {
+    const $phone = get(phone);
+    const { keys, newCertificate } = await fetchRequest($phone, getKeyRequestData, Request.CipherKey, {
+        toGet: keyToGet,
+        context,
+        reporter,
+        signal,
+    });
+    $phone.certificate = newCertificate;
+    phone.update(($phone) => $phone);
+    if (keys.low === undefined)
+        throw new Error(ErrorMessage.UnknownPhoneError);
+    return keys;
+};
+/**
+ * Ask the phone for a credential pair (login/password).
+ *
+ * @returns A pair containing the credential asked
+ */
+export const fetchAndSaveCredentials = async (context, phone, { websiteUrl, reporter, signal, }) => {
+    const $phone = get(phone);
+    const toGet = websiteUrl ? stringToUint8Array(websiteUrl) : undefined;
+    const { keys, newCertificate } = await fetchRequest($phone, getCredentialRequestData, Request.Credential, {
+        toGet,
+        context,
+        reporter,
+        signal,
+    });
+    $phone.certificate = newCertificate;
+    phone.update(($phone) => $phone);
+    return keys;
+};
+/**
+ * Ask the phone for a cloud key pair (id/password).
+ *
+ * @returns A pair containing a cloud key
+ */
+export const fetchAndSaveCloudKey = async (context, phone, { reporter, signal, }) => {
+    const $phone = get(phone);
+    // Sending '#' as data tells the phone to let the user choose the label
+    const toGet = stringToUint8Array('#');
+    const { keys, newCertificate } = await fetchRequest($phone, getCredentialRequestData, Request.CloudKey, {
+        toGet,
+        context,
+        reporter,
+        signal,
+    });
+    $phone.certificate = newCertificate;
+    phone.update(($phone) => $phone);
+    return keys;
+};
+/** Does some encryption stuff, it's still unclear at this time of refactoring. */
+const encryptKey = (iv, salt, passPhrase, cipherText) => {
+    const aes = new AesUtil(256, 1000);
+    const ecc = aes.decryptCTR(iv, salt, passPhrase, cipherText);
+    const k = axlsign.generateKeyPair(random(32));
+    const sharedKey = axlsign.sharedKey(k.private, ecc);
+    const newIv = random(16);
+    const newSalt = random(16);
+    const enc = aes.encryptCTR(newIv, newSalt, passPhrase, k.public);
+    return { sharedKey, iv: newIv, salt: newSalt, encryptedKey: enc };
+};
+/** Unjams keys. */
+const unjamKeys = async (keysExchange, certificate, { i: highInitializationVector, s: highSalt, d: highDataJam, i2: lowInitializationVector, s2: lowSalt, d2: lowDataJam, }) => {
+    const aes = new AesUtil(256, 1000);
+    const highHashPromise = sha512(new Uint8Array([...certificate.jamming, ...keysExchange[1].sharedKey]));
+    const lowHashPromise = sha512(new Uint8Array([...certificate.jamming, ...keysExchange[0].sharedKey]));
+    const highKey = xor(keysExchange[2].sharedKey, certificate.fKey);
+    const highJamming = await highHashPromise;
+    const highJammingPosition = certificate.jamming[2] ^ keysExchange[0].sharedKey[2];
+    const highJammingValueOnLength = (certificate.tKey[0] ^ keysExchange[0].sharedKey[4]) &
+        (highJamming.length - 1);
+    const highJammingShift = certificate.jamming[1] + (keysExchange[0].sharedKey[6] << 8);
+    const highUnjam = removeJamming(highJamming, highDataJam, highJammingValueOnLength, highJammingPosition, highJammingShift);
+    const high = aes.decryptCTR(highInitializationVector, highSalt, highKey, highUnjam);
+    if (lowInitializationVector === undefined ||
+        lowDataJam === undefined ||
+        lowSalt === undefined)
+        return { high, low: undefined };
+    const lowKey = xor(keysExchange[1].sharedKey, certificate.fKey);
+    const lowJamming = await lowHashPromise;
+    const lowPositionJamming = certificate.jamming[1] ^ keysExchange[0].sharedKey[1];
+    const lowJammingValueOnLength = (certificate.sKey[0] ^ keysExchange[0].sharedKey[3]) &
+        (lowJamming.length - 1);
+    const lowJammingShift = certificate.jamming[0] + (keysExchange[0].sharedKey[5] << 8);
+    const lowUnjam = removeJamming(lowJamming, lowDataJam, lowJammingValueOnLength, lowPositionJamming, lowJammingShift);
+    const low = aes.decryptCTR(lowInitializationVector, lowSalt, lowKey, lowUnjam);
+    // The two keys we asked for
+    return { high, low };
+};
+/** Create a new certificate with the old one. */
+const createNewCertificate = (newShare, newKey, certificate) => {
+    const sKid = axlsign.sharedKey(newShare.id.private, newKey.id);
+    const sK1 = axlsign.sharedKey(newShare.k1.private, newKey.k1);
+    const sK2 = axlsign.sharedKey(newShare.k2.private, newKey.k2);
+    const sK3 = axlsign.sharedKey(newShare.k3.private, newKey.k3);
+    const sK4 = axlsign.sharedKey(newShare.k4.private, newKey.k4);
+    const newCertificate = new Certificate({
+        id: xor(sKid, certificate.id),
+        fKey: xor(sK1, certificate.fKey),
+        sKey: xor(sK2, certificate.sKey),
+        tKey: xor(sK3, certificate.tKey),
+        jamming: xor(sK4, certificate.jamming),
+    });
+    const acknowledgement = {
+        d: axlsign.sharedKey(newShare.k4.private, newKey.k4),
+    };
+    return { acknowledgement, newCertificate };
+};
+/**
+ * Gets the IP of a phone found by the Zeroconf service. If the phone given is
+ * not yet connected, the function waits for it to connect.
+ */
+const getPhoneIp = async (context, signal, phone) => {
+    // Get the phone already found by the background service
+    let entry;
+    const handleAbort = () => {
+        context.scanFaster.set(false);
+        throw new Error(ErrorMessage.CanceledByUser);
+    };
+    // Stop fast scanning if abort
+    if (signal.aborted)
+        throw new Error(ErrorMessage.CanceledByUser);
+    signal.addEventListener('abort', handleAbort);
+    // Tell the Zeroconf service to scan faster
+    context.scanFaster.set(true);
+    while (!(entry = [...context.network.entries()].find((entry) => entry[1].phone && get(entry[1].phone.store) === phone)) ||
+        entry[1].phone === undefined) {
+        // If there is no such phone, wait for one to be found
+        await context.newDeviceFound.observe();
+    }
+    context.scanFaster.set(false);
+    signal.removeEventListener('abort', handleAbort);
+    // Extract the IP address, port, and keys
+    const [ip, { port, phone: { keys }, },] = entry;
+    return { ip, port, keys };
+};
+//# sourceMappingURL=exchange.js.map
