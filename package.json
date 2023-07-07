@@ -103,7 +103,7 @@
     "prettier-plugin-jsdoc": "^0.3.30",
     "prettier-plugin-svelte": "^2.5.1",
     "standard-version": "^9.3.2",
-    "stylelint": "^13.13.1",
+    "stylelint": "^15.10.1",
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-config-standard": "^22.0.0",
     "svelte-check": "^2.2.11",
